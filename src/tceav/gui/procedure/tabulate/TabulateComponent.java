@@ -313,7 +313,7 @@ public class TabulateComponent extends TabbedPanel {
         return true;
     }
     
-    private String padding = "000000000";
+    private String padding = "000000";
     
     private String StrFormat(String num) {
         return padding.substring(0,padding.length()-num.length()) + num;
@@ -368,6 +368,10 @@ public class TabulateComponent extends TabbedPanel {
         attachSchemaTableCol(dom, schemaSequence, colName, 2);
     }
     
+    private void attachSchemaTableIntCol(Document dom, Element schemaSequence, String colName) {
+        attachSchemaTableCol(dom, schemaSequence, colName, 3);
+    }
+    
     private void attachSchemaTableCol(Document dom, Element schemaSequence, String colName, int mode) {
         Element schemaCol = dom.createElement("xsd:element");
         schemaCol.setAttribute("name", colName);
@@ -380,6 +384,11 @@ public class TabulateComponent extends TabbedPanel {
             case 2:
                 schemaCol.setAttribute("od:jetType", "memo");
                 schemaCol.setAttribute("od:sqlSType", "ntext");
+                break;
+            case 3:
+                schemaCol.setAttribute("od:jetType", "longinteger");
+                schemaCol.setAttribute("od:sqlSType", "int");
+                schemaCol.setAttribute("type", "xsd:int");
                 break;
         }
         schemaSequence.appendChild(schemaCol);
@@ -433,6 +442,7 @@ public class TabulateComponent extends TabbedPanel {
             attachSchemaTableRef(dom, schemaSequence, "TaskTable");
             attachSchemaTableRef(dom, schemaSequence, "MapTable");
             attachSchemaTableRef(dom, schemaSequence, "HandlerTable");
+            attachSchemaTableRef(dom, schemaSequence, "ArgumentTable");
             
             schemaSequence = attachSchemaSequence(dom, schema, "TaskTable");
             attachSchemaTableTextCol(dom, schemaSequence, "TaskId");
@@ -455,6 +465,14 @@ public class TabulateComponent extends TabbedPanel {
             attachSchemaTableTextCol(dom, schemaSequence, "HandlerType");
             attachSchemaTableTextCol(dom, schemaSequence, "RuleValue");
             attachSchemaTableTextCol(dom, schemaSequence, "HandlerName");
+            attachSchemaTableIntCol(dom, schemaSequence, "ArgumentTotalHashCode");
+            attachSchemaTableMemoCol(dom, schemaSequence, "ArgumentTotal");
+            
+            schemaSequence = attachSchemaSequence(dom, schema, "ArgumentTable");
+            attachSchemaTableTextCol(dom, schemaSequence, "ArgumentId");
+            attachSchemaTableTextCol(dom, schemaSequence, "HandlerId");
+            attachSchemaTableTextCol(dom, schemaSequence, "SiteId");
+            attachSchemaTableIntCol(dom, schemaSequence, "ArgumentHashCode");
             attachSchemaTableMemoCol(dom, schemaSequence, "Argument");
             
             // Build Data
@@ -479,13 +497,13 @@ public class TabulateComponent extends TabbedPanel {
                 table = dom.createElement("TaskTable");
                 dataElement.appendChild(table);
                 
-                attachXMLDataRow(dom, table, "TaskId", StrFormat(rowOneModel.getId(row)) + "_" + rowOneModel.getSiteId());
+                attachXMLDataRow(dom, table, "TaskId", rowOneModel.getSiteId() + "_" + StrFormat(rowOneModel.getId(row)));
                 
                 if(!rowOneModel.getParentId(row).equals(""))
-                    attachXMLDataRow(dom, table, "ParentId", StrFormat(rowOneModel.getParentId(row)) + "_" + rowOneModel.getSiteId());
+                    attachXMLDataRow(dom, table, "ParentId", rowOneModel.getSiteId() + "_" + StrFormat(rowOneModel.getParentId(row)));
                 
                 if(!rowOneModel.getRootId(row).equals(""))
-                    attachXMLDataRow(dom, table, "RootId", StrFormat(rowOneModel.getRootId(row)) + "_" + rowOneModel.getSiteId());
+                    attachXMLDataRow(dom, table, "RootId", rowOneModel.getSiteId() + "_" + StrFormat(rowOneModel.getRootId(row)));
                 
                 attachXMLDataRow(dom, table, "SiteId", rowOneModel.getSiteId());
                 
@@ -498,7 +516,7 @@ public class TabulateComponent extends TabbedPanel {
                 table = dom.createElement("HandlerTable");
                 dataElement.appendChild(table);
                 
-                attachXMLDataRow(dom, table, "HandlerId", df.format(col) + "_" + rowOneModel.getSiteId());
+                attachXMLDataRow(dom, table, "HandlerId", rowOneModel.getSiteId() + "_" + df.format(col));
                 attachXMLDataRow(dom, table, "SiteId", rowOneModel.getSiteId());
                 attachXMLDataRow(dom, table, "HandlerType", dataModel.getColumn(col).getClassification());
                 
@@ -506,13 +524,29 @@ public class TabulateComponent extends TabbedPanel {
                     attachXMLDataRow(dom, table, "RuleValue", dataModel.getColumn(col).getRule());
                 
                 attachXMLDataRow(dom, table, "HandlerName", dataModel.getColumn(col).getHandler());
-                
-                if(!dataModel.getColumn(col).getArgument().equals(""))
-                    attachXMLDataRow(dom, table, "Argument", dataModel.getColumn(col).getArgument());
-                
+                if(dataModel.getColumn(col).getArguments().size() > 0) {
+                    attachXMLDataRow(dom, table, "ArgumentTotalHashCode", Integer.toString(dataModel.getColumn(col).getArgumentTotalHashCode()));
+                    attachXMLDataRow(dom, table, "ArgumentTotal", dataModel.getColumn(col).getArgumentsString());
+                }
             }
             
             int idCount = 0;
+            
+            for(int col=0; col<dataModel.getColumnCount(); col++) {
+                for(int i=0; i<dataModel.getColumn(col).getArguments().size(); i++) {
+                    table = dom.createElement("ArgumentTable");
+                    dataElement.appendChild(table);
+                    idCount++;
+                    
+                    attachXMLDataRow(dom, table, "ArgumentId", rowOneModel.getSiteId() + "_" + df.format(idCount));
+                    attachXMLDataRow(dom, table, "HandlerId", rowOneModel.getSiteId() + "_" + df.format(col));
+                    attachXMLDataRow(dom, table, "SiteId", rowOneModel.getSiteId());
+                    attachXMLDataRow(dom, table, "ArgumentHashCode", Integer.toString(dataModel.getColumn(col).getArgumentHashCode(i)));
+                    attachXMLDataRow(dom, table, "Argument", dataModel.getColumn(col).getArguments().get(i));
+                }
+            }
+            
+            idCount = 0;
             
             for(int row=0; row<dataModel.getRowCount(); row++) {
                 for(int col=0; col<dataModel.getColumnCount(); col++) {
@@ -524,10 +558,10 @@ public class TabulateComponent extends TabbedPanel {
                     table = dom.createElement("MapTable");
                     dataElement.appendChild(table);
                     
-                    attachXMLDataRow(dom, table, "MapId", df.format(idCount) + "_" + rowOneModel.getSiteId());
+                    attachXMLDataRow(dom, table, "MapId", rowOneModel.getSiteId() + "_" + df.format(idCount));
                     attachXMLDataRow(dom, table, "SiteId", dataModel.getSiteId());
-                    attachXMLDataRow(dom, table, "TaskId", StrFormat(rowOneModel.getId(row)) + "_"+rowOneModel.getSiteId());
-                    attachXMLDataRow(dom, table, "HandlerId", df.format(col) + "_" + rowOneModel.getSiteId());
+                    attachXMLDataRow(dom, table, "TaskId", rowOneModel.getSiteId() + "_" + StrFormat(rowOneModel.getId(row)));
+                    attachXMLDataRow(dom, table, "HandlerId", rowOneModel.getSiteId() + "_" + df.format(col));
                     attachXMLDataRow(dom, table, "MapValue", (String)dataModel.getValueAt(row, col));
                 }
             }

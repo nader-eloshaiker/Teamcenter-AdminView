@@ -37,7 +37,7 @@ public class ProcedureManagerComponent extends TabbedPanel {
     private AdminViewFrame parentFrame;
     private ProcedureManager pm;
     private JSplitPane splitPane1;
-    private ProcedureTreeModel modelProcedure;
+    private ProcessTreeModel modelProcedure;
     private ActionComponent actionComponent;
     private AttributeComponent attributeComponent;
     private XMLComponent xmlComponent;

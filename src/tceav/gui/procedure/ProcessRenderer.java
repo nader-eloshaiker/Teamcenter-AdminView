@@ -107,41 +107,41 @@ public class ProcessRenderer  implements TreeCellRenderer {
                 String s = wt.getIconKey();
                 if(s == null)
                     cell.setIcon(workflowIcon);
-                else if(s.equals("acknowledgeTask"))
+                else if(s.equalsIgnoreCase("acknowledgeTask"))
                     cell.setIcon(acknowledgeTaskIcon);
-                else if(s.equals("addStatusTask"))
+                else if(s.equalsIgnoreCase("addStatusTask"))
                     cell.setIcon(addStatusTaskIcon);
-                else if(s.equals("checkListTask"))
+                else if(s.equalsIgnoreCase("checkListTask"))
                     cell.setIcon(checkListTaskIcon);
-                else if(s.equals("conditionTask"))
+                else if(s.equalsIgnoreCase("conditionTask"))
                     cell.setIcon(conditionTaskIcon);
-                else if(s.equals("doTask"))
+                else if(s.equalsIgnoreCase("doTask"))
                     cell.setIcon(doTaskIcon);
-                else if(s.equals("impactAnalysisTask"))
+                else if(s.equalsIgnoreCase("impactAnalysisTask"))
                     cell.setIcon(impactAnalysisTaskIcon);
-                else if(s.equals("notifyTask"))
+                else if(s.equalsIgnoreCase("notifyTask"))
                     cell.setIcon(notifyTaskIcon);
-                else if(s.equals("orTask"))
+                else if(s.equalsIgnoreCase("orTask"))
                     cell.setIcon(orTaskIcon);
-                else if(s.equals("performSignoffTask"))
+                else if(s.equalsIgnoreCase("performSignoffTask"))
                     cell.setIcon(performSignoffTaskIcon);
-                else if(s.equals("prepareecoTask"))
+                else if(s.equalsIgnoreCase("prepareecoTask"))
                     cell.setIcon(prepareecoTaskIcon);
-                else if(s.equals("process"))
+                else if(s.equalsIgnoreCase("process"))
                     cell.setIcon(processIcon);
-                else if(s.equals("reviewProcess"))
+                else if(s.equalsIgnoreCase("reviewProcess"))
                     cell.setIcon(reviewProcess);
-                else if(s.equals("reviewTask"))
+                else if(s.equalsIgnoreCase("reviewTask"))
                     cell.setIcon(reviewTaskIcon);
-                else if(s.equals("routeTask"))
+                else if(s.equalsIgnoreCase("routeTask"))
                     cell.setIcon(routeTaskIcon);
-                else if(s.equals("selectSignoffTask"))
+                else if(s.equalsIgnoreCase("selectSignoffTask"))
                     cell.setIcon(selectSignoffTaskIcon);
-                else if(s.equals("syncTask"))
+                else if(s.equalsIgnoreCase("syncTask"))
                     cell.setIcon(syncTaskIcon);
-                else if(s.equals("task"))
+                else if(s.equalsIgnoreCase("task"))
                     cell.setIcon(taskIcon);
-                else if(s.equals("taskProperties"))
+                else if(s.equalsIgnoreCase("taskProperties"))
                     cell.setIcon(taskPropertiesIcon);
                 break;
                 
