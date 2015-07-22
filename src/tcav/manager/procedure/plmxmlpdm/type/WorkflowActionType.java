@@ -16,6 +16,8 @@ import org.w3c.dom.NamedNodeMap;
 import tcav.manager.procedure.plmxmlpdm.TagTools;
 import tcav.manager.procedure.plmxmlpdm.TagTypeEnum;
 import tcav.manager.procedure.plmxmlpdm.base.AttribOwnerBase;
+
+import tcav.manager.procedure.plmxmlpdm.classtype.WorkflowActionTypeEnum;
 /*
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -70,6 +72,8 @@ public class WorkflowActionType extends AttribOwnerBase {
     protected final String ruleRefsAttribute = "ruleRefs";
     protected List<String> ruleRefs;
     
+    protected WorkflowActionTypeEnum type;
+    
     public WorkflowActionType(Node node) {
         super(node);
         Node currentNode = node;
@@ -84,7 +88,7 @@ public class WorkflowActionType extends AttribOwnerBase {
 
         setTagType(TagTypeEnum.WorkflowAction);
     }
-
+    
     public List<String> getActionHandlerRefs() {
         if (actionHandlerRefs == null) {
             actionHandlerRefs = new ArrayList<String>();
@@ -98,6 +102,11 @@ public class WorkflowActionType extends AttribOwnerBase {
 
     public void setActionType(String value) {
         this.actionType = value;
+        type = WorkflowActionTypeEnum.fromValue(value);
+    }
+    
+    public WorkflowActionTypeEnum getType() {
+        return type;
     }
 
     public String getParentRef() {
