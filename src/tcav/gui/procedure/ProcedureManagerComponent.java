@@ -13,6 +13,7 @@ import tcav.*;
 import tcav.manager.procedure.ProcedureManager;
 import tcav.manager.AbstractManager;
 import tcav.gui.*;
+import tcav.gui.procedure.analysis.AnalysisComponent;
 import tcav.manager.procedure.plmxmlpdm.base.IdBase;
 import tcav.resources.*;
 import tcav.utils.*;
@@ -150,9 +151,17 @@ public class ProcedureManagerComponent extends TabbedPanel {
             }
         });
         
+        JButton buttonAnalysis = new JButton("Run Analysis");
+        buttonAnalysis.setOpaque(false);
+        buttonAnalysis.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e){
+                AnalysisComponent cmp = new AnalysisComponent(pm, parentFrame);
+            }
+        });
         
         toolBar = new JToolBar();
         toolBar.add(buttonXML);
+        toolBar.add(buttonAnalysis);
         
         return toolBar;
     }

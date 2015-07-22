@@ -343,7 +343,7 @@ public class XMLTableModel extends AbstractTableModel implements TableModel {
                 if(columnIndex == 0)
                     return "Parent Task";
                 else
-                    wt.getParentTaskTemplateRef();
+                    return wt.getParentTaskTemplateRef();
             case 8:
                 if(columnIndex == 0)
                     return "Stage";

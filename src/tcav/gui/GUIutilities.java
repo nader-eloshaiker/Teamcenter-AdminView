@@ -56,7 +56,7 @@ public class GUIutilities {
     public static void packColumns(JTable table, int margin) {
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         for (int c=0; c<table.getColumnCount(); c++) {
-            packColumn(table, c, 2);
+            packAllColumn(table, c, 2);
         }
     }
     
@@ -64,7 +64,7 @@ public class GUIutilities {
     // will be just wide enough to show the column head and the widest cell in the column.
     // margin pixels are added to the left and right
     // (resulting in an additional width of 2*margin pixels).
-    private static void packColumn(JTable table, int columnIndex, int margin) {
+    private static void packAllColumn(JTable table, int columnIndex, int margin) {
         TableModel model = table.getModel();
         DefaultTableColumnModel colModel = (DefaultTableColumnModel)table.getColumnModel();
         TableColumn col = colModel.getColumn(columnIndex);
@@ -95,13 +95,10 @@ public class GUIutilities {
         
         
         if(table.getColumnCount() == columnIndex+1){
-            int totalWidth;
             int tableWidth = table.getPreferredSize().width;
             int parentWidth = table.getParent().getWidth();
-            int newWidth = table.getPreferredSize().width;
             
             if(parentWidth > tableWidth){
-                newWidth += 2*margin;
                 col.setPreferredWidth(width + (parentWidth - tableWidth));
             }
         }

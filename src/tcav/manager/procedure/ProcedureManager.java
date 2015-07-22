@@ -262,6 +262,7 @@ public class ProcedureManager extends AbstractManager {
         
         for(int i=0; i<node.getSubTemplateRefs().size(); i++) {
             node.getSubTemplates()[i] = (WorkflowTemplateType)tagCache.get(node.getSubTemplateRefs().get(i));
+            node.getSubTemplates()[i].setParentSubTaskTemplate(node);
             processSubWorkflows(node.getSubTemplates()[i], tagCache);
         }
     }
