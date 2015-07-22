@@ -48,17 +48,19 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
                 int i = namedACL.getTable().getSelectedRow();
                 if (i > -1) {
                     if(namedACL.getModel().getAccessRule(i).getRuleTreeReferences().size() > 0) {
+                    
                         TreePath[] paths = getTreePaths(ruletree.getTree(), namedACL.getModel().getAccessRule(i).getRuleTreeReferences());
                         if(!isTreePathAvailable(paths, ruletree.getTree().getSelectionPaths())) {
                             ruletree.getTree().setSelectionPaths(paths);
                             ruletree.getTree().scrollPathToVisible(paths[0]);
                         }
-                        
-                    } else
+                       
+                    } else {
                         ruletree.getTree().clearSelection();
-                    
-                    accessControl.updateTable(namedACL.getModel().getAccessRule(i));
+                    }
                     namedACL.updateReferences(i);
+                    accessControl.updateTable(namedACL.getModel().getAccessRule(i));
+                    
                 } else
                     accessControl.updateTable();
             }
@@ -96,7 +98,7 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
                                 );
                     } else
                         accessControl.updateTable(treeNode.getAccessRule());
-                } else {
+                } else if(e.isAddedPath(e.getPath()) && treeNode.getAccessRule() == null){
                     namedACL.getTable().clearSelection();
                     accessControl.updateTable();
                 }
@@ -160,7 +162,7 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
             textAuthor.setBorder(new BevelBorder(BevelBorder.LOWERED));
             JLabel textDate = new JLabel(" Date: "+am.getMetaData().getTimeDetails()+" ");
             textDate.setBorder(new BevelBorder(BevelBorder.LOWERED));
-            JLabel textFile = new JLabel(" "+getFile()+" ");
+            JLabel textFile = new JLabel(" Path: "+getFile().getParent()+" ");
             textFile.setBorder(new BevelBorder(BevelBorder.LOWERED));
             statusBar = new JPanel();
             statusBar.setLayout(new BorderLayout(1,1));

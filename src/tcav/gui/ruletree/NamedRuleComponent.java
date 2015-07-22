@@ -94,7 +94,7 @@ public class NamedRuleComponent extends JPanel {
         panel.add("South",tabNamed);
         
         this.setLayout(new GridLayout(1,1,GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
-        this.setBorder(new TitledBorder(new EtchedBorder(), "Named "));
+        this.setBorder(new TitledBorder(new EtchedBorder(), "Named ACL"));
         this.add(GUIutilities.createPanelMargined(panel));
     }
     
