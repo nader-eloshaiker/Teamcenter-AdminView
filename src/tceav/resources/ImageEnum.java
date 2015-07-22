@@ -44,6 +44,10 @@ public enum ImageEnum {
     aclTranslation("images/acl/localization_values_16.png"),
     aclUnmanage("images/acl/unmanaged_16.png"),
     aclWrite("images/acl/writeaccess_16.png"),
+    aclIPClassifier("images/acl/ip_classifier_16.png"),
+    aclITARClassifier("images/acl/itar_classifier_16.png"),
+    aclAddContent("images/acl/add_content_16.png"),
+    aclRemoveContent("images/acl/remove_content_16.png"),
     aclUndefined("images/acl/error_16.png"),
 
     amNo("images/accessmanager/no_16.png"),

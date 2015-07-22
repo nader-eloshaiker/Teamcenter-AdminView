@@ -207,22 +207,22 @@ public class AccessControlHeaderItem {
                 
             case ITAR_CLASSIFIER:
                 desc = "ITAR Classifier";
-                image = ImageEnum.aclUndefined;
+                image = ImageEnum.aclITARClassifier;
                 break;
                 
             case IP_CLASSIFIER:
                 desc = "IP Classifier";
-                image = ImageEnum.aclUndefined;
+                image = ImageEnum.aclIPClassifier;
                 break;
                 
             case ADD_CONTENT:
                 desc = "Add Content";
-                image = ImageEnum.aclUndefined;
+                image = ImageEnum.aclAddContent;
                 break;
                 
             case REMOVE_CONTENT:
                 desc = "Remove Content";
-                image = ImageEnum.aclUndefined;
+                image = ImageEnum.aclRemoveContent;
                 break;
                 
             default:
