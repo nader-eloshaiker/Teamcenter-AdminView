@@ -13,6 +13,7 @@ import tcav.*;
 import tcav.manager.procedure.ProcedureManager;
 import tcav.manager.AbstractManager;
 import tcav.gui.*;
+import tcav.gui.procedure.tabulate.TabulateComponent;
 import tcav.manager.procedure.plmxmlpdm.base.IdBase;
 import tcav.resources.*;
 import tcav.utils.*;
@@ -35,7 +36,7 @@ import java.io.File;
  */
 public class ProcedureManagerComponent extends TabbedPanel {
     
-    private JFrame parentFrame;
+    private AdminViewFrame parentFrame;
     private ProcedureManager pm;
     private JSplitPane splitPane1;
     private ProcedureTreeModel modelProcedure;
@@ -48,7 +49,7 @@ public class ProcedureManagerComponent extends TabbedPanel {
     /**
      * Creates a new instance of ProcedureManagerComponent
      */
-    public ProcedureManagerComponent(JFrame parentFrame, ProcedureManager pm) {
+    public ProcedureManagerComponent(AdminViewFrame parentFrame, ProcedureManager pm) {
         this.pm = pm;
         this.parentFrame = parentFrame;
         
@@ -118,8 +119,8 @@ public class ProcedureManagerComponent extends TabbedPanel {
         
     }
     
-    public AbstractManager getManager() {
-        return pm;
+    public String getTitle() {
+        return pm.getFile().getName();
     }
     
     private ImageIcon iconProcedure;
@@ -150,9 +151,25 @@ public class ProcedureManagerComponent extends TabbedPanel {
             }
         });
         
+        JButton buttonTabulate = new JButton("Tabulate Procedures");
+        buttonTabulate.setOpaque(false);
+        buttonTabulate.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e){
+                TabulateComponent component = new TabulateComponent(pm, parentFrame);
+                parentFrame.addTabbedPane(component);
+            }
+        });
+        
+        try {
+            buttonTabulate.setIcon(ResourceLoader.getImage(ImageEnum.pmTabulate));
+            buttonXML.setIcon(ResourceLoader.getImage(ImageEnum.pmXML));
+        } catch (Exception ex) {
+                JOptionPane.showMessageDialog(parentFrame, ex.getMessage(), "Error Load Images", JOptionPane.ERROR_MESSAGE);
+            }
         
         toolBar = new JToolBar();
         toolBar.add(buttonXML);
+        toolBar.add(buttonTabulate);
         
         return toolBar;
     }

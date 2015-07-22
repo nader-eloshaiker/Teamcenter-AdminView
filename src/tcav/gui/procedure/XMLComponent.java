@@ -67,6 +67,7 @@ public class XMLComponent extends JComponent {
                 dialog = null;
             }
         });
+        
         JPanel panelLabel = new JPanel();
         panelLabel.setLayout(new FlowLayout(FlowLayout.CENTER, 0,0));
         panelLabel.add(new JLabel("This dialog can remain open as new selections are made"));

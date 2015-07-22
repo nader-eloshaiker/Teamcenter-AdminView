@@ -68,14 +68,6 @@ public class ProcedureManager extends AbstractManager {
         return file;
     }
     
-    public String getId() {
-        return file.toString();
-    }
-    
-    public String getName() {
-        return file.getName();
-    }
-    
     public String getManagerType() {
         return PROCEDURE_MANAGER_TYPE;
     }
@@ -262,6 +254,7 @@ public class ProcedureManager extends AbstractManager {
         
         for(int i=0; i<node.getSubTemplateRefs().size(); i++) {
             node.getSubTemplates()[i] = (WorkflowTemplateType)tagCache.get(node.getSubTemplateRefs().get(i));
+            node.getSubTemplates()[i].setParentSubTaskTemplate(node);
             processSubWorkflows(node.getSubTemplates()[i], tagCache);
         }
     }

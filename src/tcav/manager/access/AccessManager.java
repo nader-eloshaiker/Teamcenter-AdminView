@@ -45,14 +45,6 @@ public class AccessManager extends AbstractManager {
         return file;
     }
     
-    public String getId() {
-        return file.toString();
-    }
-    
-    public String getName() {
-        return file.getName();
-    }
-    
     public boolean isValid() {
         if(rootTreeNode == null)
             return false;

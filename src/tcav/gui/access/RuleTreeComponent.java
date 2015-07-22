@@ -163,11 +163,7 @@ public class RuleTreeComponent extends JPanel {
         
         
         JToolBar toolBarRuletree = new JToolBar();
-        toolBarRuletree.setMargin(new Insets(
-                GUIutilities.GAP_INSET,
-                GUIutilities.GAP_INSET,
-                GUIutilities.GAP_INSET,
-                GUIutilities.GAP_INSET));
+        toolBarRuletree.setMargin(GUIutilities.GAP_INSETS);
         toolBarRuletree.setFloatable(false);
         toolBarRuletree.add(buttonExpandAll);
         toolBarRuletree.add(buttonCollapseAll);

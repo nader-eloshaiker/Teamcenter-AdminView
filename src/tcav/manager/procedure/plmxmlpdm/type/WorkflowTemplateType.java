@@ -210,18 +210,6 @@ public class WorkflowTemplateType extends AttribOwnerBase {
         this.dependencyTaskTemplates = value;
     }
 
-    /***************
-     * Customisation
-     *
-     * getActions() changed to getActionRefs()
-     ***************/
-    public List<String> getActionRefs() {
-        if (actionRefs == null) {
-            actionRefs = new ArrayList<String>();
-        }
-        return this.actionRefs;
-    }
-    
     public List<String> getDependencyTaskTemplateRefs() {
         if (dependencyTaskTemplateRefs == null) {
             dependencyTaskTemplateRefs = new ArrayList<String>();
@@ -310,11 +298,32 @@ public class WorkflowTemplateType extends AttribOwnerBase {
 
     /***************
      * Customisation
+     *
+     * getActions() changed to getActionRefs()
+     ***************/
+    public List<String> getActionRefs() {
+        if (actionRefs == null) {
+            actionRefs = new ArrayList<String>();
+        }
+        return this.actionRefs;
+    }
+    
+    /***************
+     * Customisation
      ***************/
     
     private WorkflowTemplateType[] subTemplates;
     private WorkflowTemplateType[] dependantTasks;
     private WorkflowActionType[] actions;
+    private WorkflowTemplateType parentTaskTemplate;
+
+    public WorkflowTemplateType getParentSubTaskTemplate() {
+        return parentTaskTemplate;
+    }
+
+    public void setParentSubTaskTemplate(WorkflowTemplateType parentTaskTemplate) {
+        this.parentTaskTemplate = parentTaskTemplate;
+    }
 
     public WorkflowTemplateType[] getDependantTaskTemplates() {
         if(dependantTasks == null)

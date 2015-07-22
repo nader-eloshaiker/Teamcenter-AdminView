@@ -22,7 +22,8 @@ import tcav.resources.*;
  */
 public class GUIutilities {
     public final static int GAP_COMPONENT = 4;
-    public final static int GAP_INSET = 1;
+    public final static Insets GAP_INSETS = new Insets(1,1,1,1);
+    public final static Insets GAP_INSETS_HEADER = new Insets(2,2,2,2);
     public final static int GAP_MARGIN = 4;
     public final static int GAP_OUTER_BORDER = 8;
     public static int progressCounter = 0;
@@ -56,7 +57,7 @@ public class GUIutilities {
     public static void packColumns(JTable table, int margin) {
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         for (int c=0; c<table.getColumnCount(); c++) {
-            packColumn(table, c, 2);
+            packAllColumn(table, c, 2);
         }
     }
     
@@ -64,7 +65,7 @@ public class GUIutilities {
     // will be just wide enough to show the column head and the widest cell in the column.
     // margin pixels are added to the left and right
     // (resulting in an additional width of 2*margin pixels).
-    private static void packColumn(JTable table, int columnIndex, int margin) {
+    private static void packAllColumn(JTable table, int columnIndex, int margin) {
         TableModel model = table.getModel();
         DefaultTableColumnModel colModel = (DefaultTableColumnModel)table.getColumnModel();
         TableColumn col = colModel.getColumn(columnIndex);
@@ -95,13 +96,10 @@ public class GUIutilities {
         
         
         if(table.getColumnCount() == columnIndex+1){
-            int totalWidth;
             int tableWidth = table.getPreferredSize().width;
             int parentWidth = table.getParent().getWidth();
-            int newWidth = table.getPreferredSize().width;
             
             if(parentWidth > tableWidth){
-                newWidth += 2*margin;
                 col.setPreferredWidth(width + (parentWidth - tableWidth));
             }
         }
@@ -178,11 +176,7 @@ public class GUIutilities {
         
         
         JToolBar toolbar = new JToolBar();
-        toolbar.setMargin(new Insets(
-                GUIutilities.GAP_INSET,
-                GUIutilities.GAP_INSET,
-                GUIutilities.GAP_INSET,
-                GUIutilities.GAP_INSET));
+        toolbar.setMargin(GUIutilities.GAP_INSETS);
         toolbar.setFloatable(false);
         toolbar.add(buttonExpandAll);
         toolbar.add(buttonCollapseAll);

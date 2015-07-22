@@ -56,6 +56,9 @@ public enum ImageEnum {
     amcmpNotFound("images/compare/not_found_16.png"),
     
     
+    pmTabulate("images/proceduremanager/calendar.png"),
+    pmTabulateExport("images/proceduremanager/showimplementedby_16.png"),
+    
     pmAssociatedDataSet("images/proceduremanager/dataset_16.png"),
     pmAssociatedFolder("images/proceduremanager/foldertype_16.png"),
     pmAssociatedForm("images/proceduremanager/formtype_16.png"),
@@ -73,6 +76,7 @@ public enum ImageEnum {
     pmWorkflowHandler("images/proceduremanager/handlers_16.png"),
     pmValidationChecker("images/proceduremanager/validation_16.png"),
     pmValidationResults("images/proceduremanager/configfile_sw_16.png"),
+    pmXML("images/proceduremanager/showrealizedby_16.png"),
     
     workflowAcknowledge("images/workflow/acknowledgetask_16.png"),
     workflowAddStatus("images/workflow/addstatustasknode_16.png"),

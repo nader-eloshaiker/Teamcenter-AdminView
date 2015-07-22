@@ -18,7 +18,6 @@ import java.io.File;
 
 import tcav.resources.*;
 import tcav.manager.AbstractManager;
-import tcav.manager.empty.EmptyManager;
 
 /**
  *
@@ -26,12 +25,9 @@ import tcav.manager.empty.EmptyManager;
  */
 public class EmptyComponent extends TabbedPanel {
     
-    private EmptyManager manager;
-    
     
     /** Creates a new instance of EmptyComponent */
     public EmptyComponent() {
-        manager = new EmptyManager();
         ImageIcon iconBanner = new ImageIcon();
         try {
             iconBanner = ResourceLoader.getImage(ImageEnum.appLogoBanner);
@@ -95,8 +91,8 @@ public class EmptyComponent extends TabbedPanel {
         
     }
     
-    public AbstractManager getManager() {
-        return manager;
+    public String getTitle() {
+        return "empty";
     }
     
 }
