@@ -70,6 +70,10 @@ public class SiteType extends OwnerBase
     
     public SiteType(Node node) {
         super(node);
+        
+        if(node == null)
+            return;
+        
         Node currentNode = node;
         NamedNodeMap attrib = currentNode.getAttributes();
         

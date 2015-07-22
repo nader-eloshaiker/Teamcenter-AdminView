@@ -86,6 +86,11 @@ public abstract class AttribOwnerBase extends DescriptionBase {
     
     public AttribOwnerBase(Node node) {
         super(node);
+        
+        if (node == null) {
+            return;
+        }
+
         Node currentNode = node;
         NamedNodeMap attrib = currentNode.getAttributes();
         NodeList nodeList = currentNode.getChildNodes();

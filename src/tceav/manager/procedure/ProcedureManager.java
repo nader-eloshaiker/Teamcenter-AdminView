@@ -41,10 +41,11 @@ public class ProcedureManager extends ManagerAdapter {
     
     private ArrayList<WorkflowTemplateType> workflowProcesses;
     private ProcedureHeaderType header;
-    private ArrayList<SiteType> site;
+    private ArrayList<SiteType> sites;
     private PLMXMLType plmxml;
     private File file;
     private AdminViewFrame parentFrame;
+    private SiteType site;
     
     /**
      * Creates a new instance of ProcedureManager
@@ -85,24 +86,36 @@ public class ProcedureManager extends ManagerAdapter {
     }
     
     public ArrayList<SiteType> getSites() {
-        return site;
+        return sites;
     }
-    private int siteIndex = -1;
     
     public SiteType getSite() {
-        if (siteIndex == -1) {
-            for (int i = 0; i < site.size(); i++) {
-                if (getPLMXML().getAuthor().indexOf(site.get(i).getSiteId()) > 0) {
-                    siteIndex = i;
-                    break;
-                }
-            }
-            if (siteIndex == -1) {
-                siteIndex = 0;
+        if(site != null)
+            return site;
+        
+        String s = plmxml.getAuthor();
+        int siteIndex = -1;
+
+        for (int i = 0; i < sites.size(); i++) {
+            siteIndex = s.indexOf(sites.get(i).getSiteId());
+            if (siteIndex >= 0) {
+                site = sites.get(siteIndex);
+                break;
             }
         }
+
+        if(siteIndex == -1) {
+            String siteName = s.substring(s.indexOf('@')+1, s.indexOf('('));
+            String siteID = s.substring(s.indexOf('(')+1, s.indexOf(')'));
+            String siteOwner = s.substring(s.indexOf('-')+2, s.indexOf('@'));
+            String siteDesc = s.substring(0, s.indexOf('-')-1);
+            site = new SiteType(null);
+            site.setName(siteName);
+            site.setId(siteID);
+            site.setOwnerRef(siteOwner);
+        }
         
-        return site.get(siteIndex);
+        return site;
     }
     
     public ProcedureHeaderType getHeader() {
@@ -124,7 +137,7 @@ public class ProcedureManager extends ManagerAdapter {
         }
         ProcedureTagTypeEnum tagType;
         workflowProcesses = new ArrayList<WorkflowTemplateType>();
-        site = new ArrayList<SiteType>();
+        sites = new ArrayList<SiteType>();
         
         Hashtable<String, IdBase> tagCache = new Hashtable<String, IdBase>();
         
@@ -157,7 +170,7 @@ public class ProcedureManager extends ManagerAdapter {
                         break;
                         
                     case Site:
-                        site.add(new SiteType(currentNode));
+                        sites.add(new SiteType(currentNode));
                         parentNode.removeChild(currentNode);
                         break;
                         

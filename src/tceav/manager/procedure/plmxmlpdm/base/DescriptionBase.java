@@ -85,6 +85,10 @@ public abstract class DescriptionBase extends IdBase {
     public DescriptionBase(Node node) {
         super(node);
         
+        if (node == null) {
+            return;
+        }
+
         Node currentNode = node;
         NamedNodeMap attrib = currentNode.getAttributes();
         NodeList nodeList = currentNode.getChildNodes();

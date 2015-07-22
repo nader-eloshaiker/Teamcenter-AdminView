@@ -35,6 +35,11 @@ public abstract class IdBase {
     
     public IdBase(Node node) {
         
+        if (node == null) {
+            return;
+        }
+
+        
         Node currentNode = node;
         NamedNodeMap attrib = currentNode.getAttributes();
         
