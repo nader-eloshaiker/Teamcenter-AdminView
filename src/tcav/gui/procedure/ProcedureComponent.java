@@ -38,7 +38,6 @@ import java.util.ArrayList;
  */
 public class ProcedureComponent extends JPanel implements TabbedPanel {
     
-    protected JTreeAdvanced treeWorkflowProcess;
     protected JFrame parentFrame;
     protected ProcedureManager pm;
     protected JSplitPane splitPane1;
@@ -51,18 +50,26 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
         this.pm = pm;
         this.parentFrame = parentFrame;
         
-        splitPane1 = new JSplitPane(
-                JSplitPane.HORIZONTAL_SPLIT,
-                true,
-                Utilities.createPanelMargined(createWorkflowProcessPanel()),
-                createNodeDetailsPanel());
+        JPanel panelLeft = new JPanel();
+        panelLeft.setLayout(new GridLayout(2,1,Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
+        panelLeft.add(Utilities.createPanelMargined(createWorkflowProcessPanel()));
+        panelLeft.add(Utilities.createPanelMargined(createActionPanel()));
+        
+        JPanel panelRight = new JPanel();
+        panelRight.setLayout(new BorderLayout());
+        panelRight.add("Center",Utilities.createPanelMargined(createAttributesPanel()));
+        panelRight.add("South", Utilities.createPanelMargined(createXMLPanel()));
+        
+        
+        
+        splitPane1 = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, panelLeft, panelRight);
         splitPane1.setResizeWeight(1.0);
         splitPane1.setBorder(null);
-        splitPane1.setDividerLocation(Settings.getPMSplitLocation1());
+        splitPane1.setDividerLocation(Settings.getPMSplitLocation());
         splitPane1.setOneTouchExpandable(true);
         ((BasicSplitPaneUI)splitPane1.getUI()).getDivider().addComponentListener(new ComponentAdapter(){
             public void componentMoved(ComponentEvent e){
-                Settings.setPMSplitLocation1(splitPane1.getDividerLocation());
+                Settings.setPMSplitLocation(splitPane1.getDividerLocation());
             }
         });
         this.setLayout(new BorderLayout());
@@ -70,96 +77,104 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
         
     }
     
-    protected JButton buttonWorkflowFindNext;
-    protected JButton buttonWorkflowFind;
-    protected JButton buttonWorkflowFindClear;
-    protected JComboBox boxSearchWorkflowType;
-    protected JTextField textSearchValue;
-    protected JRadioButton radioProcedureDependantTasks;
-    protected JRadioButton radioProcedureSubWorkflow;
-    protected SearchTreeComponent searchProcedures;
+    protected JTreeAdvanced treeAction;
+    protected JRadioButton radioExpandActions;
+    protected JRadioButton radioCollapseActions;
     
-    public JComponent createWorkflowProcessPanel() {
-        
-        // Workflow Process Tree
-        treeWorkflowProcess = new JTreeAdvanced(new ProcedureTreeModel(pm, Settings.getPMProcedureMode()));
-        treeWorkflowProcess.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-        treeWorkflowProcess.setLargeModel(true);
-        treeWorkflowProcess.setCellRenderer(new ProcedureTreeCellRenderer());
-        treeWorkflowProcess.addTreeSelectionListener(new TreeSelectionListener() {
+    
+    public JComponent createActionPanel() {
+        // Action Tree
+        treeAction = new JTreeAdvanced(new ActionTreeModel());
+        treeAction.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        //treeAction.setLargeModel(true);
+        treeAction.setCellRenderer(new ProcedureTreeCellRenderer());
+        treeAction.addTreeSelectionListener(new TreeSelectionListener() {
             public void valueChanged(TreeSelectionEvent e) {
                 TreePath path = e.getPath();
                 NodeReference nr = (NodeReference)path.getLastPathComponent();
                 updateNodeDetails(nr);
             }
         });
+        JScrollPane scrollTreeAction = new JScrollPane();
+        scrollTreeAction.setBorder(new BevelBorder(BevelBorder.LOWERED));
+        scrollTreeAction.getViewport().add(treeAction);
+        
+        radioExpandActions = new JRadioButton("Expanded");
+        radioExpandActions.setOpaque(false);
+        radioExpandActions.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                Settings.setPMActionExpandedView(radioExpandActions.isSelected());
+            }
+        });
+        
+        
+        radioCollapseActions = new JRadioButton("Collapsed");
+        radioCollapseActions.setOpaque(false);
+        radioCollapseActions.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                Settings.setPMActionExpandedView(!radioCollapseActions.isSelected());
+            }
+        });
+        ButtonGroup buttonGroup = new ButtonGroup();
+        buttonGroup.add(radioExpandActions);
+        buttonGroup.add(radioCollapseActions);
+        buttonGroup.setSelected(radioExpandActions.getModel(),Settings.getPMActionExpandedView());
+        buttonGroup.setSelected(radioCollapseActions.getModel(),!Settings.getPMActionExpandedView());
+        
+        JToolBar toolbar = createTreeToolbar(treeAction);
+        toolbar.add(new JLabel("Default View:"));
+        toolbar.add(radioExpandActions);
+        toolbar.add(radioCollapseActions);
+        
+        JPanel panelActions = new JPanel();
+        panelActions.setBorder(new CompoundBorder(
+                new TitledBorder(new EtchedBorder(),"Actions"),
+                new EmptyBorder(Utilities.GAP_MARGIN,Utilities.GAP_MARGIN,Utilities.GAP_MARGIN,Utilities.GAP_MARGIN)));
+        panelActions.setLayout(new BorderLayout(Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
+        panelActions.add("Center",scrollTreeAction);
+        panelActions.add("South",toolbar);
+        
+        return panelActions;
+    }
+    
+    protected JTreeAdvanced treeWorkflowProcess;
+    protected JRadioButton radioProcedureDependantTasks;
+    protected JRadioButton radioProcedureSubWorkflow;
+    
+    public JComponent createWorkflowProcessPanel() {
+        
+        // Workflow Process Tree
+        treeWorkflowProcess = new JTreeAdvanced(new ProcedureTreeModel(pm, Settings.getPMProcedureMode()));
+        treeWorkflowProcess.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        //treeWorkflowProcess.setLargeModel(true);
+        treeWorkflowProcess.setCellRenderer(new ProcedureTreeCellRenderer());
+        treeWorkflowProcess.addTreeSelectionListener(new TreeSelectionListener() {
+            public void valueChanged(TreeSelectionEvent e) {
+                TreePath path = e.getPath();
+                NodeReference nr = (NodeReference)path.getLastPathComponent();
+                updateNodeDetails(nr);
+                updateActionDetails(nr);
+            }
+        });
         JScrollPane scrollTreeWorkflowProcess = new JScrollPane();
         scrollTreeWorkflowProcess.setBorder(new BevelBorder(BevelBorder.LOWERED));
         scrollTreeWorkflowProcess.getViewport().add(treeWorkflowProcess);
         
-        JButton buttonExpandBelow = new JButton();
-        buttonExpandBelow.setToolTipText("Expand Below");
-        buttonExpandBelow.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-                new Thread() {
-                    public void run() {
-                        Utilities.expandTreeBranch(treeWorkflowProcess, parentFrame);
-                    }
-                }.start();
-            }
-        });
-        JButton buttonExpandAll = new JButton();
-        buttonExpandAll.setToolTipText("Expand All");
-        buttonExpandAll.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-                new Thread() {
-                    public void run() {
-                        Utilities.expandTree(treeWorkflowProcess, parentFrame);
-                    }
-                }.start();
-            }
-        });
-        JButton buttonCollapseBelow = new JButton();
-        buttonCollapseBelow.setToolTipText("Collapse Below");
-        buttonCollapseBelow.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-                new Thread() {
-                    public void run() {
-                        Utilities.collapseTreeBranch(treeWorkflowProcess, parentFrame);
-                    }
-                }.start();
-            }
-        });
-        JButton buttonCollapseAll = new JButton();
-        buttonCollapseAll.setToolTipText("Collapse Below");
-        buttonCollapseAll.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-                new Thread() {
-                    public void run() {
-                        Utilities.collapseTree(treeWorkflowProcess, parentFrame);
-                    }
-                }.start();
-            }
-        });
         
         radioProcedureDependantTasks = new JRadioButton("Dependant Tasks");
+        radioProcedureDependantTasks.setOpaque(false);
         radioProcedureDependantTasks.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
                 Settings.setPMProcedureMode(ProcedureTreeModel.MODE_DEPENDANT_TASKS);
                 treeWorkflowProcess.setModel(new ProcedureTreeModel(pm, Settings.getPMProcedureMode()));
-                //modelProcedure.setProcedureMode(ProcedureTreeModel.MODE_DEPENDANT_TASKS);
-                //treeWorkflowProcess.reloadModel();
-                //treeWorkflowProcess.validate();
             }
         });
         radioProcedureSubWorkflow = new JRadioButton("Sub Workflows");
+        radioProcedureSubWorkflow.setOpaque(false);
         radioProcedureSubWorkflow.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
                 Settings.setPMProcedureMode(ProcedureTreeModel.MODE_SUB_WORKFLOWS);
                 treeWorkflowProcess.setModel(new ProcedureTreeModel(pm, Settings.getPMProcedureMode()));
-                //modelProcedure.setProcedureMode(ProcedureTreeModel.MODE_SUB_WORKFLOWS);
-                //treeWorkflowProcess.reloadModel();
-                //treeWorkflowProcess.validate();
             }
         });
         ButtonGroup buttonGroupProcedureMode = new ButtonGroup();
@@ -173,166 +188,23 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
                 (Settings.getPMProcedureMode() == ProcedureTreeModel.MODE_SUB_WORKFLOWS));
         
         
-        ImageIcon iconExpandAll = new ImageIcon();
-        ImageIcon iconExpandBelow = new ImageIcon();
-        ImageIcon iconCollapseAll = new ImageIcon();
-        ImageIcon iconCollapseBelow = new ImageIcon();
-        try {
-            iconExpandAll = new ImageIcon(ResourceLocator.getButtonImage("Expand-All.gif"));
-            iconExpandBelow = new  ImageIcon(ResourceLocator.getButtonImage("Expand-Below.gif"));
-            iconCollapseAll = new  ImageIcon(ResourceLocator.getButtonImage("Collapse-All.gif"));
-            iconCollapseBelow = new  ImageIcon(ResourceLocator.getButtonImage("Collapse-Below.gif"));
-        } catch (Exception e) {
-            System.out.println("Couldn't load images: " + e);
-        }
+        JToolBar toolBarWorkflowView = createTreeToolbar(treeWorkflowProcess);
+        toolBarWorkflowView.addSeparator();
+        toolBarWorkflowView.add(new JLabel("Default View:"));
+        toolBarWorkflowView.add(radioProcedureDependantTasks);
+        toolBarWorkflowView.add(radioProcedureSubWorkflow);
         
-        buttonExpandAll.setIcon(iconExpandAll);
-        buttonExpandBelow.setIcon(iconExpandBelow);
-        buttonCollapseAll.setIcon(iconCollapseAll);
-        buttonCollapseBelow.setIcon(iconCollapseBelow);
-        
-        searchProcedures = new SearchTreeComponent(){
-            public boolean compare(TreePath parent, String type, String value) {
-                NodeReference nr = (NodeReference)parent.getLastPathComponent();
-                Boolean matched = false;
-                
-                if((!type.equals("")) && (!value.equals("")) )
-                    return isMatched(nr.getClassType().value(), type) & isMatched(nr.getName(), value);
-                else if(!type.equals(""))
-                    return isMatched(nr.getClassType().value(), type);
-                else if(!value.equals(""))
-                    return isMatched(nr.getName(), value);
-                else
-                    return false;
-            }
-        };
-        
-        buttonWorkflowFind = new JButton("Find");
-        buttonWorkflowFind.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-                new Thread() {
-                    public void run() {
-                        String workflowString = "";
-                        String valueString = "";
-                        
-                        if(boxSearchWorkflowType.getSelectedIndex() > 0)
-                            workflowString = ProcedureManager.WORKFLOW_TYPES[boxSearchWorkflowType.getSelectedIndex() - 1].value();
-                        valueString = textSearchValue.getText();
-                        
-                        if( (workflowString.equals(""))  &&
-                                ((valueString == null) || (valueString.equals(""))))
-                            JOptionPane.showMessageDialog(parentFrame, "Search requires either a Workflow Type, value/name or any combination.", "No Search Criteria", JOptionPane.ERROR_MESSAGE);
-                        else {
-                            searchProcedures.search(treeWorkflowProcess, workflowString, valueString);
-                            
-                            if (searchProcedures.getResultSize() == 0) {
-                                JOptionPane.showMessageDialog(parentFrame, "No matches found", "No Matches Found", JOptionPane.WARNING_MESSAGE);
-                                buttonWorkflowFindNext.setEnabled(false);
-                                buttonWorkflowFindClear.setEnabled(false);
-                                buttonWorkflowFind.setEnabled(true);
-                                boxSearchWorkflowType.setEnabled(true);
-                                textSearchValue.setEnabled(true);
-                            } else {
-                                int k = searchProcedures.getResultIndex() + 1;
-                                buttonWorkflowFind.setText(k+" / "+searchProcedures.getResultSize());
-                                buttonWorkflowFindNext.setEnabled(true);
-                                buttonWorkflowFindClear.setEnabled(true);
-                                buttonWorkflowFind.setEnabled(false);
-                                boxSearchWorkflowType.setEnabled(false);
-                                textSearchValue.setEnabled(false);
-                            }
-                        }
-                    }
-                }.start();
-            }
-        });
-        
-        buttonWorkflowFindNext = new JButton("Find Next");
-        buttonWorkflowFindNext.setEnabled(false);
-        buttonWorkflowFindNext.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-                searchProcedures.searchNext(treeWorkflowProcess);
-                int k = searchProcedures.getResultIndex() + 1;
-                buttonWorkflowFind.setText(k+" / "+ searchProcedures.getResultSize());
-            }
-        });
-        
-        buttonWorkflowFindClear = new JButton("Clear");
-        buttonWorkflowFindClear.setEnabled(false);
-        buttonWorkflowFindClear.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-                buttonWorkflowFind.setText("Find");
-                buttonWorkflowFindNext.setEnabled(false);
-                buttonWorkflowFindClear.setEnabled(false);
-                buttonWorkflowFind.setEnabled(true);
-                boxSearchWorkflowType.setEnabled(true);
-                textSearchValue.setEnabled(true);
-                boxSearchWorkflowType.setSelectedIndex(0);
-                textSearchValue.setText("");
-                searchProcedures.resetResults();
-            }
-        });
-        
-        boxSearchWorkflowType = new JComboBox();
-        boxSearchWorkflowType.setToolTipText("Workflow Type");
-        if (pm.getWorkflowTemplates().size() == 0) {
-            boxSearchWorkflowType.setEnabled(false);
-            boxSearchWorkflowType.addItem("Workflow Type");
-        } else {
-            boxSearchWorkflowType.addItem("");
-            for(int i=0; i<ProcedureManager.WORKFLOW_TYPES_NAMES.length; i++) {
-                boxSearchWorkflowType.addItem(ProcedureManager.WORKFLOW_TYPES_NAMES[i]);
-            }
-        }
-        
-        textSearchValue = new JTextField();
-        textSearchValue.setToolTipText("Workflow Name/Value: * ? [ - ] accepted");
-        textSearchValue.setColumns(6);
-        
-        JToolBar toolBarWorkflowTreeTop = new JToolBar();
-        toolBarWorkflowTreeTop.setMargin(new Insets(
-                Utilities.GAP_INSET,
-                Utilities.GAP_INSET,
-                Utilities.GAP_INSET,
-                Utilities.GAP_INSET));
-        toolBarWorkflowTreeTop.setFloatable(false);
-        toolBarWorkflowTreeTop.add(buttonExpandAll);
-        toolBarWorkflowTreeTop.add(buttonExpandBelow);
-        toolBarWorkflowTreeTop.add(buttonCollapseAll);
-        toolBarWorkflowTreeTop.add(buttonCollapseBelow);
-        toolBarWorkflowTreeTop.addSeparator();
-        toolBarWorkflowTreeTop.add(new JLabel("Default View:"));
-        toolBarWorkflowTreeTop.add(radioProcedureDependantTasks);
-        toolBarWorkflowTreeTop.add(radioProcedureSubWorkflow);
-        
-        JToolBar toolBarWorkflowTreeBottom = new JToolBar();
-        toolBarWorkflowTreeBottom.setMargin(new Insets(
-                Utilities.GAP_INSET,
-                Utilities.GAP_INSET,
-                Utilities.GAP_INSET,
-                Utilities.GAP_INSET));
-        toolBarWorkflowTreeBottom.setFloatable(false);
-        toolBarWorkflowTreeBottom.add(boxSearchWorkflowType);
-        toolBarWorkflowTreeBottom.addSeparator();
-        toolBarWorkflowTreeBottom.add(textSearchValue);
-        toolBarWorkflowTreeBottom.addSeparator();
-        toolBarWorkflowTreeBottom.add(buttonWorkflowFindClear);
-        toolBarWorkflowTreeBottom.add(buttonWorkflowFindNext);
-        toolBarWorkflowTreeBottom.add(buttonWorkflowFind);
         
         JPanel panelWorkflowProcess =  new JPanel();
         panelWorkflowProcess.setLayout(new BorderLayout(Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
-        panelWorkflowProcess.add("North",toolBarWorkflowTreeTop);
+        panelWorkflowProcess.setBorder(new CompoundBorder(
+                new TitledBorder(new EtchedBorder(),"Workflow Templates"),
+                new EmptyBorder(Utilities.GAP_MARGIN,Utilities.GAP_MARGIN,Utilities.GAP_MARGIN,Utilities.GAP_MARGIN)));
+        panelWorkflowProcess.add("South",toolBarWorkflowView);
         panelWorkflowProcess.add("Center",scrollTreeWorkflowProcess);
-        panelWorkflowProcess.add("South",toolBarWorkflowTreeBottom);
         
         
-        JPanel panel = new JPanel();
-        panel.setLayout(new BorderLayout(Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
-        panel.setBorder(new TitledBorder(new EtchedBorder(),"Workflow Templates: PROCESS"));
-        panel.add(Utilities.createPanelMargined(panelWorkflowProcess));
-        
-        return panel;
+        return panelWorkflowProcess;
     }
     
     public boolean isEmptyPanel(){
@@ -340,13 +212,10 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
     }
     
     protected JTreeAdvanced treeAttributes;
-    protected JTableAdvanced tableProcedure;
-    protected JTableAdvanced tableAttribute;
-    protected JRadioButton radioExpand;
-    protected JRadioButton radioCollapse;
-    protected JSplitPane splitPane2;
+    protected JRadioButton radioExpandAttributes;
+    protected JRadioButton radioCollapseAttributes;
     
-    private JComponent createNodeDetailsPanel() {
+    private JComponent createAttributesPanel() {
         treeAttributes = new JTreeAdvanced(new AttributeTreeModel());
         treeAttributes.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         treeAttributes.setLargeModel(true);
@@ -364,46 +233,133 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
         scrollTreeAttributes.setBorder(new BevelBorder(BevelBorder.LOWERED));
         scrollTreeAttributes.getViewport().add(treeAttributes);
         
-        JButton buttonExpandAll = new JButton();
-        buttonExpandAll.setToolTipText("Expand All");
-        buttonExpandAll.addActionListener(new ActionListener(){
+        
+        radioExpandAttributes = new JRadioButton("Expanded");
+        radioExpandAttributes.setOpaque(false);
+        radioExpandAttributes.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                new Thread() {
-                    public void run() {
-                        Utilities.expandTree(treeAttributes, parentFrame);
-                    }
-                }.start();
+                Settings.setPMWorkflowExpandedView(radioExpandAttributes.isSelected());
             }
         });
+        radioCollapseAttributes = new JRadioButton("Collapsed");
+        radioCollapseAttributes.setOpaque(false);
+        radioCollapseAttributes.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                Settings.setPMWorkflowExpandedView(!radioCollapseAttributes.isSelected());
+            }
+        });
+        ButtonGroup buttonGroup = new ButtonGroup();
+        buttonGroup.add(radioExpandAttributes);
+        buttonGroup.add(radioCollapseAttributes);
+        buttonGroup.setSelected(radioExpandAttributes.getModel(),Settings.getPMWorkflowExpandedView());
+        buttonGroup.setSelected(radioCollapseAttributes.getModel(),!Settings.getPMWorkflowExpandedView());
+        
+        JToolBar toolBarAttributeView = createTreeToolbar(treeAttributes);
+        toolBarAttributeView.addSeparator();
+        toolBarAttributeView.add(new JLabel("Default View:"));
+        toolBarAttributeView.add(radioExpandAttributes);
+        toolBarAttributeView.add(radioCollapseAttributes);
+        
+        
+        JPanel panelAttributeInner =  new JPanel();
+        panelAttributeInner.setLayout(new BorderLayout(Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
+        panelAttributeInner.add("Center",scrollTreeAttributes);
+        panelAttributeInner.add("South",toolBarAttributeView);
+        
+        
+        JPanel panelAttributes = new JPanel();
+        panelAttributes.setLayout(new BorderLayout(Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
+        panelAttributes.setBorder(new CompoundBorder(
+                new TitledBorder(new EtchedBorder(),"Attributes"),
+                new EmptyBorder(Utilities.GAP_MARGIN,Utilities.GAP_MARGIN,Utilities.GAP_MARGIN,Utilities.GAP_MARGIN)));
+        
+        panelAttributes.add("Center",Utilities.createPanelMargined(panelAttributeInner));
+        
+        return panelAttributes;
+    }
+    
+    protected JTableAdvanced tableXML;
+    
+    private JComponent createXMLPanel() {
+        tableXML = new JTableAdvanced(new XMLTableModel());
+        JScrollPane scrolltableXML = new JScrollPane();
+        scrolltableXML.setPreferredSize(new Dimension(200,220));
+        scrolltableXML.setBorder(new BevelBorder(BevelBorder.LOWERED));
+        scrolltableXML.getViewport().add(tableXML);
+        
+        JPanel panelAttributeDetails = new JPanel();
+        panelAttributeDetails.setLayout(new BorderLayout(Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
+        panelAttributeDetails.setBorder(new CompoundBorder(
+                new TitledBorder(new EtchedBorder(),"Details"),
+                new EmptyBorder(Utilities.GAP_MARGIN,Utilities.GAP_MARGIN,Utilities.GAP_MARGIN,Utilities.GAP_MARGIN)));
+        panelAttributeDetails.add("Center",scrolltableXML);
+        
+        return panelAttributeDetails;
+    }
+    
+    private void updateNodeDetails(NodeReference nr) {
+        updateAttribDetails(nr);
+        treeAttributes.setModel(new AttributeTreeModel(nr,pm));
+        if(Settings.getPMWorkflowExpandedView())
+            Utilities.expandTree(treeAttributes, parentFrame);
+    }
+    
+    private void updateAttribDetails(NodeReference nr){
+        tableXML.setModel(new XMLTableModel(nr, pm));
+        Utilities.packColumns(tableXML, 2);
+    }
+    
+    private void updateActionDetails(NodeReference nr) {
+        treeAction.setModel(new ActionTreeModel(nr, pm));
+        if(Settings.getPMActionExpandedView())
+            Utilities.expandTree(treeAction, parentFrame);
+    }
+    
+    private JToolBar createTreeToolbar(JTreeAdvanced tree) {
         JButton buttonExpandBelow = new JButton();
+        buttonExpandBelow.setOpaque(false);
         buttonExpandBelow.setToolTipText("Expand Below");
-        buttonExpandBelow.addActionListener(new ActionListener(){
+        buttonExpandBelow.addActionListener(new TreeToolBarExpandAction(tree){
             public void actionPerformed(ActionEvent e) {
                 new Thread() {
                     public void run() {
-                        Utilities.expandTreeBranch(treeAttributes, parentFrame);
+                        Utilities.expandTreeBranch(tree, parentFrame);
                     }
                 }.start();
             }
         });
-        JButton buttonCollapseAll = new JButton();
-        buttonCollapseAll.setToolTipText("Collapse All");
-        buttonCollapseAll.addActionListener(new ActionListener(){
+        JButton buttonExpandAll = new JButton();
+        buttonExpandAll.setOpaque(false);
+        buttonExpandAll.setToolTipText("Expand All");
+        buttonExpandAll.addActionListener(new TreeToolBarExpandAction(tree){
             public void actionPerformed(ActionEvent e) {
                 new Thread() {
                     public void run() {
-                        Utilities.collapseTree(treeAttributes, parentFrame);
+                        Utilities.expandTree(tree, parentFrame);
                     }
                 }.start();
             }
         });
         JButton buttonCollapseBelow = new JButton();
+        buttonCollapseBelow.setOpaque(false);
         buttonCollapseBelow.setToolTipText("Collapse Below");
-        buttonCollapseBelow.addActionListener(new ActionListener(){
+        buttonCollapseBelow.addActionListener(new TreeToolBarExpandAction(tree){
             public void actionPerformed(ActionEvent e) {
                 new Thread() {
                     public void run() {
-                        Utilities.collapseTreeBranch(treeAttributes, parentFrame);
+                        Utilities.collapseTreeBranch(tree, parentFrame);
+                    }
+                }.start();
+            }
+        });
+        JButton buttonCollapseAll = new JButton();
+        buttonCollapseAll.setOpaque(false);
+        buttonCollapseAll.setToolTipText("Collapse Below");
+        buttonCollapseAll.addActionListener(new TreeToolBarExpandAction(tree){
+            public void actionPerformed(ActionEvent e) {
+                new Thread() {
+                    public void run() {
+                        Utilities.collapseTree(tree, parentFrame);
                     }
                 }.start();
             }
@@ -427,93 +383,32 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
         buttonCollapseAll.setIcon(iconCollapseAll);
         buttonCollapseBelow.setIcon(iconCollapseBelow);
         
-        radioExpand = new JRadioButton("Expanded");
-        radioExpand.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-                Settings.setPMExpandedView(radioExpand.isSelected());
-            }
-        });
-        radioCollapse = new JRadioButton("Collapsed");
-        radioCollapse.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-                Settings.setPMExpandedView(!radioCollapse.isSelected());
-            }
-        });
-        ButtonGroup buttonGroup = new ButtonGroup();
-        buttonGroup.add(radioExpand);
-        buttonGroup.add(radioCollapse);
-        buttonGroup.setSelected(radioExpand.getModel(),Settings.getPMExpandedView());
-        buttonGroup.setSelected(radioCollapse.getModel(),!Settings.getPMExpandedView());
         
-        JToolBar toolBarAttributeTree = new JToolBar();
-        toolBarAttributeTree.setMargin(new Insets(
+        JToolBar toolbar = new JToolBar();
+        toolbar.setMargin(new Insets(
                 Utilities.GAP_INSET,
                 Utilities.GAP_INSET,
                 Utilities.GAP_INSET,
                 Utilities.GAP_INSET));
-        toolBarAttributeTree.setFloatable(false);
-        toolBarAttributeTree.add(buttonExpandAll);
-        toolBarAttributeTree.add(buttonExpandBelow);
-        toolBarAttributeTree.add(buttonCollapseAll);
-        toolBarAttributeTree.add(buttonCollapseBelow);
-        toolBarAttributeTree.addSeparator();
-        toolBarAttributeTree.add(new JLabel("Default View:"));
-        toolBarAttributeTree.add(radioExpand);
-        toolBarAttributeTree.add(radioCollapse);
+        //toolbar.setFloatable(false);
+        toolbar.add(buttonExpandAll);
+        toolbar.add(buttonExpandBelow);
+        toolbar.add(buttonCollapseAll);
+        toolbar.add(buttonCollapseBelow);
         
-        
-        JPanel panelAttributeInner =  new JPanel();
-        panelAttributeInner.setLayout(new BorderLayout(Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
-        panelAttributeInner.add("Center",scrollTreeAttributes);
-        panelAttributeInner.add("North",toolBarAttributeTree);
-        
-        
-        JPanel panelAttributes = new JPanel();
-        panelAttributes.setLayout(new BorderLayout(Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
-        panelAttributes.setBorder(new TitledBorder(new EtchedBorder(),"Attributes"));
-        panelAttributes.add("Center",Utilities.createPanelMargined(panelAttributeInner));
-        
-        tableAttribute = new JTableAdvanced(new NodeTableModel());
-        JScrollPane scrollTableAttribute = new JScrollPane();
-        scrollTableAttribute.setPreferredSize(new Dimension(200,220));
-        scrollTableAttribute.setBorder(new BevelBorder(BevelBorder.LOWERED));
-        scrollTableAttribute.getViewport().add(tableAttribute);
-        
-        JPanel panelAttributeDetails = new JPanel();
-        panelAttributeDetails.setLayout(new BorderLayout(Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
-        panelAttributeDetails.setBorder(new TitledBorder(new EtchedBorder(),"Details"));
-        panelAttributeDetails.add("Center",Utilities.createPanelMargined(scrollTableAttribute));
-        
-        
-        splitPane2 = new JSplitPane(
-                JSplitPane.VERTICAL_SPLIT,
-                true,
-                Utilities.createPanelMargined(panelAttributes),
-                Utilities.createPanelMargined(panelAttributeDetails));
-        splitPane2.setResizeWeight(1.0);
-        splitPane2.setDividerLocation(Settings.getPMSplitLocation2());
-        splitPane2.setOneTouchExpandable(true);
-        splitPane2.setBorder(null);
-        ((BasicSplitPaneUI)splitPane2.getUI()).getDivider().addComponentListener(new ComponentAdapter(){
-            public void componentMoved(ComponentEvent e){
-                Settings.setPMSplitLocation2(splitPane2.getDividerLocation());
-            }
-        });
-        
-        return splitPane2;
+        return toolbar;
     }
     
-    private void updateNodeDetails(NodeReference nr) {
-        tableAttribute.setModel(new NodeTableModel(nr, pm));
-        Utilities.packColumns(tableAttribute, 2);
-        treeAttributes.setModel(new AttributeTreeModel(nr,pm));
-        if(radioExpand.isSelected())
-            Utilities.expandTree(treeAttributes, parentFrame);
-    }
-    
-    private void updateAttribDetails(NodeReference nr){
-        tableAttribute.setModel(new NodeTableModel(nr, pm));
-        Utilities.packColumns(tableAttribute, 2);
+    class TreeToolBarExpandAction extends AbstractAction {
+        JTreeAdvanced tree;
+        protected TreeToolBarExpandAction(JTreeAdvanced tree) {
+            super("Tree ToolBar Expand Action");
+            this.tree = tree;
+        }
+        
+        public void actionPerformed(ActionEvent e) {
+            
+        }
     }
     
 }
