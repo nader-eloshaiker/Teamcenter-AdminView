@@ -136,7 +136,7 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         JTreeAdvanced tree = new JTreeAdvanced(new RuleTreeModel(am.getAccessManagerTree()));
         tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         tree.setCellRenderer(new RuleTreeNodeRenderer());
-        tree.setLargeModel(true);
+        //tree.setLargeModel(true);
         tree.addTreeSelectionListener(new TreeSelectionListener() {
             public void valueChanged(TreeSelectionEvent e) {
                 TreePath path = e.getPath();
@@ -224,6 +224,7 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         treeScroll.getViewport().add(treeRuleTree);
         
         JButton buttonExpandAll = new JButton();
+        buttonExpandAll.setOpaque(false);
         buttonExpandAll.setToolTipText("Expand All");
         buttonExpandAll.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
@@ -235,6 +236,7 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
             }
         });
         JButton buttonExpandBelow = new JButton();
+        buttonExpandBelow.setOpaque(false);
         buttonExpandBelow.setToolTipText("Expand Below");
         buttonExpandBelow.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
@@ -246,6 +248,7 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
             }
         });
         JButton buttonCollapseAll = new JButton();
+        buttonCollapseAll.setOpaque(false);
         buttonCollapseAll.setToolTipText("Collapse All");
         buttonCollapseAll.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
@@ -257,6 +260,7 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
             }
         });
         JButton buttonCollapseBelow = new JButton();
+        buttonCollapseBelow.setOpaque(false);
         buttonCollapseBelow.setToolTipText("Collapse Below");
         buttonCollapseBelow.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
@@ -303,6 +307,7 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         };
         
         buttonRuleTreeFindNext = new JButton("Find Next");
+        buttonRuleTreeFindNext.setOpaque(false);
         buttonRuleTreeFindNext.setEnabled(false);
         buttonRuleTreeFindNext.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
@@ -313,6 +318,7 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         });
         
         buttonRuleTreeFind = new JButton("Find");
+        buttonRuleTreeFind.setOpaque(false);
         buttonRuleTreeFind.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
                 new Thread() {
@@ -353,6 +359,7 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         });
         
         buttonRuleTreeFindClear = new JButton("Clear");
+        buttonRuleTreeFindClear.setOpaque(false);
         buttonRuleTreeFindClear.setEnabled(false);
         buttonRuleTreeFindClear.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
@@ -369,6 +376,7 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         });
         
         boxSearchCondition = new JComboBox();
+        boxSearchCondition.setOpaque(false);
         boxSearchCondition.setToolTipText("Ruletree Condition");
         if (am.getAccessManagerTree().getConditions().size() == 0) {
             boxSearchCondition.setEnabled(false);
@@ -380,6 +388,7 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         }
         
         textSearchValue = new JTextField();
+        textSearchValue.setOpaque(false);
         textSearchValue.setToolTipText("Ruletree Value: * ? [ - ] accepted");
         textSearchValue.setColumns(6);
         
@@ -390,7 +399,7 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
                 Utilities.GAP_INSET,
                 Utilities.GAP_INSET,
                 Utilities.GAP_INSET));
-        toolBarRuletree.setFloatable(false);
+        //toolBarRuletree.setFloatable(false);
         toolBarRuletree.add(buttonExpandAll);
         toolBarRuletree.add(buttonExpandBelow);
         toolBarRuletree.add(buttonCollapseAll);

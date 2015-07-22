@@ -40,17 +40,25 @@ public class AdminViewFrame extends JFrame{
     protected ImageIcon iconExit;
     protected ImageIcon iconApp;
     
-    
     /**
      * Creates a new instance of AdminViewFrame
      */
     public AdminViewFrame() {
-        super("Rule Tree");
+        super("TcAV");
         parentFrame = this;
         
+        try {
+            Settings.load();
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Load Settings Error", JOptionPane.ERROR_MESSAGE);
+        }
         
         try {
-            UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+            if (Settings.getUserInterface().equals("")) {
+                UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+                Settings.setUserInterface(UIManager.getCrossPlatformLookAndFeelClassName());
+            } else
+                UIManager.setLookAndFeel(Settings.getUserInterface());
             // If you want the System L&F instead, comment out the above line and
             // uncomment the following:
             // UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -66,12 +74,6 @@ public class AdminViewFrame extends JFrame{
             iconApp = new ImageIcon(ResourceLocator.getAppImage("logoIcon.gif"));
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Error Load Images", JOptionPane.ERROR_MESSAGE);
-        }
-        
-        try {
-            Settings.load();
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage(), "Load Settings Error", JOptionPane.ERROR_MESSAGE);
         }
         
         JMenuBar menuBar = constructMenuBar();
@@ -99,9 +101,9 @@ public class AdminViewFrame extends JFrame{
         this.setTitle(ResourceLocator.getApplicationName()+" v"+ResourceLocator.getVersion());
     }
     
-    public JFileChooser createFileChooser() {
+    public JFileChooser createFileChooser(String path) {
         JFileChooser fc = new JFileChooser();
-        fc.setCurrentDirectory(new File(Settings.getLoadPath()));
+        fc.setCurrentDirectory(new File(path));
         return fc;
     }
     
@@ -113,6 +115,7 @@ public class AdminViewFrame extends JFrame{
         JToolBar toolbar = new JToolBar("Main ToolBar");
         
         JButton buttonOpenRuleTree = new JButton("Load Tree");
+        buttonOpenRuleTree.setOpaque(false);
         buttonOpenRuleTree.setIcon(iconRuleTree);
         buttonOpenRuleTree.setHorizontalTextPosition(SwingConstants.RIGHT);
         buttonOpenRuleTree.setToolTipText("Import TcAE Ruletree File");
@@ -123,6 +126,7 @@ public class AdminViewFrame extends JFrame{
         });
         
         JButton buttonOpenProcedure = new JButton("Load Procedure");
+        buttonOpenProcedure.setOpaque(false);
         buttonOpenProcedure.setIcon(iconProcedure);
         buttonOpenProcedure.setHorizontalTextPosition(SwingConstants.RIGHT);
         buttonOpenProcedure.setToolTipText("Import TcAE Procedure File");
@@ -133,6 +137,7 @@ public class AdminViewFrame extends JFrame{
         });
         
         JButton buttonClose = new JButton("Close Tab");
+        buttonClose.setOpaque(false);
         buttonClose.setIcon(iconClose);
         buttonClose.setHorizontalTextPosition(SwingConstants.RIGHT);
         buttonClose.setToolTipText("Close the current tabb");
@@ -143,6 +148,7 @@ public class AdminViewFrame extends JFrame{
         });
         
         JButton buttonExit = new JButton("Exit");
+        buttonExit.setOpaque(false);
         buttonExit.setIcon(iconExit);
         buttonExit.setHorizontalTextPosition(SwingConstants.RIGHT);
         buttonExit.setToolTipText("End this application");
@@ -243,6 +249,23 @@ public class AdminViewFrame extends JFrame{
             }
         });
         
+        /* Look and Feel */
+        menu = new JMenu("Interface");
+        menuBar.add(menu);
+        menu.setMnemonic('I');
+        
+        UIManager.LookAndFeelInfo[] lafInfo = UIManager.getInstalledLookAndFeels();
+        ButtonGroup lafMenuGroup = new ButtonGroup();
+        
+        for (int counter = 0; counter < lafInfo.length; counter++) {
+            menuItem = (JRadioButtonMenuItem) menu.add(new JRadioButtonMenuItem(lafInfo[counter].getName()));
+            lafMenuGroup.add(menuItem);
+            if(lafInfo[counter].getClassName().equals(UIManager.getLookAndFeel().getClass().getName()))
+                lafMenuGroup.setSelected(menuItem.getModel(),true);
+            menuItem.addActionListener(new ChangeLookAndFeelAction(lafInfo[counter].getClassName()));
+            menuItem.setEnabled(isAvailableLookAndFeel(lafInfo[counter].getClassName()));
+        }
+        
         /* Misc. */
         menu = new JMenu("Help");
         menu.setMnemonic('H');
@@ -286,6 +309,51 @@ public class AdminViewFrame extends JFrame{
         return menuBar;
     }
     
+    protected void actionUserInterface(String laf) {
+        try {
+            UIManager.setLookAndFeel(laf);
+            SwingUtilities.updateComponentTreeUI(parentFrame);
+            Settings.setUserInterface(laf);
+            // If you want the System L&F instead, comment out the above line and
+            // uncomment the following:
+            // UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(parentFrame, ex.getMessage(), "GUI Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    class ChangeLookAndFeelAction extends AbstractAction {
+        String laf;
+        protected ChangeLookAndFeelAction(String laf) {
+            super("ChangeTheme");
+            this.laf = laf;
+        }
+        
+        public void actionPerformed(ActionEvent e) {
+            actionUserInterface(laf);
+        }
+    }
+    /**
+     * A utility function that layers on top of the LookAndFeel's
+     * isSupportedLookAndFeel() method. Returns true if the LookAndFeel
+     * is supported. Returns false if the LookAndFeel is not supported
+     * and/or if there is any kind of error checking if the LookAndFeel
+     * is supported.
+     *
+     * The L&F menu will use this method to detemine whether the various
+     * L&F options should be active or inactive.
+     *
+     */
+    protected boolean isAvailableLookAndFeel(String laf) {
+        try {
+            Class lnfClass = Class.forName(laf);
+            LookAndFeel newLAF = (LookAndFeel)(lnfClass.newInstance());
+            return newLAF.isSupportedLookAndFeel();
+        } catch(Exception e) { // If ANYTHING weird happens, return false
+            return false;
+        }
+    }
+    
     private void actionSaveSettings() {
         try{
             Settings.setFrameSizeX(parentFrame.getSize().width);
@@ -302,27 +370,28 @@ public class AdminViewFrame extends JFrame{
         tabbedpane.remove(tabbedpane.getSelectedIndex());
         if (tabbedpane.getTabCount() == 0)
             tabbedpane.addTab("TcAV", iconApp, new EmptyComponent());
+        System.gc();
     }
     
     private void actionExit() {
-            Settings.setFrameSizeX(this.getSize().width);
-            Settings.setFrameSizeY(this.getSize().height);
-            Settings.setFrameLocationX(this.getLocation().x);
-            Settings.setFrameLocationY(this.getLocation().y);
-            actionSaveSettings();
+        Settings.setFrameSizeX(this.getSize().width);
+        Settings.setFrameSizeY(this.getSize().height);
+        Settings.setFrameLocationX(this.getLocation().x);
+        Settings.setFrameLocationY(this.getLocation().y);
+        actionSaveSettings();
         System.exit(0);
     }
     
     private void actionLoadRuleTree() {
         new Thread() {
             public void run() {
-                JFileChooser fc = createFileChooser();
+                JFileChooser fc = createFileChooser(Settings.getAMLoadPath());
                 fc.addChoosableFileFilter(new CustomFileFilter(
                         new String[]{"txt",""},"Text File (*.txt; *.)"));
                 int result = fc.showOpenDialog(getFrame());
                 if(result == JFileChooser.APPROVE_OPTION) {
                     try {
-                        Settings.setLoadPath(fc.getCurrentDirectory().getPath());
+                        Settings.setAMLoadPath(fc.getCurrentDirectory().getPath());
                         AccessManager am = new AccessManager();
                         
                         try {
@@ -349,6 +418,7 @@ public class AdminViewFrame extends JFrame{
                         JOptionPane.showMessageDialog(parentFrame, ex.getMessage(), "Ruletree File Error", JOptionPane.ERROR_MESSAGE);
                     }
                 }
+                System.gc();
             }
         }.start();
     }
@@ -356,14 +426,14 @@ public class AdminViewFrame extends JFrame{
     private void actionLoadProcedure() {
         new Thread() {
             public void run() {
-                JFileChooser fc = createFileChooser();
+                JFileChooser fc = createFileChooser(Settings.getPMLoadPath());
                 fc.addChoosableFileFilter(new CustomFileFilter(
                         new String[]{"xml","plmxml"},"XML File (*.xml; *.plmxml)"));
                 int result = fc.showOpenDialog(getFrame());
                 if(result == JFileChooser.APPROVE_OPTION) {
                     try {
                         ProcedureManager pm;
-                        Settings.setLoadPath(fc.getCurrentDirectory().getPath());
+                        Settings.setPMLoadPath(fc.getCurrentDirectory().getPath());
                         pm = new ProcedureManager(parentFrame);
                         try {
                             pm.readFile(fc.getSelectedFile());
@@ -389,6 +459,7 @@ public class AdminViewFrame extends JFrame{
                         JOptionPane.showMessageDialog(parentFrame, ex.getMessage(), "Procedure File Error", JOptionPane.ERROR_MESSAGE);
                     }
                 }
+                System.gc();
             }
         }.start();
     }
