@@ -42,4 +42,8 @@ public class AccessControlHeaderItem {
     public ImageEnum image() {
         return image;
     }
+
+    public boolean equals(AccessControlHeaderItem a) {
+        return value.equals(a.value());
+    }
 }

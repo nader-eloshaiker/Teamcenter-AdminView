@@ -66,14 +66,17 @@ public class CompareAccessManager extends ManagerAdapter {
     }
     
     public boolean isValid() {
+        /*
         if (amList[0].isValid() && amList[1].isValid())
-            return (amList[0].getAccessControlColumns().size() == amList[1].getAccessControlColumns().size());
+            return (amList[0].getAccessRuleList().getAccessControlColumns().size() == amList[1].getAccessRuleList().getAccessControlColumns().size());
         else
             return false;
+         */
+        return true;
     }
     
     public String getManagerType() {
-        return super.ACCESS_COMPARE_MANAGER_TYPE;
+        return ACCESS_COMPARE_MANAGER_TYPE;
     }
 
     private void compare(ArrayList<RuleTreeNode> am1, ArrayList<RuleTreeNode> am2) {
@@ -81,19 +84,24 @@ public class CompareAccessManager extends ManagerAdapter {
     }
     
     private void compare(ArrayList<RuleTreeNode> am1, ArrayList<RuleTreeNode> am2, CompareResult results) {
-        int result = CompareInterface.NOT_FOUND;
+        int compResult = CompareInterface.NOT_FOUND;
+        int finalResult = CompareInterface.NOT_FOUND;
         RuleTreeNode node;
      
         for (int i=0; i<am1.size(); i++) {
             node = am1.get(i);
             for (int j=0; j<am2.size(); j++){
-                result = node.compare(am2.get(j));
-                if(result != CompareInterface.NOT_FOUND)
+                compResult = node.compare(am2.get(j));
+                if(compResult == CompareInterface.EQUAL) {
+                    finalResult = compResult;
                     break;
+                } else if(compResult == CompareInterface.NOT_EQUAL) {
+                    finalResult = compResult;
+                }
             }
-            node.setComparison(result);
+            node.setComparison(finalResult);
             if(results != null)
-                results.increment(result);
+                results.increment(finalResult);
         }
     }
 
