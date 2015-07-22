@@ -232,7 +232,7 @@ public class ProcedureManager extends ManagerAdapter {
             
             for (int k = 0; k < workflowProcesses.size(); k++) {
                 processSubWorkflows(workflowProcesses.get(k), tagCache);
-                sortSubWorkflows(workflowProcesses.get(k));
+                //sortSubWorkflows(workflowProcesses.get(k));
                 processAttributes(workflowProcesses.get(k), tagCache);
             }
             
@@ -306,6 +306,7 @@ public class ProcedureManager extends ManagerAdapter {
         }
     }
 
+    /*
     private void sortSubWorkflows(WorkflowTemplateType node) {
         for (int j = 0; j < node.getSubTemplates().length; j++) {
             sortSubWorkflows(node.getSubTemplates()[j]);
@@ -322,12 +323,12 @@ public class ProcedureManager extends ManagerAdapter {
         List<String> dependantRefs = wt.getDependencyTaskTemplateRefs();
         ArrayList<WorkflowTemplateType> sortedTasks = new ArrayList<WorkflowTemplateType>();
         
-        /* Create a snap shot of the sub tasks */
+        // Create a snap shot of the sub tasks
         for (int i = 0; i < subTasks.length; i++) {
             sortedTasks.add(subTasks[i]);
         }
         
-        /* Locate final tasks and place them at the end */
+        // Locate final tasks and place them at the end
         int matchCount = 0;
         for (int i = 0; i < dependantRefs.size(); i++) {
             for (int j = 0; j < sortedTasks.size(); j++) {
@@ -339,11 +340,7 @@ public class ProcedureManager extends ManagerAdapter {
             }
         }
         
-        /* Printing for debug */
-        //System.out.println("---- " + wt.getName() + " ----");
-        //print(sortedTasks);
-        
-        /* Back to front sort dependancies */
+        // Back to front sort dependancies
         int index;
         for (int j = sortedTasks.size() - 1; j >= 0; j--) {
             dependantRefs = sortedTasks.get(j).getDependencyTaskTemplateRefs();
@@ -365,13 +362,9 @@ public class ProcedureManager extends ManagerAdapter {
                 swap(index, j - 1, sortedTasks);
             }
             
-            /* Printing for debug */
-            //print(sortedTasks);
         }
-        /* Printing for debug */
-        //System.out.println();
         
-        /* Apply sort to refs */
+        // Apply sort to refs
         for (int j = 0; j < sortedTasks.size(); j++) {
             subTasks[j] = sortedTasks.get(j);
             subTasksRefs.set(j, sortedTasks.get(j).getId());
@@ -407,6 +400,8 @@ public class ProcedureManager extends ManagerAdapter {
         }
         return -1;
     }
+    *
+    */
     
     private void print(ArrayList<WorkflowTemplateType> array) {
         for (int i = 0; i < array.size(); i++) {
