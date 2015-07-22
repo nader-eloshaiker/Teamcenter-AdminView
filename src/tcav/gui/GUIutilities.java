@@ -22,7 +22,8 @@ import tcav.resources.*;
  */
 public class GUIutilities {
     public final static int GAP_COMPONENT = 4;
-    public final static int GAP_INSET = 1;
+    public final static Insets GAP_INSETS = new Insets(1,1,1,1);
+    public final static Insets GAP_INSETS_HEADER = new Insets(2,2,2,2);
     public final static int GAP_MARGIN = 4;
     public final static int GAP_OUTER_BORDER = 8;
     public static int progressCounter = 0;
@@ -175,11 +176,7 @@ public class GUIutilities {
         
         
         JToolBar toolbar = new JToolBar();
-        toolbar.setMargin(new Insets(
-                GUIutilities.GAP_INSET,
-                GUIutilities.GAP_INSET,
-                GUIutilities.GAP_INSET,
-                GUIutilities.GAP_INSET));
+        toolbar.setMargin(GUIutilities.GAP_INSETS);
         toolbar.setFloatable(false);
         toolbar.add(buttonExpandAll);
         toolbar.add(buttonCollapseAll);

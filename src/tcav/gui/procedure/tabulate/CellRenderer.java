@@ -19,7 +19,7 @@ import java.awt.*;
  *
  * @author NZR4DL
  */
-public class CellRenderer extends TableShadedRenderer implements TableCellRenderer {
+public class CellRenderer extends SyncedRenderer implements TableCellRenderer {
     
     static protected ImageIcon yesIcon;
     
@@ -33,6 +33,11 @@ public class CellRenderer extends TableShadedRenderer implements TableCellRender
         }
     }
     
+    public CellRenderer(JTable oppositeTable) {
+        super(oppositeTable);
+    }
+    
+    
     public Component getTableCellRendererComponent(JTable table,
             Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         
@@ -40,14 +45,19 @@ public class CellRenderer extends TableShadedRenderer implements TableCellRender
         
         String s = (String)value;
         
-        setValue(null);
+        
         setHorizontalAlignment(SwingConstants.CENTER);
         setVerticalAlignment(SwingConstants.CENTER);
-        if(s.equals("y"))
+        
+        if(s.equals("y")) {
+            setValue(null);
             setIcon(yesIcon);
-        else
+        } else {
             setIcon(null);
+            setValue(null);
+        }
         
         return this;
     }
+    
 }

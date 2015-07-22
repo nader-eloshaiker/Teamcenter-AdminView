@@ -160,6 +160,13 @@ public class ProcedureManagerComponent extends TabbedPanel {
             }
         });
         
+        try {
+            buttonTabulate.setIcon(ResourceLoader.getImage(ImageEnum.pmTabulate));
+            buttonXML.setIcon(ResourceLoader.getImage(ImageEnum.pmXML));
+        } catch (Exception ex) {
+                JOptionPane.showMessageDialog(parentFrame, ex.getMessage(), "Error Load Images", JOptionPane.ERROR_MESSAGE);
+            }
+        
         toolBar = new JToolBar();
         toolBar.add(buttonXML);
         toolBar.add(buttonTabulate);

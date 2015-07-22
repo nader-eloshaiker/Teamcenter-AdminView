@@ -11,6 +11,7 @@ package tcav.gui.procedure.tabulate;
 
 import tcav.manager.procedure.plmxmlpdm.type.WorkflowHandlerType;
 import tcav.manager.procedure.plmxmlpdm.type.UserDataType;
+import tcav.Settings;
 import java.util.ArrayList;
 
 /**
@@ -54,9 +55,15 @@ public class ColumnHeaderEntry {
             if(arguments.size() != ud.getUserValue().size())
                 return false;
             
-            for(int i=0; i<ud.getUserValue().size(); i++)
-                if(arguments.indexOf(ud.getUserValue().get(i).getValue()) == -1)
-                    return false;
+            for(int i=0; i<arguments.size(); i++) {
+                if(!Settings.isPmTblStrictArgument()) {
+                    if(!matchArgument(ud.getUserValue().get(i).getValue()))
+                        return false;
+                } else {
+                    if(arguments.indexOf(ud.getUserValue().get(i).getValue()) == -1)
+                        return false;
+                }
+            }
             
             return true;
             
@@ -67,6 +74,85 @@ public class ColumnHeaderEntry {
             return true;
             
         }
+    }
+    
+    private boolean matchArgument(String str) {
+        
+        if(arguments.indexOf(str) > -1)
+            return true;
+        
+        if(str.indexOf('=') == -1)
+            return false;
+        
+        String[] value;
+        String name;
+        
+        value = str.split("=");
+        name = value[0];
+        
+        value = splitDelimiter(value[1]);
+        if(value == null)
+            return false;
+        
+        String[] argValue;
+        boolean found = false;
+        
+        for(int i=0; i<arguments.size(); i++) {
+            if(arguments.get(i).indexOf('=') == -1) {
+                found = false;
+                continue;
+            }
+            
+            argValue = arguments.get(i).split("=");
+            
+            if(!name.equals(argValue[0])) {
+                found = false;
+                continue;
+            }
+            
+            argValue = splitDelimiter(argValue[1]);
+            if(argValue == null) {
+                found = false;
+                continue;
+            }
+            
+            if(value.length != argValue.length) {
+                found = false;
+                continue;
+            }
+            
+            found = true;
+            
+            for(int j=0; j<value.length; j++) {
+                if(indexOf(value[j], argValue) == -1)  {
+                    found = false;
+                    break;
+                }
+            }
+            
+            if(found)
+                break;
+        }
+        
+        return found;
+        
+    }
+    
+    private String[] splitDelimiter(String s) {
+        if(s.indexOf(';') > -1)
+            return s.split(";");
+        else if(s.indexOf(',') > -1)
+            return s.split(",");
+        
+        return null;
+    }
+    
+    private int indexOf(String s, String[] array) {
+        for(int i=0; i<array.length; i++)
+            if(s.equals(array[i]))
+                return i;
+        
+        return -1;
     }
     
     public boolean equals(WorkflowHandlerType wh) {
@@ -84,7 +170,7 @@ public class ColumnHeaderEntry {
         
         for(int i=0; i<arguments.size(); i++){
             tmp = arguments.get(i);
-            index = tmp.indexOf("=");
+            index = tmp.indexOf("=")+1;
             
             pad = "";
             for(int k=0; k<index; k++)
@@ -94,6 +180,9 @@ public class ColumnHeaderEntry {
             tmp = tmp.replaceAll(",","\n" + ARGUMENT_PREFIX + pad);
             
             argument += ARGUMENT_PREFIX + tmp;
+            
+            if(!argument.endsWith("\n"))
+                argument += "\n";
         }
         
         argument = argument.replaceAll("\"", "\"\"");
@@ -144,7 +233,11 @@ public class ColumnHeaderEntry {
             }
             tmp = "";
             for(int j=0; j<tmpList.size(); j++) {
-                tmp += tmpList.get(j) + "\n";
+                if(!tmpList.get(j).endsWith("\n"))
+                    tmp += tmpList.get(j) + "\n";
+                else
+                    tmp += tmpList.get(j);
+                
             }
             argument += ARGUMENT_PREFIX + tmp;
         }

@@ -82,6 +82,10 @@ public class Settings {
     private static final boolean PROPERTY_PM_ACTIONEXPANDEDVIEW_DEFAULT = true;
     
     
+    private static boolean pmTblStrictArgument;
+    private static final String PROPERTY_PM_TBL_STRICTARUMENT = "tcav.pm.tbl.strictArgument";
+    private static final boolean PROPERTY_PM_TBL_STRICTARUMENT_DEFAULT = false;
+
     private static String compareMode;
     private static final String PROPERTY_COMPAREMODE = "tcav.compareMode";
     private static final String PROPERTY_COMPAREMODE_DEFAULT = AbstractManager.ACCESS_MANAGER_TYPE;
@@ -245,6 +249,12 @@ public class Settings {
                 PROPERTY_PM_ACTIONEXPANDEDVIEW,
                 PROPERTY_PM_ACTIONEXPANDEDVIEW_DEFAULT));
         
+        
+        setPmTblStrictArgument(
+                getPropertyAsBoolean(
+                PROPERTY_PM_TBL_STRICTARUMENT,
+                PROPERTY_PM_TBL_STRICTARUMENT_DEFAULT));
+        
     }
     
     public static void store() throws Exception  {
@@ -332,6 +342,12 @@ public class Settings {
         property.setProperty(
                 PROPERTY_PM_ACTIONEXPANDEDVIEW,
                 Boolean.toString(isPmActionExpandedView()));
+        
+
+        property.setProperty(
+                PROPERTY_PM_TBL_STRICTARUMENT,
+                Boolean.toString(isPmTblStrictArgument()));
+
         
         File path = new File(System.getenv("USERPROFILE"),".TcAV");
         if(!path.exists())
@@ -574,6 +590,14 @@ public class Settings {
     
     public static void setPmActionExpandedView(boolean pmActionExpandedView) {
         Settings.pmActionExpandedView = pmActionExpandedView;
+    }
+
+    public static boolean isPmTblStrictArgument() {
+        return pmTblStrictArgument;
+    }
+
+    public static void setPmTblStrictArgument(boolean pmTblStrictArgument) {
+        Settings.pmTblStrictArgument = pmTblStrictArgument;
     }
     
     private static int getPropertyAsInt(String name, int defaultValue) throws NumberFormatException {

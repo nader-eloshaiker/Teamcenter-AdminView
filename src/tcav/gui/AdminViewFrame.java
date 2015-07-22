@@ -266,11 +266,7 @@ public class AdminViewFrame extends JFrame{
             }
         });
         
-        toolbar.setMargin(new Insets(
-                GUIutilities.GAP_INSET,
-                GUIutilities.GAP_INSET,
-                GUIutilities.GAP_INSET,
-                GUIutilities.GAP_INSET));
+        toolbar.setMargin(GUIutilities.GAP_INSETS);
         toolbar.add(buttonOpenRuleTree);
         toolbar.add(buttonOpenProcedure);
         toolbar.addSeparator();
@@ -282,9 +278,9 @@ public class AdminViewFrame extends JFrame{
         toolBarPanel = new JPanel();
         toolBarPanel.setLayout(new CardLayout());
         JPanel panel = new JPanel();
-        panel.setLayout(new FlowLayout(FlowLayout.LEFT,0,0));
-        panel.add(toolbar);//, BorderLayout.WEST);
-        panel.add(toolBarPanel);//, BorderLayout.CENTER);
+        panel.setLayout(new BorderLayout(0,0));//FlowLayout(FlowLayout.LEFT,0,0));
+        panel.add(toolbar, BorderLayout.WEST);//, BorderLayout.WEST);
+        panel.add(toolBarPanel, BorderLayout.CENTER);
         
         return panel;
     }

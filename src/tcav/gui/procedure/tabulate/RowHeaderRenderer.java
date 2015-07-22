@@ -9,50 +9,36 @@
 
 package tcav.gui.procedure.tabulate;
 
-import java.awt.ComponentOrientation;
-import java.awt.Component;
-import java.awt.Font;
-import javax.swing.JTable;
-import javax.swing.JLabel;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableCellRenderer;
-import java.awt.GridLayout;
-import tcav.gui.RotatedTextIcon;
-import javax.swing.SwingConstants;
-
+import tcav.gui.TableShadedRenderer;
+import javax.swing.table.*;
+import javax.swing.*;
+import java.awt.*;
 /**
  *
  * @author nzr4dl
  */
-public class RowHeaderRenderer implements TableCellRenderer {
+public class RowHeaderRenderer extends SyncedRenderer implements TableCellRenderer {
     
-    public static DefaultTableCellRenderer getRenderer() {
-        JTable table = new JTable();
-        TableCellRenderer temp = table.getTableHeader().getDefaultRenderer();
-        DefaultTableCellRenderer cell = (DefaultTableCellRenderer)temp.getTableCellRendererComponent(table, "", false, false, 0, 0);
-        return cell;
+    public RowHeaderRenderer(JTable oppositeTable) {
+        super(oppositeTable);
     }
     
     public Component getTableCellRendererComponent(JTable table,
             Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         
+        super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         
-        //ColumnHeaderEntry entry = (ColumnHeaderEntry)value;
-        String entry = (String)value;
+        String s = (String)value;
         
-        TableCellRenderer temp = table.getTableHeader().getDefaultRenderer();
-        DefaultTableCellRenderer cell = (DefaultTableCellRenderer)temp.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+        setHorizontalAlignment(SwingConstants.LEFT);
+        setVerticalAlignment(SwingConstants.CENTER);
         
-        if(!entry.startsWith(" "))
-            cell.setFont(cell.getFont().deriveFont(Font.BOLD));
+        if(!s.startsWith(ColumnHeaderEntry.ARGUMENT_PREFIX))
+            setFont(getFont().deriveFont(Font.BOLD));
         else
-            cell.setFont(cell.getFont().deriveFont(Font.PLAIN));
+            setFont(getFont().deriveFont(Font.PLAIN));
         
-        cell.setText(entry);
-        cell.setVerticalAlignment(SwingConstants.BOTTOM);
-        cell.setHorizontalAlignment(SwingConstants.LEFT);
-        cell.setToolTipText(entry);
-        
-        return cell;
+        return this;
     }
+    
 }

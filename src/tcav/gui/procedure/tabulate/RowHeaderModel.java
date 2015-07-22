@@ -62,7 +62,7 @@ public class RowHeaderModel implements TableModel {
         
         String s = "";
         for (int i=0; i<indent; i++)
-            s = s + "    ";
+            s = s + ColumnHeaderEntry.ARGUMENT_PREFIX;
         
         return s;
     }

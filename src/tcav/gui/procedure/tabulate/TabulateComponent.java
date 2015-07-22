@@ -11,12 +11,12 @@ package tcav.gui.procedure.tabulate;
 
 import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.*;
 import javax.swing.table.*;
 import javax.swing.border.*;
 import java.awt.*;
 import tcav.gui.*;
+import tcav.Settings;
 import tcav.utils.CustomFileFilter;
 import tcav.resources.*;
 import tcav.manager.procedure.ProcedureManager;
@@ -49,31 +49,23 @@ public class TabulateComponent extends TabbedPanel {
         table.getTableHeader().setReorderingAllowed(false);
         table.getTableHeader().setResizingAllowed(false);
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-        //table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        //table.getSelectionModel().addListSelectionListener(new SelectionListener(false));
+        table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent e) {
+                tableRowHeader.repaint();
+            }
+        });
         
         tableRowHeader = new JTableAdvanced(data.createRowHeaderModel());
         tableRowHeader.getTableHeader().setReorderingAllowed(false);
         tableRowHeader.getTableHeader().setResizingAllowed(false);
         tableRowHeader.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-        //tableRowHeader.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        //tableRowHeader.getSelectionModel().addListSelectionListener(new SelectionListener(true));
+        tableRowHeader.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent e) {
+                table.repaint();
+            }
+        });
         
-        
-        TableColumn column;
-        CellRenderer renderer = new CellRenderer();
-        ColumnHeaderRenderer rendererCol = new ColumnHeaderRenderer();
-        
-        for (int i=0; i<table.getColumnCount(); i++) {
-            column = table.getColumnModel().getColumn(i);
-            column.setHeaderRenderer(rendererCol);
-            column.setCellRenderer(renderer);
-            packColumn(i);
-        }
-        column = tableRowHeader.getColumnModel().getColumn(0);
-        column.setHeaderRenderer(new RowHeaderRenderer());
-        column.setCellRenderer(new RowHeaderRenderer());
-        packRowHeader();
+        formatTable();
         
         JPanel panelTable = new JPanel();
         panelTable.setLayout(new BorderLayout());
@@ -97,17 +89,122 @@ public class TabulateComponent extends TabbedPanel {
         
     }
     
+    public void updateUI() {
+        super.updateUI();
+        if(table != null && tableRowHeader != null)
+            formatTable();
+    }
+    
+    private void updateTable() {
+        Settings.setPmTblStrictArgument(buttonExactMatch.isSelected());
+        table.setModel(new DataModel(pm));
+        formatTable();
+        textHandler = new JLabel(" "+table.getColumnCount()+" ");
+    }
+    
+    private void formatTable() {
+        TableColumn column;
+        CellRenderer renderer = new CellRenderer(tableRowHeader);
+        ColumnHeaderRenderer rendererCol = new ColumnHeaderRenderer();
+        RowHeaderRenderer rendererRow = new RowHeaderRenderer(table);
+        
+        for (int i=0; i<table.getColumnCount(); i++) {
+            column = table.getColumnModel().getColumn(i);
+            column.setHeaderRenderer(rendererCol);
+            column.setCellRenderer(renderer);
+            packColumn(i);
+        }
+        column = tableRowHeader.getColumnModel().getColumn(0);
+        column.setHeaderRenderer(rendererCol);
+        column.setCellRenderer(rendererRow);
+        packRowHeader();
+    }
+    
+    private JPanel statusBar;
+    private JLabel textHandler;
+    
     public JComponent getStatusBar() {
-        return new JPanel();
+        if(statusBar != null)
+            return statusBar;
+        
+        JLabel textFileLabel = new JLabel(" Path:");
+        JLabel textFile = new JLabel(" "+pm.getFile().getParent()+" ");
+        textFile.setBorder(new BevelBorder(BevelBorder.LOWERED));
+        JPanel panelFile = new JPanel();
+        panelFile.setLayout(new BorderLayout());
+        panelFile.add(textFileLabel, BorderLayout.WEST);
+        panelFile.add(textFile, BorderLayout.CENTER);
+        
+        JLabel textHandlerLabel = new JLabel("  Coloumns [Handlers]:");
+        textHandler = new JLabel(" "+table.getColumnCount()+" ");
+        textHandler.setBorder(new BevelBorder(BevelBorder.LOWERED));
+        JPanel panelHandler = new JPanel();
+        panelHandler.setLayout(new BorderLayout());
+        panelHandler.add(textHandlerLabel, BorderLayout.WEST);
+        panelHandler.add(textHandler, BorderLayout.CENTER);
+        
+        JLabel textTaskLabel = new JLabel("  Rows [Tasks]:");
+        JLabel textTask = new JLabel(" "+table.getRowCount()+" ");
+        textTask.setBorder(new BevelBorder(BevelBorder.LOWERED));
+        JPanel panelTask = new JPanel();
+        panelTask.setLayout(new BorderLayout());
+        panelTask.add(textTaskLabel, BorderLayout.WEST);
+        panelTask.add(textTask, BorderLayout.CENTER);
+        
+        JLabel textWorkflowLabel = new JLabel("  Workflow Procedures:");
+        JLabel textWorkflow = new JLabel(" "+pm.getWorkflowProcesses().size()+" ");
+        textWorkflow.setBorder(new BevelBorder(BevelBorder.LOWERED));
+        JPanel panelWorkflow = new JPanel();
+        panelWorkflow.setLayout(new BorderLayout());
+        panelWorkflow.add(textWorkflowLabel, BorderLayout.WEST);
+        panelWorkflow.add(textWorkflow, BorderLayout.CENTER);
+        
+        JPanel panelTaskHandler = new JPanel();
+        panelTaskHandler.setLayout(new FlowLayout(FlowLayout.LEFT,GUIutilities.GAP_COMPONENT,0));
+        panelTaskHandler.add(panelTask);
+        panelTaskHandler.add(panelHandler);
+        panelTaskHandler.add(panelWorkflow);
+        
+        JLabel textDateLabel = new JLabel("  Date:");
+        JLabel textDate = new JLabel(" "+pm.getPLMXML().getDate()+" ");
+        textDate.setBorder(new BevelBorder(BevelBorder.LOWERED));
+        JPanel panelDate = new JPanel();
+        panelDate.setLayout(new BorderLayout());
+        panelDate.add(textDateLabel, BorderLayout.WEST);
+        panelDate.add(textDate, BorderLayout.CENTER);
+        
+        JLabel textTimeLabel = new JLabel("  Time:");
+        JLabel textTime = new JLabel(" "+pm.getPLMXML().getTime()+" ");
+        textTime.setBorder(new BevelBorder(BevelBorder.LOWERED));
+        JPanel panelTime = new JPanel();
+        panelTime.setLayout(new BorderLayout());
+        panelTime.add(textTimeLabel, BorderLayout.WEST);
+        panelTime.add(textTime, BorderLayout.CENTER);
+        
+        JPanel panelDateTime = new JPanel();
+        panelDateTime.setLayout(new BorderLayout());
+        panelDateTime.add(panelDate, BorderLayout.WEST);
+        panelDateTime.add(panelTime, BorderLayout.EAST);
+        
+        
+        statusBar = new JPanel();
+        statusBar.setLayout(new BorderLayout());
+        statusBar.add(panelFile, BorderLayout.WEST);
+        statusBar.add(panelTaskHandler, BorderLayout.CENTER);
+        statusBar.add(panelDateTime, BorderLayout.EAST);
+        
+        return statusBar;
     }
     
     private JToolBar toolBar;
+    private JCheckBox buttonExactMatch;
     
     public JComponent getToolBar() {
         if(toolBar != null)
             return toolBar;
         
         JButton buttonExport = new JButton("Export");
+        buttonExport.setToolTipText("Export to a comma delimited csv file");
         buttonExport.setOpaque(false);
         buttonExport.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e){
@@ -115,13 +212,11 @@ public class TabulateComponent extends TabbedPanel {
                 int result = fc.showSaveDialog(parentFrame);
                 if(result == JFileChooser.APPROVE_OPTION) {
                     File file = fc.getSelectedFile();
+                    if(!file.getName().toLowerCase().endsWith(".csv"))
+                        file = new File(file.getParentFile(), file.getName()+".csv");
                     
                     if(file.isDirectory()) {
                         JOptionPane.showMessageDialog(parentFrame, "You have selected a directory!", "Error", JOptionPane.ERROR_MESSAGE);
-                        return;
-                    }
-                    if(file.getName().equals("")) {
-                        JOptionPane.showMessageDialog(parentFrame, "No file name specified!", "Error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
                     
@@ -141,9 +236,26 @@ public class TabulateComponent extends TabbedPanel {
                 }
             }
         });
+
+        try {
+            buttonExport.setIcon(ResourceLoader.getImage(ImageEnum.pmTabulateExport));
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error Load Images", JOptionPane.ERROR_MESSAGE);
+        }
+        
+        
+        buttonExactMatch = new JCheckBox("Exact Argument Match", Settings.isPmTblStrictArgument());
+        buttonExactMatch.setToolTipText("Matches exact order of delimited [;,] handler arguments");
+        buttonExactMatch.setOpaque(false);
+        buttonExactMatch.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                updateTable();
+            }
+        });
         
         toolBar = new JToolBar();
         toolBar.add(buttonExport);
+        toolBar.add(buttonExactMatch);
         
         return toolBar;
     }
@@ -208,7 +320,8 @@ public class TabulateComponent extends TabbedPanel {
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         fileChooser.setCurrentDirectory(pm.getFile());
         fileChooser.addChoosableFileFilter(new CustomFileFilter(
-                new String[]{"csv","txt"},"Delimited File (*.csv; *.txt)"));
+                new String[]{"csv"},
+                "Comma Delimited Text File (*.csv)"));
         
         return fileChooser;
     }
@@ -217,20 +330,20 @@ public class TabulateComponent extends TabbedPanel {
     private void packRowHeader() {
         TableColumn column = tableRowHeader.getColumnModel().getColumn(0);
         int width = 0;
-        int height = 0;
         String s;
+        int insetVal = 2;
         
-        DefaultTableCellRenderer label = RowHeaderRenderer.getRenderer();
+        //DefaultTableCellRenderer label = RowHeaderRenderer.getRenderer();
+        JLabel label = new JLabel();
         
         for (int r=0; r<table.getRowCount(); r++) {
             s = (String)tableRowHeader.getValueAt(r, 0);
             label.setText(s);
-            if(!s.startsWith(" "))
+            if(!s.startsWith(ColumnHeaderEntry.ARGUMENT_PREFIX))
                 label.setFont(label.getFont().deriveFont(Font.BOLD));
             else
                 label.setFont(label.getFont().deriveFont(Font.PLAIN));
             width = Math.max(width, label.getPreferredSize().width);
-            height = Math.max(height, label.getPreferredSize().height);
         }
         
         width += 10;
@@ -241,8 +354,8 @@ public class TabulateComponent extends TabbedPanel {
         column.setMinWidth(width);
         column.setWidth(width);
         
-        tableRowHeader.setRowHeight(height);
-        table.setRowHeight(height);
+        //tableRowHeader.setRowHeight(height);
+        //table.setRowHeight(height);
     }
     
     private void packColumn(int columnIndex) {
@@ -267,26 +380,5 @@ public class TabulateComponent extends TabbedPanel {
         column.setMinWidth(width);
         column.setWidth(width);
     }
-    
-    private class SelectionListener implements ListSelectionListener {
-        boolean	isFixedTable	= true;
-        
-        public SelectionListener(boolean isFixedTable) {
-            this.isFixedTable = isFixedTable;
-        }
-        
-        public void valueChanged(ListSelectionEvent e) {
-            
-            if (isFixedTable) {
-                int fixedSelectedIndex = tableRowHeader.getSelectedRow();
-                table.setRowSelectionInterval(fixedSelectedIndex, fixedSelectedIndex);
-                
-            } else {
-                int selectedIndex = table.getSelectedRow();
-                tableRowHeader.setRowSelectionInterval(selectedIndex, selectedIndex);
-            }
-        }
-    }
-    
     
 }
