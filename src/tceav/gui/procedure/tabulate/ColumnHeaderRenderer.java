@@ -6,13 +6,12 @@
  * To change this template, choose Tools | Template Manager
  * and open the template in the editor.
  */
-
 package tceav.gui.procedure.tabulate;
 
+import java.util.ArrayList;
 import java.awt.Component;
 import java.awt.Font;
 import javax.swing.JTable;
-import javax.swing.JLabel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.CompoundBorder;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -26,83 +25,52 @@ import javax.swing.SwingConstants;
  * @author NZR4DL
  */
 public class ColumnHeaderRenderer implements TableCellRenderer {
+
     private DefaultTableCellRenderer cell;
-    
+
     public DefaultTableCellRenderer getCell() {
         return cell;
     }
-    
+
     public Component getTableCellRendererComponent(JTable table,
             Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        
-        
-        //String entry = (String)value;
-        
+
         TableCellRenderer temp = table.getTableHeader().getDefaultRenderer();
-        cell = (DefaultTableCellRenderer)temp.getTableCellRendererComponent(table, null, isSelected, hasFocus, row, column);
-        ColumnHeaderEntry che = ((DataModel)table.getModel()).getColumns().get(column);
-        
+        cell = (DefaultTableCellRenderer) temp.getTableCellRendererComponent(table, null, isSelected, hasFocus, row, column);
+        ColumnHeaderAdapter che = ((TableData) table.getModel()).getColumns().get(column);
+
         cell.setText(null);
         cell.setBorder(new CompoundBorder(
                 cell.getBorder(),
                 new EmptyBorder(GUIutilities.GAP_INSETS_HEADER)));
-        
+
         cell.setVerticalAlignment(SwingConstants.BOTTOM);
         cell.setHorizontalAlignment(SwingConstants.CENTER);
-        //cell.setToolTipText(entry);
-        
-        /*
-        if(che.isHandler())
-            cell.setFont(cell.getFont().deriveFont(Font.BOLD));
-        else if(che.isRule())
-            cell.setFont(cell.getFont().deriveFont(Font.ITALIC));
-        else
-            cell.setFont(cell.getFont().deriveFont(Font.PLAIN));
-         
-        cell.setIcon(new RotatedTextIcon(RotatedTextIcon.LEFT, cell.getFont(), entry));
-         */
+
         Font font = cell.getFont();
-        
-        if(che.isRuleClassicifaction()){
-            if(che.isRule())
-                cell.setIcon(new RotatedTextIcon(
-                        RotatedTextIcon.LEFT,
-                        new Font[] {font.deriveFont(Font.ITALIC)},
-                        che.toStringArray()));
-            else if(che.isHandler())
-                cell.setIcon(new RotatedTextIcon(
-                        RotatedTextIcon.LEFT,
-                        new Font[] {font.deriveFont(Font.ITALIC), font.deriveFont(Font.BOLD)},
-                        che.toStringArray()));
-            else if(che.isArgument())
-                cell.setIcon(new RotatedTextIcon(
-                        RotatedTextIcon.LEFT,
-                        new Font[] {font.deriveFont(Font.ITALIC), font.deriveFont(Font.BOLD), font.deriveFont(Font.PLAIN)},
-                        che.toStringArray()));
-            else
-                cell.setIcon(new RotatedTextIcon(
-                        RotatedTextIcon.LEFT,
-                        font.deriveFont(Font.PLAIN),
-                        che.toString()));
-            
-        } else {
-            if(che.isHandler())
-                cell.setIcon(new RotatedTextIcon(
-                        RotatedTextIcon.LEFT,
-                        new Font[] {font.deriveFont(Font.BOLD)},
-                        che.toStringArray()));
-            else if(che.isArgument())
-                cell.setIcon(new RotatedTextIcon(
-                        RotatedTextIcon.LEFT,
-                        new Font[] {font.deriveFont(Font.BOLD), font.deriveFont(Font.PLAIN)},
-                        che.toStringArray()));
-            else
-                cell.setIcon(new RotatedTextIcon(
-                        RotatedTextIcon.LEFT,
-                        font.deriveFont(Font.PLAIN),
-                        che.toString()));
-        } 
-        
+        RotatedTextIcon icon;
+
+        ArrayList<Font> fonts = new ArrayList<Font>();
+        ArrayList<String> str = new ArrayList<String>();
+
+        if (che.isRuleHandler()) {
+            fonts.add(font.deriveFont(Font.ITALIC));
+            str.add(che.toStringRule());
+        }
+
+        for (int i = 0; i < che.getHandlerSize(); i++) {
+            fonts.add(font.deriveFont(Font.BOLD));
+            str.add(che.getHandler(i).getName());
+            if (che.getHandler(i).hasArguments()) {
+                fonts.add(font.deriveFont(Font.PLAIN));
+                str.add(che.getHandler(i).toStringArguments());
+            }
+        }
+
+        icon = new RotatedTextIcon(RotatedTextIcon.LEFT, fonts, str);
+
+        cell.setIcon(icon);
+
         return cell;
     }
 }

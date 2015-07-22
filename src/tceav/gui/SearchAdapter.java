@@ -16,7 +16,7 @@ import java.util.ArrayList;
  *
  * @author NZR4DL
  */
-public abstract class SearchAbstract {
+public abstract class SearchAdapter {
 
     private int resultIndex;
 

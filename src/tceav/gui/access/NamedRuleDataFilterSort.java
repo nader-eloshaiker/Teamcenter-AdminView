@@ -17,7 +17,7 @@ import java.util.*;
  *
  * @author NZR4DL
  */
-public class NamedRuleDataFilterSort extends NamedRuleDataFilterAbstract implements NamedRuleDataFilterInterface {
+public class NamedRuleDataFilterSort extends NamedRuleDataFilterAdapter implements NamedRuleDataFilterInterface {
     private ArrayList<Integer> sortingColumns = new ArrayList<Integer>();
     private boolean ascending = true;
     

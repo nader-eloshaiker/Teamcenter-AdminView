@@ -11,7 +11,7 @@ package tceav.gui;
 
 import tceav.gui.access.AccessManagerComponent;
 import tceav.gui.procedure.ProcedureManagerComponent;
-import tceav.manager.AbstractManager;
+import tceav.manager.ManagerAdapter;
 import tceav.manager.access.AccessManager;
 import tceav.manager.procedure.ProcedureManager;
 import tceav.manager.compare.CompareAccessManager;
@@ -135,12 +135,12 @@ public class AdminViewFrame extends JFrame{
         String path = "";
         JFileChooser fc = new JFileChooser();
         
-        if(type.equals(AbstractManager.ACCESS_MANAGER_TYPE)) {
+        if(type.equals(ManagerAdapter.ACCESS_MANAGER_TYPE)) {
             path = Settings.getAmLoadPath();
             fc.setCurrentDirectory(new File(path));
             fc.addChoosableFileFilter(new CustomFileFilter(
                     new String[]{"txt",""},"Text File (*.txt; *.)"));
-        } else if(type.equals(AbstractManager.PROCEDURE_MANAGER_TYPE)) {
+        } else if(type.equals(ManagerAdapter.PROCEDURE_MANAGER_TYPE)) {
             path = Settings.getPmLoadPath();
             fc.setCurrentDirectory(new File(path));
             fc.addChoosableFileFilter(new CustomFileFilter(
@@ -514,7 +514,7 @@ public class AdminViewFrame extends JFrame{
     private void actionLoadRuleTree() {
         new Thread() {
             public void run() {
-                JFileChooser fc = createFileChooser(AbstractManager.ACCESS_MANAGER_TYPE);
+                JFileChooser fc = createFileChooser(ManagerAdapter.ACCESS_MANAGER_TYPE);
                 int result = fc.showOpenDialog(getFrame());
                 if(result == JFileChooser.APPROVE_OPTION) {
                     try {
@@ -546,7 +546,7 @@ public class AdminViewFrame extends JFrame{
     private void actionLoadProcedure() {
         new Thread() {
             public void run() {
-                JFileChooser fc = createFileChooser(AbstractManager.PROCEDURE_MANAGER_TYPE);
+                JFileChooser fc = createFileChooser(ManagerAdapter.PROCEDURE_MANAGER_TYPE);
                 int result = fc.showOpenDialog(getFrame());
                 if(result == JFileChooser.APPROVE_OPTION) {
                     try {
@@ -585,7 +585,7 @@ public class AdminViewFrame extends JFrame{
                 if(result == JOptionPane.CANCEL_OPTION)
                     return;
                 
-                if(chooser.getSelectionMode().equals(AbstractManager.PROCEDURE_MANAGER_TYPE)) {
+                if(chooser.getSelectionMode().equals(ManagerAdapter.PROCEDURE_MANAGER_TYPE)) {
                     JOptionPane.showMessageDialog(parentFrame, "The ability to compare procedures has not yet been implemented.", "Unsupport Feature", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
@@ -595,7 +595,7 @@ public class AdminViewFrame extends JFrame{
                     return;
                 }
                 
-                if(chooser.getSelectionMode().equals(AbstractManager.ACCESS_MANAGER_TYPE)) {
+                if(chooser.getSelectionMode().equals(ManagerAdapter.ACCESS_MANAGER_TYPE)) {
                     File files[] = chooser.getSelectedFiles();
                     AccessManager[] am = new AccessManager[files.length];
                     try {

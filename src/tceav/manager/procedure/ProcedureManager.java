@@ -15,24 +15,20 @@ import javax.swing.*;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.NamedNodeMap;
 
-import tceav.manager.AbstractManager;
+import tceav.manager.ManagerAdapter;
 import tceav.manager.procedure.plmxmlpdm.HeaderType;
 import tceav.manager.procedure.plmxmlpdm.TagTypeEnum;
 import tceav.manager.procedure.plmxmlpdm.base.*;
 import tceav.manager.procedure.plmxmlpdm.classtype.WorkflowTemplateClassificationEnum;
 import tceav.manager.procedure.plmxmlpdm.type.*;
-import tceav.manager.procedure.plmxmlpdm.type.element.*;
 import tceav.xml.DOMReader;
-
-import tceav.manager.procedure.plmxmlpdm.base.AttributeBase;
 
 /**
  *
  * @author NZR4DL
  */
-public class ProcedureManager extends AbstractManager {
+public class ProcedureManager extends ManagerAdapter {
     
     private ArrayList<WorkflowTemplateType> workflowProcesses;
     private HeaderType header;

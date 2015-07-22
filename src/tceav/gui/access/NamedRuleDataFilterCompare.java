@@ -17,7 +17,7 @@ import java.util.*;
  *
  * @author nzr4dl
  */
-public class NamedRuleDataFilterCompare extends NamedRuleDataFilterAbstract implements NamedRuleDataFilterInterface {
+public class NamedRuleDataFilterCompare extends NamedRuleDataFilterAdapter implements NamedRuleDataFilterInterface {
     
     private boolean filterEqual;
     private boolean filterNotEqual;

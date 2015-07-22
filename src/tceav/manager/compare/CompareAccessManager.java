@@ -9,7 +9,7 @@
 
 package tceav.manager.compare;
 
-import tceav.manager.AbstractManager;
+import tceav.manager.ManagerAdapter;
 import tceav.manager.access.*;
 import java.io.File;
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ import java.util.ArrayList;
  *
  * @author nzr4dl
  */
-public class CompareAccessManager extends AbstractManager {
+public class CompareAccessManager extends ManagerAdapter {
     public static final int TREE_TYPE = 0;
     public static final int ACL_TYPE = 1;
     

@@ -17,9 +17,9 @@ import java.awt.*;
  *
  * @author nzr4dl
  */
-public class RowOneRenderer extends SyncedRenderer implements TableCellRenderer {
+public class FreezeRowRenderer extends SyncedRenderer implements TableCellRenderer {
     
-    public RowOneRenderer(JTable oppositeTable) {
+    public FreezeRowRenderer(JTable oppositeTable) {
         super(oppositeTable);
     }
     
@@ -33,7 +33,7 @@ public class RowOneRenderer extends SyncedRenderer implements TableCellRenderer 
         setHorizontalAlignment(SwingConstants.LEFT);
         setVerticalAlignment(SwingConstants.CENTER);
         
-        RowOneModel model = (RowOneModel)table.getModel();
+        FreezeRowTableData model = (FreezeRowTableData)table.getModel();
         
         if(model.isRootNode(row))
             setFont(getFont().deriveFont(Font.BOLD));

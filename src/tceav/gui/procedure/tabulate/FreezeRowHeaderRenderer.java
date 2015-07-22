@@ -29,7 +29,7 @@ import javax.swing.SwingConstants;
  *
  * @author NZR4DL
  */
-public class RowOneHeaderRenderer implements TableCellRenderer {
+public class FreezeRowHeaderRenderer implements TableCellRenderer {
     
     
     public Component getTableCellRendererComponent(JTable table,

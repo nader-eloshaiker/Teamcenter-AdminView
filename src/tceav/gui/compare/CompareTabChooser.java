@@ -16,7 +16,7 @@ import java.io.File;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
-import tceav.manager.AbstractManager;
+import tceav.manager.ManagerAdapter;
 import tceav.utils.CustomFileFilter;
 import tceav.Settings;
 import tceav.gui.*;
@@ -46,22 +46,22 @@ public class CompareTabChooser extends JPanel {
         
         ruletreeButton = new JRadioButton(
                 "RuleTree",
-                (SelectionMode.equals(AbstractManager.ACCESS_MANAGER_TYPE)));
+                (SelectionMode.equals(ManagerAdapter.ACCESS_MANAGER_TYPE)));
         ruletreeButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if(ruletreeButton.isSelected()) {
-                    SelectionMode = AbstractManager.ACCESS_MANAGER_TYPE;
+                    SelectionMode = ManagerAdapter.ACCESS_MANAGER_TYPE;
                     Settings.setCompareMode(SelectionMode);
                 }
             }
         });
         procedureButton = new JRadioButton(
                 "Procedure",
-                (SelectionMode.equals(AbstractManager.PROCEDURE_MANAGER_TYPE)));
+                (SelectionMode.equals(ManagerAdapter.PROCEDURE_MANAGER_TYPE)));
         procedureButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if(procedureButton.isSelected()) {
-                    SelectionMode = AbstractManager.PROCEDURE_MANAGER_TYPE;
+                    SelectionMode = ManagerAdapter.PROCEDURE_MANAGER_TYPE;
                     Settings.setCompareMode(SelectionMode);
                 }
             }

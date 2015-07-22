@@ -10,7 +10,7 @@
 package tceav.gui.procedure;
 
 import tceav.manager.procedure.ProcedureManager;
-import tceav.manager.AbstractManager;
+import tceav.manager.ManagerAdapter;
 import tceav.gui.procedure.tabulate.TabulateComponent;
 import tceav.manager.procedure.plmxmlpdm.base.IdBase;
 import javax.swing.*;
@@ -37,11 +37,11 @@ public class ProcedureManagerComponent extends TabbedPanel {
     private AdminViewFrame parentFrame;
     private ProcedureManager pm;
     private JSplitPane splitPane1;
-    private ProcessTreeModel modelProcedure;
-    private ActionComponent actionComponent;
-    private AttributeComponent attributeComponent;
+    private WorkflowTreeData modelProcedure;
+    private HandlerComponent actionComponent;
+    private ProcessComponent attributeComponent;
     private XMLComponent xmlComponent;
-    private ProcessComponent processComponent;
+    private WorkflowComponent processComponent;
     
     
     /**
@@ -51,7 +51,7 @@ public class ProcedureManagerComponent extends TabbedPanel {
         this.pm = pm;
         this.parentFrame = parentFrame;
         
-        processComponent = new ProcessComponent(parentFrame, pm);
+        processComponent = new WorkflowComponent(parentFrame, pm);
         processComponent.getTree().addTreeSelectionListener(new TreeSelectionListener() {
             public void valueChanged(TreeSelectionEvent e) {
                 if(e.isAddedPath(e.getPath())) {
@@ -63,25 +63,25 @@ public class ProcedureManagerComponent extends TabbedPanel {
             }
         });
         
-        actionComponent = new ActionComponent(parentFrame, pm);
+        actionComponent = new HandlerComponent(parentFrame, pm);
         actionComponent.getTree().addTreeSelectionListener(new TreeSelectionListener() {
             public void valueChanged(TreeSelectionEvent e) {
                 if(e.isAddedPath(e.getPath())) {
                     IdBase procedure = (IdBase)e.getPath().getLastPathComponent();
-                    processComponent.getTree().clearSelection();
-                    attributeComponent.updateTree(procedure);
+                    //processComponent.getTree().clearSelection();
+                    //attributeComponent.updateTree(procedure);
                     xmlComponent.updateTable(procedure);
                 }
             }
         });
         
-        attributeComponent = new AttributeComponent(parentFrame, pm);
+        attributeComponent = new ProcessComponent(parentFrame, pm);
         attributeComponent.getTree().addTreeSelectionListener(new TreeSelectionListener() {
             public void valueChanged(TreeSelectionEvent e) {
                 if(e.isAddedPath(e.getPath())) {
                     IdBase procedure = (IdBase)e.getPath().getLastPathComponent();
-                    processComponent.getTree().clearSelection();
-                    actionComponent.getTree().clearSelection();
+                    //processComponent.getTree().clearSelection();
+                    //actionComponent.getTree().clearSelection();
                     xmlComponent.updateTable(procedure);
                 }
             }
@@ -94,11 +94,11 @@ public class ProcedureManagerComponent extends TabbedPanel {
         JPanel panelLeft = new JPanel();
         panelLeft.setLayout(new GridLayout(2,1,GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
         panelLeft.add(GUIutilities.createPanelMargined(processComponent));
-        panelLeft.add(GUIutilities.createPanelMargined(actionComponent));
+        panelLeft.add(GUIutilities.createPanelMargined(attributeComponent));
         
         JPanel panelRight = new JPanel();
         panelRight.setLayout(new GridLayout(1,1,GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
-        panelRight.add("Center",GUIutilities.createPanelMargined(attributeComponent));
+        panelRight.add("Center",GUIutilities.createPanelMargined(actionComponent));
         //panelRight.add("South", GUIutilities.createPanelMargined(xmlComponent));
         
         splitPane1 = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, panelLeft, panelRight);

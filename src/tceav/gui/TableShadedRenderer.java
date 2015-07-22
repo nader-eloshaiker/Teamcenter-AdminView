@@ -1,5 +1,5 @@
 /*
- * TableShadedRenderer.java
+ * TableshadedColorRenderer.java
  *
  * Created on 17 April 2008, 11:52
  *
@@ -19,45 +19,54 @@ import java.awt.Component;
  */
 public class TableShadedRenderer extends DefaultTableCellRenderer  implements TableCellRenderer {
     
+    private final int SHADE_LEVEL = 8;
+    
     /** Creates a new instance of TableShadedRenderer */
     public TableShadedRenderer() {
         super();
     }
     
-    private final int FACTOR = 8;
-    
-    private Color darker(Color c) {
+    private Color darker(Color c, int factor) {
         return new Color(
-                Math.max((c.getRed() - FACTOR), 0),
-                Math.max((c.getGreen() - FACTOR), 0),
-                Math.max((c.getBlue() - FACTOR), 0));
+                Math.max((c.getRed() - (SHADE_LEVEL*factor)), 0),
+                Math.max((c.getGreen() - (SHADE_LEVEL*factor)), 0),
+                Math.max((c.getBlue() - (SHADE_LEVEL*factor)), 0));
     }
     
-    private Color brighter(Color c) {
-        return new Color(Math.min((c.getRed() + FACTOR), 255),
-                         Math.min((c.getGreen() + FACTOR), 255),
-                         Math.min((c.getBlue() + FACTOR), 255));
+    private Color brighter(Color c, int factor) {
+        return new Color(Math.min((c.getRed() + (SHADE_LEVEL*factor)), 255),
+                         Math.min((c.getGreen() + (SHADE_LEVEL*factor)), 255),
+                         Math.min((c.getBlue() + (SHADE_LEVEL*factor)), 255));
     }
     
     private void setBackgroundShading(JTable table, int row, boolean isSelected) {
-        Color shaded;
-        Color normal = table.getBackground();
-        
-        if(normal.getBlue()+normal.getRed()+normal.getGreen() > 383)
-            shaded = darker(normal);
-        else
-            shaded = brighter(normal);
-        
-        
+        Color normalColor = table.getBackground();
+        Color shadedColor = getShadedColor(normalColor);
+
         if(isSelected) {
             setBackground(table.getSelectionBackground());
         } else {
             if(row % 2 == 0)
-                setBackground(shaded);
+                setBackground(shadedColor);
             else
-                setBackground(normal);
+                setBackground(normalColor);
         }
         
+    }
+    
+    public Color getShadedColor(Color baseline) {
+        return getShadedColor(baseline, 1);
+    }
+    
+    public Color getShadedColor(Color baseline, int factor) {
+        Color c;
+        
+        if(baseline.getBlue()+baseline.getRed()+baseline.getGreen() > 383)
+            c = darker(baseline, factor);
+        else
+            c = brighter(baseline, factor);
+        
+        return c;
     }
 
     public Component getTableCellRendererComponent(JTable table,

@@ -18,7 +18,7 @@ import java.awt.*;
  *
  * @author nzr4dl
  */
-public class SyncedRenderer extends TableShadedRenderer implements TableCellRenderer {
+public class SyncedRenderer extends TableShadedWorkflowRenderer implements TableCellRenderer {
     
     private JTable oppositeTable;
     

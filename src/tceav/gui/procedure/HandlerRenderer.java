@@ -10,26 +10,23 @@
 package tceav.gui.procedure;
 
 import tceav.manager.procedure.plmxmlpdm.type.SiteType;
-import tceav.manager.procedure.plmxmlpdm.type.UserDataType;
 import tceav.manager.procedure.plmxmlpdm.type.WorkflowActionType;
 import tceav.manager.procedure.plmxmlpdm.type.WorkflowBusinessRuleType;
 import tceav.manager.procedure.plmxmlpdm.type.WorkflowBusinessRuleHandlerType;
 import tceav.manager.procedure.plmxmlpdm.type.WorkflowHandlerType;
 import tceav.manager.procedure.plmxmlpdm.type.WorkflowTemplateType;
-import tceav.manager.procedure.plmxmlpdm.TagTypeEnum;
 import tceav.manager.procedure.plmxmlpdm.base.IdBase;
 import javax.swing.tree.*;
 import javax.swing.*;
 import java.awt.*;
 import tceav.manager.procedure.plmxmlpdm.type.element.UserDataElementType;
-import tceav.manager.procedure.plmxmlpdm.type.element.ValidationCheckerType;
 import tceav.resources.*;
 
 /**
  *
  * @author nzr4dl
  */
-public class ActionlRenderer  implements TreeCellRenderer {
+public class HandlerRenderer  implements TreeCellRenderer {
     
     //Class Type
     protected static ImageIcon siteIcon;
@@ -38,6 +35,7 @@ public class ActionlRenderer  implements TreeCellRenderer {
     protected static ImageIcon businessRuleHandlerIcon;
     protected static ImageIcon businessRuleIcon;
     protected static ImageIcon workflowIcon;
+    protected static ImageIcon userValue;
 
     static {
         
@@ -49,6 +47,7 @@ public class ActionlRenderer  implements TreeCellRenderer {
             businessRuleHandlerIcon = ResourceLoader.getImage(ImageEnum.pmBusinessRuleHandler);
             businessRuleIcon = ResourceLoader.getImage(ImageEnum.pmBusinessRule);
             workflowIcon = ResourceLoader.getImage(ImageEnum.pmWorkflow);
+            userValue= ResourceLoader.getImage(ImageEnum.pmUserValue);
             
         } catch (Exception e) {
             System.out.println("Couldn't load images: " + e);
@@ -58,7 +57,7 @@ public class ActionlRenderer  implements TreeCellRenderer {
     /**
      * Creates a new instance of ProcedureTreeCellRenderer
      */
-    public ActionlRenderer() {
+    public HandlerRenderer() {
     }
     
     public Component getTreeCellRendererComponent(JTree tree, Object value, boolean isSelected, boolean expanded, boolean leaf, int row, boolean hasFocus){
@@ -68,8 +67,6 @@ public class ActionlRenderer  implements TreeCellRenderer {
         
         if(value == null)
             return cell;
-
-        UserDataType ud;
 
         switch(((IdBase)value).getTagType()) {
             case Site:
@@ -91,6 +88,7 @@ public class ActionlRenderer  implements TreeCellRenderer {
                 cell.setText(wh.getName());
                 cell.setToolTipText(wh.getName());
                 cell.setIcon(workflowHandlerIcon);
+                cell.setFont(cell.getFont().deriveFont(Font.BOLD));
                 break;
                 
             case WorkflowBusinessRuleHandler:
@@ -98,32 +96,41 @@ public class ActionlRenderer  implements TreeCellRenderer {
                 cell.setText(brh.getName());
                 cell.setToolTipText(brh.getName());
                 cell.setIcon(businessRuleHandlerIcon);
+                cell.setFont(cell.getFont().deriveFont(Font.BOLD));
                 break;
                 
             case WorkflowBusinessRule:
                 WorkflowBusinessRuleType wbr = (WorkflowBusinessRuleType)value;
-                cell.setText("Rule: "+wbr.getRuleQuorum());
-                cell.setToolTipText("Rule: "+wbr.getRuleQuorum());
+                cell.setText("Quorum Rule: "+wbr.getRuleQuorum());
+                cell.setToolTipText("Quorum Rule: "+wbr.getRuleQuorum());
                 cell.setIcon(businessRuleIcon);
                 break;
                 
             case WorkflowAction:
                 WorkflowActionType wa = (WorkflowActionType)value;
-                cell.setText("Action: "+wa.getType().getName());
-                cell.setToolTipText("Action: "+wa.getType().getName());
+                cell.setText(wa.getType().getName());
+                cell.setToolTipText(wa.getType().getName());
                 cell.setIcon(workflowActionIcon);
+                //cell.setFont(cell.getFont().deriveFont(Font.BOLD));
                 break;
             
+            case UserValue:
+                UserDataElementType udv = (UserDataElementType)value;
+                cell.setText(udv.getValue());
+                cell.setToolTipText(udv.getValue());
+                cell.setIcon(userValue);
+                break;
+                
             default:
                 cell.setText(value.toString());
                 cell.setToolTipText(value.toString());
                 cell.setIcon(workflowIcon);
                 break;
         }
-        
+        /*
         if (!leaf)
             cell.setFont(cell.getFont().deriveFont(Font.BOLD));
-        
+        */
         return cell;
     }
 }

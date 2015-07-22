@@ -1,5 +1,5 @@
 /*
- * XMLTableModel.java
+ * XMLTableData.java
  *
  * Created on 31 July 2007, 20:25
  *
@@ -33,18 +33,18 @@ import tceav.manager.procedure.plmxmlpdm.type.element.UserDataElementType;
  *
  * @author NZR4DL
  */
-public class XMLTableModel extends AbstractTableModel implements TableModel {
+public class XMLTableData extends AbstractTableModel implements TableModel {
     private IdBase data;
     //private ProcedureManager pm;
     
     /**
-     * Creates a new instance of XMLTableModel
+     * Creates a new instance of XMLTableData
      */
-    public XMLTableModel(IdBase data) {
+    public XMLTableData(IdBase data) {
         this.data = data;
     }
     
-    public XMLTableModel() {
+    public XMLTableData() {
         this(null);
     }
     

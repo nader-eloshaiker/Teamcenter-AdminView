@@ -3,7 +3,7 @@ package tceav.gui.access;
 import javax.naming.ldap.StartTlsRequest;
 import tceav.manager.access.AccessManager;
 import tceav.manager.access.RuleTreeNode;
-import tceav.manager.AbstractManager;
+import tceav.manager.ManagerAdapter;
 import tceav.utils.PatternMatch;
 import tceav.gui.*;
 import tceav.resources.*;

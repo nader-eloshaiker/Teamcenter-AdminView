@@ -27,7 +27,7 @@ public class XMLComponent extends JComponent {
     
     public XMLComponent() {
         super();
-        table = new JTableAdvanced(new XMLTableModel());
+        table = new JTableAdvanced(new XMLTableData());
         table.getTableHeader().setReorderingAllowed(false);        
     }
     
@@ -42,7 +42,7 @@ public class XMLComponent extends JComponent {
         
         if(dialog != null)
             if(dialog.isVisible()) {
-                table.setModel(new XMLTableModel(procedure));
+                table.setModel(new XMLTableData(procedure));
                 GUIutilities.packColumns(table, 2);
             }
     }
@@ -108,7 +108,7 @@ public class XMLComponent extends JComponent {
         dialog.setVisible(true);
 
         if(procedure != null) {
-            table.setModel(new XMLTableModel(procedure));
+            table.setModel(new XMLTableData(procedure));
             GUIutilities.packColumns(table, 2);
         }
         

@@ -15,7 +15,7 @@ import java.io.FileOutputStream;
 import java.io.File;
 import java.util.Properties;
 import tceav.resources.ResourceStrings;
-import tceav.manager.AbstractManager;
+import tceav.manager.ManagerAdapter;
 import tceav.gui.access.NamedRuleComponent;
 import tceav.gui.compare.CompareAccessManagerComponent;
 
@@ -101,7 +101,7 @@ public class Settings {
     
     private static String compareMode;
     private static final String PROPERTY_COMPAREMODE = "tcav.compareMode";
-    private static final String PROPERTY_COMPAREMODE_DEFAULT = AbstractManager.ACCESS_MANAGER_TYPE;
+    private static final String PROPERTY_COMPAREMODE_DEFAULT = ManagerAdapter.ACCESS_MANAGER_TYPE;
     
     
     /* properties access manager comparison */
