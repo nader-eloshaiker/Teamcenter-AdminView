@@ -21,11 +21,22 @@ public class AccessRule extends ArrayList<AccessControl>  implements CompareInte
     private String ruleName;
     private String ruleType;
     private ArrayList<RuleTreeNode> ruleTreeReference;
+    private AccessControlHeaderItem[] columns;
     
     /**
      * Creates a new instance of AccessRule
      */
     public AccessRule() {
+    }
+
+    @Override
+    public boolean add(AccessControl a) {
+        a.setColumns(columns);
+        return super.add(a);
+    }
+
+    public void setColumns(AccessControlHeaderItem[] c) {
+        columns = c;
     }
     
     public void setRule(String accessRule) {
@@ -42,6 +53,7 @@ public class AccessRule extends ArrayList<AccessControl>  implements CompareInte
         return ruleType;
     }
     
+    @Override
     public String toString() {
         return ruleName;
     }

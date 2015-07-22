@@ -36,15 +36,15 @@ public class ResourceStrings {
     }
     
     public static String getVersion() {
-        return "4.01";
+        return "5.00";
     }
     
     public static String getBuild() {
-        return "177";
+        return "179";
     }
     
     public static String getReleaseDate() {
-        return "12-Jan-09";
+        return "18-Sep-09";
     }
     
     public static String getApplicationName() {
@@ -71,7 +71,7 @@ public class ResourceStrings {
         return "Chris Gielens\n"+ 
                "Doug Schilling\n"+
                "Kevin Coykendal\n"+
-               "Vincent Mastrolorito";
+               "Annemie Witters";
     }
     
 }

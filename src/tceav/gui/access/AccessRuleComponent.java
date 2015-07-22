@@ -39,7 +39,7 @@ public class AccessRuleComponent extends JPanel {
     
     public AccessRuleComponent(AccessManager am, boolean compareMode) {
         super();
-        this.header = am.getAccessControlColumns();
+        this.header = am.getAccessRuleList().getAccessControlColumns();
         this.compareMode = compareMode;
 
         table = new JTableAdvanced();
