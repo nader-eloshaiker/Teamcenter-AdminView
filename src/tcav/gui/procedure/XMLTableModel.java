@@ -562,7 +562,7 @@ public class XMLTableModel extends AbstractTableModel implements TableModel {
             case 8:
                 if(columnIndex == 0)
                     return "Group Reference";
-                else 
+                else if(wsp.getGroupRef() != null)
                     return wsp.getGroupRef()+" "+wsp.getGroup().getName();
             default:
                 return null;

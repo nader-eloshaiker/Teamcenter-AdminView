@@ -22,11 +22,7 @@ public class MetaData {
     /**
      * Creates a new instance of MetaData
      */
-    public MetaData() {
-
-    }
-
-    public void setMetaData(String metaData) {
+    public MetaData(String metaData) {
         String[] temp;
         
         stringID = metaData;

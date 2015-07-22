@@ -13,6 +13,7 @@ import tcav.*;
 import tcav.gui.*;
 import tcav.procedure.*;
 import tcav.procedure.plmxmlpdm.base.IdBase;
+import tcav.resources.*;
 import tcav.utils.*;
 import tcav.xml.*;
 import javax.swing.*;
@@ -88,7 +89,9 @@ public class ProcedureManagerComponent extends JPanel implements TabbedPanel {
         // Action Tree
         treeAction = new JTreeAdvanced(new ActionTreeModel());
         treeAction.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-        treeAction.setCellRenderer(new ActionTreeCellRenderer());
+        treeAction.setCellRenderer(new ActionlRenderer());
+        if(treeAction.getRowHeight() < 18)
+            treeAction.setRowHeight(18);
         treeAction.addTreeSelectionListener(new TreeSelectionListener() {
             public void valueChanged(TreeSelectionEvent e) {
                 TreePath path = e.getPath();
@@ -148,7 +151,9 @@ public class ProcedureManagerComponent extends JPanel implements TabbedPanel {
         // Workflow Process Tree
         treeWorkflowProcess = new JTreeAdvanced(new ProcedureTreeModel(pm.getWorkflowProcesses(), pm.getSite(), Settings.getPMProcedureMode()));
         treeWorkflowProcess.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-        treeWorkflowProcess.setCellRenderer(new TagTreeCellRenderer());
+        treeWorkflowProcess.setCellRenderer(new ProcessRenderer());
+        if(treeWorkflowProcess.getRowHeight() < 18)
+            treeWorkflowProcess.setRowHeight(18);
         treeWorkflowProcess.addTreeSelectionListener(new TreeSelectionListener() {
             public void valueChanged(TreeSelectionEvent e) {
                 TreePath path = e.getPath();
@@ -221,7 +226,9 @@ public class ProcedureManagerComponent extends JPanel implements TabbedPanel {
         treeAttributes = new JTreeAdvanced(new AttributeTreeModel());
         treeAttributes.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         treeAttributes.setLargeModel(true);
-        treeAttributes.setCellRenderer(new TagTreeCellRenderer());
+        treeAttributes.setCellRenderer(new AttributelRenderer());
+        if(treeAttributes.getRowHeight() < 18)
+            treeAttributes.setRowHeight(18);
         treeAttributes.addTreeSelectionListener(new TreeSelectionListener() {
             public void valueChanged(TreeSelectionEvent e) {
                 TreePath path = e.getPath();
@@ -372,10 +379,10 @@ public class ProcedureManagerComponent extends JPanel implements TabbedPanel {
         ImageIcon iconCollapseAll = new ImageIcon();
         ImageIcon iconCollapseBelow = new ImageIcon();
         try {
-            iconExpandAll = new ImageIcon(ResourceLocator.getButtonImage("Expand-All.gif"));
-            iconExpandBelow = new  ImageIcon(ResourceLocator.getButtonImage("Expand-Below.gif"));
-            iconCollapseAll = new  ImageIcon(ResourceLocator.getButtonImage("Collapse-All.gif"));
-            iconCollapseBelow = new  ImageIcon(ResourceLocator.getButtonImage("Collapse-Below.gif"));
+            iconExpandAll = ResourceLoader.getImage(ImageEnum.utilExpandAll);
+            iconExpandBelow = ResourceLoader.getImage(ImageEnum.utilExpand);
+            iconCollapseAll = ResourceLoader.getImage(ImageEnum.utilCollapseAll);
+            iconCollapseBelow = ResourceLoader.getImage(ImageEnum.utilCollapse);
         } catch (Exception e) {
             System.out.println("Couldn't load images: " + e);
         }
@@ -394,8 +401,8 @@ public class ProcedureManagerComponent extends JPanel implements TabbedPanel {
                 GUIutilities.GAP_INSET));
         //toolbar.setFloatable(false);
         toolbar.add(buttonExpandAll);
-        toolbar.add(buttonExpandBelow);
         toolbar.add(buttonCollapseAll);
+        toolbar.add(buttonExpandBelow);
         toolbar.add(buttonCollapseBelow);
         
         return toolbar;
