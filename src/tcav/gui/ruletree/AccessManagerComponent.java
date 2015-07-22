@@ -416,20 +416,6 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
     protected JButton buttonNamedACLSearch;
     
     private JPanel createPanelNamedACL() {
-        /* Named ACL List Panel */
-        
-        ImageIcon iconFind = new ImageIcon();
-        ImageIcon iconReset = new ImageIcon();
-        ImageIcon iconAccessorType = new ImageIcon();
-        ImageIcon iconAccessorId = new ImageIcon();
-        try {
-            iconFind = new ImageIcon(ResourceLocator.getButtonImage("Find.gif"));
-            iconReset = new  ImageIcon(ResourceLocator.getButtonImage("Clear.gif"));
-            iconAccessorType = new  ImageIcon(ResourceLocator.getRultreeColumnImage("AccessorType.gif"));;
-            iconAccessorId = new  ImageIcon(ResourceLocator.getRultreeColumnImage("AccessorId.gif"));;
-        } catch (Exception e) {
-            System.out.println("Couldn't load images: " + e);
-        }
         
         JScrollPane namedAclComponentScroll = new JScrollPane();
         namedAclComponentScroll.setPreferredSize(new Dimension(400,250));
@@ -439,6 +425,36 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         panelRuleList.setLayout(new GridLayout(1,1));
         panelRuleList.add(namedAclComponentScroll);
         
+        tabNamedAcl = new JTabbedPane();
+        tabNamedAcl.add("Details",Utilities.createPanelMargined(createACLTabDetails()));
+        tabNamedAcl.add("Unused",Utilities.createPanelMargined(createACLTabMissing()));
+        tabNamedAcl.add("Sort",Utilities.createPanelMargined(createACLTabSort()));
+        tabNamedAcl.add("Filter",Utilities.createPanelMargined(createACLTabFilter()));
+        tabNamedAcl.add("Search",Utilities.createPanelMargined(createACLTabSearch()));
+        tabNamedAcl.add("Tree",createACLTabReferences());
+        tabNamedAcl.setSelectedIndex(Settings.getAMACLTab());
+        tabNamedAcl.addChangeListener(new ChangeListener(){
+            public void stateChanged(ChangeEvent e) {
+                Settings.setAMACLTab(tabNamedAcl.getSelectedIndex());
+            }
+        });
+        
+        
+        JPanel panelACL = new JPanel();
+        panelACL.setLayout(new BorderLayout(Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
+        panelACL.add("Center",panelRuleList);
+        panelACL.add("South",tabNamedAcl);
+        
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(1,1,Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
+        panel.setBorder(new TitledBorder(new EtchedBorder(), "Named ACL"));
+        panel.add(Utilities.createPanelMargined(panelACL));
+        
+        return panel;
+        
+    }
+    
+    private JPanel createACLTabDetails() {
         JPanel panelNamedACLDetailsLeft = new JPanel();
         panelNamedACLDetailsLeft.setLayout(new GridLayout(
                 am.getAccessRuleList().getACLTypes().size()+1,
@@ -468,7 +484,10 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         panelNamedACLDetails.add("West",panelNamedACLDetailsLeft);
         panelNamedACLDetails.add("Center",panelNamedACLDetailsRight);
         
-        
+        return panelNamedACLDetails;
+    }
+    
+    private JPanel createACLTabMissing() {
         JPanel panelNamedACLMissing = new JPanel();
         panelNamedACLMissing.setLayout(new BorderLayout(Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
         panelNamedACLMissing.add("West",new JLabel("Total Unused Named ACLs"));
@@ -505,7 +524,10 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         panelNamedACLMissingFull.add(listUnusedNamedACL);
         panelNamedACLMissingFull.add(new JPanel());
         
-        
+        return panelNamedACLMissingFull;
+    }
+    
+    private JPanel createACLTabSort() {
         boxFirstSort = new JComboBox(NamedRuleFilterSortTableModel.SORT_COLUMN_SELECTION);
         boxFirstSort.setSelectedIndex(tableDataFilterSortNamedACL.getSort(0));
         boxSecondSort = new JComboBox(NamedRuleFilterSortTableModel.SORT_COLUMN_SELECTION);
@@ -527,6 +549,14 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
                 tableNamedACL.repaint();
             }
         });
+
+        ImageIcon iconFind = new ImageIcon();
+        try {
+            iconFind = new ImageIcon(ResourceLocator.getButtonImage("Find.gif"));
+        } catch (Exception e) {
+            System.out.println("Couldn't load images: " + e);
+        }
+        buttonSortNamedACL.setIcon(iconFind);
         
         JPanel panelNamedACLSortTop = new JPanel();
         panelNamedACLSortTop.setLayout(new GridLayout(2,3,Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
@@ -545,7 +575,10 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         panelNamedACLSort.add("North",panelNamedACLSortTop);
         panelNamedACLSort.add("Center",panelNamedACLSortBottom);
         
-        
+        return panelNamedACLSort;
+    }
+    
+    private JPanel createACLTabFilter() {
         boxfilterType = new JComboBox();
         boxfilterType.addItem(null);
         for(int i=0; i<am.getAccessRuleList().getACLTypes().size(); i++)
@@ -593,6 +626,17 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
             }
         });
         
+        ImageIcon iconFind = new ImageIcon();
+        ImageIcon iconReset = new ImageIcon();
+        try {
+            iconFind = new ImageIcon(ResourceLocator.getButtonImage("Find.gif"));
+            iconReset = new  ImageIcon(ResourceLocator.getButtonImage("Clear.gif"));
+        } catch (Exception e) {
+            System.out.println("Couldn't load images: " + e);
+        }
+        buttonFilter.setIcon(iconFind);
+        buttonReset.setIcon(iconReset);
+
         JPanel panelNamedACLFilterTop = new JPanel();
         panelNamedACLFilterTop.setLayout(new GridLayout(2,3,Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
         panelNamedACLFilterTop.add(new JLabel("Match Type"));
@@ -610,6 +654,10 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         panelNamedACLFilter.add("North",panelNamedACLFilterTop);
         panelNamedACLFilter.add("Center",panelNamedACLFilterBottom);
         
+        return panelNamedACLFilter;
+    }
+    
+    private JPanel createACLTabSearch() {
         boxTypeAccessor = new JComboBox();
         boxTypeAccessor.addItem(null);
         for(int i=0; i<am.getAccessRuleList().getAccessorTypes().size(); i++)
@@ -678,6 +726,23 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
                 tableNamedACL.clearSelection();
             }
         });
+        
+        ImageIcon iconAccessorType = new ImageIcon();
+        ImageIcon iconAccessorId = new ImageIcon();
+        ImageIcon iconFind = new ImageIcon();
+        ImageIcon iconReset = new ImageIcon();
+        try {
+            iconFind = new ImageIcon(ResourceLocator.getButtonImage("Find.gif"));
+            iconReset = new  ImageIcon(ResourceLocator.getButtonImage("Clear.gif"));
+            iconAccessorType = new  ImageIcon(ResourceLocator.getRultreeColumnImage("AccessorType.gif"));;
+            iconAccessorId = new  ImageIcon(ResourceLocator.getRultreeColumnImage("AccessorId.gif"));;
+        } catch (Exception e) {
+            System.out.println("Couldn't load images: " + e);
+        }
+        buttonNamedACLSearch.setIcon(iconFind);
+        buttonNamedACLSearchReset.setIcon(iconReset);
+
+        
         JPanel panelSearchTop = new JPanel();
         panelSearchTop.setLayout(new GridLayout(2,2,Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
         panelSearchTop.add(new JLabel("Type of Accessor:", iconAccessorType, JLabel.LEFT));
@@ -695,7 +760,10 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         panelSearch.add("North",panelSearchTop);
         panelSearch.add("Center",panelSearchBottom);
         
-        
+        return panelSearch;
+    }
+    
+    private JPanel createACLTabReferences() {
         treeReferences = new JTreeAdvanced(new String[]{"Ruletree Reference","Nader Eloshaiker"});
         treeReferences.setRootVisible(false);
         treeReferences.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
@@ -708,41 +776,7 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         panelNamedACLReferences.setLayout(new GridLayout(1,1,Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
         panelNamedACLReferences.add(scrollReferences);
         
-        
-        buttonFilter.setIcon(iconFind);
-        buttonSortNamedACL.setIcon(iconFind);
-        buttonReset.setIcon(iconReset);
-        buttonNamedACLSearch.setIcon(iconFind);
-        buttonNamedACLSearchReset.setIcon(iconReset);
-        
-        
-        tabNamedAcl = new JTabbedPane();
-        tabNamedAcl.add("Details",Utilities.createPanelMargined(panelNamedACLDetails));
-        tabNamedAcl.add("Unused",Utilities.createPanelMargined(panelNamedACLMissingFull));
-        tabNamedAcl.add("Sort",Utilities.createPanelMargined(panelNamedACLSort));
-        tabNamedAcl.add("Filter",Utilities.createPanelMargined(panelNamedACLFilter));
-        tabNamedAcl.add("Search",Utilities.createPanelMargined(panelSearch));
-        tabNamedAcl.add("Tree",panelNamedACLReferences);
-        tabNamedAcl.setSelectedIndex(Settings.getAMACLTab());
-        tabNamedAcl.addChangeListener(new ChangeListener(){
-            public void stateChanged(ChangeEvent e) {
-                Settings.setAMACLTab(tabNamedAcl.getSelectedIndex());
-            }
-        });
-        
-        
-        JPanel panelACL = new JPanel();
-        panelACL.setLayout(new BorderLayout(Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
-        panelACL.add("Center",panelRuleList);
-        panelACL.add("South",tabNamedAcl);
-        
-        JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(1,1,Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
-        panel.setBorder(new TitledBorder(new EtchedBorder(), "Named ACL"));
-        panel.add(Utilities.createPanelMargined(panelACL));
-        
-        return panel;
-        
+        return panelNamedACLReferences;
     }
     
     private void updateReferences(AccessRule ar) {
@@ -760,6 +794,9 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
     private int ruleTreeSearchIndex = 0;
     private ArrayList<Integer> aclSearchResults = new ArrayList<Integer>();
     private int aclSearchIndex = 0;
+    private final int SEARCH_CONDITION_VALUE = 0;
+    private final int SEARCH_CONDITION = 1;
+    private final int SEARCH_VALUE = 2;
     
     private boolean findNextRuleTree(JTreeAdvanced tree) {
         ruleTreeSearchIndex++;
@@ -778,7 +815,27 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
     private boolean findRuleTree(JTreeAdvanced tree, String condition, String value) {
         ruleTreeSearchResults = new ArrayList<TreePath>();
         ruleTreeSearchIndex = 0;
-        findRuleTreeItems(tree, tree.getPathForRow(0), condition, value);
+        if((!condition.equals("")) && (!value.equals("")) )
+            findRuleTreeItems(
+                    tree,
+                    tree.getPathForRow(0),
+                    SEARCH_CONDITION_VALUE,
+                    condition,
+                    value);
+        else if(!condition.equals(""))
+            findRuleTreeItems(
+                    tree,
+                    tree.getPathForRow(0),
+                    SEARCH_CONDITION,
+                    condition,
+                    value);
+        else if(!value.equals(""))
+            findRuleTreeItems(
+                    tree,
+                    tree.getPathForRow(0),
+                    SEARCH_VALUE,
+                    condition,
+                    value);
         if(ruleTreeSearchResults.size() > 0) {
             tree.expandPath(ruleTreeSearchResults.get(ruleTreeSearchIndex));
             tree.setSelectionPath(ruleTreeSearchResults.get(ruleTreeSearchIndex));
@@ -791,30 +848,32 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
     /*
      * Both condition and value cannot be empty, either one or the other.
      */
-    private void findRuleTreeItems(JTreeAdvanced tree, TreePath parent, String condition, String value) {
+    private void findRuleTreeItems(JTreeAdvanced tree, TreePath parent, int searchBias, String condition, String value) {
         // Traverse children
         AccessManagerItem amItem = (AccessManagerItem)parent.getLastPathComponent();
         Boolean matched = false;
         
-        if(!matched)
-            matched = isMatched(amItem.getCondition(), condition);
-        
-        if(!matched)
-            matched = isMatched(amItem.getValue(), value);
-        
-        if(!matched)
-            matched = isMatched(amItem.getAccessRuleName(), value);
-        
+        switch(searchBias) {
+            case SEARCH_CONDITION_VALUE:
+                matched = isMatched(amItem.getCondition(), condition) & ( (isMatched(amItem.getValue(), value) | isMatched(amItem.getAccessRuleName(), value)) );
+                break;
+            case SEARCH_CONDITION:
+                matched = isMatched(amItem.getCondition(), condition);
+                break;
+            case SEARCH_VALUE:
+                matched = isMatched(amItem.getValue(), value) | isMatched(amItem.getAccessRuleName(), value);
+                break;
+            default:
+                matched = false;
+        }
         if(matched)
             ruleTreeSearchResults.add(parent);
         
         int childCount = tree.getModel().getChildCount(amItem);
-        //if (node.getChildCount() >= 0) {
         if(childCount > 0) {
-            //for (Enumeration e=node.children(); e.hasMoreElements(); ) {
             for (int e=0; e<childCount; e++ ) {
                 TreePath path = parent.pathByAddingChild(tree.getModel().getChild(amItem, e));
-                findRuleTreeItems(tree, path, condition, value);
+                findRuleTreeItems(tree, path, searchBias, condition, value);
             }
         }
     }
@@ -840,7 +899,25 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
     private boolean findNamedACL(JTableAdvanced table, String accessorType, String accessorId) {
         aclSearchResults = new ArrayList<Integer>();
         aclSearchIndex = 0;
-        findNamedACLItems(table, accessorType, accessorId);
+        if((!accessorType.equals("")) && (!accessorId.equals("")) )
+            findNamedACLItems(
+                    table,
+                    SEARCH_CONDITION_VALUE,
+                    accessorType,
+                    accessorId);
+        else if(!accessorType.equals(""))
+            findNamedACLItems(
+                    table,
+                    SEARCH_CONDITION,
+                    accessorType,
+                    accessorId);
+        else if(!accessorId.equals(""))
+            findNamedACLItems(
+                    table,
+                    SEARCH_VALUE,
+                    accessorType,
+                    accessorId);
+        
         if(aclSearchResults.size() > 0) {
             table.setRowSelectionInterval(aclSearchResults.get(aclSearchIndex),aclSearchResults.get(aclSearchIndex));
             table.getSelectionModel().setAnchorSelectionIndex(aclSearchResults.get(aclSearchIndex));
@@ -857,7 +934,7 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
     /*
      * Both condition and value cannot be empty, either one or the other.
      */
-    private void findNamedACLItems(JTableAdvanced table, String accessorType, String accessorId) {
+    private void findNamedACLItems(JTableAdvanced table, int searchBias, String accessorType, String accessorId) {
         Boolean matched;
         AccessRule ar;
         int index;
@@ -867,13 +944,20 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
             index = tableDataFilterSortNamedACL.getDataIndex(i);
             ar = am.getAccessRuleList().elementAt(index);
             for(int j=0; j<ar.size(); j++) {
-                if(!matched)
-                    matched = isMatched(ar.elementAt(j).getTypeOfAccessor(), accessorType);
-                
-                if(!matched)
-                    matched = isMatched(ar.elementAt(j).getIdOfAccessor(), accessorId);
-                
-                if(matched)
+                switch(searchBias) {
+                    case SEARCH_CONDITION_VALUE:
+                        matched = isMatched(ar.elementAt(j).getTypeOfAccessor(), accessorType) & isMatched(ar.elementAt(j).getIdOfAccessor(), accessorId);
+                        break;
+                    case SEARCH_CONDITION:
+                        matched = isMatched(ar.elementAt(j).getTypeOfAccessor(), accessorType);
+                        break;
+                    case SEARCH_VALUE:
+                        matched = isMatched(ar.elementAt(j).getIdOfAccessor(), accessorId);
+                        break;
+                    default:
+                        matched = false;
+                }
+                if (matched)
                     break;
             }
             if(matched)

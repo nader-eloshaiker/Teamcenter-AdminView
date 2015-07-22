@@ -283,7 +283,7 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
         toolBarWorkflowTreeTop.addSeparator();
         toolBarWorkflowTreeTop.add(buttonExpandDependTask);
         toolBarWorkflowTreeTop.add(buttonExpandSubTask);
-
+        
         JToolBar toolBarWorkflowTreeBottom = new JToolBar();
         toolBarWorkflowTreeBottom.setMargin(new Insets(
                 Utilities.GAP_INSET,
@@ -497,6 +497,9 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
     
     private int workflowSearchIndex;
     private ArrayList<TreePath> workflowSearchResults;
+    private final int SEARCH_CONDITION_VALUE = 0;
+    private final int SEARCH_CONDITION = 1;
+    private final int SEARCH_VALUE = 2;
     
     private boolean findNextProcedure(JTreeAdvanced tree) {
         workflowSearchIndex++;
@@ -515,7 +518,27 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
     private boolean findProcedure(JTreeAdvanced tree, String condition, String value) {
         workflowSearchResults = new ArrayList<TreePath>();
         workflowSearchIndex = 0;
-        findProcedureItems(tree, tree.getPathForRow(0), condition, value);
+        if((!condition.equals("")) && (!value.equals("")) )
+            findProcedureItems(
+                    tree,
+                    tree.getPathForRow(0),
+                    SEARCH_CONDITION_VALUE,
+                    condition,
+                    value);
+        else if(!condition.equals(""))
+            findProcedureItems(
+                    tree,
+                    tree.getPathForRow(0),
+                    SEARCH_CONDITION,
+                    condition,
+                    value);
+        else if(!value.equals(""))
+            findProcedureItems(
+                    tree,
+                    tree.getPathForRow(0),
+                    SEARCH_VALUE,
+                    condition,
+                    value);
         if(workflowSearchResults.size() > 0) {
             tree.expandPath(workflowSearchResults.get(workflowSearchIndex));
             tree.setSelectionPath(workflowSearchResults.get(workflowSearchIndex));
@@ -528,27 +551,31 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
     /*
      * Both condition and value cannot be empty, either one or the other.
      */
-    private void findProcedureItems(JTreeAdvanced tree, TreePath parent, String condition, String value) {
+    private void findProcedureItems(JTreeAdvanced tree, TreePath parent, int searchBias, String condition, String value) {
         // Traverse children
         NodeReference nr = (NodeReference)parent.getLastPathComponent();
         Boolean matched = false;
-        
-        if(!matched)
-            matched = isMatched(nr.getClassType().value(), condition);
-        
-        if(!matched)
-            matched = isMatched(nr.getName(), value);
-        
+        switch(searchBias) {
+            case SEARCH_CONDITION_VALUE:
+                matched = isMatched(nr.getClassType().value(), condition) & isMatched(nr.getName(), value);
+                break;
+            case SEARCH_CONDITION:
+                matched = isMatched(nr.getClassType().value(), condition);
+                break;
+            case SEARCH_VALUE:
+                matched = isMatched(nr.getName(), value);
+                break;
+            default:
+                matched = false;
+        }
         if(matched)
             workflowSearchResults.add(parent);
         
         int childCount = tree.getModel().getChildCount(nr);
-        //if (node.getChildCount() >= 0) {
         if(childCount > 0) {
-            //for (Enumeration e=node.children(); e.hasMoreElements(); ) {
             for (int e=0; e<childCount; e++ ) {
                 TreePath path = parent.pathByAddingChild(tree.getModel().getChild(nr, e));
-                findProcedureItems(tree, path, condition, value);
+                findProcedureItems(tree, path, searchBias, condition, value);
             }
         }
     }
