@@ -10,6 +10,8 @@
 package tcav.gui.procedure.analysis;
 
 import java.util.Vector;
+import tcav.manager.procedure.plmxmlpdm.type.WorkflowHandlerType;
+import tcav.manager.procedure.plmxmlpdm.type.UserDataType;
 
 /**
  *
@@ -22,58 +24,46 @@ public class ColumnHeader extends Vector<ColumnHeaderEntry> {
         super();
     }
     
-    public boolean contains(String name) {
-        return indexOf(name, null, 0) >= 0;
+    public boolean contains(WorkflowHandlerType wh) {
+        return indexOf(wh, null, 0) >= 0;
     }
     
-    public boolean contains(String name, String value) {
-        return indexOf(name, value, 0) >= 0;
+    public boolean contains(WorkflowHandlerType wh, UserDataType ud) {
+        return indexOf(wh, ud, 0) >= 0;
     }
     
-    public int indexOf(String name) {
-        return indexOf(name, null, 0);
+    public int indexOf(WorkflowHandlerType wh) {
+        return indexOf(wh, null, 0);
     }
     
-    public int indexOf(String name, String value) {
-        return indexOf(name, value, 0);
+    public int indexOf(WorkflowHandlerType wh, UserDataType ud) {
+        return indexOf(wh, ud, 0);
     }
     
-    public synchronized int indexOf(String name, String value, int index) {
-        if (value == null) {
-            for (int i = index ; i < super.size() ; i++)
-                if (name.equals(get(i).NAME) && get(i).VALUE==null)
-                    return i;
-        } else {
-            for (int i = index ; i < super.size() ; i++){
-                if (name.equals(get(i).NAME) && value.equals(get(i).VALUE)) 
-                    return i;
-                
-            }
-        }
+    public synchronized int indexOf(WorkflowHandlerType wh, UserDataType ud, int index) {
+        for (int i = index ; i < super.size() ; i++)
+            if (get(i).equals(wh, ud))
+                return i;
+        
         return -1;
     }
     
-    public synchronized int lastIndexOf(String name) {
-        return lastIndexOf(name, null, size()-1);
+    public synchronized int lastIndexOf(WorkflowHandlerType wh) {
+        return lastIndexOf(wh, null, size()-1);
     }
     
-    public synchronized int lastIndexOf(String name, String value) {
-        return lastIndexOf(name, value, size()-1);
+    public synchronized int lastIndexOf(WorkflowHandlerType wh, UserDataType ud) {
+        return lastIndexOf(wh, ud, size()-1);
     }
     
-    public synchronized int lastIndexOf(String name, String value, int index) {
+    public synchronized int lastIndexOf(WorkflowHandlerType wh, UserDataType ud, int index) {
         if (index >= size())
             throw new IndexOutOfBoundsException(index + " >= "+ size());
         
-        if (value == null) {
-            for (int i = index; i >= 0; i--)
-                if (name.equals(get(i).NAME))
-                    return i;
-        } else {
-            for (int i = index; i >= 0; i--)
-                if (name.equals(get(i).NAME) && value.equals(get(i).VALUE)) 
-                    return i;
-        }
+        for (int i = index; i >= 0; i--)
+            if (get(i).equals(wh, ud))
+                return i;
+        
         return -1;
     }
     

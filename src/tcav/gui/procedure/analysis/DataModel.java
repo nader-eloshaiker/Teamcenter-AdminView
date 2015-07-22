@@ -22,14 +22,13 @@ import tcav.manager.procedure.plmxmlpdm.TagTypeEnum;
 public class DataModel implements TableModel {
     
     private ColumnHeader header;
-    private ArrayList <WorkflowTemplateType>workflowList;
+    private ArrayList<WorkflowTemplateType> workflowList;
     
     /**
      * Creates a new instance of DataModel
      */
     public DataModel(ProcedureManager pm) {
         header = new ColumnHeader();
-        header.add(new ColumnHeaderEntry("Procedure Name"));
         workflowList = new ArrayList<WorkflowTemplateType>();
         
         for (int i=0; i<pm.getWorkflowProcesses().size(); i++) {
@@ -40,22 +39,21 @@ public class DataModel implements TableModel {
     private void scanWorkflowTemplate(WorkflowTemplateType wt) {
         workflowList.add(wt);
         WorkflowHandlerType[] wh;
+        UserDataType ud;
         int index;
         
         for(int i=0; i<wt.getActions().length; i++) {
             wh = wt.getActions()[i].getActionHandlers();
             for(int j=0; j<wh.length; j++) {
-                if(!header.contains(wh[j].getName()))
-                    header.add(new ColumnHeaderEntry(wh[j].getName()));
+                if(!header.contains(wh[j]))
+                    header.add(new ColumnHeaderEntry(wh[j]));
                 
                 for(int k=0; k<wh[j].getAttribute().size(); k++) {
                     if(wh[j].getAttribute().get(k).getTagType() == TagTypeEnum.Arguments) {
-                        UserDataType ud = (UserDataType)wh[j].getAttribute().get(k);
-                        for(int l=0; l<ud.getUserValue().size(); l++) {
-                            if(!header.contains(wh[j].getName(), ud.getUserValue().get(l).getValue())) {
-                                index = header.lastIndexOf(wh[j].getName());
-                                header.insertElementAt(new ColumnHeaderEntry(wh[j].getName(), ud.getUserValue().get(l).getValue()), index+1);
-                            }
+                        ud = (UserDataType)wh[j].getAttribute().get(k);
+                        if(!header.contains(wh[j], ud)) {
+                            index = header.lastIndexOf(wh[j]);
+                            header.insertElementAt(new ColumnHeaderEntry(wh[j], ud), index+1);
                         }
                     }
                 }
@@ -64,22 +62,6 @@ public class DataModel implements TableModel {
         
         for(int k=0; k<wt.getSubTemplates().length; k++)
             scanWorkflowTemplate(wt.getSubTemplates()[k]);
-    }
-    
-    public String getIndent(int rowIndex) {
-        WorkflowTemplateType wt = workflowList.get(rowIndex).getParentSubTaskTemplate();
-        int indent = 0;
-        
-        while(wt != null) {
-            wt = wt.getParentSubTaskTemplate();
-            indent++;
-        }
-        
-        String s = "";
-        for (int i=0; i<indent; i++)
-            s = s + "    ";
-        
-        return s;
     }
     
     public Class getColumnClass(int columnIndex) {
@@ -110,29 +92,25 @@ public class DataModel implements TableModel {
         
         WorkflowTemplateType wt = workflowList.get(rowIndex);
         WorkflowHandlerType[] wh;
-        
-        if(columnIndex == 0)
-            return getIndent(rowIndex) + wt.getName();
+        UserDataType ud;
         
         ColumnHeaderEntry entry = getColumn(columnIndex);
+        
         for(int i=0; i<wt.getActions().length; i++) {
             wh = wt.getActions()[i].getActionHandlers();
             for(int j=0; j<wh.length; j++) {
-                if(entry.NAME.equals(wh[j].getName())) {
-                    if(entry.VALUE == null) {
+                if(entry.equals(wh[j])) {
+                    if(entry.isArgumentsEmpty()) {
                         return "y";
-                    } else {
+                    } else if (wh[j].getAttribute().size() > 0) {
                         for(int k=0; k<wh[j].getAttribute().size(); k++) {
                             if(wh[j].getAttribute().get(k).getTagType() == TagTypeEnum.Arguments) {
-                                UserDataType ud = (UserDataType)wh[j].getAttribute().get(k);
-                                for(int l=0; l<ud.getUserValue().size(); l++) {
-                                    if(entry.NAME.equals(wh[j].getName()) && entry.VALUE.equals(ud.getUserValue().get(l).getValue())) {
-                                        return "y";
-                                    }
+                                ud = (UserDataType)wh[j].getAttribute().get(k);
+                                if(entry.equals(wh[j], ud)) {
+                                    return "y";
                                 }
                             }
                         }
-                        
                     }
                 }
             }
@@ -142,24 +120,61 @@ public class DataModel implements TableModel {
         
     }
     
-    /**********************
-     * Unused methods
-     **********************/
-    
-    public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return false;
-    }
-    
-    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+    public TableModel createRowHeaderModel() {
         
+        return new RowHeaderModel(workflowList);
     }
     
-    public void removeTableModelListener(TableModelListener l) {
+    private class RowHeaderModel implements TableModel {
+        private String[] rowHeader;
         
+        public RowHeaderModel(ArrayList<WorkflowTemplateType> rowList) {
+            rowHeader = new String[rowList.size()];
+            for(int i=0; i<rowList.size(); i++)
+                rowHeader[i] = getIndent(rowList.get(i)) + rowList.get(i).getName();
+        }
+        
+        public Class getColumnClass(int columnIndex) { return String.class; }
+        
+        public int getColumnCount() { return 1; }
+        
+        public String getColumnName(int columnIndex) { return "Procedure Name"; }
+        
+        public int getRowCount() { return rowHeader.length; }
+        
+        public Object getValueAt(int rowIndex, int columnIndex) { return rowHeader[rowIndex]; }
+        
+        public boolean isCellEditable(int rowIndex, int columnIndex) { return false; }
+        
+        public void setValueAt(Object aValue, int rowIndex, int columnIndex) { }
+        
+        public void removeTableModelListener(TableModelListener l) { }
+        
+        public void addTableModelListener(TableModelListener l) { }
+        
+        private String getIndent(WorkflowTemplateType wt) {
+            WorkflowTemplateType tmp = wt.getParentSubTaskTemplate();
+            int indent = 0;
+            
+            while(tmp != null) {
+                tmp = tmp.getParentSubTaskTemplate();
+                indent++;
+            }
+            
+            String s = "";
+            for (int i=0; i<indent; i++)
+                s = s + "    ";
+            
+            return s;
+        }
     }
     
-    public void addTableModelListener(TableModelListener l) {
-        
-    }
+    public boolean isCellEditable(int rowIndex, int columnIndex) { return false; }
+    
+    public void setValueAt(Object aValue, int rowIndex, int columnIndex) { }
+    
+    public void removeTableModelListener(TableModelListener l) { }
+    
+    public void addTableModelListener(TableModelListener l) { }
     
 }

@@ -1,7 +1,7 @@
 /*
- * CellRenderer.java
+ * RowHeaderCellRenderer.java
  *
- * Created on 11 May 2008, 13:28
+ * Created on 13 May 2008, 17:31
  *
  * To change this template, choose Tools | Template Manager
  * and open the template in the editor.
@@ -17,20 +17,13 @@ import java.awt.*;
 
 /**
  *
- * @author NZR4DL
+ * @author nzr4dl
  */
-public class CellRenderer extends TableShadedRenderer implements TableCellRenderer {
+public class RowHeaderCellRenderer extends TableShadedRenderer implements TableCellRenderer {
     
-    static protected ImageIcon yesIcon;
-    
-    
-    static
-    {
-        try {
-            yesIcon = ResourceLoader.getImage(ImageEnum.amYes);
-        } catch (Exception e) {
-            System.out.println("Couldn't load images: " + e);
-        }
+    public RowHeaderCellRenderer getRenderer() {
+        super.getTableCellRendererComponent(new JTable(), "", false, false, 0, 0);
+        return this;
     }
     
     public Component getTableCellRendererComponent(JTable table,
@@ -40,13 +33,10 @@ public class CellRenderer extends TableShadedRenderer implements TableCellRender
         
         String s = (String)value;
         
-        setValue(null);
-        setHorizontalAlignment(SwingConstants.CENTER);
-        setVerticalAlignment(SwingConstants.CENTER);
-        if(s.equals("y"))
-            setIcon(yesIcon);
-        else
-            setIcon(null);
+        if(!s.startsWith(" "))
+            this.setFont(this.getFont().deriveFont(Font.BOLD));
+        setHorizontalAlignment(SwingConstants.LEFT);
+        setVerticalAlignment(SwingConstants.BOTTOM);
         
         return this;
     }

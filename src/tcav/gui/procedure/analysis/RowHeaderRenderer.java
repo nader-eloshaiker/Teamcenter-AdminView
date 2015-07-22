@@ -1,7 +1,7 @@
 /*
- * ColumnHeaderRenderer.java
+ * RowHeaderRenderer.java
  *
- * Created on 10 May 2008, 08:38
+ * Created on 13 May 2008, 17:30
  *
  * To change this template, choose Tools | Template Manager
  * and open the template in the editor.
@@ -22,9 +22,16 @@ import javax.swing.SwingConstants;
 
 /**
  *
- * @author NZR4DL
+ * @author nzr4dl
  */
-public class ColumnHeaderRenderer implements TableCellRenderer {
+public class RowHeaderRenderer implements TableCellRenderer {
+    
+    public static DefaultTableCellRenderer getRenderer() {
+        JTable table = new JTable();
+        TableCellRenderer temp = table.getTableHeader().getDefaultRenderer();
+        DefaultTableCellRenderer cell = (DefaultTableCellRenderer)temp.getTableCellRendererComponent(table, "", false, false, 0, 0);
+        return cell;
+    }
     
     public Component getTableCellRendererComponent(JTable table,
             Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -36,16 +43,13 @@ public class ColumnHeaderRenderer implements TableCellRenderer {
         TableCellRenderer temp = table.getTableHeader().getDefaultRenderer();
         DefaultTableCellRenderer cell = (DefaultTableCellRenderer)temp.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         
-        cell.setText(null);
-        
-        if(!entry.startsWith(ColumnHeaderEntry.ARGUMENT_PREFIX))
+        if(!entry.startsWith(" "))
             cell.setFont(cell.getFont().deriveFont(Font.BOLD));
         else
             cell.setFont(cell.getFont().deriveFont(Font.PLAIN));
         
-        cell.setIcon(new RotatedTextIcon(RotatedTextIcon.LEFT, cell.getFont(), entry));
+        cell.setText(entry);
         cell.setVerticalAlignment(SwingConstants.BOTTOM);
-        cell.setHorizontalAlignment(SwingConstants.CENTER);
         cell.setToolTipText(entry);
         
         return cell;
