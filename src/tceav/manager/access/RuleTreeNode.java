@@ -99,6 +99,7 @@ public class RuleTreeNode implements CompareInterface {
         return indentLevel;
     }
     
+    @Override
     public String toString() {
         String s = condition+"( "+value+" )";
         

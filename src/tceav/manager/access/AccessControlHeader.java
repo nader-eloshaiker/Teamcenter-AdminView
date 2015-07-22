@@ -8,53 +8,52 @@
  */
 package tceav.manager.access;
 
-import tceav.resources.ImageEnum;
-
 /**
  *
  * @author NZR4DL
  */
 public class AccessControlHeader {
     
-    private AccessControlHeaderItem[] column;
+    private AccessControlHeaderItem[] columns;
     
     /**
      * Creates a new instance of AccessControlHeader
      */
     public AccessControlHeader(String str) {
         String[] s = str.split("!");
-        column = new AccessControlHeaderItem[s.length+2];
-        column[0] = new AccessControlHeaderItem(AccessControlHeaderEnum.AccessorType);
-        column[1] = new AccessControlHeaderItem(AccessControlHeaderEnum.AccessorID);
+        columns = new AccessControlHeaderItem[s.length+2];
+        columns[0] = new AccessControlHeaderItem(AccessControlHeaderEnum.AccessorType);
+        columns[1] = new AccessControlHeaderItem(AccessControlHeaderEnum.AccessorID);
         
         for (int i=0; i<s.length; i++)
-            column[i+2] = new AccessControlHeaderItem(AccessControlHeaderEnum.fromValue(s[i]));
+            columns[i+2] = new AccessControlHeaderItem(AccessControlHeaderEnum.fromValue(s[i]));
         
     }
     
     public AccessControlHeaderItem getColumn(int index) {
-        return column[index];
+        return columns[index];
     }
     
     public AccessControlHeaderItem[] getColumns() {
-        return column;
+        return columns;
     }
     
     public int size() {
-        return column.length;
+        return columns.length;
     }
     
+    @Override
     public String toString() {
         String s = "";
-        for(int i=0; i<column.length; i++)
-            s += column[i].value()+"!";
+        for(int i=0; i<columns.length; i++)
+            s += columns[i].value()+"!";
         return s;
     }
     
     public String generateExportString() {
         String s = "";
-        for(int i=2; i<column.length; i++)
-            s += column[i].value()+"!";
+        for(int i=2; i<columns.length; i++)
+            s += columns[i].value()+"!";
         return s;
     }
 }

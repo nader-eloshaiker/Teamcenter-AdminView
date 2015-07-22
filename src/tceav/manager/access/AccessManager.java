@@ -24,7 +24,6 @@ import tceav.manager.ManagerAdapter;
 public class AccessManager extends ManagerAdapter {
 
     private MetaData metaData;
-    private AccessControlHeader acHeader;
     private AccessRuleList arList;
     private ArrayList<AccessRule> unusedRules;
     private RuleTreeNode rootTreeNode;
@@ -68,10 +67,6 @@ public class AccessManager extends ManagerAdapter {
         return unusedRules;
     }
 
-    public AccessControlHeader getAccessControlColumns() {
-        return acHeader;
-    }
-
     public RuleTreeNode getAccessTree() {
         return rootTreeNode;
     }
@@ -98,10 +93,12 @@ public class AccessManager extends ManagerAdapter {
         this.file = file;
 
         String thisLine;
-        String ruleMetaData = "";
+        String ruleMetaData = new String();
         int readMode = MODE_METADATA_AND_ACCESS_CONTROL_HEADER;
         int ruleTreeIndex = 0;
+
         AccessRule accessRule = new AccessRule();
+        //arList.add(accessRule);
 
         RuleTreeNode newNode;
         RuleTreeNode currentNode = new RuleTreeNode();
@@ -120,15 +117,15 @@ public class AccessManager extends ManagerAdapter {
                 case MODE_METADATA_AND_ACCESS_CONTROL_HEADER:
                     if (thisLine.startsWith("#")) {
 
-                        if (ruleMetaData.length() > 0) {
+                        if (ruleMetaData.length() > 0)
                             ruleMetaData += "\n";
-                        }
+
                         ruleMetaData += thisLine;
                     } else {
                         if (ruleMetaData != null) {
                             metaData = new MetaData(ruleMetaData);
                             if (thisLine.length() != 0) {
-                                acHeader = new AccessControlHeader(thisLine);
+                                arList.createAccessControlColumns(thisLine);
                                 readMode = MODE_ACCESS_CONTROL;
                             } else {
                                 readMode = MODE_CORRUPTED_FILE;
@@ -144,14 +141,11 @@ public class AccessManager extends ManagerAdapter {
                         thisLine = br.readLine();
                         if (thisLine != null) {
                             if (thisLine.length() == 0) {
-                                arList.add(accessRule);
                                 readMode = MODE_RULE_TREE;
                             } else {
-                                if (accessRule.toString() != null) {
-                                    arList.add(accessRule);
-                                }
                                 accessRule = new AccessRule();
                                 accessRule.setRule(thisLine);
+                                arList.add(accessRule);
                             }
                         } else {
                             readMode = MODE_UNEXPECTED_EOF;
@@ -204,6 +198,9 @@ public class AccessManager extends ManagerAdapter {
 
                 case MODE_CORRUPTED_FILE:
                     throw new IOException("Corrupted File");
+
+                default:
+                    break;
             }
 
         } // end while
@@ -227,7 +224,7 @@ public class AccessManager extends ManagerAdapter {
         RuleTreeNode amItem;
 
         s = "MetaData:\n" + metaData.toString() + "\n" +
-                "Access Control acHeader:\n" + acHeader.toString() + "\n" +
+                "Access Control acHeader:\n" + arList.getAccessControlColumns().toString() + "\n" +
                 "Access Rules:\n";
 
         for (int i = 0; i < arList.size(); i++) {

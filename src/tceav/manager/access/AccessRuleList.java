@@ -21,6 +21,7 @@ public class AccessRuleList extends ArrayList<AccessRule>{
     private ArrayList<String> aclTypes;
     private Hashtable<String, Integer> aclTypeSize;
     private ArrayList<String> accessorTypes;
+    private AccessControlHeader acHeader;
     
     /** Creates a new instance of AccessRuleList */
     public AccessRuleList() {
@@ -29,7 +30,15 @@ public class AccessRuleList extends ArrayList<AccessRule>{
         aclTypeSize = new Hashtable<String,Integer>();
         accessorTypes = new ArrayList<String>();
     }
+
+    public void createAccessControlColumns(String s) {
+        acHeader = new AccessControlHeader(s);
+    }
     
+    public AccessControlHeader getAccessControlColumns() {
+        return acHeader;
+    }
+
     public boolean contains(String s) {
         return indexOf(s, 0) >= 0;
     }
@@ -56,7 +65,9 @@ public class AccessRuleList extends ArrayList<AccessRule>{
         return get(indexOf(s.trim()));
     }
     
+    @Override
     public boolean add(AccessRule ar){
+        ar.setColumns(acHeader.getColumns());
         String s = ar.getRuleType();
         
         if(aclTypes.indexOf(s) == -1){
