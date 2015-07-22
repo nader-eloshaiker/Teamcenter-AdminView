@@ -52,11 +52,11 @@ public class ResourceLocator {
     }
     
     public static String getVersion() {
-        return "0.1.14 Beta 1 Build 14";
+        return "0.1.15 Beta 1 Build 15";
     }
     
     public static String getReleaseDate() {
-        return "20-Aug-07";
+        return "24-Aug-07";
     }
     
     public static String getApplicationName() {

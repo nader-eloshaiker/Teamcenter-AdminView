@@ -292,10 +292,15 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         //AccessManagerItem amItem = (AccessManagerItem)node.getUserObject();
         AccessManagerItem amItem = (AccessManagerItem)parent.getLastPathComponent();
         Boolean matched = false;
+
+        if(!matched)
+            matched = isMatched(amItem.getCondition(), condition);
         
-        matched = isMatched(amItem.getCondition(), condition);
-        matched = isMatched(amItem.getValue(), value);
-        matched = isMatched(amItem.getAccessRuleName(), value);
+        if(!matched)
+            matched = isMatched(amItem.getValue(), value);
+        
+        if(!matched)
+            matched = isMatched(amItem.getAccessRuleName(), value);
         
         if(matched)
             ruleTreeSearchResults.add(parent);
