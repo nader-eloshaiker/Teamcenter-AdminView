@@ -388,7 +388,7 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         }
         
         textSearchValue = new JTextField();
-        textSearchValue.setOpaque(false);
+        //textSearchValue.setOpaque(false);
         textSearchValue.setToolTipText("Ruletree Value: * ? [ - ] accepted");
         textSearchValue.setColumns(6);
         

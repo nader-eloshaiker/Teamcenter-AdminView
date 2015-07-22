@@ -122,6 +122,7 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
         buttonGroup.setSelected(radioCollapseActions.getModel(),!Settings.getPMActionExpandedView());
         
         JToolBar toolbar = createTreeToolbar(treeAction);
+        toolbar.addSeparator();
         toolbar.add(new JLabel("Default View:"));
         toolbar.add(radioExpandActions);
         toolbar.add(radioCollapseActions);
@@ -315,7 +316,7 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
             Utilities.expandTree(treeAction, parentFrame);
     }
     
-    private JToolBar createTreeToolbar(JTreeAdvanced tree) {
+    public JToolBar createTreeToolbar(JTreeAdvanced tree) {
         JButton buttonExpandBelow = new JButton();
         buttonExpandBelow.setOpaque(false);
         buttonExpandBelow.setToolTipText("Expand Below");
