@@ -250,6 +250,8 @@ public class ProcedureManager extends AbstractManager {
         for(int i=0; i<order.size(); i++) {
             counter--;
             for(int j=0; j<wt.getSubTemplates().length; j++) {
+                if(i == j)
+                    continue;
                 if(order.get(counter).equals(wt.getSubTemplates()[j].getId())) {
                    tmp =  wt.getSubTemplates()[i];
                    wt.getSubTemplates()[i] = wt.getSubTemplates()[j];

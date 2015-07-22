@@ -91,6 +91,12 @@ public class Settings {
     private static boolean pmTblShowActions;
     private static final String PROPERTY_PM_TBL_SHOWACTIONS = "tcav.pm.tbl.showActions";
     private static final boolean PROPERTY_PM_TBL_SHOWACTIONS_DEFAULT = true;
+    private static boolean pmTblIncludeIndents;
+    private static final String PROPERTY_PM_TBL_INCLUDEINDENTS = "tcav.pm.tbl.includeIndents";
+    private static final boolean PROPERTY_PM_TBL_INCLUDEINDENTS_DEFAULT = true;
+    private static boolean pmTblIncludeIds;
+    private static final String PROPERTY_PM_TBL_INCLUDEIDS = "tcav.pm.tbl.includeIds";
+    private static final boolean PROPERTY_PM_TBL_INCLUDEIDS_DEFAULT = true;
 
     
     private static String compareMode;
@@ -269,6 +275,14 @@ public class Settings {
                 getPropertyAsBoolean(
                 PROPERTY_PM_TBL_SHOWACTIONS,
                 PROPERTY_PM_TBL_SHOWACTIONS_DEFAULT));
+        setPmTblIncludeIndents(
+                getPropertyAsBoolean(
+                PROPERTY_PM_TBL_INCLUDEINDENTS,
+                PROPERTY_PM_TBL_INCLUDEINDENTS_DEFAULT));
+        setPmTblIncludeIds(
+                getPropertyAsBoolean(
+                PROPERTY_PM_TBL_INCLUDEIDS,
+                PROPERTY_PM_TBL_INCLUDEIDS_DEFAULT));
         
     }
     
@@ -368,6 +382,12 @@ public class Settings {
         property.setProperty(
                 PROPERTY_PM_TBL_SHOWACTIONS,
                 Boolean.toString(isPmTblShowActions()));
+        property.setProperty(
+                PROPERTY_PM_TBL_INCLUDEINDENTS,
+                Boolean.toString(isPmTblIncludeIndents()));
+        property.setProperty(
+                PROPERTY_PM_TBL_INCLUDEIDS,
+                Boolean.toString(isPmTblIncludeIds()));
 
         
         File path = new File(System.getenv("USERPROFILE"),".TcAV");
@@ -613,8 +633,25 @@ public class Settings {
         Settings.pmActionExpandedView = pmActionExpandedView;
     }
     
+
     
 
+    public static boolean isPmTblIncludeIds() {
+        return pmTblIncludeIds;
+    }
+
+    public static void setPmTblIncludeIds(boolean pmTblIncludeIds) {
+        Settings.pmTblIncludeIds = pmTblIncludeIds;
+    }
+    
+    public static boolean isPmTblIncludeIndents() {
+        return pmTblIncludeIndents;
+    }
+
+    public static void setPmTblIncludeIndents(boolean pmTblIncludeIndents) {
+        Settings.pmTblIncludeIndents = pmTblIncludeIndents;
+    }
+    
     public static boolean isPmTblMultiSheet() {
         return pmTblMultiSheet;
     }

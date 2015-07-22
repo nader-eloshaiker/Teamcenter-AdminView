@@ -33,7 +33,9 @@ public class RowOneRenderer extends SyncedRenderer implements TableCellRenderer 
         setHorizontalAlignment(SwingConstants.LEFT);
         setVerticalAlignment(SwingConstants.CENTER);
         
-        if(!s.startsWith(ColumnHeaderEntry.ARGUMENT_PREFIX))
+        RowOneModel model = (RowOneModel)table.getModel();
+        
+        if(model.isRootNode(row))
             setFont(getFont().deriveFont(Font.BOLD));
         else
             setFont(getFont().deriveFont(Font.PLAIN));

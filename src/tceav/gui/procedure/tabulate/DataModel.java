@@ -210,7 +210,7 @@ public class DataModel implements TableModel {
         
     }
     
-    public TableModel createRowHeaderModel() {
+    public RowOneModel createRowHeaderModel() {
         
         return new RowOneModel(workflowList);
     }

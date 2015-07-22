@@ -32,15 +32,15 @@ public class ResourceStrings {
     }
     
     public static String getVersion() {
-        return "3.04";
+        return "3.05";
     }
     
     public static String getBuild() {
-        return "132";
+        return "134";
     }
     
     public static String getReleaseDate() {
-        return "06-June-08";
+        return "10-June-08";
     }
     
     public static String getApplicationName() {
