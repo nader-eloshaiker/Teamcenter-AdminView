@@ -114,23 +114,17 @@ public class ProcedureManagerComponent extends TabbedPanel {
         workflowComponent.setPreferredSize(new Dimension(310,310));
         attributeComponent.setPreferredSize(new Dimension(310,310));
 
-        JPanel panelBottom = new JPanel();
-        panelBottom.setLayout(new BorderLayout());
-        panelBottom.add(GUIutilities.createPanelMargined(attributeComponent), BorderLayout.WEST);
-        panelBottom.add(GUIutilities.createPanelMargined(processViewer), BorderLayout.CENTER);
+        JPanel panelRight = new JPanel();
+        panelRight.setLayout(new BorderLayout());
+        panelRight.add(GUIutilities.createPanelMargined(attributeComponent), BorderLayout.WEST);
+        panelRight.add(GUIutilities.createPanelMargined(actionComponent), BorderLayout.CENTER);
 
-        JPanel panelTopRight = new JPanel();
-        panelTopRight.setLayout(new BorderLayout());
-        panelTopRight.add(GUIutilities.createPanelMargined(actionComponent), BorderLayout.CENTER);
-        panelTopRight.add(GUIutilities.createPanelMargined(descriptionComponent), BorderLayout.NORTH);
+        JPanel panelLeft = new JPanel();
+        panelLeft.setLayout(new BorderLayout());
+        panelLeft.add(GUIutilities.createPanelMargined(workflowComponent), BorderLayout.CENTER);
+        panelLeft.add(GUIutilities.createPanelMargined(descriptionComponent), BorderLayout.SOUTH);
 
-        JPanel panelTop = new JPanel();
-        panelTop.setLayout(new BorderLayout());
-        panelTop.add(GUIutilities.createPanelMargined(workflowComponent), BorderLayout.WEST);
-        panelTop.add(panelTopRight, BorderLayout.CENTER);
-        //panelTop.add(GUIutilities.createPanelMargined(actionComponent), BorderLayout.CENTER);
-
-        splitPane1 = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true, panelTop, panelBottom);
+        splitPane1 = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true, panelRight, GUIutilities.createPanelMargined(processViewer));
         splitPane1.setResizeWeight(1);
         splitPane1.setBorder(null);
         splitPane1.setDividerLocation(Settings.getPmSplitLocation());
@@ -144,6 +138,7 @@ public class ProcedureManagerComponent extends TabbedPanel {
         });
 
         this.setLayout(new BorderLayout());
+        this.add(panelLeft, BorderLayout.WEST);
         this.add(splitPane1, BorderLayout.CENTER);
 
     }

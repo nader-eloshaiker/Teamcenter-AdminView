@@ -40,11 +40,11 @@ public class ResourceStrings {
     }
     
     public static String getBuild() {
-        return "175";
+        return "176";
     }
     
     public static String getReleaseDate() {
-        return "04-Dec-08";
+        return "05-Dec-08";
     }
     
     public static String getApplicationName() {
@@ -52,7 +52,7 @@ public class ResourceStrings {
     }
     
     public static String getApplicationNameShort() {
-        return "TcE.AV";
+        return "TcE AdminView";
     }
     
     public static String getDeveloperName() {

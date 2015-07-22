@@ -63,6 +63,7 @@ public class AttributeComponent extends JComponent {
                 new TitledBorder(new EtchedBorder(),"Attributes"),
                 new EmptyBorder(GUIutilities.GAP_MARGIN,GUIutilities.GAP_MARGIN,GUIutilities.GAP_MARGIN,GUIutilities.GAP_MARGIN)));
         this.add(scrolltree, BorderLayout.CENTER);
+        this.add(toolbar, BorderLayout.SOUTH);
         
     }
     

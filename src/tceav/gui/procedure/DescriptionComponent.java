@@ -34,7 +34,7 @@ public class DescriptionComponent extends JComponent {
         super();
 
         // Action Tree
-        textComp = new JTextArea(3, 40);
+        textComp = new JTextArea(8, 20);
         textComp.setLineWrap(true);
         textComp.setWrapStyleWord(true);
         textComp.setEditable(false);
