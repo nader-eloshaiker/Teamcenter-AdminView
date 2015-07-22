@@ -94,9 +94,9 @@ public class Settings {
     private static boolean pmTblIncludeIndents;
     private static final String PROPERTY_PM_TBL_INCLUDEINDENTS = "tcav.pm.tbl.includeIndents";
     private static final boolean PROPERTY_PM_TBL_INCLUDEINDENTS_DEFAULT = true;
-    private static boolean pmTblIncludeIds;
-    private static final String PROPERTY_PM_TBL_INCLUDEIDS = "tcav.pm.tbl.includeIds";
-    private static final boolean PROPERTY_PM_TBL_INCLUDEIDS_DEFAULT = true;
+    private static boolean pmTblDatabaseMode;
+    private static final String PROPERTY_PM_TBL_DATABASEMODE = "tcav.pm.tbl.database";
+    private static final boolean PROPERTY_PM_TBL_DATABASEMODE_DEFAULT = true;
 
     
     private static String compareMode;
@@ -279,10 +279,10 @@ public class Settings {
                 getPropertyAsBoolean(
                 PROPERTY_PM_TBL_INCLUDEINDENTS,
                 PROPERTY_PM_TBL_INCLUDEINDENTS_DEFAULT));
-        setPmTblIncludeIds(
+        setPmTblDatabaseMode(
                 getPropertyAsBoolean(
-                PROPERTY_PM_TBL_INCLUDEIDS,
-                PROPERTY_PM_TBL_INCLUDEIDS_DEFAULT));
+                PROPERTY_PM_TBL_DATABASEMODE,
+                PROPERTY_PM_TBL_DATABASEMODE_DEFAULT));
         
     }
     
@@ -386,8 +386,8 @@ public class Settings {
                 PROPERTY_PM_TBL_INCLUDEINDENTS,
                 Boolean.toString(isPmTblIncludeIndents()));
         property.setProperty(
-                PROPERTY_PM_TBL_INCLUDEIDS,
-                Boolean.toString(isPmTblIncludeIds()));
+                PROPERTY_PM_TBL_DATABASEMODE,
+                Boolean.toString(isPmTblDatabaseMode()));
 
         
         File path = new File(System.getenv("USERPROFILE"),".TcAV");
@@ -636,12 +636,12 @@ public class Settings {
 
     
 
-    public static boolean isPmTblIncludeIds() {
-        return pmTblIncludeIds;
+    public static boolean isPmTblDatabaseMode() {
+        return pmTblDatabaseMode;
     }
 
-    public static void setPmTblIncludeIds(boolean pmTblIncludeIds) {
-        Settings.pmTblIncludeIds = pmTblIncludeIds;
+    public static void setPmTblDatabaseMode(boolean pmTblDatabaseMode) {
+        Settings.pmTblDatabaseMode = pmTblDatabaseMode;
     }
     
     public static boolean isPmTblIncludeIndents() {

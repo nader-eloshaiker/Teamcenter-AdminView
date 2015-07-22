@@ -12,6 +12,7 @@ package tceav.gui.procedure.tabulate;
 import java.util.ArrayList;
 import javax.swing.table.TableModel;
 import javax.swing.event.TableModelListener;
+import tceav.Settings;
 import tceav.manager.procedure.ProcedureManager;
 import tceav.manager.procedure.plmxmlpdm.TagTypeEnum;
 import tceav.manager.procedure.plmxmlpdm.type.*;
@@ -23,6 +24,7 @@ public class DataModel implements TableModel {
     
     private ColumnHeader header;
     private ArrayList<WorkflowTemplateType> workflowList;
+    private String siteId;
     
     /**
      * Creates a new instance of DataModel
@@ -30,11 +32,16 @@ public class DataModel implements TableModel {
     public DataModel(ProcedureManager pm) {
         header = new ColumnHeader();
         workflowList = new ArrayList<WorkflowTemplateType>();
+        siteId = pm.getSite().getName();
         
-        for (int i=0; i<pm.getWorkflowProcesses().size(); i++) 
+        for (int i=0; i<pm.getWorkflowProcesses().size(); i++)
             scanWorkflowTemplate(pm.getWorkflowProcesses().get(i));
         
         header.sort();
+    }
+    
+    public String getSiteId() {
+        return siteId;
     }
     
     private void scanWorkflowTemplate(WorkflowTemplateType wt) {
@@ -49,16 +56,18 @@ public class DataModel implements TableModel {
             wh = wt.getActions()[i].getActionHandlers();
             for(int j=0; j<wh.length; j++) {
                 if(wh[j].getAttribute().size() == 0) {
+                    
                     if(!header.contains(wh[j]))
                         header.add(new ColumnHeaderEntry(wh[j]));
                     
                 } else {
                     for(int k=0; k<wh[j].getAttribute().size(); k++) {
                         ud = (UserDataType)wh[j].getAttribute().get(k);
+                        
                         if(ud.getTagType() == TagTypeEnum.Arguments)
                             if(!header.contains(wh[j], ud))
                                 header.add(new ColumnHeaderEntry(wh[j], ud));
-                    
+                        
                     }
                 }
             }
@@ -66,12 +75,14 @@ public class DataModel implements TableModel {
             wbr = wt.getActions()[i].getRules();
             for(int j=0; j<wbr.length; j++) {
                 if(wbr[j].getRuleHandlers().length == 0){
+                    
                     if(!header.contains(wbr[j]))
                         header.add(new ColumnHeaderEntry(wbr[j]));
-
+                    
                 } else {
                     wbrh = wbr[j].getRuleHandlers();
                     for(int k=0; k<wbrh.length; k++) {
+                        
                         if(wbrh[k].getAttribute().size() == 0) {
                             if(!header.contains(wbr[j], wbrh[k]))
                                 header.add(new ColumnHeaderEntry(wbr[j], wbrh[k]));
@@ -79,8 +90,9 @@ public class DataModel implements TableModel {
                         } else {
                             for(int l=0; l<wbrh[k].getAttribute().size(); l++) {
                                 ud = (UserDataType)wbrh[k].getAttribute().get(l);
-                                if(ud.getTagType() == TagTypeEnum.Arguments) 
-                                    if(!header.contains(wbr[j], wbrh[k], ud)) 
+                                
+                                if(ud.getTagType() == TagTypeEnum.Arguments)
+                                    if(!header.contains(wbr[j], wbrh[k], ud))
                                         header.add(new ColumnHeaderEntry(wbr[j], wbrh[k], ud));
                                 
                             }
@@ -119,8 +131,15 @@ public class DataModel implements TableModel {
         return workflowList.size();
     }
     
-    public String getExportValueAt(int rowIndex, int columnIndex) {
+    public String getCSVValueAt(int rowIndex, int columnIndex) {
         return "\"" + ((String)getValueAt(rowIndex, columnIndex)).replace("\"", "\"\"") + "\"";
+    }
+    
+    private String getValue(WorkflowActionType wa) {
+        if(Settings.isPmTblShowActions())
+            return wa.getType().getName();
+        else
+            return "y";
     }
     
     public Object getValueAt(int rowIndex, int columnIndex) {
@@ -141,17 +160,18 @@ public class DataModel implements TableModel {
                 for(int j=0; j<wh.length; j++) {
                     if(entry.matches(wh[j])) {
                         
-                        if(entry.equals(wh[j])) {
-                            return "y";
-                        } else {
-                            for(int k=0; k<wh[j].getAttribute().size(); k++) {
-                                if(wh[j].getAttribute().get(k).getTagType() == TagTypeEnum.Arguments) {
-                                    ud = (UserDataType)wh[j].getAttribute().get(k);
-                                    if(entry.equals(wh[j], ud))
-                                        return "y";
-                                }
-                            }
+                        if(entry.equals(wh[j]))
+                            return getValue(wt.getActions()[i]);
+                        
+                        for(int k=0; k<wh[j].getAttribute().size(); k++) {
+                            ud = (UserDataType)wh[j].getAttribute().get(k);
+                            
+                            if(ud.getTagType() == TagTypeEnum.Arguments)
+                                if(entry.equals(wh[j], ud))
+                                    return getValue(wt.getActions()[i]);
+                            
                         }
+                        
                         
                     }
                 }
@@ -163,7 +183,7 @@ public class DataModel implements TableModel {
                     if(entry.matches(wbr[j])){
                         
                         if(entry.equals(wbr[j]))
-                            return "y";
+                            return getValue(wt.getActions()[i]);
                         
                         wbrh = wbr[j].getRuleHandlers();
                         
@@ -171,15 +191,15 @@ public class DataModel implements TableModel {
                             if(entry.matches(wbr[j], wbrh[k])) {
                                 
                                 if(entry.equals(wbr[j], wbrh[k]))
-                                    return "y";
+                                    return getValue(wt.getActions()[i]);
                                 
                                 for(int l=0; l<wbrh[k].getAttribute().size(); l++) {
-                                    if(wbrh[k].getAttribute().get(l).getTagType() == TagTypeEnum.Arguments) {
-                                        ud = (UserDataType)wbrh[k].getAttribute().get(l);
+                                    ud = (UserDataType)wbrh[k].getAttribute().get(l);
+                                    
+                                    if(ud.getTagType() == TagTypeEnum.Arguments)
                                         if(entry.equals(wbr[j], wbrh[k], ud))
-                                            return "y";
-                                        
-                                    }
+                                            return getValue(wt.getActions()[i]);
+                                    
                                 }
                                 
                             }
@@ -198,7 +218,7 @@ public class DataModel implements TableModel {
     
     public RowOneModel createRowHeaderModel() {
         
-        return new RowOneModel(workflowList);
+        return new RowOneModel(workflowList, siteId);
     }
     
     

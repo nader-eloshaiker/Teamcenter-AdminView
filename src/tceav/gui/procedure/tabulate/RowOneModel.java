@@ -24,8 +24,9 @@ public class RowOneModel implements TableModel {
     //private String[] rowHeader;
     private ArrayList<WorkflowTemplateType> rowList;
     
-    public RowOneModel(ArrayList<WorkflowTemplateType> rowList) {
+    public RowOneModel(ArrayList<WorkflowTemplateType> rowList, String siteId) {
         this.rowList = rowList;
+        this.siteId = siteId;
         //rowHeader = new String[rowList.size()];
         //for(int i=0; i<rowList.size(); i++)
         //    rowHeader[i] = getIndent(rowList.get(i));
@@ -36,6 +37,12 @@ public class RowOneModel implements TableModel {
             return true;
         else
             return false;
+    }
+    
+    private String siteId;
+    
+    public String getSiteId() {
+        return siteId;
     }
     
     public String getId(int rowIndex) {
@@ -54,6 +61,17 @@ public class RowOneModel implements TableModel {
             return s.substring(2);
     }
     
+    public String getRootId(int rowIndex) {
+        if(rowList.get(rowIndex).isRootTaskTemplate())
+            return "";
+        
+        String s = rowList.get(rowIndex).getRootTaskTemplate().getId();
+        if(s == null)
+            return "";
+        else
+            return s.substring(2);
+    }
+    
     public Class getColumnClass(int columnIndex) {
         return String.class;
     }
@@ -66,12 +84,12 @@ public class RowOneModel implements TableModel {
     public String getColumnName(int columnIndex) {
         //return "Procedure Name";
         if(columnIndex == 0)
-            return "Procedure Name";
+            return "ProcedureName";
         else
-            return "Procedure Type";
+            return "ProcedureType";
     }
     
-    public String getColumnExportName(int columnIndex) {
+    public String getCSVColumnName(int columnIndex) {
         //return "\"Procedure Name\"";
         return "\"" + getColumnName(columnIndex) + "\"";
     }
@@ -80,7 +98,7 @@ public class RowOneModel implements TableModel {
         return rowList.size();
     }
     
-    private String getStringValueAt(int rowIndex, int columnIndex) {
+    public String getRawValueAt(int rowIndex, int columnIndex) {
         if(columnIndex == 0)
             return rowList.get(rowIndex).getName();
         else {
@@ -97,15 +115,14 @@ public class RowOneModel implements TableModel {
     }
     
     public Object getValueAt(int rowIndex, int columnIndex) {
-        //return rowHeader[rowIndex];
-        return getIndent(rowList.get(rowIndex)) + getStringValueAt(rowIndex, columnIndex);
+        return getIndent(rowList.get(rowIndex)) + getRawValueAt(rowIndex, columnIndex);
     }
     
-    public String getExportValueAt(int rowIndex, int columnIndex) {
+    public String getCSVValueAt(int rowIndex, int columnIndex) {
         if(Settings.isPmTblIncludeIndents())
-            return "\"" + getIndent(rowList.get(rowIndex)) + getStringValueAt(rowIndex, columnIndex).replace("\"", "\"\"") + "\"";
+            return "\"" + getIndent(rowList.get(rowIndex)) + getRawValueAt(rowIndex, columnIndex).replace("\"", "\"\"") + "\"";
         else
-            return "\"" + getStringValueAt(rowIndex, columnIndex).replace("\"", "\"\"") + "\"";
+            return "\"" + getRawValueAt(rowIndex, columnIndex).replace("\"", "\"\"") + "\"";
     }
     
     public boolean isCellEditable(int rowIndex, int columnIndex) {
