@@ -60,7 +60,7 @@ public class ResourceLocator {
     }
     
     public static String getBuild() {
-        return "31";
+        return "32";
     }
     
     public static String getReleaseDate() {
