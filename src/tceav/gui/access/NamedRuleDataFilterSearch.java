@@ -16,7 +16,7 @@ import java.util.*;
  *
  * @author nzr4dl
  */
-public class NamedRuleDataFilterSearch extends NamedRuleDataFilterAbstract implements NamedRuleDataFilterInterface {
+public class NamedRuleDataFilterSearch extends NamedRuleDataFilterAdapter implements NamedRuleDataFilterInterface {
     
     private String strPattern;
     private ArrayList<Integer> filteringColumns = new ArrayList<Integer>();

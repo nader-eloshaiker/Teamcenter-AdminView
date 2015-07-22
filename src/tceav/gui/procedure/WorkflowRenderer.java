@@ -9,32 +9,22 @@
 
 package tceav.gui.procedure;
 
-import tceav.manager.procedure.plmxmlpdm.type.AssociatedDataSetType;
-import tceav.manager.procedure.plmxmlpdm.type.AssociatedFolderType;
-import tceav.manager.procedure.plmxmlpdm.type.AssociatedFormType;
-import tceav.manager.procedure.plmxmlpdm.type.OrganisationType;
-import tceav.manager.procedure.plmxmlpdm.type.RoleType;
 import tceav.manager.procedure.plmxmlpdm.type.SiteType;
 import tceav.manager.procedure.plmxmlpdm.type.UserDataType;
-import tceav.manager.procedure.plmxmlpdm.type.ValidationResultsType;
 import tceav.manager.procedure.plmxmlpdm.type.WorkflowTemplateType;
 import tceav.manager.procedure.plmxmlpdm.base.IdBase;
 import javax.swing.tree.*;
 import javax.swing.*;
 import java.awt.*;
-import tceav.manager.procedure.plmxmlpdm.type.element.UserDataElementType;
-import tceav.manager.procedure.plmxmlpdm.type.element.ValidationCheckerType;
 import tceav.resources.*;
 
 /**
  *
  * @author nzr4dl
  */
-public class ProcessRenderer  implements TreeCellRenderer {
+public class WorkflowRenderer  implements TreeCellRenderer {
     
-    
-    //Class Type
-    protected static ImageIcon siteIcon;
+    //Workflow Template
     protected static ImageIcon acknowledgeTaskIcon;
     protected static ImageIcon addStatusTaskIcon;
     protected static ImageIcon checklistTaskIcon;
@@ -54,19 +44,10 @@ public class ProcessRenderer  implements TreeCellRenderer {
     protected static ImageIcon taskIcon;
     protected static ImageIcon taskPropertiesIcon;
     protected static ImageIcon workflowIcon;
-
-    protected static ImageIcon associatedDataSet;
-    protected static ImageIcon associatedFolder;
-    protected static ImageIcon associatedForm;
-    protected static ImageIcon argument;
-    protected static ImageIcon userData;
-    protected static ImageIcon userValue;
-    protected static ImageIcon organisation;
-    protected static ImageIcon validationResult;
-    protected static ImageIcon validationChecker;
-    protected static ImageIcon signoffProfile;
-    protected static ImageIcon role;
     
+    //Class Type
+    protected static ImageIcon siteIcon;
+
     static {
         
         
@@ -89,21 +70,10 @@ public class ProcessRenderer  implements TreeCellRenderer {
             syncTaskIcon = ResourceLoader.getImage(ImageEnum.workflowSync);
             taskIcon = ResourceLoader.getImage(ImageEnum.workflowTask);
             taskPropertiesIcon = ResourceLoader.getImage(ImageEnum.workflowTaskDependancies);
-
+            
             siteIcon = ResourceLoader.getImage(ImageEnum.pmSite);
             workflowIcon = ResourceLoader.getImage(ImageEnum.pmWorkflow);
 
-            role = ResourceLoader.getImage(ImageEnum.pmRole);
-            associatedDataSet = ResourceLoader.getImage(ImageEnum.pmAssociatedDataSet);
-            associatedFolder = ResourceLoader.getImage(ImageEnum.pmAssociatedFolder);
-            associatedForm = ResourceLoader.getImage(ImageEnum.pmAssociatedForm);
-            argument = ResourceLoader.getImage(ImageEnum.pmArgument);
-            userData = ResourceLoader.getImage(ImageEnum.pmUserData);
-            userValue= ResourceLoader.getImage(ImageEnum.pmUserValue);
-            validationResult = ResourceLoader.getImage(ImageEnum.pmValidationResults);
-            validationChecker = ResourceLoader.getImage(ImageEnum.pmValidationChecker);
-            signoffProfile = ResourceLoader.getImage(ImageEnum.pmSignOffProfile);
-            organisation = ResourceLoader.getImage(ImageEnum.pmOrganisation);
             
         } catch (Exception e) {
             System.out.println("Couldn't load images: " + e);
@@ -113,7 +83,7 @@ public class ProcessRenderer  implements TreeCellRenderer {
     /**
      * Creates a new instance of ProcedureTreeCellRenderer
      */
-    public ProcessRenderer() {
+    public WorkflowRenderer() {
     }
     
     public Component getTreeCellRendererComponent(JTree tree, Object value, boolean isSelected, boolean expanded, boolean leaf, int row, boolean hasFocus){
@@ -172,91 +142,14 @@ public class ProcessRenderer  implements TreeCellRenderer {
                     cell.setIcon(taskPropertiesIcon);
                 else
                     cell.setIcon(workflowIcon);
-                cell.setFont(cell.getFont().deriveFont(Font.BOLD));
                 break;
+                
             
             case Site:
                 SiteType site = (SiteType)value;
                 cell.setText(site.getName());
                 cell.setToolTipText(site.getName());
                 cell.setIcon(siteIcon);
-                break;
-                
-            case UserData:
-                ud = (UserDataType)value;
-                cell.setText(ud.getType());
-                cell.setToolTipText(ud.getType());
-                cell.setIcon(userData);
-                break;
-                
-            case UserValue:
-                UserDataElementType udv = (UserDataElementType)value;
-                cell.setText(udv.getTitle()+": "+udv.getValue());
-                cell.setToolTipText(udv.getTitle()+": "+udv.getValue());
-                cell.setIcon(userValue);
-                break;
-                
-            case Arguments:
-                ud = (UserDataType)value;
-                cell.setText(ud.getType());
-                cell.setToolTipText(ud.getType());
-                cell.setIcon(argument);
-                break;
-                
-            case AssociatedDataSet:
-                AssociatedDataSetType ad = (AssociatedDataSetType)value;
-                cell.setText(ad.getRole());
-                cell.setToolTipText(ad.getRole());
-                cell.setIcon(associatedDataSet);
-                break;
-                
-            case AssociatedFolder:
-                AssociatedFolderType af = (AssociatedFolderType)value;
-                cell.setText(af.getRole());
-                cell.setToolTipText(af.getRole());
-                cell.setIcon(associatedFolder);
-                break;
-                
-            case AssociatedForm:
-                AssociatedFormType afm = (AssociatedFormType)value;
-                cell.setText(afm.getRole());
-                cell.setToolTipText(afm.getRole());
-                cell.setIcon(associatedForm);
-                break;
-                
-            case ValidationResults:
-                ValidationResultsType vr = (ValidationResultsType)value;
-                cell.setText(vr.getApplication());
-                cell.setToolTipText(vr.getApplication());
-                cell.setIcon(validationResult);
-                break;
-                
-                
-            case Organisation:
-                OrganisationType o = (OrganisationType)value;
-                cell.setText(o.getName());
-                cell.setToolTipText(o.getName());
-                cell.setIcon(organisation);
-                break;
-                
-            case Role:
-                RoleType r = (RoleType)value;
-                cell.setText(r.getName());
-                cell.setToolTipText(r.getName());
-                cell.setIcon(role);
-                break;
-                
-            case Checker:
-                ValidationCheckerType vc = (ValidationCheckerType)value;
-                cell.setText(vc.getName());
-                cell.setToolTipText(vc.getName());
-                cell.setIcon(validationResult);
-                break;
-                
-            case WorkflowSignoffProfile:
-                cell.setText("Signoff Profile");
-                cell.setToolTipText("Signoff Profile");
-                cell.setIcon(signoffProfile);
                 break;
                 
             default:
@@ -266,10 +159,10 @@ public class ProcessRenderer  implements TreeCellRenderer {
                 break;
                 
         }
-        /*
+        
         if (!leaf)
             cell.setFont(cell.getFont().deriveFont(Font.BOLD));
-        */
+        
         return cell;
     }
 }

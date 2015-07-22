@@ -15,7 +15,7 @@ import java.io.File;
  *
  * @author nzr4dl
  */
-public abstract class AbstractManager {
+public abstract class ManagerAdapter {
     
     public static final String EMPTY_MANAGER_TYPE = "EMPTY";
     public static final String ACCESS_MANAGER_TYPE = "ACCESS";

@@ -33,14 +33,14 @@ public class RotatedTextIcon implements Icon {
     private RenderingHints renderHints;
     
     
-    public RotatedTextIcon(int rotate, Font[] font, String[] s) {
+    public RotatedTextIcon(int rotate, ArrayList<Font> font, ArrayList<String> s) {
         this.rotate = rotate;
         this.height = 0;
         this.width = 0;
         glyphs = new ArrayList<GlyphVector>();
         
-        for(int i=0; i<s.length; i++)
-            convertTextToGlyph(font[i], s[i]);
+        for(int i=0; i<s.size(); i++)
+            convertTextToGlyph(font.get(i), s.get(i));
         
     }
     
@@ -49,22 +49,26 @@ public class RotatedTextIcon implements Icon {
         this.width = 0;
         this.rotate = rotate;
         glyphs = new ArrayList<GlyphVector>();
-
+        
         convertTextToGlyph(font, s);
     }
     
     public void convertTextToGlyph(Font font, String s) {
         String[] text = s.split("\n");
         
-        FontRenderContext fontRenderContext
-                = new FontRenderContext(null,true,true);
+        FontRenderContext fontRenderContext = new FontRenderContext(null,true,true);
         for(int i=0; i<text.length; i++) {
-            glyphs.add(font.createGlyphVector(fontRenderContext,text[i]));
-            width = Math.max(width, (int)glyphs.get(i).getLogicalBounds().getWidth() + 4);
             
-            LineMetrics lineMetrics = font.getLineMetrics(text[i], fontRenderContext);
-            ascent = lineMetrics.getAscent();
-            height = Math.max(height, (int)lineMetrics.getHeight());
+            ArrayList<String> strList = hyphenateString(text[i]);
+            
+            for(int k=0; k<strList.size(); k++) {
+                glyphs.add(font.createGlyphVector(fontRenderContext,strList.get(k)));
+                width = Math.max(width, (int)glyphs.get(glyphs.size()-1).getLogicalBounds().getWidth() + 4);
+                LineMetrics lineMetrics = font.getLineMetrics(strList.get(k), fontRenderContext);
+                ascent = lineMetrics.getAscent();
+                height = Math.max(height, (int)lineMetrics.getHeight());
+            }
+            
         }
         
         renderHints = new RenderingHints(
@@ -74,6 +78,44 @@ public class RotatedTextIcon implements Icon {
                 RenderingHints.VALUE_FRACTIONALMETRICS_ON);
         renderHints.put(RenderingHints.KEY_RENDERING,
                 RenderingHints.VALUE_RENDER_QUALITY);
+    }
+    
+    private ArrayList<String> hyphenateString(String s) {
+        int stringLimit = 50;
+        int division;
+        String indent;
+        String pad = "   ";
+        ArrayList<String> tmpList = new ArrayList<String>();
+        
+        if(s.length() > stringLimit) {
+            division = s.length() / stringLimit;
+            indent = getLeadingSpace(s);
+            
+            for(int k=0; k<=division; k++) {
+                if (k == 0)
+                    tmpList.add(s.substring(stringLimit*k,stringLimit*(k+1))+"...");
+                else if(k == division)
+                    tmpList.add(indent + pad + s.substring(stringLimit*k));
+                else
+                    tmpList.add(indent + pad + s.substring(stringLimit*k,stringLimit*(k+1))+"...");
+            }
+            
+        } else
+            tmpList.add(s);
+        
+        return tmpList;
+        
+    }
+    
+    private String getLeadingSpace(String s) {
+        String tmp = s.trim();
+        int len = s.length() - tmp.length();
+        String indent = "";
+        
+        for(int i=0; i<len; i++)
+            indent += " ";
+        
+        return indent;
     }
     
     public int getIconWidth() {
@@ -92,7 +134,7 @@ public class RotatedTextIcon implements Icon {
     
     public void paintIcon(Component c, Graphics g, int x, int y) {
         Graphics2D g2d = (Graphics2D)g;
-
+        
         AffineTransform oldTransform = g2d.getTransform();
         RenderingHints oldHints = g2d.getRenderingHints();
         

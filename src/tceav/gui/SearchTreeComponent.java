@@ -17,7 +17,7 @@ import javax.swing.tree.TreePath;
  *
  * @author NZR4DL
  */
-public abstract class SearchTreeComponent extends SearchAbstract implements SearchTreeComparator{
+public abstract class SearchTreeComponent extends SearchAdapter implements SearchTreeComparator{
     
     private ArrayList<TreePath> resultsTreeLocations;
     

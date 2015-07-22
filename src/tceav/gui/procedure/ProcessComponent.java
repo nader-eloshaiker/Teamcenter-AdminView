@@ -1,7 +1,7 @@
 /*
  * ProcessComponent.java
  *
- * Created on 8 February 2008, 11:34
+ * Created on 8 February 2008, 13:38
  *
  * To change this template, choose Tools | Template Manager
  * and open the template in the editor.
@@ -15,6 +15,7 @@ import javax.swing.border.*;
 import java.awt.event.*;
 import java.awt.*;
 import tceav.Settings;
+import tceav.manager.procedure.plmxmlpdm.base.IdBase;
 import tceav.manager.procedure.ProcedureManager;
 import tceav.gui.*;
 
@@ -25,69 +26,61 @@ import tceav.gui.*;
 public class ProcessComponent extends JComponent {
     
     private JTreeAdvanced tree;
-    private JRadioButton radioDependantTasks;
-    private JRadioButton radioSubWorkflow;
-    private ProcedureManager procedureManager;
+    private JRadioButton radioExpandAttributes;
+    private JRadioButton radioCollapseAttributes;
+    private JFrame parentFrame;
     
     public ProcessComponent(JFrame parentFrame, ProcedureManager pm) {
         super();
-        this.procedureManager = pm;
+        this.parentFrame = parentFrame;
         
-        // Workflow Process Tree
-        tree = new JTreeAdvanced(new ProcessTreeModel(pm.getWorkflowProcesses(), pm.getSite(), Settings.getPmProcedureMode()));
+        tree = new JTreeAdvanced(new ProcessTreeData());
         tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        tree.setLargeModel(true);
         tree.setCellRenderer(new ProcessRenderer());
         if(tree.getRowHeight() < 18)
             tree.setRowHeight(18);
         
         ToolTipManager.sharedInstance().registerComponent(tree);
-
         
         JScrollPane scrolltree = new JScrollPane();
         scrolltree.setBorder(new BevelBorder(BevelBorder.LOWERED));
         scrolltree.getViewport().add(tree);
         
         
-        radioDependantTasks = new JRadioButton("Dependant Tasks");
-        radioDependantTasks.setOpaque(false);
-        radioDependantTasks.addActionListener(new ActionListener(){
+        radioExpandAttributes = new JRadioButton("Expanded");
+        radioExpandAttributes.setOpaque(false);
+        radioExpandAttributes.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                Settings.setPmProcedureMode(ProcessTreeModel.MODE_DEPENDANT_TASKS);
-                tree.setModel(new ProcessTreeModel(procedureManager.getWorkflowProcesses(), procedureManager.getSite(), Settings.getPmProcedureMode()));
+                Settings.setPmWorkflowExpandedView(radioExpandAttributes.isSelected());
             }
         });
-        radioSubWorkflow = new JRadioButton("Sub Workflows");
-        radioSubWorkflow.setOpaque(false);
-        radioSubWorkflow.addActionListener(new ActionListener(){
+        radioCollapseAttributes = new JRadioButton("Collapsed");
+        radioCollapseAttributes.setOpaque(false);
+        radioCollapseAttributes.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                Settings.setPmProcedureMode(ProcessTreeModel.MODE_SUB_WORKFLOWS);
-                tree.setModel(new ProcessTreeModel(procedureManager.getWorkflowProcesses(), procedureManager.getSite(), Settings.getPmProcedureMode()));
+                Settings.setPmWorkflowExpandedView(!radioCollapseAttributes.isSelected());
             }
         });
-        ButtonGroup buttonGroupProcedureMode = new ButtonGroup();
-        buttonGroupProcedureMode.add(radioDependantTasks);
-        buttonGroupProcedureMode.add(radioSubWorkflow);
-        buttonGroupProcedureMode.setSelected(
-                radioDependantTasks.getModel(),
-                (Settings.getPmProcedureMode() == ProcessTreeModel.MODE_DEPENDANT_TASKS));
-        buttonGroupProcedureMode.setSelected(
-                radioSubWorkflow.getModel(),
-                (Settings.getPmProcedureMode() == ProcessTreeModel.MODE_SUB_WORKFLOWS));
+        ButtonGroup buttonGroup = new ButtonGroup();
+        buttonGroup.add(radioExpandAttributes);
+        buttonGroup.add(radioCollapseAttributes);
+        buttonGroup.setSelected(radioExpandAttributes.getModel(),Settings.isPmWorkflowExpandedView());
+        buttonGroup.setSelected(radioCollapseAttributes.getModel(),!Settings.isPmWorkflowExpandedView());
         
-        
-        JToolBar toolBarWorkflowView = new GUIutilities().createTreeExpandToolbar(tree, parentFrame);
-        toolBarWorkflowView.addSeparator();
-        toolBarWorkflowView.add(new JLabel("Default View:"));
-        toolBarWorkflowView.add(radioDependantTasks);
-        toolBarWorkflowView.add(radioSubWorkflow);
+        JToolBar toolBarAttributeView = new GUIutilities().createTreeExpandToolbar(tree, parentFrame);
+        toolBarAttributeView.addSeparator();
+        toolBarAttributeView.add(new JLabel("Default View:"));
+        toolBarAttributeView.add(radioExpandAttributes);
+        toolBarAttributeView.add(radioCollapseAttributes);
         
         
         this.setLayout(new BorderLayout(GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
         this.setBorder(new CompoundBorder(
-                new TitledBorder(new EtchedBorder(),"Workflow Templates"),
+                new TitledBorder(new EtchedBorder(),"Process View"),
                 new EmptyBorder(GUIutilities.GAP_MARGIN,GUIutilities.GAP_MARGIN,GUIutilities.GAP_MARGIN,GUIutilities.GAP_MARGIN)));
-        this.add("South",toolBarWorkflowView);
-        this.add("Center",scrolltree);
+        this.add(toolBarAttributeView, BorderLayout.SOUTH);
+        this.add(scrolltree, BorderLayout.CENTER);
         
     }
     
@@ -95,4 +88,9 @@ public class ProcessComponent extends JComponent {
         return tree;
     }
     
+    public void updateTree(IdBase procedure) {
+        tree.setModel(new ProcessTreeData(procedure));
+        if(Settings.isPmWorkflowExpandedView())
+            GUIutilities.expandTree(tree, parentFrame);
+    }
 }

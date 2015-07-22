@@ -15,7 +15,7 @@ import java.awt.Color;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.io.File;
-import tceav.manager.AbstractManager;
+import tceav.manager.ManagerAdapter;
 import tceav.gui.*;
 import tceav.resources.*;
 

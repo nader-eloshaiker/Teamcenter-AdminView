@@ -15,7 +15,7 @@ import javax.swing.table.*;
  *
  * @author nzr4dl
  */
-public abstract class NamedRuleDataAbstractModel extends AbstractTableModel {
+public abstract class NamedRuleDataAdapterModel extends AbstractTableModel {
     
     private final String[] columns = new String[]{"Type","Count","Named ACL"};
     private final String[] columnsCompare = new String[]{"Type","Count","Named ACL","Compare"};

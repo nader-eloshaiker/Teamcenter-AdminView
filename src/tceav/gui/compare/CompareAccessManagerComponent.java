@@ -11,7 +11,7 @@ package tceav.gui.compare;
 
 import tceav.manager.access.AccessManager;
 import tceav.manager.access.RuleTreeNode;
-import tceav.manager.AbstractManager;
+import tceav.manager.ManagerAdapter;
 import tceav.utils.PatternMatch;
 import tceav.Settings;
 import tceav.gui.*;

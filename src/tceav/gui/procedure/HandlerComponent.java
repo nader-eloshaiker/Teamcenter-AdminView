@@ -1,5 +1,5 @@
 /*
- * ActionComponent.java
+ * HandlerComponent.java
  *
  * Created on 8 February 2008, 13:17
  *
@@ -24,7 +24,7 @@ import tceav.resources.*;
  *
  * @author nzr4dl
  */
-public class ActionComponent extends JComponent {
+public class HandlerComponent extends JComponent {
     
     private JTreeAdvanced tree;
     private JRadioButton radioExpandActions;
@@ -32,14 +32,14 @@ public class ActionComponent extends JComponent {
     private JFrame parentFrame;
     
     
-    public ActionComponent(JFrame parentFrame, ProcedureManager pm) {
+    public HandlerComponent(JFrame parentFrame, ProcedureManager pm) {
         super();
         this.parentFrame = parentFrame;
         
         // Action Tree
-        tree = new JTreeAdvanced(new ActionTreeModel());
+        tree = new JTreeAdvanced(new HandlerTreeData());
         tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-        tree.setCellRenderer(new ActionlRenderer());
+        tree.setCellRenderer(new HandlerRenderer());
 
         ToolTipManager.sharedInstance().registerComponent(tree);
 
@@ -76,7 +76,7 @@ public class ActionComponent extends JComponent {
         toolbar.add(radioCollapseActions);
         
         this.setBorder(new CompoundBorder(
-                new TitledBorder(new EtchedBorder(),"Actions"),
+                new TitledBorder(new EtchedBorder(),"Handlers"),
                 new EmptyBorder(GUIutilities.GAP_MARGIN,GUIutilities.GAP_MARGIN,GUIutilities.GAP_MARGIN,GUIutilities.GAP_MARGIN)));
         this.setLayout(new BorderLayout(GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
         this.add("Center",scrolltree);
@@ -88,7 +88,7 @@ public class ActionComponent extends JComponent {
     }
     
     public void updateTree(IdBase procedure) {
-        tree.setModel(new ActionTreeModel(procedure));
+        tree.setModel(new HandlerTreeData(procedure));
         if(Settings.isPmActionExpandedView())
             GUIutilities.expandTree(tree, parentFrame);
     }

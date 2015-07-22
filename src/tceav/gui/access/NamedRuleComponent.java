@@ -155,7 +155,7 @@ public class NamedRuleComponent extends JPanel {
         table.repaint();
     }
     
-    public NamedRuleDataFilterAbstract getModel() {
+    public NamedRuleDataFilterAdapter getModel() {
         return dataFilter;
     }
     

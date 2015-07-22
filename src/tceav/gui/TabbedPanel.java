@@ -14,7 +14,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import java.io.File;
 
-import tceav.manager.AbstractManager;
+import tceav.manager.ManagerAdapter;
 
 /**
  *

@@ -16,7 +16,7 @@ import tceav.manager.access.AccessRule;
  *
  * @author nzr4dl
  */
-public abstract class NamedRuleDataFilterAbstract extends NamedRuleDataAbstractModel implements NamedRuleDataFilterInterface {
+public abstract class NamedRuleDataFilterAdapter extends NamedRuleDataAdapterModel implements NamedRuleDataFilterInterface {
     
     protected int[] indexes;
     protected NamedRuleDataFilterInterface model;

@@ -16,7 +16,7 @@ import tceav.manager.access.AccessRule;
  *
  * @author NZR4DL
  */
-public abstract class SearchTableComponent extends SearchAbstract implements SearchTableComparator {
+public abstract class SearchTableComponent extends SearchAdapter implements SearchTableComparator {
     private ArrayList<Integer> resultsRowLocations;
     
     /** Creates a new instance of SearchTableComponent */
