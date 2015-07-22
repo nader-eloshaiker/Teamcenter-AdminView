@@ -16,7 +16,6 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.NamedNodeMap;
 import tcadminview.plmxmlpdm.*;
 import tcadminview.plmxmlpdm.base.AttribOwnerBase;
-import tcadminview.plmxmlpdm.TagTypeEnum;
 import tcadminview.plmxmlpdm.classtype.WorkflowTemplateClassificationEnum;
 import tcadminview.plmxmlpdm.classtype.WorkflowTemplateStageEnum;
 

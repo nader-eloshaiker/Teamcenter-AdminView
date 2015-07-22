@@ -9,6 +9,7 @@ package tcadminview.gui.ruletree;
  */
 
 import tcadminview.gui.*;
+import tcadminview.gui.Utilities;
 import tcadminview.ruletree.AccessManager;
 import tcadminview.ruletree.AccessManagerItem;
 import tcadminview.ruletree.AccessRule;
@@ -31,8 +32,8 @@ public class AccessManagerComponent extends JPanel {
     
     protected JFrame parentFrame;
     protected JTree treeRuleTree;
-    protected JTable tableNamedACL;
-    protected JTable tableAccessRule;
+    protected JTableAdvanced tableNamedACL;
+    protected JTableAdvanced tableAccessRule;
     protected AccessRuleTableModel tableDataAccessRule;
     protected DefaultTreeModel treeDataRuleTree;
     protected NamedRuleFilterSortTableModel tableDataFilterSortNamedACL;
@@ -83,17 +84,17 @@ public class AccessManagerComponent extends JPanel {
         JPanel panelRuleTable =  new JPanel();
         panelRuleTable.setLayout(new GridLayout(1,1));
         panelRuleTable.setBorder(new TitledBorder(new EtchedBorder(),"Access Control"));
-        panelRuleTable.add(GUITools.createPanelMargined(accessRuleComponentScroll));
+        panelRuleTable.add(Utilities.createPanelMargined(accessRuleComponentScroll));
         
         /* Rules Panel */
         JPanel panelRule =  new JPanel();
-        panelRule.setLayout(new BorderLayout(GUITools.GAP_MARGIN,GUITools.GAP_MARGIN));
+        panelRule.setLayout(new BorderLayout(Utilities.GAP_MARGIN,Utilities.GAP_MARGIN));
         panelRule.add("East", createPanelNamedACL());
         panelRule.add("Center",createPanelRuleTree());
         
         /* And show it. */
-        this.setLayout(new BorderLayout(GUITools.GAP_MARGIN,GUITools.GAP_MARGIN));
-        this.setBorder(new EmptyBorder(GUITools.GAP_MARGIN,GUITools.GAP_MARGIN,GUITools.GAP_MARGIN,GUITools.GAP_MARGIN));
+        this.setLayout(new BorderLayout(Utilities.GAP_MARGIN,Utilities.GAP_MARGIN));
+        this.setBorder(new EmptyBorder(Utilities.GAP_MARGIN,Utilities.GAP_MARGIN,Utilities.GAP_MARGIN,Utilities.GAP_MARGIN));
         this.add("Center", panelRule);
         this.add("South",panelRuleTable);
         
@@ -152,7 +153,7 @@ public class AccessManagerComponent extends JPanel {
     }
     
     private void createTableAccessControl() {
-        tableAccessRule = new JTable();
+        tableAccessRule = new JTableAdvanced();
         updateTableAccessControl();
     }
     
@@ -194,8 +195,8 @@ public class AccessManagerComponent extends JPanel {
         return tree;
     }
     
-    private JTable createTableNamedACL() {
-        JTable table = new JTable();
+    private JTableAdvanced createTableNamedACL() {
+        JTableAdvanced table = new JTableAdvanced();
         tableDataFilterSortNamedACL = new NamedRuleFilterSortTableModel(accessManager.getAccessRuleList());
         tableDataFilterSortNamedACL.setSort(new int[]{0,2},true);
         table.setModel(tableDataFilterSortNamedACL);
@@ -242,42 +243,19 @@ public class AccessManagerComponent extends JPanel {
     }
     
     private void collapseTree(JTree tree){
-        setCascadeTreeExpansion(tree,tree.getPathForRow(0),false);
+        Utilities.setCascadeTreeExpansion(tree,tree.getPathForRow(0),false);
     }
     
     private void collapseTreeBranch(JTree tree, TreePath path){
-        setCascadeTreeExpansion(tree,path,false);
+        Utilities.setCascadeTreeExpansion(tree,path,false);
     }
     
     private void expandTree(JTree tree) {
-        setCascadeTreeExpansion(treeRuleTree, treeRuleTree.getPathForRow(0), true);
+        Utilities.setCascadeTreeExpansion(treeRuleTree, treeRuleTree.getPathForRow(0), true);
     }
     
     private void expandTreeBranch(JTree tree, TreePath path){
-        setCascadeTreeExpansion(tree,path,true);
-    }
-    
-    private void setCascadeTreeExpansion(JTree tree, TreePath parent, boolean expand) {
-        // Traverse children
-        //TreeNode node = (TreeNode)parent.getLastPathComponent();
-        int childCount = tree.getModel().getChildCount(parent.getLastPathComponent());
-        //if (node.getChildCount() >= 0) {
-        if(childCount > 0) {
-            //for (Enumeration e=node.children(); e.hasMoreElements(); ) {
-            for (int e=0; e<childCount; e++ ) {
-                //TreeNode n = (TreeNode)e.nextElement();
-                //TreePath path = parent.pathByAddingChild(n);
-                TreePath path = parent.pathByAddingChild(tree.getModel().getChild(parent.getLastPathComponent(), e));
-                setCascadeTreeExpansion(tree, path, expand);
-            }
-        }
-        
-        // Expansion or collapse must be done bottom-up
-        if (expand) {
-            tree.expandPath(parent);
-        } else {
-            tree.collapsePath(parent);
-        }
+        Utilities.setCascadeTreeExpansion(tree,path,true);
     }
     
     private boolean findNextRuleTreeItem() {
@@ -316,11 +294,9 @@ public class AccessManagerComponent extends JPanel {
         AccessManagerItem amItem = (AccessManagerItem)parent.getLastPathComponent();
         Boolean matched = false;
         
-        if((condition != null) && (!condition.equals("")))
-            matched = condition.equals(amItem.getCondition());
-        
-        if((value != null) && (!value.equals("")))
-            matched = PatternMatch.isStringMatch(amItem.getValue(), value);
+        matched = isMatched(amItem.getCondition(), condition);
+        matched = isMatched(amItem.getValue(), value);
+        matched = isMatched(amItem.getAccessRuleName(), value);
         
         if(matched)
             ruleTreeSearchResults.add(parent);
@@ -336,7 +312,16 @@ public class AccessManagerComponent extends JPanel {
                 findRuleTreeItem(tree, path, condition, value);
             }
         }
-        
+    }
+    
+    private boolean isMatched(String s, String pattern) {
+        if((pattern != null) && (!pattern.equals(""))){
+            if((s != null) && (!s.equals(""))){
+                return PatternMatch.isStringMatch(s, pattern);
+            } else
+                return false;
+        } else
+            return false;
     }
     
     
@@ -393,21 +378,6 @@ public class AccessManagerComponent extends JPanel {
         buttonCollapseAll.setIcon(iconCollapseAll);
         buttonCollapseBelow.setIcon(iconCollapseBelow);
         
-        boxSearchCondition = new JComboBox();
-        boxSearchCondition.setToolTipText("Ruletree Condition");
-        if (accessManager.getAccessManagerTree().getConditionSize() == 0) {
-            boxSearchCondition.setEnabled(false);
-            boxSearchCondition.addItem("Condition");
-        } else {
-            boxSearchCondition.addItem("");
-            for(int x=0; x<accessManager.getAccessManagerTree().getConditionSize(); x++)
-                boxSearchCondition.addItem(accessManager.getAccessManagerTree().getCondition(x));
-        }
-        
-        textSearchValue = new JTextField();
-        textSearchValue.setToolTipText("Ruletree Vale: * ? [ - ] accepted");
-        textSearchValue.setColumns(8);
-        
         buttonRuleTreeFindNext = new JButton("Find Next");
         buttonRuleTreeFindNext.setEnabled(false);
         buttonRuleTreeFindNext.addActionListener(new ActionListener(){
@@ -427,12 +397,11 @@ public class AccessManagerComponent extends JPanel {
                     conditionString = (String)boxSearchCondition.getSelectedItem();
                 valueString = textSearchValue.getText();
                 
-                if(
-                        (conditionString.equals(""))
-                        &&
-                        ((valueString == null) || (valueString.equals("")))
-                        )
-                    JOptionPane.showMessageDialog(parentFrame, "Search requires a condition or a value or both", "No Search Criteria", JOptionPane.ERROR_MESSAGE);
+                if( (conditionString.equals(""))
+                     &&
+                    ((valueString == null) || (valueString.equals("")))
+                  )
+                    JOptionPane.showMessageDialog(parentFrame, "Search requires either a condition, value, ACL or any combination.", "No Search Criteria", JOptionPane.ERROR_MESSAGE);
                 else {
                     ruleTreeSearchResults = new ArrayList<TreePath>();
                     ruleTreeSearchIndex = 0;
@@ -476,8 +445,24 @@ public class AccessManagerComponent extends JPanel {
             }
         });
         
+        boxSearchCondition = new JComboBox();
+        boxSearchCondition.setToolTipText("Ruletree Condition");
+        if (accessManager.getAccessManagerTree().getConditionSize() == 0) {
+            boxSearchCondition.setEnabled(false);
+            boxSearchCondition.addItem("Condition");
+        } else {
+            boxSearchCondition.addItem("");
+            for(int x=0; x<accessManager.getAccessManagerTree().getConditionSize(); x++)
+                boxSearchCondition.addItem(accessManager.getAccessManagerTree().getCondition(x));
+        }
+        
+        textSearchValue = new JTextField();
+        textSearchValue.setToolTipText("Ruletree Value: * ? [ - ] accepted");
+        textSearchValue.setColumns(6);
+
+        
         JToolBar toolBarRuletree = new JToolBar();
-        //toolBarRuletree.setFloatable(false);
+        toolBarRuletree.setFloatable(false);
         toolBarRuletree.add(buttonExpandAll);
         toolBarRuletree.add(buttonExpandBelow);
         toolBarRuletree.add(buttonCollapseAll);
@@ -486,19 +471,20 @@ public class AccessManagerComponent extends JPanel {
         toolBarRuletree.add(new JLabel("Search:"));
         toolBarRuletree.add(boxSearchCondition);
         toolBarRuletree.add(textSearchValue);
+        toolBarRuletree.addSeparator();
         toolBarRuletree.add(buttonRuleTreeFind);
         toolBarRuletree.add(buttonRuleTreeFindNext);
         toolBarRuletree.add(buttonRuleTreeFindClear);
         
         JPanel panelRuleTree =  new JPanel();
-        panelRuleTree.setLayout(new BorderLayout(GUITools.GAP_COMPONENT,GUITools.GAP_COMPONENT));
+        panelRuleTree.setLayout(new BorderLayout(Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
         panelRuleTree.add("Center",treeScroll);
         panelRuleTree.add("South",toolBarRuletree);
         
         JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(1,1,GUITools.GAP_COMPONENT,GUITools.GAP_COMPONENT));
+        panel.setLayout(new GridLayout(1,1,Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
         panel.setBorder(new TitledBorder(new EtchedBorder(),"Access Manager Tree"));
-        panel.add(GUITools.createPanelMargined(panelRuleTree));
+        panel.add(Utilities.createPanelMargined(panelRuleTree));
         
         return panel;
     }
@@ -515,20 +501,20 @@ public class AccessManagerComponent extends JPanel {
         
         
         JPanel panelNamedACLDetails = new JPanel();
-        panelNamedACLDetails.setLayout(new BorderLayout(GUITools.GAP_COMPONENT,GUITools.GAP_COMPONENT));
+        panelNamedACLDetails.setLayout(new BorderLayout(Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
         JPanel panelNamedACLDetailsLeft = new JPanel();
-        panelNamedACLDetailsLeft.setLayout(new GridLayout(3,1,GUITools.GAP_COMPONENT,GUITools.GAP_COMPONENT));
+        panelNamedACLDetailsLeft.setLayout(new GridLayout(3,1,Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
         panelNamedACLDetailsLeft.add(new JLabel("RuleTree Named ACLs"));
         panelNamedACLDetailsLeft.add(new JLabel("Workflow Named ACLs"));
         panelNamedACLDetailsLeft.add(new JPanel());
         JPanel panelNamedACLDetailsRight = new JPanel();
-        panelNamedACLDetailsRight.setLayout(new GridLayout(3,1,GUITools.GAP_COMPONENT,GUITools.GAP_COMPONENT));
-        panelNamedACLDetailsRight.add(GUITools.createProgressBar(
+        panelNamedACLDetailsRight.setLayout(new GridLayout(3,1,Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
+        panelNamedACLDetailsRight.add(Utilities.createProgressBar(
                 0,
                 accessManager.getAccessRuleList().size(),
                 accessManager.getAccessRuleList().getTreeTypeSize(),
                 "Access Rules"));
-        panelNamedACLDetailsRight.add(GUITools.createProgressBar(
+        panelNamedACLDetailsRight.add(Utilities.createProgressBar(
                 0,
                 accessManager.getAccessRuleList().size(),
                 accessManager.getAccessRuleList().getWorkFlowTypeSize(),
@@ -539,9 +525,9 @@ public class AccessManagerComponent extends JPanel {
         
         
         JPanel panelNamedACLMissing = new JPanel();
-        panelNamedACLMissing.setLayout(new BorderLayout(GUITools.GAP_COMPONENT,GUITools.GAP_COMPONENT));
+        panelNamedACLMissing.setLayout(new BorderLayout(Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
         panelNamedACLMissing.add("West",new JLabel("Total Unused Named ACLs"));
-        panelNamedACLMissing.add("Center",GUITools.createProgressBar(
+        panelNamedACLMissing.add("Center",Utilities.createProgressBar(
                 0,
                 accessManager.getAccessRuleList().size(),
                 accessManager.getUnusedRulesSize(),
@@ -569,7 +555,7 @@ public class AccessManagerComponent extends JPanel {
         
         
         JPanel panelNamedACLMissingFull = new JPanel();
-        panelNamedACLMissingFull.setLayout(new GridLayout(3,1,GUITools.GAP_COMPONENT,GUITools.GAP_COMPONENT));
+        panelNamedACLMissingFull.setLayout(new GridLayout(3,1,Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
         panelNamedACLMissingFull.add(panelNamedACLMissing);
         panelNamedACLMissingFull.add(listUnusedNamedACL);
         panelNamedACLMissingFull.add(new JPanel());
@@ -596,7 +582,7 @@ public class AccessManagerComponent extends JPanel {
         });
         
         JPanel panelNamedACLSort = new JPanel();
-        panelNamedACLSort.setLayout(new GridLayout(3,3,GUITools.GAP_COMPONENT,GUITools.GAP_COMPONENT));
+        panelNamedACLSort.setLayout(new GridLayout(3,3,Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
         panelNamedACLSort.add(new JLabel("Sort By"));
         panelNamedACLSort.add(new JLabel("Then By"));
         panelNamedACLSort.add(new JLabel("Finally By"));
@@ -648,7 +634,7 @@ public class AccessManagerComponent extends JPanel {
         });
         
         JPanel panelNamedACLFilter = new JPanel();
-        panelNamedACLFilter.setLayout(new GridLayout(3,3,GUITools.GAP_COMPONENT,GUITools.GAP_COMPONENT));
+        panelNamedACLFilter.setLayout(new GridLayout(3,3,Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
         panelNamedACLFilter.add(new JLabel("Match Type"));
         panelNamedACLFilter.add(new JLabel("Match Count"));
         panelNamedACLFilter.add(new JLabel("Match Name"));
@@ -668,27 +654,27 @@ public class AccessManagerComponent extends JPanel {
         scrollReferences.getViewport().add(treeReferences);
         scrollReferences.setBorder(new BevelBorder(BevelBorder.LOWERED));
         JPanel panelNamedACLReferences = new JPanel();
-        panelNamedACLReferences.setLayout(new GridLayout(1,1,GUITools.GAP_COMPONENT,GUITools.GAP_COMPONENT));
+        panelNamedACLReferences.setLayout(new GridLayout(1,1,Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
         panelNamedACLReferences.add(scrollReferences);
         
         
         JTabbedPane tabNamedAcl = new JTabbedPane();
-        tabNamedAcl.add("Details",GUITools.createPanelMargined(panelNamedACLDetails));
-        tabNamedAcl.add("Unused ACLs",GUITools.createPanelMargined(panelNamedACLMissingFull));
-        tabNamedAcl.add("Sort",GUITools.createPanelMargined(panelNamedACLSort));
-        tabNamedAcl.add("Filter",GUITools.createPanelMargined(panelNamedACLFilter));
+        tabNamedAcl.add("Details",Utilities.createPanelMargined(panelNamedACLDetails));
+        tabNamedAcl.add("Unused ACLs",Utilities.createPanelMargined(panelNamedACLMissingFull));
+        tabNamedAcl.add("Sort",Utilities.createPanelMargined(panelNamedACLSort));
+        tabNamedAcl.add("Filter",Utilities.createPanelMargined(panelNamedACLFilter));
         tabNamedAcl.add("References",panelNamedACLReferences);
         
         
         JPanel panelACL = new JPanel();
-        panelACL.setLayout(new BorderLayout(GUITools.GAP_COMPONENT,GUITools.GAP_COMPONENT));
+        panelACL.setLayout(new BorderLayout(Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
         panelACL.add("Center",panelRuleList);
         panelACL.add("South",tabNamedAcl);
         
         JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(1,1,GUITools.GAP_COMPONENT,GUITools.GAP_COMPONENT));
+        panel.setLayout(new GridLayout(1,1,Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
         panel.setBorder(new TitledBorder(new EtchedBorder(), "Named ACL"));
-        panel.add(GUITools.createPanelMargined(panelACL));
+        panel.add(Utilities.createPanelMargined(panelACL));
         
         return panel;
         

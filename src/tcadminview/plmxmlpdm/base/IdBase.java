@@ -39,7 +39,7 @@ public abstract class IdBase {
     //@XmlAttribute
     //@XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     //@XmlID
-    public final String idAttribute = "id";
+    protected final String idAttribute = "id";
     protected String id;
     
     public IdBase(Node node) {

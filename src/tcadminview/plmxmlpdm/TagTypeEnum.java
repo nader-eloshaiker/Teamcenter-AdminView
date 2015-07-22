@@ -14,15 +14,13 @@ package tcadminview.plmxmlpdm;
  * @author NZR4DL
  */
 public enum TagTypeEnum {
-
+    /* Custom */
     UNDEFINED("Undefined"),
-    //NULL(null),
     
-    Document("#document"),
-    Text("#text"),
-    
-    PLMXML("PLMXML"),
     Header("Header"),
+    PLMXML("PLMXML"),
+    Text("#text"),
+    /* end of custom */
     
     AccessIntent("AccessIntent"),
     ApplicationRef("ApplicationRef"),
@@ -40,6 +38,7 @@ public enum TagTypeEnum {
     Site("Site"),
     TaskDescription("TaskDescription"),
     UserData("UserData"),
+    UserList("UserList"),
     UserValue("UserValue"),
     ValidationResults("ValidationResults"),
     WorkflowAction("WorkflowAction"),

@@ -15,8 +15,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.NamedNodeMap;
 import org.xml.sax.InputSource;
-//import tcadminview.plmxmlpdm.*;
+import tcadminview.plmxmlpdm.HeaderType;
 import tcadminview.plmxmlpdm.TagTypeEnum;
+import tcadminview.plmxmlpdm.base.AttribOwnerBase;
 import tcadminview.plmxmlpdm.type.WorkflowHandlerType;
 import tcadminview.plmxmlpdm.type.WorkflowTemplateType;
 import tcadminview.plmxmlpdm.type.SiteType;
@@ -36,6 +37,7 @@ import tcadminview.xml.DOMUtil;
 public class ProcedureManager {
     
     //private ArrayList<WorkflowTemplateType> worklowTemplateList;
+    private HeaderType header;
     private WorkflowTemplateList workflowTemplateList;
     private ArrayList<WorkflowHandlerType> workflowHanderList;
     private ArrayList<SiteType> siteList;
@@ -73,71 +75,72 @@ public class ProcedureManager {
         decodeXML(rootXMLNode);
     }
     
+
+    private String toStringId(String id){
+        if(id.charAt(0)== '#')
+            return id.substring(1);
+        else
+            return id;
+    }
+    
     public int getIdIndex(String id) {
         if(id == null || id.equals(""))
             return -1;
-        else {
-            if(id.startsWith("#"))
-                return idIndexLookup.get(id.substring(1)).intValue();
-            else
-                return idIndexLookup.get(id).intValue();
-        }
+        else
+            return idIndexLookup.get(toStringId(id)).intValue();
+        
     }
     
     public TagTypeEnum getIdClass(String id) {
         if(id == null || id.equals(""))
             return null;
-        else {
-            if(id.startsWith("#"))
-                return idClassLookup.get(id.substring(1));
-            else
-                return idClassLookup.get(id);
-        }
+        else
+            return idClassLookup.get(toStringId(id));
+        
     }
     
-    public ArrayList<String> getNamedReferences(List<String> id){
-        ArrayList<String> names = new ArrayList<String>();
-        for(int i=0; i<id.size(); i++){
-            names.add(getNamedReference(id.get(i)));
-        }
-        return names;
-    }
-    
-    public String getNamedReference(String id){
+    public AttribOwnerBase getAttribOwnerBase(String id){
+        if(id == null || id.equals(""))
+            return null;
         switch(getIdClass(id)){
             case WorkflowTemplate:
-                return workflowTemplateList.get(getIdIndex(id)).getName();
+                return workflowTemplateList.get(getIdIndex(id));
                 
             case WorkflowHandler:
-                return workflowHanderList.get(getIdIndex(id)).getName();
+                return workflowHanderList.get(getIdIndex(id));
                 
             case Site:
-                return siteList.get(getIdIndex(id)).getName();
+                return siteList.get(getIdIndex(id));
                 
             case WorkflowAction:
-                return workflowActionList.get(getIdIndex(id)).getName();
+                return workflowActionList.get(getIdIndex(id));
                 
             case WorkflowBusinessRuleHandler:
-                return workflowBusinessRuleHandlerList.get(getIdIndex(id)).getName();
+                return workflowBusinessRuleHandlerList.get(getIdIndex(id));
                 
             case WorkflowBusinessRule:
-                return workflowBusinessRuleList.get(getIdIndex(id)).getName();
+                return workflowBusinessRuleList.get(getIdIndex(id));
                 
             case WorkflowSignoffProfile:
-                return workflowSignoffProfileList.get(getIdIndex(id)).getName();
+                return workflowSignoffProfileList.get(getIdIndex(id));
                 
             case Role:
-                return roleList.get(getIdIndex(id)).getName();
+                return roleList.get(getIdIndex(id));
                 
             case AccessIntent:
-                return accessIntentList.get(getIdIndex(id)).getName();
+                return accessIntentList.get(getIdIndex(id));
                 
             case Organisation:
-                return organisationList.get(getIdIndex(id)).getName();
+                return organisationList.get(getIdIndex(id));
                 
             default:
                 return null;
         }
+        
+    }
+    
+    public HeaderType getHeader() {
+        return header;
     }
     
     public ArrayList<AccessIntentType> getAccessIntents() {
@@ -199,14 +202,6 @@ public class ProcedureManager {
         NodeList list;
         
         try {
-            /*
-            //<PLMXML>
-            list = currentNode.getChildNodes();
-            currentNode = list.item(0);
-            
-            //Workflow List
-            list = currentNode.getChildNodes();
-             **/
             list = currentNode.getChildNodes();
             
             TagTypeEnum tagType;
@@ -217,6 +212,14 @@ public class ProcedureManager {
                 tagType = TagTypeEnum.fromValue(currentNode.getNodeName());
                 
                 switch(tagType) {
+                    case Header:
+                        header = new HeaderType(currentNode);
+                        setIdLookup(header.getId(),TagTypeEnum.Header,0);
+                        break;
+                        
+                    case Text:
+                        break;
+
                     case WorkflowTemplate:
                         WorkflowTemplateType wt = new WorkflowTemplateType(currentNode);
                         workflowTemplateList.add(wt);

@@ -190,6 +190,8 @@ public class UserDataElementType {
             tagType = TagTypeEnum.fromValue(currentNode.getNodeName());
             
             switch(tagType) {
+                case UserList:
+                    setUserList(new UserListDataType(currentNode));
                 default:
                     System.out.println("UserDataElementDataType: "+currentNode.getNodeName());
                     break;

@@ -11,10 +11,12 @@ package tcadminview.gui.procedure;
 
 import tcadminview.gui.*;
 import tcadminview.xml.DOMUtil;
-import tcadminview.utils.GUITools;
+import tcadminview.gui.Utilities;
 import tcadminview.procedure.*;
 import tcadminview.plmxmlpdm.classtype.*;
 import tcadminview.plmxmlpdm.type.*;
+import tcadminview.plmxmlpdm.base.AttribOwnerBase;
+import tcadminview.plmxmlpdm.type.element.*;
 import tcadminview.plmxmlpdm.TagTypeEnum;
 import org.xml.sax.InputSource;
 import javax.swing.border.*;
@@ -67,111 +69,94 @@ public class ProcedureComponent extends JPanel{
         scrollTreeXML.setBorder(new BevelBorder(BevelBorder.LOWERED));
         scrollTreeXML.getViewport().add(treeXML);
         JPanel panelDebug = new JPanel();
-        panelDebug.setLayout(new GridLayout(1,1,GUITools.GAP_COMPONENT,GUITools.GAP_COMPONENT));
+        panelDebug.setLayout(new GridLayout(1,1,Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
         panelDebug.setBorder(new TitledBorder(new EtchedBorder(),"PLMXML Debug Window"));
-        panelDebug.add(GUITools.createPanelMargined(scrollTreeXML));
+        panelDebug.add(Utilities.createPanelMargined(scrollTreeXML));
          */
         
         // Workflow Process Tree
-        treeWorkflowProcess = new JTree(ProcedureNodeBuilder.buildProcessNodes(pm));
-        treeWorkflowProcess.setCellRenderer(new WorkflowTreeCellRenderer());
-        treeWorkflowProcess.setRowHeight(20);
+        treeWorkflowProcess = new JTree(new ProcedureTreeModel(pm));
+        treeWorkflowProcess.setCellRenderer(new ProcedureTreeCellRenderer());
         treeWorkflowProcess.addTreeSelectionListener(new TreeSelectionListener() {
             public void valueChanged(TreeSelectionEvent e) {
                 TreePath path = e.getPath();
-                DefaultMutableTreeNode  nodes = (DefaultMutableTreeNode)path.getLastPathComponent();
-                WorkflowTreeItem wti = (WorkflowTreeItem)nodes.getUserObject();
-                
-                if(wti.getClassType() == null)
-                    return;
-                
-                TagTypeEnum classType = wti.getClassType();
-                switch(classType) {
-                    case WorkflowTemplate:
-                        WorkflowTemplateType wt = pm.getWorkflowTemplates().get(pm.getIdIndex(wti.getId()));
-                        labelId.setText(wt.getId());
-                        labelSignOffQuorum.setText(wt.getSignoffQuorum().toString());
-                        labelClassification.setText(wt.getTemplateClassification().value());
-                        labelShowProcessStage.setText(wt.isShowInProcessStage().toString());
-                        labelObjectType.setText(wt.getObjectType());
-                        labelParentTask.setText(wt.getParentTaskTemplateRef());
-                        labelStage.setText(wt.getStage().value());
-                        break;
-                }
+                NodeReference nr = (NodeReference)path.getLastPathComponent();
+                updateNodeDetails(nr);
             }
         });
         JScrollPane scrollTreeWorkflowProcess = new JScrollPane();
-        //scrollTreeWorkflowProcess.setPreferredSize(new Dimension(600,500));
         scrollTreeWorkflowProcess.setBorder(new BevelBorder(BevelBorder.LOWERED));
         scrollTreeWorkflowProcess.getViewport().add(treeWorkflowProcess);
         JPanel panelTreeWorkflowProcess = new JPanel();
-        panelTreeWorkflowProcess.setLayout(new BorderLayout(GUITools.GAP_COMPONENT,GUITools.GAP_COMPONENT));
+        panelTreeWorkflowProcess.setLayout(new BorderLayout(Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
         panelTreeWorkflowProcess.setBorder(new TitledBorder(new EtchedBorder(),"Workflow Templates: PROCESS"));
-        panelTreeWorkflowProcess.add(GUITools.createPanelMargined(scrollTreeWorkflowProcess));
-        
-        
+        panelTreeWorkflowProcess.add(Utilities.createPanelMargined(scrollTreeWorkflowProcess));
         
         
         JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(1,2,GUITools.GAP_COMPONENT,GUITools.GAP_COMPONENT));
+        panel.setLayout(new GridLayout(1,2,Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
         panel.add(panelTreeWorkflowProcess);
-        panel.add(createWorkflowProcessPanel());
+        panel.add(createNodeDetailsPanel());
         
         
-        
-        this.setLayout(new BorderLayout(GUITools.GAP_COMPONENT,GUITools.GAP_COMPONENT));
-        this.add("Center",GUITools.createPanelMargined(panel));
+        this.setLayout(new BorderLayout(Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
+        this.add("Center",Utilities.createPanelMargined(panel));
         
     }
     
-    protected JLabel labelId = new JLabel("#");
-    protected JLabel labelSignOffQuorum = new JLabel("#");
-    protected JLabel labelClassification = new JLabel("#");
-    protected JLabel labelShowProcessStage = new JLabel("#");
-    protected JLabel labelObjectType = new JLabel("#");
-    protected JLabel labelParentTask = new JLabel("#");
-    protected JLabel labelStage = new JLabel("#");
+    protected JTree treeAttributes;
+    protected JTableAdvanced tableProcedure;
+    protected JTableAdvanced tableAttribute;
     
-    private JPanel createWorkflowProcessPanel() {
+    private JPanel createNodeDetailsPanel() {
+        treeAttributes = new JTree(new AttributeTreeModel());
+        treeAttributes.addTreeSelectionListener(new TreeSelectionListener() {
+            public void valueChanged(TreeSelectionEvent e) {
+                TreePath path = e.getPath();
+                NodeReference nr = (NodeReference)path.getLastPathComponent();
+                updateAttribDetails(nr);
+            }
+        });
+        treeAttributes.setCellRenderer(new ProcedureTreeCellRenderer());
+        JScrollPane scrollTreeAttributes = new JScrollPane();
+        scrollTreeAttributes.setPreferredSize(new Dimension(200,220));
+        scrollTreeAttributes.setBorder(new BevelBorder(BevelBorder.LOWERED));
+        scrollTreeAttributes.getViewport().add(treeAttributes);
         
-        JPanel panelInnerDetails = new JPanel();
-        panelInnerDetails.setLayout(new GridLayout(7,2,GUITools.GAP_COMPONENT,GUITools.GAP_COMPONENT));
-        panelInnerDetails.add(new JLabel("Id:"));
-        panelInnerDetails.add(labelId);
-        panelInnerDetails.add(new JLabel("Sign off Quorum:"));
-        panelInnerDetails.add(labelSignOffQuorum);
-        panelInnerDetails.add(new JLabel("Classification:"));
-        panelInnerDetails.add(labelClassification);
-        panelInnerDetails.add(new JLabel("Show in Process Stage:"));
-        panelInnerDetails.add(labelShowProcessStage);
-        panelInnerDetails.add(new JLabel("Object Type:"));
-        panelInnerDetails.add(labelObjectType);
-        panelInnerDetails.add(new JLabel("Parent Task:"));
-        panelInnerDetails.add(labelParentTask);
-        panelInnerDetails.add(new JLabel("Stage:"));
-        panelInnerDetails.add(labelStage);
-        JPanel panelDetails = new JPanel();
-        panelDetails.setBorder(new TitledBorder(new EtchedBorder(),"Workflow Details"));
-        panelDetails.setLayout(new BorderLayout(GUITools.GAP_COMPONENT,GUITools.GAP_COMPONENT));
-        panelDetails.add("Center",GUITools.createPanelMargined(panelInnerDetails));
+        JPanel panelAttributes = new JPanel();
+        panelAttributes.setLayout(new BorderLayout(Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
+        panelAttributes.setBorder(new TitledBorder(new EtchedBorder(),"Attributes"));
+        panelAttributes.add("Center",Utilities.createPanelMargined(scrollTreeAttributes));
         
-        JPanel panelUserData = new JPanel();
-        panelUserData.setLayout(new BorderLayout(GUITools.GAP_COMPONENT,GUITools.GAP_COMPONENT));
-        panelUserData.setBorder(new TitledBorder(new EtchedBorder(),"User Data"));
-        //panelUserData.add("Center",GUITools.createPanelMargined(new JTable()));
+        tableAttribute = new JTableAdvanced(new NodeTableModel());
+        JScrollPane scrollTableAttribute = new JScrollPane();
+        scrollTableAttribute.setPreferredSize(new Dimension(200,220));
+        scrollTableAttribute.setBorder(new BevelBorder(BevelBorder.LOWERED));
+        scrollTableAttribute.getViewport().add(tableAttribute);
         
-        JPanel panelTaskDescription = new JPanel();
-        panelTaskDescription.setLayout(new BorderLayout(GUITools.GAP_COMPONENT,GUITools.GAP_COMPONENT));
-        panelTaskDescription.setBorder(new TitledBorder(new EtchedBorder(),"Task Description"));
-        //panelTaskDescription.add("Center",GUITools.createPanelMargined(new JTable()));
+        JPanel panelAttributeDetails = new JPanel();
+        panelAttributeDetails.setLayout(new BorderLayout(Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
+        panelAttributeDetails.setBorder(new TitledBorder(new EtchedBorder(),"Attribute Details"));
+        panelAttributeDetails.add("Center",Utilities.createPanelMargined(scrollTableAttribute));
         
         JPanel panel = new JPanel();
-        panel.setLayout(new BorderLayout(GUITools.GAP_COMPONENT,GUITools.GAP_COMPONENT));
-        panel.add("North",panelDetails);
-        panel.add("Center",panelUserData);
-        panel.add("South",panelTaskDescription);
+        panel.setLayout(new BorderLayout(Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
+        panel.add("Center",panelAttributes);
+        panel.add("South",panelAttributeDetails);
         
         return panel;
+    }
+    
+    private void updateNodeDetails(NodeReference nr) {
+        tableAttribute.setModel(new NodeTableModel(nr, pm));
+        Utilities.packColumns(tableAttribute, 2);
+        treeAttributes.setModel(new AttributeTreeModel(nr,pm));
+        Utilities.setCascadeTreeExpansion(treeAttributes,treeAttributes.getPathForRow(0),true);
+    }
+    
+    private void updateAttribDetails(NodeReference nr){
+        tableAttribute.setModel(new NodeTableModel(nr, pm));
+        Utilities.packColumns(tableAttribute, 2);
     }
     
 }

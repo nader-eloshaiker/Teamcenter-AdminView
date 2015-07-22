@@ -8,8 +8,7 @@
 
 package tcadminview.plmxmlpdm.base;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import tcadminview.plmxmlpdm.TagTools;
 import tcadminview.plmxmlpdm.TagTypeEnum;
@@ -76,6 +75,9 @@ public abstract class AttribOwnerBase extends DescriptionBase {
     //@XmlElementRef(name = "Attribute", namespace = "http://www.plmxml.org/Schemas/PLMXMLSchema", type = JAXBElement.class)
     protected List<AttributeBase> attribute;
     
+    private ArrayList<String>idIndexLookup;
+    private ArrayList<TagTypeEnum>idClassLookup;
+    
     //@XmlAttribute
     //@XmlIDREF
     protected List<Object> attributeRefs;
@@ -86,30 +88,44 @@ public abstract class AttribOwnerBase extends DescriptionBase {
         NamedNodeMap attrib = currentNode.getAttributes();
         NodeList nodeList = currentNode.getChildNodes();
         
+        idIndexLookup = new ArrayList<String>();
+        idClassLookup = new ArrayList<TagTypeEnum>();
+        
         TagTypeEnum tagType;
         for (int i=0; i<nodeList.getLength(); i++) {
             currentNode = nodeList.item(i);
             tagType = TagTypeEnum.fromValue(currentNode.getNodeName());
             
             switch(tagType) {
+                case Arguments:
                 case UserData:          // Set AttribOwnerBase Node
-                    getAttribute().add(new UserDataType(currentNode));
+                    UserDataType ud = new UserDataType(currentNode);
+                    getAttribute().add(ud);
+                    setAttributeId(ud.getId(),tagType);
                     break;
                     
                 case AssociatedDataSet:
-                    getAttribute().add(new AssociatedDataSetType(currentNode));
+                    AssociatedDataSetType ad = new AssociatedDataSetType(currentNode);
+                    getAttribute().add(ad);
+                    setAttributeId(ad.getId(),tagType);
                     break;
                     
                 case AssociatedFolder:
-                    getAttribute().add(new AssociatedFolderType(currentNode));
+                    AssociatedFolderType afd = new AssociatedFolderType(currentNode);
+                    getAttribute().add(afd);
+                    setAttributeId(afd.getId(),tagType);
                     break;
                     
                 case AssociatedForm:
-                    getAttribute().add(new AssociatedFormType(currentNode));
+                    AssociatedFormType afm = new AssociatedFormType(currentNode);
+                    getAttribute().add(afm);
+                    setAttributeId(afm.getId(),tagType);
                     break;
                     
                 case ValidationResults:
-                    getAttribute().add(new ValidationResultsType(currentNode));
+                    ValidationResultsType vr = new ValidationResultsType(currentNode);
+                    getAttribute().add(vr);
+                    setAttributeId(vr.getId(),tagType);
                     break;
                     
                 default:
@@ -119,6 +135,69 @@ public abstract class AttribOwnerBase extends DescriptionBase {
         }
     }
 
+    private String toStringId(String id){
+        if(id.charAt(0)== '#')
+            return id.substring(1);
+        else
+            return id;
+    }
+    
+    public int getAttributeIdIndex(String id) {
+        if(id == null || id.equals(""))
+            return -1;
+        else 
+            return idIndexLookup.indexOf(toStringId(id));
+        
+    }
+    
+    public TagTypeEnum getAttributeIdClass(String id) {
+        if(id == null || id.equals(""))
+            return null;
+        else 
+            return idClassLookup.get(idIndexLookup.indexOf(toStringId(id)));
+        
+    }
+    
+    public String getAttributeIdName(String id){
+        if(id == null || id.equals(""))
+            return null;
+
+        return getAttributeName(getAttributeIdIndex(toStringId(id)));
+    }
+    
+    public String getAttributeName(int index){
+        switch(getAttributeClass(index)) {
+            case Arguments:
+            case UserData:
+                return ((UserDataType)getAttribute().get(index)).getType();
+                
+            case AssociatedDataSet:
+                return ((AssociatedDataSetType)getAttribute().get(index)).getRole();
+                
+            case AssociatedFolder:
+                return ((AssociatedFolderType)getAttribute().get(index)).getRole();
+                
+            case AssociatedForm:
+                return ((AssociatedFormType)getAttribute().get(index)).getRole();
+                
+            case ValidationResults:
+                return ((ValidationResultsType)getAttribute().get(index)).getApplication();
+                
+            default:
+                return null;
+            
+        }
+    }
+
+    private void setAttributeId(String id, TagTypeEnum tagType) {
+        idIndexLookup.add(id);
+        idClassLookup.add(tagType);
+    }
+    
+    public TagTypeEnum getAttributeClass(int index){
+       return idClassLookup.get(index);
+    }
+    
     /**
      * Gets the value of the attribute property.
      * 

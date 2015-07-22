@@ -28,7 +28,10 @@ public class WorkflowTemplateList extends ArrayList<WorkflowTemplateType>{
     }
     
     public ArrayList<Integer> getIndexesForClassification(WorkflowTemplateClassificationEnum classification) {
-        return classifications.get(classification);
+        if(classifications.get(classification) == null)
+            return new ArrayList<Integer>();
+        else
+            return classifications.get(classification);
     }
     
     public int sizeOfClassifications() {
