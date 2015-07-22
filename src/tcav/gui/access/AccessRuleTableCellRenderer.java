@@ -19,7 +19,7 @@ import tcav.manager.compare.CompareInterface;
  *
  * @author nzr4dl
  */
-public class AccessRuleTableCellRenderer implements TableCellRenderer{
+public class AccessRuleTableCellRenderer implements TableCellRenderer {
     
     static protected ImageIcon yesIcon;
     static protected ImageIcon noIcon;
@@ -39,10 +39,12 @@ public class AccessRuleTableCellRenderer implements TableCellRenderer{
     
     public AccessRuleTableCellRenderer() {
         this(false);
+        //System.out.println("Override Constructor Called");
     }
     
     public AccessRuleTableCellRenderer(boolean compareMode) {
         this.compareMode = compareMode;
+        //System.out.println("Constructor Called: "+compareMode);
     }
      
     /** Creates a new instance of AccessRuleTableHearderRenderer */

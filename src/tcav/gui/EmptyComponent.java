@@ -38,8 +38,7 @@ public class EmptyComponent extends TabbedPanel {
         } catch (Exception e) {
             System.out.println("Couldn't load images: " + e);
         }
-        JLabel label = new JLabel(iconBanner);
-        //label.setEnabled(false);
+        JLabel label = new JLabel(iconBanner, JLabel.RIGHT);
         this.setLayout(new BorderLayout());
         this.add("East", label);
         //this.setBackground(Color.WHITE);
@@ -54,27 +53,20 @@ public class EmptyComponent extends TabbedPanel {
 
         JLabel textVersion = new JLabel(" "+ResourceStrings.getVersion()+" ");
         textVersion.setBorder(new BevelBorder(BevelBorder.LOWERED));
-        JPanel panelVersion = new JPanel();
-        panelVersion.setLayout(new BorderLayout());
-        panelVersion.add(new JLabel(" Version:"), BorderLayout.WEST);
-        panelVersion.add(textVersion, BorderLayout.CENTER);
 
         JLabel textBuild = new JLabel(" "+ResourceStrings.getBuild()+" ");
         textBuild.setBorder(new BevelBorder(BevelBorder.LOWERED));
         JPanel panelBuild = new JPanel();
-        panelBuild.setLayout(new BorderLayout());
-        panelBuild.add(new JLabel("  Build:"), BorderLayout.WEST);
-        panelBuild.add(textBuild, BorderLayout.CENTER);
 
-        JLabel text = new JLabel(ResourceStrings.getApplicationName()+
-                " version: "+ResourceStrings.getVersion()+
-                " Build: "+ ResourceStrings.getBuild());
-        text.setBorder(new BevelBorder(BevelBorder.LOWERED));;
+        JLabel text = new JLabel("   Supporting the TeamCenter Community");
         
         statusBar = new JPanel();
         statusBar.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        statusBar.add(panelVersion);
-        statusBar.add(panelBuild);
+        statusBar.add(new JLabel(" Version:"));
+        statusBar.add(textVersion);
+        statusBar.add(new JLabel("   Build:"));
+        statusBar.add(textBuild);
+        statusBar.add(text);
         
         return statusBar;
     }
