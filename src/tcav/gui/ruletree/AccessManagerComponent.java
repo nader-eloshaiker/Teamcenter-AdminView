@@ -159,7 +159,7 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
                 
             }
         });
-
+        
         return tree;
     }
     
@@ -215,7 +215,7 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
     protected JButton buttonRuleTreeFindNext;
     protected JButton buttonRuleTreeFind;
     protected JButton buttonRuleTreeFindClear;
-    
+    protected SearchTreeComponent searchRuleTree;
     
     private JPanel createPanelRuleTree() {
         JScrollPane treeScroll = new JScrollPane();
@@ -286,13 +286,29 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         buttonCollapseAll.setIcon(iconCollapseAll);
         buttonCollapseBelow.setIcon(iconCollapseBelow);
         
+        searchRuleTree = new SearchTreeComponent() {
+            public boolean compare(TreePath path, String type, String value) {
+                AccessManagerItem amItem = (AccessManagerItem)path.getLastPathComponent();
+                Boolean matched = false;
+                
+                if((!type.equals("")) && (!value.equals("")) )
+                    return isMatched(amItem.getCondition(), type) & ( (isMatched(amItem.getValue(), value) | isMatched(amItem.getAccessRuleName(), value)) );
+                else if(!type.equals(""))
+                    return isMatched(amItem.getCondition(), type);
+                else if(!value.equals(""))
+                    return isMatched(amItem.getValue(), value) | isMatched(amItem.getAccessRuleName(), value);
+                else
+                    return false;
+            }
+        };
+        
         buttonRuleTreeFindNext = new JButton("Find Next");
         buttonRuleTreeFindNext.setEnabled(false);
         buttonRuleTreeFindNext.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                findNextRuleTree(treeRuleTree);
-                int k = ruleTreeSearchIndex + 1;
-                buttonRuleTreeFind.setText(k+" / "+ruleTreeSearchResults.size());
+                searchRuleTree.searchNext(treeRuleTree);
+                int k = searchRuleTree.getResultIndex() + 1;
+                buttonRuleTreeFind.setText(k+" / "+searchRuleTree.getResultSize());
             }
         });
         
@@ -312,9 +328,9 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
                                 ((valueString == null) || (valueString.equals(""))) )
                             JOptionPane.showMessageDialog(parentFrame, "Search requires either a condition, value/ACL or any combination.", "No Search Criteria", JOptionPane.ERROR_MESSAGE);
                         else {
-                            findRuleTree(treeRuleTree, conditionString, valueString);
+                            searchRuleTree.search(treeRuleTree, conditionString, valueString);
                             
-                            if (ruleTreeSearchResults.size() == 0) {
+                            if (searchRuleTree.getResultSize() == 0) {
                                 JOptionPane.showMessageDialog(parentFrame, "No matches found", "No Matches Found", JOptionPane.WARNING_MESSAGE);
                                 buttonRuleTreeFindNext.setEnabled(false);
                                 buttonRuleTreeFindClear.setEnabled(false);
@@ -322,8 +338,8 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
                                 boxSearchCondition.setEnabled(true);
                                 textSearchValue.setEnabled(true);
                             } else {
-                                int k = ruleTreeSearchIndex + 1;
-                                buttonRuleTreeFind.setText(k+" / "+ruleTreeSearchResults.size());
+                                int k = searchRuleTree.getResultIndex() + 1;
+                                buttonRuleTreeFind.setText(k+" / "+searchRuleTree.getResultSize());
                                 buttonRuleTreeFindNext.setEnabled(true);
                                 buttonRuleTreeFindClear.setEnabled(true);
                                 buttonRuleTreeFind.setEnabled(false);
@@ -348,9 +364,7 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
                 textSearchValue.setEnabled(true);
                 boxSearchCondition.setSelectedIndex(0);
                 textSearchValue.setText("");
-                ruleTreeSearchResults.clear();
-                ruleTreeSearchIndex = 0;
-                treeRuleTree.clearSelection();
+                searchRuleTree.resetResults();
             }
         });
         
@@ -420,6 +434,8 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
     protected JButton buttonNamedACLSearchNext;
     protected JButton buttonNamedACLSearchReset;
     protected JButton buttonNamedACLSearch;
+    protected SearchTableComponent searchACL;
+    
     
     private JPanel createPanelNamedACL() {
         
@@ -664,6 +680,27 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
     }
     
     private JPanel createACLTabSearch() {
+        searchACL = new SearchTableComponent(){
+            public boolean compare(int row, String type, String value) {
+                boolean matched = false;
+                int index = tableDataFilterSortNamedACL.getDataIndex(row);
+                AccessRule ar = am.getAccessRuleList().elementAt(index);
+                for(int j=0; j<ar.size(); j++) {
+                    if((!type.equals("")) && (!value.equals("")) )
+                        matched = isMatched(ar.elementAt(j).getTypeOfAccessor(), type) & isMatched(ar.elementAt(j).getIdOfAccessor(), value);
+                    else if(!type.equals(""))
+                        matched = isMatched(ar.elementAt(j).getTypeOfAccessor(), type);
+                    else if(!value.equals(""))
+                        matched = isMatched(ar.elementAt(j).getIdOfAccessor(), value);
+                    
+                    if (matched)
+                        break;
+                }
+                
+                return matched;
+            }
+        };
+        
         boxTypeAccessor = new JComboBox();
         boxTypeAccessor.addItem(null);
         for(int i=0; i<am.getAccessRuleList().getAccessorTypes().size(); i++)
@@ -687,9 +724,9 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
                                 ((accessorId == null) || (accessorId.equals(""))) )
                             JOptionPane.showMessageDialog(parentFrame, "Search requires either a Accessor Type, Accessor ID or any combination.", "No Search Criteria", JOptionPane.ERROR_MESSAGE);
                         else {
-                            findNamedACL(tableNamedACL, acessorType, accessorId);
+                            searchACL.search(tableNamedACL, acessorType, accessorId);
                             
-                            if (aclSearchResults.size() == 0) {
+                            if (searchACL.getResultSize() == 0) {
                                 JOptionPane.showMessageDialog(parentFrame, "No matches found", "No Matches Found", JOptionPane.WARNING_MESSAGE);
                                 buttonNamedACLSearchNext.setEnabled(false);
                                 buttonNamedACLSearchReset.setEnabled(false);
@@ -697,8 +734,8 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
                                 boxTypeAccessor.setEnabled(true);
                                 textAccessorID.setEnabled(true);
                             } else {
-                                int k = aclSearchIndex + 1;
-                                labelACLSearchResult.setText("Result: "+k+" / "+aclSearchResults.size());
+                                int k = searchACL.getResultIndex() + 1;
+                                labelACLSearchResult.setText("Result: "+k+" / "+searchACL.getResultSize());
                                 buttonNamedACLSearchNext.setEnabled(true);
                                 buttonNamedACLSearchReset.setEnabled(true);
                                 buttonNamedACLSearch.setEnabled(false);
@@ -714,9 +751,9 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         buttonNamedACLSearchNext.setEnabled(false);
         buttonNamedACLSearchNext.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                findNextNamedACL(tableNamedACL);
-                int k = aclSearchIndex + 1;
-                labelACLSearchResult.setText("Result: "+k+" / "+aclSearchResults.size());
+                searchACL.searchNext(tableNamedACL);
+                int k = searchACL.getResultIndex() + 1;
+                labelACLSearchResult.setText("Result: "+k+" / "+searchACL.getResultSize());
             }
         });
         buttonNamedACLSearchReset = new JButton("Clear");
@@ -731,9 +768,7 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
                 textAccessorID.setEnabled(true);
                 boxTypeAccessor.setSelectedIndex(0);
                 textAccessorID.setText("");
-                aclSearchResults.clear();
-                aclSearchIndex = 0;
-                tableNamedACL.clearSelection();
+                searchACL.resetResults();
             }
         });
         
@@ -799,191 +834,4 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         ((DefaultTreeModel)treeReferences.getModel()).setRoot(root);
         treeReferences.repaint();
     }
-    
-    private ArrayList<TreePath> ruleTreeSearchResults = new ArrayList<TreePath>();
-    private int ruleTreeSearchIndex = 0;
-    private ArrayList<Integer> aclSearchResults = new ArrayList<Integer>();
-    private int aclSearchIndex = 0;
-    private final int SEARCH_CONDITION_VALUE = 0;
-    private final int SEARCH_CONDITION = 1;
-    private final int SEARCH_VALUE = 2;
-    
-    private boolean findNextRuleTree(JTreeAdvanced tree) {
-        ruleTreeSearchIndex++;
-        if(ruleTreeSearchIndex >= ruleTreeSearchResults.size())
-            ruleTreeSearchIndex = 0;
-        
-        if(ruleTreeSearchResults.size() > 0) {
-            tree.expandPath(ruleTreeSearchResults.get(ruleTreeSearchIndex));
-            tree.setSelectionPath(ruleTreeSearchResults.get(ruleTreeSearchIndex));
-            tree.scrollPathToVisible(ruleTreeSearchResults.get(ruleTreeSearchIndex));
-            return true;
-        } else
-            return false;
-    }
-    
-    private boolean findRuleTree(JTreeAdvanced tree, String condition, String value) {
-        ruleTreeSearchResults = new ArrayList<TreePath>();
-        ruleTreeSearchIndex = 0;
-        if((!condition.equals("")) && (!value.equals("")) )
-            findRuleTreeItems(
-                    tree,
-                    tree.getPathForRow(0),
-                    SEARCH_CONDITION_VALUE,
-                    condition,
-                    value);
-        else if(!condition.equals(""))
-            findRuleTreeItems(
-                    tree,
-                    tree.getPathForRow(0),
-                    SEARCH_CONDITION,
-                    condition,
-                    value);
-        else if(!value.equals(""))
-            findRuleTreeItems(
-                    tree,
-                    tree.getPathForRow(0),
-                    SEARCH_VALUE,
-                    condition,
-                    value);
-        if(ruleTreeSearchResults.size() > 0) {
-            tree.expandPath(ruleTreeSearchResults.get(ruleTreeSearchIndex));
-            tree.setSelectionPath(ruleTreeSearchResults.get(ruleTreeSearchIndex));
-            tree.scrollPathToVisible(ruleTreeSearchResults.get(ruleTreeSearchIndex));
-            return true;
-        } else
-            return false;
-    }
-    
-    /*
-     * Both condition and value cannot be empty, either one or the other.
-     */
-    private void findRuleTreeItems(JTreeAdvanced tree, TreePath parent, int searchBias, String condition, String value) {
-        // Traverse children
-        AccessManagerItem amItem = (AccessManagerItem)parent.getLastPathComponent();
-        Boolean matched = false;
-        
-        switch(searchBias) {
-            case SEARCH_CONDITION_VALUE:
-                matched = isMatched(amItem.getCondition(), condition) & ( (isMatched(amItem.getValue(), value) | isMatched(amItem.getAccessRuleName(), value)) );
-                break;
-            case SEARCH_CONDITION:
-                matched = isMatched(amItem.getCondition(), condition);
-                break;
-            case SEARCH_VALUE:
-                matched = isMatched(amItem.getValue(), value) | isMatched(amItem.getAccessRuleName(), value);
-                break;
-            default:
-                matched = false;
-        }
-        if(matched)
-            ruleTreeSearchResults.add(parent);
-        
-        int childCount = tree.getModel().getChildCount(amItem);
-        if(childCount > 0) {
-            for (int e=0; e<childCount; e++ ) {
-                TreePath path = parent.pathByAddingChild(tree.getModel().getChild(amItem, e));
-                findRuleTreeItems(tree, path, searchBias, condition, value);
-            }
-        }
-    }
-    
-    private boolean findNextNamedACL(JTableAdvanced table) {
-        aclSearchIndex++;
-        if(aclSearchIndex >= aclSearchResults.size())
-            aclSearchIndex = 0;
-        
-        if(aclSearchResults.size() > 0) {
-            table.setRowSelectionInterval(aclSearchResults.get(aclSearchIndex),aclSearchResults.get(aclSearchIndex));
-            table.getSelectionModel().setAnchorSelectionIndex(aclSearchResults.get(aclSearchIndex));
-            table.scrollRectToVisible(
-                    table.getCellRect(
-                    table.getSelectionModel().getAnchorSelectionIndex(),
-                    table.getColumnModel().getSelectionModel().getAnchorSelectionIndex(),
-                    false));
-            return true;
-        } else
-            return false;
-    }
-    
-    private boolean findNamedACL(JTableAdvanced table, String accessorType, String accessorId) {
-        aclSearchResults = new ArrayList<Integer>();
-        aclSearchIndex = 0;
-        if((!accessorType.equals("")) && (!accessorId.equals("")) )
-            findNamedACLItems(
-                    table,
-                    SEARCH_CONDITION_VALUE,
-                    accessorType,
-                    accessorId);
-        else if(!accessorType.equals(""))
-            findNamedACLItems(
-                    table,
-                    SEARCH_CONDITION,
-                    accessorType,
-                    accessorId);
-        else if(!accessorId.equals(""))
-            findNamedACLItems(
-                    table,
-                    SEARCH_VALUE,
-                    accessorType,
-                    accessorId);
-        
-        if(aclSearchResults.size() > 0) {
-            table.setRowSelectionInterval(aclSearchResults.get(aclSearchIndex),aclSearchResults.get(aclSearchIndex));
-            table.getSelectionModel().setAnchorSelectionIndex(aclSearchResults.get(aclSearchIndex));
-            table.scrollRectToVisible(
-                    table.getCellRect(
-                    table.getSelectionModel().getAnchorSelectionIndex(),
-                    table.getColumnModel().getSelectionModel().getAnchorSelectionIndex(),
-                    false));
-            return true;
-        } else
-            return false;
-    }
-    
-    /*
-     * Both condition and value cannot be empty, either one or the other.
-     */
-    private void findNamedACLItems(JTableAdvanced table, int searchBias, String accessorType, String accessorId) {
-        Boolean matched;
-        AccessRule ar;
-        int index;
-        
-        for(int i=0; i<table.getRowCount(); i++) {
-            matched = false;
-            index = tableDataFilterSortNamedACL.getDataIndex(i);
-            ar = am.getAccessRuleList().elementAt(index);
-            for(int j=0; j<ar.size(); j++) {
-                switch(searchBias) {
-                    case SEARCH_CONDITION_VALUE:
-                        matched = isMatched(ar.elementAt(j).getTypeOfAccessor(), accessorType) & isMatched(ar.elementAt(j).getIdOfAccessor(), accessorId);
-                        break;
-                    case SEARCH_CONDITION:
-                        matched = isMatched(ar.elementAt(j).getTypeOfAccessor(), accessorType);
-                        break;
-                    case SEARCH_VALUE:
-                        matched = isMatched(ar.elementAt(j).getIdOfAccessor(), accessorId);
-                        break;
-                    default:
-                        matched = false;
-                }
-                if (matched)
-                    break;
-            }
-            if(matched)
-                aclSearchResults.add(i);
-            
-        }
-    }
-    
-    private boolean isMatched(String s, String pattern) {
-        if((pattern != null) && (!pattern.equals(""))){
-            if((s != null) && (!s.equals(""))){
-                return PatternMatch.isStringMatch(s, pattern);
-            } else
-                return false;
-        } else
-            return false;
-    }
-    
 }
