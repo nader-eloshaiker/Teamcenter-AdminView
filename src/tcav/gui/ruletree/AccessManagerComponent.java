@@ -4,7 +4,7 @@ import javax.naming.ldap.StartTlsRequest;
 import tcav.gui.*;
 import tcav.utils.PatternMatch;
 import tcav.ruletree.*;
-import tcav.ResourceLocator;
+import tcav.resources.*;
 import tcav.Settings;
 import java.util.*;
 import java.awt.*;
@@ -42,8 +42,7 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         this.parentFrame = parentFrame;
         this.am = am;
         
-        tableAccessRule = new JTableAdvanced();
-        updateTableAccessControl();
+        tableAccessRule = createAccessControlTable();
         treeRuleTree = createTreeRuleTree();
         tableNamedACL = createTableNamedACL();
         
@@ -90,16 +89,39 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         
     }
     
-    public AccessManagerComponent(JFrame parentFrame) {
-        this(parentFrame, new AccessManager());
-    }
-    
     public boolean isEmptyPanel() {
         return (!am.getAccessManagerTree().isValid());
     }
     
     public AccessManager getAccessManager() {
         return am;
+    }
+    
+    private JTableAdvanced createAccessControlTable() {
+        JTableAdvanced table = new JTableAdvanced();
+        tableDataAccessRule = new AccessRuleTableModel(am.getAccessControlColumns(),new AccessRule());
+        table.setModel(tableDataAccessRule);
+        table.setRowSelectionAllowed(true);
+        if(table.getRowHeight() < 18)
+            table.setRowHeight(18);
+        TableColumn column;
+        for (int i=0; i<table.getColumnCount(); i++){
+            column = table.getColumnModel().getColumn(i);
+            column.setHeaderValue(tableDataAccessRule.getColumn(i));
+            column.setHeaderRenderer(new AccessRuleTableHearderRenderer());
+            column.setCellRenderer(new AccessRuleTableCellRenderer());
+            if(i == 0 || i == 1) {
+                column.setResizable(true);
+                column.setPreferredWidth(80);
+            } else {
+                column.setResizable(false);
+                column.setPreferredWidth(28);
+                column.setMaxWidth(28);
+                column.setMinWidth(28);
+                column.setWidth(28);
+            }
+        }
+        return table;
     }
     
     private void updateTableAccessControl() {
@@ -109,7 +131,7 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
     private void updateTableAccessControl(AccessRule ar) {
         tableDataAccessRule = new AccessRuleTableModel(am.getAccessControlColumns(),ar);
         tableAccessRule.setModel(tableDataAccessRule);
-        tableAccessRule.setRowSelectionAllowed(true);
+        
         TableColumn column;
         for (int i=0; i<tableAccessRule.getColumnCount(); i++){
             column = tableAccessRule.getColumnModel().getColumn(i);
@@ -134,17 +156,25 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         //tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         tree.setCellRenderer(new RuleTreeNodeRenderer());
         tree.addTreeSelectionListener(new TreeSelectionListener() {
-            private RuleTreeNode previousTreeNode = new RuleTreeNode();
+            private TreePath oldPath;
             
             public void valueChanged(TreeSelectionEvent e) {
+                TreePath newPath = e.getPath();
+                
+                if(oldPath != null){
+                    if(e.isAddedPath(e.getPath()) && newPath.equals(oldPath))
+                        return;
+                }
+                
+                if(e.isAddedPath(e.getPath()))
+                    oldPath = newPath;
+                else
+                    oldPath = null;
+                
                 RuleTreeNode treeNode = (RuleTreeNode)e.getPath().getLastPathComponent();
                 
-                if(e.isAddedPath(e.getPath()) && treeNode.equals(previousTreeNode))
-                    return;
-                
-                if(e.isAddedPath(e.getPath()) && treeNode.getAccessRule() != null ){
-                    previousTreeNode = treeNode;
-                    int index = tableDataFilterSortNamedACL.indexOfRuleName(treeNode.getAccessRuleName());//tableDataFilterSortNamedACL.getModelIndex(amItem.getAccessRuleListIndex());
+                if(e.isAddedPath(e.getPath()) && treeNode.getAccessRule() != null){
+                    int index = tableDataFilterSortNamedACL.indexOfRuleName(treeNode.getAccessRuleName());
                     if(index > -1) {
                         tableNamedACL.setRowSelectionInterval(index,index);
                         tableNamedACL.getSelectionModel().setAnchorSelectionIndex(index);
@@ -156,10 +186,8 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
                                 );
                     } else
                         updateTableAccessControl(treeNode.getAccessRule());
-                } else {
+                } else
                     updateTableAccessControl();
-                    previousTreeNode = new RuleTreeNode();
-                }
                 
             }
         });
@@ -200,9 +228,14 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
                 if (i > -1) {
                     if(tableDataFilterSortNamedACL.getAccessRule(i).getRuleTreeReferences().size() > 0) {
                         TreePath[] paths = getTreePaths(treeRuleTree, tableDataFilterSortNamedACL.getAccessRule(i).getRuleTreeReferences());
-                        treeRuleTree.setSelectionPaths(paths);
-                        treeRuleTree.scrollPathToVisible(paths[0]);
-                    }
+                        if(!isTreePathAvailable(paths, treeRuleTree.getSelectionPaths())) {
+                            treeRuleTree.setSelectionPaths(paths);
+                            treeRuleTree.scrollPathToVisible(paths[0]);
+                        }
+                        
+                    } else
+                        treeRuleTree.clearSelection();
+                    
                     updateTableAccessControl(tableDataFilterSortNamedACL.getAccessRule(i));
                     updateReferences(tableDataFilterSortNamedACL.getAccessRule(i));
                 } else
@@ -210,6 +243,25 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
             }
         });
         return table;
+    }
+    
+    public int indexOfTreePath(TreePath path, TreePath[] paths) {
+        if((path == null) || (paths == null))
+            return -1;
+        
+        for(int i=0; i<paths.length; i++)
+            if(path.equals(paths[i]))
+                return i;
+        
+        return -1;
+    }
+    
+    public boolean isTreePathAvailable(TreePath[] src, TreePath[] dst) {
+        for(int i=0; i<src.length; i++)
+            if(indexOfTreePath(src[i], dst) > -1)
+                return true;
+        
+        return false;
     }
     
     private TreePath[] getTreePaths(JTreeAdvanced tree, ArrayList<RuleTreeNode> components) {
@@ -300,10 +352,10 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         ImageIcon iconCollapseAll = new ImageIcon();
         ImageIcon iconCollapseBelow = new ImageIcon();
         try {
-            iconExpandAll = new ImageIcon(ResourceLocator.getButtonImage("Expand-All.gif"));
-            iconExpandBelow = new  ImageIcon(ResourceLocator.getButtonImage("Expand-Below.gif"));
-            iconCollapseAll = new  ImageIcon(ResourceLocator.getButtonImage("Collapse-All.gif"));
-            iconCollapseBelow = new  ImageIcon(ResourceLocator.getButtonImage("Collapse-Below.gif"));
+            iconExpandAll = ResourceLoader.getImage(ImageEnum.utilExpandAll);
+            iconExpandBelow = ResourceLoader.getImage(ImageEnum.utilExpand);
+            iconCollapseAll = ResourceLoader.getImage(ImageEnum.utilCollapseAll);
+            iconCollapseBelow = ResourceLoader.getImage(ImageEnum.utilCollapse);
         } catch (Exception e) {
             System.out.println("Couldn't load images: " + e);
         }
@@ -424,8 +476,8 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
                 GUIutilities.GAP_INSET));
         //toolBarRuletree.setFloatable(false);
         toolBarRuletree.add(buttonExpandAll);
-        toolBarRuletree.add(buttonExpandBelow);
         toolBarRuletree.add(buttonCollapseAll);
+        toolBarRuletree.add(buttonExpandBelow);
         toolBarRuletree.add(buttonCollapseBelow);
         toolBarRuletree.addSeparator();
         toolBarRuletree.add(new JLabel("Search:"));
@@ -450,6 +502,7 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         return panel;
     }
     
+    
     protected JComboBox listUnusedNamedACL;
     protected JComboBox boxFirstSort;
     protected JComboBox boxSecondSort;
@@ -467,7 +520,6 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
     protected JButton buttonNamedACLSearchReset;
     protected JButton buttonNamedACLSearch;
     protected SearchTableComponent searchACL;
-    
     
     private JPanel createPanelNamedACL() {
         
@@ -507,6 +559,7 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         return panel;
         
     }
+    
     
     private JPanel createACLTabDetails() {
         JPanel panelNamedACLDetailsLeft = new JPanel();
@@ -606,7 +659,7 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         
         ImageIcon iconFind = new ImageIcon();
         try {
-            iconFind = new ImageIcon(ResourceLocator.getButtonImage("Find.gif"));
+            iconFind = ResourceLoader.getImage(ImageEnum.utilFind);
         } catch (Exception e) {
             System.out.println("Couldn't load images: " + e);
         }
@@ -683,8 +736,8 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         ImageIcon iconFind = new ImageIcon();
         ImageIcon iconReset = new ImageIcon();
         try {
-            iconFind = new ImageIcon(ResourceLocator.getButtonImage("Find.gif"));
-            iconReset = new  ImageIcon(ResourceLocator.getButtonImage("Clear.gif"));
+            iconFind = ResourceLoader.getImage(ImageEnum.utilFind);
+            iconReset = ResourceLoader.getImage(ImageEnum.utilClear);
         } catch (Exception e) {
             System.out.println("Couldn't load images: " + e);
         }
@@ -808,10 +861,10 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         ImageIcon iconFind = new ImageIcon();
         ImageIcon iconReset = new ImageIcon();
         try {
-            iconFind = new ImageIcon(ResourceLocator.getButtonImage("Find.gif"));
-            iconReset = new  ImageIcon(ResourceLocator.getButtonImage("Clear.gif"));
-            iconAccessorType = new  ImageIcon(ResourceLocator.getRultreeColumnImage("AccessorType.gif"));;
-            iconAccessorId = new  ImageIcon(ResourceLocator.getRultreeColumnImage("AccessorId.gif"));;
+            iconFind = ResourceLoader.getImage(ImageEnum.utilFind);
+            iconReset = ResourceLoader.getImage(ImageEnum.utilClear);
+            iconAccessorType = ResourceLoader.getImage(ImageEnum.aclAccessorType);
+            iconAccessorId = ResourceLoader.getImage(ImageEnum.aclAccessorID);
         } catch (Exception e) {
             System.out.println("Couldn't load images: " + e);
         }
@@ -840,7 +893,7 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
     }
     
     private JPanel createACLTabReferences() {
-        treeReferences = new JTreeAdvanced(new String[]{"Ruletree Reference","Nader Eloshaiker"});
+        treeReferences = new JTreeAdvanced(new RuleTreeReferencesModel(new AccessRule()));
         treeReferences.setRootVisible(false);
         treeReferences.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         JScrollPane scrollReferences = new JScrollPane();

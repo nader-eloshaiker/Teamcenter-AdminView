@@ -8,129 +8,35 @@
  */
 package tcav.ruletree;
 
+import tcav.resources.ImageEnum;
+
 /**
  *
  * @author NZR4DL
  */
 public class AccessControlHeader {
     
-    private final String[] ACCESS_CONTROL_NAMES = new String[]{
-        "TYPEACCESSOR",
-        "IDACCESSOR",
-        "READ",
-        "WRITE",
-        "DELETE",
-        "CHANGE",
-        "PROMOTE",
-        "DEMOTE",
-        "COPY",
-        "EXPORT",
-        "IMPORT",
-        "TRANSFER_OUT",
-        "TRANSFER_IN",
-        "CHANGE_OWNER",
-        "PUBLISH",
-        "SUBSCRIBE",
-        "WRITE_ICOS",
-        "ASSIGN_TO_PROJECT",
-        "REMOVE_FROM_PROJECT"
-    };
-    private final String[] ACCESS_CONTROL_DESCRIPTIONS = new String[]{
-        "Type Of Accessor",
-        "Id Of Accessor",
-        "Read",
-        "Write",
-        "Delete",
-        "Change",
-        "Promote",
-        "Demote",
-        "Copy",
-        "Export",
-        "Import",
-        "Transfer Out",
-        "Transfer In",
-        "Change Ownership",
-        "Publish",
-        "Subscribe",
-        "Write Classification ICO's",
-        "Assign to Project",
-        "Remove From Project"
-    };
-    private final String[] ACCESS_CONTROL_IMAGES = new String[]{
-        "AccessorType.gif",
-        "AccessorId.gif",
-        "ReadAccess.gif",
-        "WriteAccess.gif",
-        "DeleteAccess.gif",
-        "ChangeAccess.gif",
-        "PromoteAccess.gif",
-        "DemoteAccess.gif",
-        "CopyAccess.gif",
-        "ExportAccess.gif",
-        "ImportAccess.gif",
-        "TransferOutAccess.gif",
-        "TransferInAccess.gif",
-        "ChangeOwnerShipAccess.gif",
-        "PublishAccess.gif",
-        "SubscribeAccess.gif",
-        "ClassificationAccess.gif",
-        "AssignToProjectAccess.gif",
-        "RemoveFromProjectAccess.gif"
-    };
-    
-    private AccessControlHeaderEntry[] column;
+    private AccessControlHeaderItem[] column;
     
     /**
      * Creates a new instance of AccessControlHeader
      */
-    public AccessControlHeader() {
-        column = new AccessControlHeaderEntry[0];
-    }
-    
-    public void setAccessControlColumns(String str) {
+    public AccessControlHeader(String str) {
         String[] s = str.split("!");
-        column = new AccessControlHeaderEntry[s.length+2];
+        column = new AccessControlHeaderItem[s.length+2];
+        column[0] = new AccessControlHeaderItem(AccessControlHeaderEnum.AccessorType);
+        column[1] = new AccessControlHeaderItem(AccessControlHeaderEnum.AccessorID);
         
-        for (int i=0; i<column.length; i++){
-            column[i] = new AccessControlHeaderEntry();
-            
-            if(i == 0) {
-                column[0].setName("TYPEACCESSOR");
-                column[0].setDescription(ACCESS_CONTROL_DESCRIPTIONS[0]);
-                column[0].setIconName(ACCESS_CONTROL_IMAGES[0]);
-            } else if(i == 1) {
-                column[1].setName("IDACCESSOR");
-                column[1].setDescription(ACCESS_CONTROL_DESCRIPTIONS[1]);
-                column[1].setIconName(ACCESS_CONTROL_IMAGES[1]);
-            } else {
-                column[i].setName(s[i-2]);
-                
-                //Dynamically build the descriptions to the names
-                for (int j=0; j<ACCESS_CONTROL_NAMES.length; j++) {
-                    if (column[i].getName().equals(ACCESS_CONTROL_NAMES[j])){
-                        column[i].setDescription(ACCESS_CONTROL_DESCRIPTIONS[j]);
-                        column[i].setIconName(ACCESS_CONTROL_IMAGES[j]);
-                        break;
-                    }
-                }
-            }
-        }
+        for (int i=0; i<s.length; i++)
+            column[i+2] = new AccessControlHeaderItem(AccessControlHeaderEnum.fromValue(s[i]));
         
     }
     
-    public String getName(int index) {
-        return column[index].getName();
-    }
-    
-    public String getDescritpion(int index) {
-        return column[index].getDescription();
-    }
-    
-    public AccessControlHeaderEntry getColumn(int index) {
+    public AccessControlHeaderItem getColumn(int index) {
         return column[index];
     }
     
-    public AccessControlHeaderEntry[] getColumns() {
+    public AccessControlHeaderItem[] getColumns() {
         return column;
     }
     
@@ -141,14 +47,14 @@ public class AccessControlHeader {
     public String toString() {
         String s = "";
         for(int i=0; i<column.length; i++)
-            s += column[i].getName()+"!";
+            s += column[i].value()+"!";
         return s;
     }
     
     public String generateExportString() {
         String s = "";
         for(int i=2; i<column.length; i++)
-            s += column[i].getName()+"!";
+            s += column[i].value()+"!";
         return s;
     }
 }

@@ -14,7 +14,7 @@ import tcav.gui.procedure.ProcedureManagerComponent;
 import tcav.ruletree.AccessManager;
 import tcav.procedure.ProcedureManager;
 import tcav.utils.CustomFileFilter;
-import tcav.ResourceLocator;
+import tcav.resources.*;
 import tcav.Settings;
 import javax.swing.*;
 import javax.swing.event.*;
@@ -67,11 +67,11 @@ public class AdminViewFrame extends JFrame{
         }
         
         try {
-            iconRuleTree = new ImageIcon(ResourceLocator.getButtonImage("RuleTree.gif"));
-            iconProcedure = new ImageIcon(ResourceLocator.getButtonImage("Procedure.gif"));
-            iconClose = new ImageIcon(ResourceLocator.getButtonImage("Close.gif"));
-            iconExit  = new ImageIcon(ResourceLocator.getButtonImage("Exit.gif"));
-            iconApp = new ImageIcon(ResourceLocator.getAppImage("logoIcon.gif"));
+            iconRuleTree = ResourceLoader.getImage(ImageEnum.amRuletree);
+            iconProcedure = ResourceLoader.getImage(ImageEnum.pmWorkflow);
+            iconClose = ResourceLoader.getImage(ImageEnum.utilClose);
+            iconExit  = ResourceLoader.getImage(ImageEnum.utilExit);
+            iconApp = ResourceLoader.getImage(ImageEnum.appLogo);
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Error Load Images", JOptionPane.ERROR_MESSAGE);
         }
@@ -98,7 +98,7 @@ public class AdminViewFrame extends JFrame{
                 Settings.getFrameLocationX(),
                 Settings.getFrameLocationY());
         this.setVisible(true);
-        this.setTitle(ResourceLocator.getApplicationName()+" v"+ResourceLocator.getVersion());
+        this.setTitle(ResourceStrings.getApplicationName()+" v"+ResourceStrings.getVersion());
     }
     
     public JFileChooser createFileChooser(String path) {
@@ -277,7 +277,7 @@ public class AdminViewFrame extends JFrame{
                 URL url = null;
                 JEditorPane html = new JEditorPane();
                 try {
-                    url = tcav.ResourceLocator.getChangeLog();
+                    url = tcav.resources.ResourceStrings.getChangeLog();
                     html = new JEditorPane(url);
                 } catch (Exception ex) {
                     System.err.println("Failed to open file");
@@ -302,7 +302,7 @@ public class AdminViewFrame extends JFrame{
             public void actionPerformed(ActionEvent e) {
                 JOptionPane.showMessageDialog(
                         getFrame(),
-                        ResourceLocator.getAboutInfo());
+                        ResourceStrings.getAboutInfo());
             }
         });
         

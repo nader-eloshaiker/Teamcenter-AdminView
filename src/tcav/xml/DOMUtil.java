@@ -10,7 +10,7 @@
 package tcav.xml;
 
 import tcav.procedure.ProcedureManager;
-import tcav.ResourceLocator;
+import tcav.resources.ResourceStrings;
 import java.util.List;
 import java.io.InputStream;
 import javax.xml.XMLConstants;
@@ -32,7 +32,7 @@ public class DOMUtil {
     public DOMUtil(InputStream is) throws Exception {
         // Validation
         //SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-        //Schema schema = schemaFactory.newSchema(ResourceLocator.getPLMXMLPDMSchema());
+        //Schema schema = schemaFactory.newSchema(ResourceStrings.getPLMXMLPDMSchema());
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setIgnoringElementContentWhitespace(true);
         factory.setCoalescing(true);
