@@ -239,10 +239,10 @@ public class AttributeTreeModel implements TreeModel {
         }
         
         switch(nrParent.getClassType()){
-            case WorkflowTemplate:
             case WorkflowHandler:
             case WorkflowBusinessRuleHandler:
             case Organisation:
+            case WorkflowTemplate:
                 aob = pm.getAttribOwnerBase(nrParent.getId());
                 return aob.getAttribute().size();
 
@@ -309,10 +309,10 @@ public class AttributeTreeModel implements TreeModel {
         }
         
         switch(nr.getClassType()){
-            case WorkflowTemplate:
-            case Organisation:
             case WorkflowHandler:
             case WorkflowBusinessRuleHandler:
+            case Organisation:
+            case WorkflowTemplate:
                 aob = pm.getAttribOwnerBase(nr.getId());
                 return (aob.getAttribute().size() == 0);
                 
@@ -373,10 +373,10 @@ public class AttributeTreeModel implements TreeModel {
         }
         
         switch(nrParent.getClassType()){
-            case WorkflowTemplate:
-            case Organisation:
             case WorkflowHandler:
             case WorkflowBusinessRuleHandler:
+            case Organisation:
+            case WorkflowTemplate:
                 aob = pm.getAttribOwnerBase(nrParent.getId());
                 return aob.getAttributeIdIndex(nrChild.getId());
                 

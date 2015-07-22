@@ -85,6 +85,7 @@ public class AdminViewFrame extends JFrame{
         });
         
         this.pack();
+        this.setSize(new Dimension(1024,740));
         this.setVisible(true);
         this.setTitle(ResourceLocator.getApplicationName()+" v"+ResourceLocator.getVersion());
     }
@@ -143,6 +144,11 @@ public class AdminViewFrame extends JFrame{
             }
         });
         
+        toolbar.setMargin(new Insets(
+                Utilities.GAP_INSET,
+                Utilities.GAP_INSET,
+                Utilities.GAP_INSET,
+                Utilities.GAP_INSET));
         toolbar.add(buttonOpenRuleTree);
         toolbar.add(buttonOpenProcedure);
         toolbar.addSeparator();

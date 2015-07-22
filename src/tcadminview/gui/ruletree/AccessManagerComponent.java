@@ -78,7 +78,7 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         
         /* Acccess Control Panel */
         JScrollPane accessRuleComponentScroll = new JScrollPane();
-        accessRuleComponentScroll.setPreferredSize(new Dimension(880,150));
+        accessRuleComponentScroll.setPreferredSize(new Dimension(980,150));
         accessRuleComponentScroll.getViewport().add(tableAccessRule);
         accessRuleComponentScroll.setBorder(new BevelBorder(BevelBorder.LOWERED));
         JPanel panelRuleTable =  new JPanel();
@@ -92,11 +92,17 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         panelRule.add("East", createPanelNamedACL());
         panelRule.add("Center",createPanelRuleTree());
         
+        JSplitPane splitPane = new JSplitPane(
+                JSplitPane.VERTICAL_SPLIT,
+                true,
+                Utilities.createPanelMargined(panelRule),
+                Utilities.createPanelMargined(panelRuleTable));
+        splitPane.setResizeWeight(0.6);
+        splitPane.setOneTouchExpandable(true);
+        
         /* And show it. */
-        this.setLayout(new BorderLayout(Utilities.GAP_MARGIN,Utilities.GAP_MARGIN));
-        this.setBorder(new EmptyBorder(Utilities.GAP_MARGIN,Utilities.GAP_MARGIN,Utilities.GAP_MARGIN,Utilities.GAP_MARGIN));
-        this.add("Center", panelRule);
-        this.add("South",panelRuleTable);
+        this.setLayout(new BorderLayout());//Utilities.GAP_MARGIN,Utilities.GAP_MARGIN));
+        this.add("Center",splitPane);
         
     }
     
@@ -142,7 +148,6 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
     private void updateReferences(AccessRule ar) {
         DefaultMutableTreeNode root;
         if(ar.getTreeIndexSize() > 0)
-            //root = RuleTreeNodeBuilder.getRuleTreeNodesForRule(accessManager.getAccessManagerTree(),ar);
             root = RuleTreeNodeBuilder.getRuleTreePathsForRule(accessManager.getAccessManagerTree(),ar);
         else
             root = null;
@@ -157,20 +162,19 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
     }
     
     private JTree createTreeRuleTree() {
-        
+        /*
         DefaultMutableTreeNode root;
         if(accessManager.getAccessManagerTreeSize()!=0)
             root = RuleTreeNodeBuilder.getRuleTreeNodes(accessManager.getAccessManagerTree());
         else
             root = null;
         treeDataRuleTree = new DefaultTreeModel(root);
-        //JTree tree = new JTree(treeDataRuleTree);
+         **/
         JTree tree = new JTree(new RuleTreeModel(accessManager.getAccessManagerTree()));
         tree.setCellRenderer(new RuleTreeNodeRenderer());
         tree.addTreeSelectionListener(new TreeSelectionListener() {
             public void valueChanged(TreeSelectionEvent e) {
                 TreePath path = e.getPath();
-                //DefaultMutableTreeNode  nodes = (DefaultMutableTreeNode)path.getLastPathComponent();
                 AccessManagerItem amItem = (AccessManagerItem)path.getLastPathComponent();//nodes.getUserObject();
                 if(e.isAddedPath(path) && amItem.getAccessRuleListIndex() != -1 ){
                     int index = tableDataFilterSortNamedACL.getModelIndex(amItem.getAccessRuleListIndex());
@@ -241,22 +245,6 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         return table;
     }
     
-    private void collapseTree(JTree tree){
-        Utilities.setCascadeTreeExpansion(tree,tree.getPathForRow(0),false);
-    }
-    
-    private void collapseTreeBranch(JTree tree, TreePath path){
-        Utilities.setCascadeTreeExpansion(tree,path,false);
-    }
-    
-    private void expandTree(JTree tree) {
-        Utilities.setCascadeTreeExpansion(treeRuleTree, treeRuleTree.getPathForRow(0), true);
-    }
-    
-    private void expandTreeBranch(JTree tree, TreePath path){
-        Utilities.setCascadeTreeExpansion(tree,path,true);
-    }
-    
     private boolean findNextRuleTreeItem() {
         ruleTreeSearchIndex++;
         if(ruleTreeSearchIndex >= ruleTreeSearchResults.size())
@@ -272,6 +260,7 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
     }
     
     private boolean findRuleTreeItem(String condition, String value) {
+        ruleTreeSearchResults = new ArrayList<TreePath>();
         ruleTreeSearchIndex = 0;
         findRuleTreeItem(treeRuleTree, treeRuleTree.getPathForRow(0), condition, value);
         if(ruleTreeSearchResults.size() > 0) {
@@ -288,11 +277,9 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
      */
     private void findRuleTreeItem(JTree tree, TreePath parent, String condition, String value) {
         // Traverse children
-        //DefaultMutableTreeNode node = (DefaultMutableTreeNode)parent.getLastPathComponent();
-        //AccessManagerItem amItem = (AccessManagerItem)node.getUserObject();
         AccessManagerItem amItem = (AccessManagerItem)parent.getLastPathComponent();
         Boolean matched = false;
-
+        
         if(!matched)
             matched = isMatched(amItem.getCondition(), condition);
         
@@ -310,8 +297,6 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         if(childCount > 0) {
             //for (Enumeration e=node.children(); e.hasMoreElements(); ) {
             for (int e=0; e<childCount; e++ ) {
-                //TreeNode n = (TreeNode)e.nextElement();
-                //TreePath path = parent.pathByAddingChild(n);
                 TreePath path = parent.pathByAddingChild(tree.getModel().getChild(amItem, e));
                 findRuleTreeItem(tree, path, condition, value);
             }
@@ -339,28 +324,28 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         buttonExpandAll.setToolTipText("Expand All");
         buttonExpandAll.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                expandTree(treeRuleTree);
+                Utilities.expandTree(treeRuleTree);
             }
         });
         JButton buttonExpandBelow = new JButton();
         buttonExpandBelow.setToolTipText("Expand Below");
         buttonExpandBelow.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                expandTreeBranch(treeRuleTree, treeRuleTree.getSelectionPath());
+                Utilities.expandTreeBranch(treeRuleTree);
             }
         });
         JButton buttonCollapseAll = new JButton();
         buttonCollapseAll.setToolTipText("Collapse All");
         buttonCollapseAll.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                collapseTree(treeRuleTree);
+                Utilities.collapseTree(treeRuleTree);
             }
         });
         JButton buttonCollapseBelow = new JButton();
         buttonCollapseBelow.setToolTipText("Collapse Below");
         buttonCollapseBelow.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                collapseTreeBranch(treeRuleTree, treeRuleTree.getSelectionPath());
+                Utilities.collapseTreeBranch(treeRuleTree);
             }
         });
         
@@ -388,7 +373,8 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
             public void actionPerformed(ActionEvent e) {
                 findNextRuleTreeItem();
                 int k = ruleTreeSearchIndex + 1;
-                buttonRuleTreeFind.setText(k+" / "+ruleTreeSearchResults.size());            }
+                buttonRuleTreeFind.setText(k+" / "+ruleTreeSearchResults.size());
+            }
         });
         
         buttonRuleTreeFind = new JButton("Find");
@@ -401,14 +387,10 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
                     conditionString = (String)boxSearchCondition.getSelectedItem();
                 valueString = textSearchValue.getText();
                 
-                if( (conditionString.equals(""))
-                &&
-                        ((valueString == null) || (valueString.equals("")))
-                        )
+                if( (conditionString.equals("")) &&
+                        ((valueString == null) || (valueString.equals(""))) )
                     JOptionPane.showMessageDialog(parentFrame, "Search requires either a condition, value/ACL or any combination.", "No Search Criteria", JOptionPane.ERROR_MESSAGE);
                 else {
-                    ruleTreeSearchResults = new ArrayList<TreePath>();
-                    ruleTreeSearchIndex = 0;
                     findRuleTreeItem(conditionString, valueString);
                     
                     if (ruleTreeSearchResults.size() == 0) {
@@ -466,6 +448,11 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         
         
         JToolBar toolBarRuletree = new JToolBar();
+        toolBarRuletree.setMargin(new Insets(
+                Utilities.GAP_INSET,
+                Utilities.GAP_INSET,
+                Utilities.GAP_INSET,
+                Utilities.GAP_INSET));
         toolBarRuletree.setFloatable(false);
         toolBarRuletree.add(buttonExpandAll);
         toolBarRuletree.add(buttonExpandBelow);
@@ -474,6 +461,7 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         toolBarRuletree.addSeparator();
         toolBarRuletree.add(new JLabel("Search:"));
         toolBarRuletree.add(boxSearchCondition);
+        toolBarRuletree.addSeparator();
         toolBarRuletree.add(textSearchValue);
         toolBarRuletree.addSeparator();
         toolBarRuletree.add(buttonRuleTreeFind);
@@ -618,18 +606,18 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         buttonFilter.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
                 int[] filterColumns = new int[]{0,1,2};
-                    String[] filterPatterns = new String[]{
-                        (String)boxfilterType.getSelectedItem(),
-                        textFilterInstanceCount.getText(),
-                        textFilterName.getText()
-                    };
-                    
+                String[] filterPatterns = new String[]{
+                    (String)boxfilterType.getSelectedItem(),
+                    textFilterInstanceCount.getText(),
+                    textFilterName.getText()
+                };
+                
                 if( ((filterPatterns[0] == null) || (filterPatterns[0].equals("")))
-                    &&
-                    ((filterPatterns[1] == null) || (filterPatterns[1].equals("")))
-                    &&
-                    ((filterPatterns[2] == null) || (filterPatterns[2].equals("")))
-                  )
+                &&
+                        ((filterPatterns[1] == null) || (filterPatterns[1].equals("")))
+                        &&
+                        ((filterPatterns[2] == null) || (filterPatterns[2].equals("")))
+                        )
                     JOptionPane.showMessageDialog(parentFrame, "Filtering requires either a Type, Instance Count, Name or any combination.", "No Filter Criteria", JOptionPane.ERROR_MESSAGE);
                 else {
                     

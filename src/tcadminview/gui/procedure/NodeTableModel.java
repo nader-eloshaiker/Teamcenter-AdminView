@@ -65,32 +65,32 @@ public class NodeTableModel extends AbstractTableModel implements TableModel {
             case NodeReference.ITEM:
                 switch(nr.getClassType()) {
                     case WorkflowTemplate:
-                        return 11;
+                        return 12;
                         
                     case WorkflowAction:
-                        return 5;
+                        return 6;
                         
                     case WorkflowHandler:
-                        return 3;
+                        return 4;
                         
                     case WorkflowBusinessRule:
-                        return 5;
+                        return 6;
                         
                     case WorkflowBusinessRuleHandler:
-                        return 5;
+                        return 6;
                         
                     case WorkflowSignoffProfile:
-                        return 8;
+                        return 9;
                         
                     case Organisation:
-                        return 3;
+                        return 4;
                         
                     case Role:
-                        return 3;
+                        return 4;
                     
                     case Arguments:
                     case UserData:
-                        return 4;
+                        return 5;
                         
                     case UserValue:
                         return 15;
@@ -98,10 +98,10 @@ public class NodeTableModel extends AbstractTableModel implements TableModel {
                     case AssociatedDataSet:
                     case AssociatedFolder:
                     case AssociatedForm:
-                        return 5;
+                        return 6;
                         
                     case ValidationResults:
-                        return 4;
+                        return 5;
                         
                     default:
                         return 0;
@@ -197,24 +197,25 @@ public class NodeTableModel extends AbstractTableModel implements TableModel {
         switch(rowIndex){
             case 0:
                 if(columnIndex == 0)
-                    return "Name";
-                else {
-                    if(ud.getName() != null)
-                        return ud.getName();
-                    else 
-                        return ud.getId();
-                }
+                    return "Id";
+                else
+                    return ud.getId();
             case 1:
+                if(columnIndex == 0)
+                    return "Name";
+                else
+                    return ud.getName();
+            case 2:
                 if(columnIndex == 0)
                     return "Description";
                 else
                     return ud.getDescription();
-            case 2:
+            case 3:
                 if(columnIndex == 0)
                     return "Procedure Type";
                 else
                     return nr.getClassType().value();
-            case 3:
+            case 4:
                 if(columnIndex == 0)
                     return "Type";
                 else
@@ -323,39 +324,40 @@ public class NodeTableModel extends AbstractTableModel implements TableModel {
         switch(rowIndex){
             case 0:
                 if(columnIndex == 0)
-                    return "Name";
-                else {
-                    if(wt.getName() != null)
-                        return wt.getName();
-                    else 
-                        return wt.getId();
-                }
+                    return "Id";
+                else
+                    return wt.getId();
             case 1:
+                if(columnIndex == 0)
+                    return "Name";
+                else
+                    return wt.getName();
+            case 2:
                 if(columnIndex == 0)
                     return "Description";
                 else
                     return wt.getDescription();
-            case 2:
+            case 3:
                 if(columnIndex == 0)
                     return "Procedure Type";
                 else
                     return nr.getClassType().value();
-            case 3:
+            case 4:
                 if(columnIndex == 0)
                     return "Sign Off Quorum";
                 else
                     return wt.getSignoffQuorum();
-            case 4:
+            case 5:
                 if(columnIndex == 0)
                     return "Classification";
                 else
                     return wt.getTemplateClassification().value();
-            case 5:
+            case 6:
                 if(columnIndex == 0)
                     return "Show in Process Stage";
                 else
                     return wt.isShowInProcessStage();
-            case 6:
+            case 7:
                 if(columnIndex == 0)
                     return "Parent Task";
                 else {
@@ -364,22 +366,22 @@ public class NodeTableModel extends AbstractTableModel implements TableModel {
                     else
                         return null;
                 }
-            case 7:
+            case 8:
                 if(columnIndex == 0)
                     return "Stage";
                 else
                     return wt.getStage().value();
-            case 8:
+            case 9:
                 if(columnIndex == 0)
                     return "Object Type";
                 else
                     return wt.getObjectType();
-            case 9:
+            case 10:
                 if(columnIndex == 0)
                     return "Key";
                 else
                     return wt.getIconKey();
-            case 10:
+            case 11:
                 if(columnIndex == 0)
                     return "Task Description";
                 else {
@@ -399,29 +401,30 @@ public class NodeTableModel extends AbstractTableModel implements TableModel {
         switch(rowIndex){
             case 0:
                 if(columnIndex == 0)
-                    return "Name";
-                else {
-                    if(wa.getName() != null)
-                        return wa.getName();
-                    else 
-                        return wa.getId();
-                }
+                    return "Id";
+                else
+                    return wa.getId();
             case 1:
+                if(columnIndex == 0)
+                    return "Name";
+                else
+                    return wa.getName();
+            case 2:
                 if(columnIndex == 0)
                     return "Description";
                 else
                     return wa.getDescription();
-            case 2:
+            case 3:
                 if(columnIndex == 0)
                     return "Procedure Type";
                 else
                     return nr.getClassType().value();
-            case 3:
+            case 4:
                 if(columnIndex == 0)
                     return "Action Type";
                 else
                     return wa.getActionType();
-            case 4:
+            case 5:
                 if(columnIndex == 0)
                     return "Parent Process";
                 else {
@@ -440,19 +443,20 @@ public class NodeTableModel extends AbstractTableModel implements TableModel {
         switch(rowIndex){
             case 0:
                 if(columnIndex == 0)
-                    return "Name";
-                else {
-                    if(wh.getName() != null)
-                        return wh.getName();
-                    else 
-                        return wh.getId();
-                }
+                    return "Id";
+                else
+                    return wh.getId();
             case 1:
+                if(columnIndex == 0)
+                    return "Name";
+                else
+                    return wh.getName();
+            case 2:
                 if(columnIndex == 0)
                     return "Description";
                 else
                     return wh.getDescription();
-            case 2:
+            case 3:
                 if(columnIndex == 0)
                     return "Procedure Type";
                 else
@@ -467,29 +471,30 @@ public class NodeTableModel extends AbstractTableModel implements TableModel {
         switch(rowIndex){
             case 0:
                 if(columnIndex == 0)
-                    return "Name";
-                else {
-                    if(wbr.getName() != null)
-                        return wbr.getName();
-                    else 
-                        return wbr.getId();
-                }
+                    return "Id";
+                else
+                    return wbr.getId();
             case 1:
+                if(columnIndex == 0)
+                    return "Name";
+                else
+                    return wbr.getName();
+            case 2:
                 if(columnIndex == 0)
                     return "Description";
                 else
                     return wbr.getDescription();
-            case 2:
+            case 3:
                 if(columnIndex == 0)
                     return "Procedure Type";
                 else
                     return nr.getClassType().value();
-            case 3:
+            case 4:
                 if(columnIndex == 0)
                     return "Sign Off Quorum";
                 else
                     return wbr.getRuleQuorum();
-            case 4:
+            case 5:
                 if(columnIndex == 0)
                     return "Parent Action";
                 else
@@ -504,29 +509,30 @@ public class NodeTableModel extends AbstractTableModel implements TableModel {
         switch(rowIndex){
             case 0:
                 if(columnIndex == 0)
-                    return "Name";
-                else {
-                    if(wbrh.getName() != null)
-                        return wbrh.getName();
-                    else 
-                        return wbrh.getId();
-                }
+                    return "Id";
+                else
+                    return wbrh.getId();
             case 1:
+                if(columnIndex == 0)
+                    return "Name";
+                else
+                    return wbrh.getName();
+            case 2:
                 if(columnIndex == 0)
                     return "Description";
                 else
                     return wbrh.getDescription();
-            case 2:
+            case 3:
                 if(columnIndex == 0)
                     return "Procedure Type";
                 else
                     return nr.getClassType().value();
-            case 3:
+            case 4:
                 if(columnIndex == 0)
                     return "Negated";
                 else
                     return wbrh.isNegated();
-            case 4:
+            case 5:
                 if(columnIndex == 0)
                     return "Overide";
                 else
@@ -542,39 +548,40 @@ public class NodeTableModel extends AbstractTableModel implements TableModel {
         switch(rowIndex){
             case 0:
                 if(columnIndex == 0)
-                    return "Name";
-                else {
-                    if(wsp.getName() != null)
-                        return wsp.getName();
-                    else 
-                        return wsp.getId();
-                }
+                    return "Id";
+                else
+                    return wsp.getId();
             case 1:
+                if(columnIndex == 0)
+                    return "Name";
+                else
+                    return wsp.getName();
+            case 2:
                 if(columnIndex == 0)
                     return "Description";
                 else
                     return wsp.getDescription();
-            case 2:
+            case 3:
                 if(columnIndex == 0)
                     return "Procedure Type";
                 else
                     return nr.getClassType().value();
-            case 3:
+            case 4:
                 if(columnIndex == 0)
                     return "Sign Off Quorum";
                 else
                     return wsp.getSignoffQuorum();
-            case 4:
+            case 5:
                 if(columnIndex == 0)
                     return "Number of Sign Offs";
                 else
                     return wsp.getNumberOfSignoffs();
-            case 5:
+            case 6:
                 if(columnIndex == 0)
                     return "Allow Sub Groups";
                 else
                     return wsp.isAllowSubgroups();
-            case 6:
+            case 7:
                 if(columnIndex == 0)
                     return "Role Reference";
                 else {
@@ -585,7 +592,7 @@ public class NodeTableModel extends AbstractTableModel implements TableModel {
                     else
                         return null;
                 }
-            case 7:
+            case 8:
                 if(columnIndex == 0)
                     return "Group Reference";
                 else {
@@ -606,19 +613,20 @@ public class NodeTableModel extends AbstractTableModel implements TableModel {
         switch(rowIndex){
             case 0:
                 if(columnIndex == 0)
-                    return "Name";
-                else {
-                    if(o.getName() != null)
-                        return o.getName();
-                    else 
-                        return o.getId();
-                }
+                    return "Id";
+                else
+                    return o.getId();
             case 1:
+                if(columnIndex == 0)
+                    return "Name";
+                else
+                    return o.getName();
+            case 2:
                 if(columnIndex == 0)
                     return "Description";
                 else
                     return o.getDescription();
-            case 2:
+            case 3:
                 if(columnIndex == 0)
                     return "Procedure Type";
                 else
@@ -633,19 +641,20 @@ public class NodeTableModel extends AbstractTableModel implements TableModel {
         switch(rowIndex){
             case 0:
                 if(columnIndex == 0)
-                    return "Name";
-                else {
-                    if(r.getName() != null)
-                        return r.getName();
-                    else 
-                        return r.getId();
-                }
+                    return "Id";
+                else
+                    return r.getId();
             case 1:
+                if(columnIndex == 0)
+                    return "Name";
+                else
+                    return r.getName();
+            case 2:
                 if(columnIndex == 0)
                     return "Description";
                 else
                     return r.getDescription();
-            case 2:
+            case 3:
                 if(columnIndex == 0)
                     return "Procedure Type";
                 else
@@ -661,29 +670,30 @@ public class NodeTableModel extends AbstractTableModel implements TableModel {
         switch(rowIndex){
             case 0:
                 if(columnIndex == 0)
-                    return "Name";
-                else {
-                    if(ad.getName() != null)
-                        return ad.getName();
-                    else 
-                        return ad.getId();
-                }
+                    return "Id";
+                else
+                    return ad.getId();
             case 1:
+                if(columnIndex == 0)
+                    return "Name";
+                else
+                    return ad.getName();
+            case 2:
                 if(columnIndex == 0)
                     return "Description";
                 else
                     return ad.getDescription();
-            case 2:
+            case 3:
                 if(columnIndex == 0)
                     return "Procedure Type";
                 else
                     return nr.getClassType().value();
-            case 3:
+            case 4:
                 if(columnIndex == 0)
                     return "Role";
                 else
                     return ad.getRole();
-            case 4:
+            case 5:
                 if(columnIndex == 0)
                     return "DataSet Reference";
                 else {
@@ -705,29 +715,30 @@ public class NodeTableModel extends AbstractTableModel implements TableModel {
         switch(rowIndex){
             case 0:
                 if(columnIndex == 0)
-                    return "Name";
-                else {
-                    if(af.getName() != null)
-                        return af.getName();
-                    else 
-                        return af.getId();
-                }
+                    return "Id";
+                else
+                    return af.getId();
             case 1:
+                if(columnIndex == 0)
+                    return "Name";
+                else
+                    return af.getName();
+            case 2:
                 if(columnIndex == 0)
                     return "Description";
                 else
                     return af.getDescription();
-            case 2:
+            case 3:
                 if(columnIndex == 0)
                     return "Procedure Type";
                 else
                     return nr.getClassType().value();
-            case 3:
+            case 4:
                 if(columnIndex == 0)
                     return "Role";
                 else
                     return af.getRole();
-            case 4:
+            case 5:
                 if(columnIndex == 0)
                     return "Folder Reference";
                 else {
@@ -749,29 +760,30 @@ public class NodeTableModel extends AbstractTableModel implements TableModel {
         switch(rowIndex){
             case 0:
                 if(columnIndex == 0)
-                    return "Name";
-                else {
-                    if(af.getName() != null)
-                        return af.getName();
-                    else 
-                        return af.getId();
-                }
+                    return "Id";
+                else
+                    return af.getId();
             case 1:
+                if(columnIndex == 0)
+                    return "Name";
+                else
+                    return af.getName();
+            case 2:
                 if(columnIndex == 0)
                     return "Description";
                 else
                     return af.getDescription();
-            case 2:
+            case 3:
                 if(columnIndex == 0)
                     return "Procedure Type";
                 else
                     return nr.getClassType().value();
-            case 3:
+            case 4:
                 if(columnIndex == 0)
                     return "Role";
                 else
                     return af.getRole();
-            case 4:
+            case 5:
                 if(columnIndex == 0)
                     return "Folder Reference";
                 else {
@@ -793,24 +805,25 @@ public class NodeTableModel extends AbstractTableModel implements TableModel {
         switch(rowIndex){
             case 0:
                 if(columnIndex == 0)
-                    return "Name";
-                else {
-                    if(vr.getName() != null)
-                        return vr.getName();
-                    else 
-                        return vr.getId();
-                }
+                    return "Id";
+                else
+                    return vr.getId();
             case 1:
+                if(columnIndex == 0)
+                    return "Name";
+                else
+                    return vr.getName();
+            case 2:
                 if(columnIndex == 0)
                     return "Description";
                 else
                     return vr.getDescription();
-            case 2:
+            case 3:
                 if(columnIndex == 0)
                     return "Application";
                 else
                     return vr.getApplication();
-            case 3:
+            case 4:
                 if(columnIndex == 0)
                     return "Procedure Type";
                 else

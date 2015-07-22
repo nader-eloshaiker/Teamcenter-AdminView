@@ -14,13 +14,15 @@ import javax.swing.table.*;
 import javax.swing.tree.*;
 import javax.swing.border.*;
 import java.awt.*;
+import tcadminview.gui.procedure.NodeReference;
 /**
  *
  * @author nzr4dl
  */
 public class Utilities {
-    public static int GAP_COMPONENT = 5;
-    public static int GAP_MARGIN = 5;
+    public final static int GAP_COMPONENT = 4;
+    public final static int GAP_INSET = 1;
+    public final static int GAP_MARGIN = 4;
     
     /**
      * Creates a new instance of Utilities
@@ -32,7 +34,7 @@ public class Utilities {
         JPanel SpacedPanel = new JPanel();
         SpacedPanel.setLayout(new GridLayout(1,1,GAP_COMPONENT,GAP_COMPONENT));
         SpacedPanel.setBorder(new EmptyBorder(GAP_MARGIN,GAP_MARGIN,GAP_MARGIN,GAP_MARGIN));
-        SpacedPanel.add(component);
+        SpacedPanel.add("Center",component);
         
         return SpacedPanel;
     }
@@ -101,6 +103,27 @@ public class Utilities {
         }
         
     }
+  
+    public static void collapseTree(JTree tree){
+        setCascadeTreeExpansion(tree,tree.getPathForRow(0),false);
+        //tree.expandRow(0);
+        //tree.expandPath(new TreePath(tree.getModel().getRoot()));
+    }
+    
+    public static void collapseTreeBranch(JTree tree){
+        if(!tree.isSelectionEmpty())
+            setCascadeTreeExpansion(tree,tree.getSelectionPath(),false);
+    }
+    
+    public static void expandTree(JTree tree) {
+        setCascadeTreeExpansion(tree, tree.getPathForRow(0), true);
+    }
+    
+    public static void expandTreeBranch(JTree tree){
+        if(!tree.isSelectionEmpty())
+            setCascadeTreeExpansion(tree,tree.getSelectionPath(),true);
+    }
+    
     
     public static void setCascadeTreeExpansion(JTree tree, TreePath parent, boolean expand) {
         // Traverse children

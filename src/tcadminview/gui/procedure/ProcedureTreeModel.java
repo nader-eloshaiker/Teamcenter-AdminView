@@ -82,7 +82,7 @@ public class ProcedureTreeModel implements TreeModel {
                 childId = wt.getActions().get(index);
                 wa = pm.getWorkflowActions().get(pm.getIdIndex(childId));
                 return new NodeReference(
-                        wa.getId(), "Action "+index, wa.getActionType(), TagTypeEnum.WorkflowAction);
+                        wa.getId(), "Action Type: "+wa.getActionType(), wa.getActionType(), TagTypeEnum.WorkflowAction);
                 
             case NodeReference.WORKFLOW_HANDLER:
                 wa = pm.getWorkflowActions().get(pm.getIdIndex(nrParent.getId()));
@@ -214,8 +214,8 @@ public class ProcedureTreeModel implements TreeModel {
                 return wa.getActionHandlerRefs().size();
                 
             case NodeReference.WORKFLOW_BUSINESS_RULE:
-                wbr = pm.getWorkflowBusinessRules().get(pm.getIdIndex(nrParent.getId()));
-                return wbr.getRuleHandlerRefs().size();
+                wa = pm.getWorkflowActions().get(pm.getIdIndex(nrParent.getId()));
+                return wa.getRuleRefs().size();
                 
             case NodeReference.WORKFLOW_BUSINESS_RULE_HANDLER:
                 wbr = pm.getWorkflowBusinessRules().get(pm.getIdIndex(nrParent.getId()));

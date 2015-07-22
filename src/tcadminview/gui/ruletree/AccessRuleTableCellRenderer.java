@@ -22,7 +22,7 @@ public class AccessRuleTableCellRenderer extends DefaultTableCellRenderer implem
     
     static protected ImageIcon yesIcon;
     static protected ImageIcon noIcon;
-
+    
     
     static
     {
@@ -38,16 +38,15 @@ public class AccessRuleTableCellRenderer extends DefaultTableCellRenderer implem
             Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         
         String s = (String)value;
-
-        if(s.equals("Y")) {
+        
+        if(column > 1) {
             setHorizontalAlignment(CENTER);
-            setIcon(yesIcon);
-        } else if(s.equals("N")) {
-            setHorizontalAlignment(CENTER);
-            setIcon(noIcon);
-        } else if (column > 1) {
-            setHorizontalAlignment(CENTER);
-            setIcon(null);
+            if(s.equals("Y"))
+                setIcon(yesIcon);
+            else if(s.equals("N"))
+                setIcon(noIcon);
+            else
+                setIcon(null);
         } else
             setText(s);
         

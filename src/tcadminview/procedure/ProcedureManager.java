@@ -51,11 +51,27 @@ public class ProcedureManager {
     private ArrayList<AccessIntentType> accessIntentList;
     private ArrayList<OrganisationType> organisationList;
     
-    private Hashtable<String, Integer>idIndexLookup;
-    private Hashtable<String, TagTypeEnum>idClassLookup;
+    private Hashtable<String, Integer> idIndexLookup;
+    private Hashtable<String, TagTypeEnum> idClassLookup;
     
     private JFrame frame;
     private DOMUtil domUtil;
+    
+    public final static String[] WORKFLOW_TYPES_NAMES = {
+            "Action",
+            "Business Rule",
+            "Business Handler",
+            "Handler",
+            "Template"
+    };
+    
+    public final static TagTypeEnum[] WORKFLOW_TYPES = {
+        TagTypeEnum.WorkflowAction,
+        TagTypeEnum.WorkflowBusinessRule,
+        TagTypeEnum.WorkflowBusinessRuleHandler,
+        TagTypeEnum.WorkflowHandler,
+        TagTypeEnum.WorkflowTemplate
+    };
     
     
     /**
@@ -212,7 +228,7 @@ public class ProcedureManager {
     }
     
     private void setIdLookup(String id, TagTypeEnum tagType, int index) {
-        idIndexLookup.put(id,index);
+        idIndexLookup.put(id, index);
         idClassLookup.put(id, tagType);
     }
     
