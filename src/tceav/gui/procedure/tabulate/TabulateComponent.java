@@ -684,11 +684,22 @@ public class TabulateComponent extends TabbedPanel {
                 Settings.setPmTblIncludeIndents(checkIncludeIndents.isSelected());
             }
         });
+        
+        if(Settings.isPmTblDatabaseMode()) {
+            checkMultiSheet.setEnabled(false);
+            checkIncludeIndents.setEnabled(false);
+        } else {
+            checkMultiSheet.setEnabled(true);
+            checkIncludeIndents.setEnabled(true);
+        }
+        
         JRadioButton radioDatabaseMode = new JRadioButton("Database", Settings.isPmTblDatabaseMode());
         radioDatabaseMode.setToolTipText("Export to XML table files");
         radioDatabaseMode.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Settings.setPmTblDatabaseMode(true);
+                checkMultiSheet.setEnabled(false);
+                checkIncludeIndents.setEnabled(false);
                 if(fileChooser.getFileFilter().equals(filterCSV))
                     fileChooser.setFileFilter(filterXML);
             }
@@ -698,6 +709,8 @@ public class TabulateComponent extends TabbedPanel {
         radioSpreadSheetMode.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Settings.setPmTblDatabaseMode(false);
+                checkMultiSheet.setEnabled(true);
+                checkIncludeIndents.setEnabled(true);
                 if(fileChooser.getFileFilter().equals(filterXML))
                     fileChooser.setFileFilter(filterCSV);
             }
@@ -722,8 +735,8 @@ public class TabulateComponent extends TabbedPanel {
         
         JPanel panelOptions = new JPanel();
         panelOptions.setLayout(new GridLayout(2,1));
-        panelOptions.add(panelSpreadsheetOptions);
         panelOptions.add(panelExportMode);
+        panelOptions.add(panelSpreadsheetOptions);
         
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
