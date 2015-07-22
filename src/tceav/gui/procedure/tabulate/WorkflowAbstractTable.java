@@ -9,10 +9,10 @@
 
 package tceav.gui.procedure.tabulate;
 
+import java.util.ArrayList;
 import javax.swing.table.TableModel;
 import javax.swing.event.TableModelListener;
-import java.util.*;
-import tceav.manager.procedure.plmxmlpdm.type.*;
+import tceav.manager.procedure.plmxmlpdm.type.WorkflowTemplateType;
 /**
  *
  * @author nzr4dl-e
@@ -52,11 +52,11 @@ public abstract class WorkflowAbstractTable implements TableModel {
     public abstract String getCSVValueAt(int rowIndex, int columnIndex);
     
     public int getIndentLevel(int rowIndex) {
-        WorkflowTemplateType tmp = rowList.get(rowIndex).getParentSubTaskTemplate();
+        WorkflowTemplateType tmp = rowList.get(rowIndex).getParentTaskTemplate();
         int indent = 0;
         
         while(tmp != null) {
-            tmp = tmp.getParentSubTaskTemplate();
+            tmp = tmp.getParentTaskTemplate();
             indent++;
         }
         

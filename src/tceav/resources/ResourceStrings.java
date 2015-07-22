@@ -27,20 +27,24 @@ public class ResourceStrings {
         return ResourceStrings.class.getResource("ChangeLog.html");
     }
     
+    public static URL getLicense() throws IOException {
+        return ResourceStrings.class.getResource("gpl-3.html");
+    }
+
     public static URL getPLMXMLPDMSchema() throws IOException {
         return ResourceStrings.class.getResource("schema/PLMXMLPDMSchema.xsd");
     }
     
     public static String getVersion() {
-        return "3.10";
+        return "4.00";
     }
     
     public static String getBuild() {
-        return "154";
+        return "176";
     }
     
     public static String getReleaseDate() {
-        return "16-September-08";
+        return "05-Dec-08";
     }
     
     public static String getApplicationName() {
@@ -48,22 +52,26 @@ public class ResourceStrings {
     }
     
     public static String getApplicationNameShort() {
-        return "TcE.AV";
+        return "TcE AdminView";
     }
     
-    public static String getAboutInfo() {
-        return "<html><p>TcE Admin View</p><p></p>" +
-                        "<p>Version: "+getVersion()+"</p>" +
-                        "<p>Build: "+getBuild()+"</p>" +
-                        "<p>Release Date: "+getReleaseDate()+"</p>"+
-                        "<p></p>" +
-                        "<p>Developed by"+
-                        "<br>Nader Eloshaiker"+
-                        "<br>email: nader.eloshaiker@gm.com"+
-                        "<br>phone: +61 3 9647 5271</p>"+
-                        "<p></p>" +
-                        "<p>Math Based Systems<br>Engineering<br>General Motors Holden Pty. Ltd.</p>" +
-                        "</html>";
+    public static String getDeveloperName() {
+        return "Nader Eloshaiker";
+    }
+    
+    public static String getDeveloperEmail() {
+        return "whoisnader@gmail.com";
+    }
+
+    public static String getWebsite() {
+        return "http://tceav.sourceforge.net";
+    }
+    
+    public static String getProjectSupporters() {
+        return "Chris Gielens\n"+ 
+                "Doug Schilling\n"+
+                "Kevin Coykendal\n"+
+                "Vincent Mastrolorito";
     }
     
 }

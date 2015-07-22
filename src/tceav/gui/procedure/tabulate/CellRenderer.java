@@ -8,13 +8,16 @@
  */
 package tceav.gui.procedure.tabulate;
 
-import javax.swing.table.*;
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Component;
 import java.util.HashMap;
+import javax.swing.ImageIcon;
+import javax.swing.JTable;
+import javax.swing.SwingConstants;
+import javax.swing.table.TableCellRenderer;
 import tceav.Settings;
 import tceav.manager.procedure.plmxmlpdm.classtype.WorkflowActionTypeEnum;
-import tceav.resources.*;
+import tceav.resources.ImageEnum;
+import tceav.resources.ResourceLoader;
 
 /**
  *

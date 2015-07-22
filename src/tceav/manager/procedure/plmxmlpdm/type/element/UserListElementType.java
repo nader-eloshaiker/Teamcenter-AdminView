@@ -60,8 +60,6 @@ public class UserListElementType extends IdBase {
         
          setDescription(TagTools.getStringValue(attrib, descriptionAttribute));
          setValue(TagTools.getStringValue(attrib, valueAttribute));
-        
-         setTagType(TagTypeEnum.UserListValue);
     }
 
     /**

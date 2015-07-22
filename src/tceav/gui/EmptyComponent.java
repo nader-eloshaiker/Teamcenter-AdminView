@@ -9,15 +9,18 @@
 
 package tceav.gui;
 
-import javax.swing.*;
 import javax.swing.border.BevelBorder;
-import java.awt.Color;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
-import java.io.File;
-import tceav.manager.ManagerAdapter;
-import tceav.gui.*;
-import tceav.resources.*;
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import tceav.resources.ImageEnum;
+import tceav.resources.ResourceLoader;
+import tceav.resources.ResourceStrings;
 
 /**
  *
@@ -34,10 +37,10 @@ public class EmptyComponent extends TabbedPanel {
         } catch (Exception e) {
             System.out.println("Couldn't load images: " + e);
         }
-        JLabel label = new JLabel(iconBanner, JLabel.RIGHT);
+        JLabel label = new JLabel(iconBanner, JLabel.CENTER);
         this.setLayout(new BorderLayout());
-        this.add("East", label);
-        //this.setBackground(Color.WHITE);
+        this.add(label, BorderLayout.CENTER);
+        this.setBackground(Color.WHITE);
         this.setBorder(new BevelBorder(BevelBorder.LOWERED));
     }
     

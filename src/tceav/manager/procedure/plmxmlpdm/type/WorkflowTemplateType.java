@@ -4,12 +4,11 @@
 // Any modifications to this file will be lost upon recompilation of the source schema. 
 // Generated on: 2007.07.22 at 11:41:15 AM EST 
 //
-
-
 package tceav.manager.procedure.plmxmlpdm.type;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.awt.Point;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -19,7 +18,6 @@ import tceav.manager.procedure.plmxmlpdm.TagTypeEnum;
 import tceav.manager.procedure.plmxmlpdm.base.AttribOwnerBase;
 import tceav.manager.procedure.plmxmlpdm.classtype.WorkflowTemplateClassificationEnum;
 import tceav.manager.procedure.plmxmlpdm.classtype.WorkflowTemplateStageEnum;
-
 
 /**
  * 
@@ -65,10 +63,10 @@ import tceav.manager.procedure.plmxmlpdm.classtype.WorkflowTemplateStageEnum;
  */
 //@XmlAccessorType(XmlAccessType.FIELD)
 /*
- @XmlType(name = "WorkflowTemplateType", propOrder = {
-    "taskDescription",
-    "dependencyTaskActions",
-    "dependencyTaskTemplates"
+@XmlType(name = "WorkflowTemplateType", propOrder = {
+"taskDescription",
+"dependencyTaskActions",
+"dependencyTaskTemplates"
 })
  */
 public class WorkflowTemplateType extends AttribOwnerBase {
@@ -79,7 +77,6 @@ public class WorkflowTemplateType extends AttribOwnerBase {
     protected String dependencyTaskActions;
     //@XmlElement(name = "DependencyTaskTemplates", required = true)
     protected String dependencyTaskTemplates;
-    
     //@XmlAttribute
     /**************
      *Customisation
@@ -89,103 +86,90 @@ public class WorkflowTemplateType extends AttribOwnerBase {
      **************/
     protected final String actionRefsAttribute = "actions";
     protected List<String> actionRefs;
-    
     //@XmlAttribute
     protected final String dependencyTaskTemplateRefsAttribute = "dependencyTaskTemplateRefs";
     protected List<String> dependencyTaskTemplateRefs;
-    
     //@XmlAttribute
     protected final String iconKeyAttribute = "iconKey";
     protected String iconKey;
-    
     //@XmlAttribute(required = true)
     protected final String locationAttribute = "location";
     protected String location;
-    
     //@XmlAttribute(required = true)
     protected final String objectTypeAttribute = "objectType";
     protected String objectType;
-    
     //@XmlAttribute
     protected final String parentTaskTemplateRefAttribute = "parentTaskTemplateRef";
     protected String parentTaskTemplateRef;
-    
     //@XmlAttribute(required = true)
     protected final String showInProcessStageAttribute = "showInProcessStage";
     protected Boolean showInProcessStage;
-    
     //@XmlAttribute
     protected final String signoffQuorumAttribute = "signoffQuorum";
     protected Integer signoffQuorum;
-    
     //@XmlAttribute
     protected final String stageAttribute = "stage";
     protected WorkflowTemplateStageEnum stage;
-    
     //@XmlAttribute
     protected final String subTemplateRefsAttribute = "subTemplateRefs";
     protected List<String> subTemplateRefs;
-    
     //@XmlAttribute
     protected final String templateClassificationAttribute = "templateClassification";
     protected WorkflowTemplateClassificationEnum templateClassification;
-    
 
     public WorkflowTemplateType(Node node) {
         super(node);
         Node currentNode = node;
         NamedNodeMap attrib = currentNode.getAttributes();
         NodeList nodeList = currentNode.getChildNodes();
-        
-        
+
+
         setIconKey(TagTools.getStringValue(attrib, iconKeyAttribute));
         setLocation(TagTools.getStringValue(attrib, locationAttribute));
         setObjectType(TagTools.getStringValue(attrib, objectTypeAttribute));
         setParentTaskTemplateRef(TagTools.getStringValue(attrib, parentTaskTemplateRefAttribute));
         setShowInProcessStage(TagTools.getBooleanValue(attrib, showInProcessStageAttribute));
         setSignoffQuorum(TagTools.getIntegerValue(attrib, signoffQuorumAttribute));
-        
+
         String s;
-        
+
         s = TagTools.getStringValue(attrib, stageAttribute);
-        if(s != null)
+        if (s != null) {
             setStage(WorkflowTemplateStageEnum.fromValue(s));
-        
+        }
         s = TagTools.getStringValue(attrib, templateClassificationAttribute);
-        if(s != null)
+        if (s != null) {
             setTemplateClassification(WorkflowTemplateClassificationEnum.fromValue(s));
-        
+        }
         TagTools.addToList(attrib, subTemplateRefsAttribute, getSubTemplateRefs());
         TagTools.addToList(attrib, dependencyTaskTemplateRefsAttribute, getDependencyTaskTemplateRefs());
         TagTools.addToList(attrib, actionRefsAttribute, getActionRefs());
-        
-        setTagType(TagTypeEnum.WorkflowTemplate);
-        
+
         TagTypeEnum tagType;
-        for (int i=0; i<nodeList.getLength(); i++) {
+        for (int i = 0; i < nodeList.getLength(); i++) {
             currentNode = nodeList.item(i);
             tagType = TagTypeEnum.fromValue(currentNode.getNodeName());
-            
-            switch(tagType) {
+
+            switch (tagType) {
                 case DependencyTaskActions:
                     setDependencyTaskActions(currentNode.getNodeValue());
                     break;
-                    
+
                 case DependencyTaskTemplates:
                     setDependencyTaskTemplates(currentNode.getNodeValue());
                     break;
-                    
+
                 case TaskDescription:
                     setTaskDescription(new UserListDataType(currentNode));
                     break;
-                    
+
                 default:
                     break;
             }
         }
-        
+
     }
-    
+
     public UserListDataType getTaskDescription() {
         return taskDescription;
     }
@@ -311,26 +295,24 @@ public class WorkflowTemplateType extends AttribOwnerBase {
     /***************
      * Customisation
      ***************/
-    
     private WorkflowTemplateType[] subTemplates;
-    private WorkflowTemplateType[] dependantTasks;
+    //private WorkflowTemplateType[] dependantTasks;
     private WorkflowActionType[] actions;
     private WorkflowTemplateType parentTaskTemplate;
-    private WorkflowTemplateType parentSubTaskTemplate;
 
     public WorkflowTemplateType getParentTaskTemplate() {
         return parentTaskTemplate;
     }
-    
+
     public WorkflowTemplateType getRootTaskTemplate() {
         WorkflowTemplateType root = this;
-        
-        while(root.getParentTaskTemplate() != null)
+
+        while (root.getParentTaskTemplate() != null) {
             root = root.getParentTaskTemplate();
-        
+        }
         return root;
     }
-    
+
     public boolean isRootTaskTemplate() {
         return (getParentTaskTemplate() == null);
     }
@@ -339,29 +321,70 @@ public class WorkflowTemplateType extends AttribOwnerBase {
         this.parentTaskTemplate = parentTaskTemplate;
     }
 
-    public WorkflowTemplateType getParentSubTaskTemplate() {
-        return parentSubTaskTemplate;
-    }
-
-    public void setParentSubTaskTemplate(WorkflowTemplateType parentSubTaskTemplate) {
-        this.parentSubTaskTemplate = parentSubTaskTemplate;
-    }
-
-    public WorkflowTemplateType[] getDependantTaskTemplates() {
-        if(dependantTasks == null)
+    /*
+    public WorkflowTemplateType[] getDependencyTaskTemplate() {
+        if (dependantTasks == null) {
             dependantTasks = new WorkflowTemplateType[getDependencyTaskTemplateRefs().size()];
+        }
         return dependantTasks;
     }
+    */
 
     public WorkflowTemplateType[] getSubTemplates() {
-        if(subTemplates == null)
+        if (subTemplates == null) {
             subTemplates = new WorkflowTemplateType[getSubTemplateRefs().size()];
+        }
         return subTemplates;
     }
 
     public WorkflowActionType[] getActions() {
-        if(actions == null)
+        if (actions == null) {
             actions = new WorkflowActionType[getActionRefs().size()];
+        }
         return actions;
+    }
+    
+    
+    private Point locTask;
+    private Point locStart;
+    private Point locEnd;
+    private final static int xLocTask = 0;
+    private final static int yLocTask = 1;
+    private final static int xLocStart = 2;
+    private final static int yLocStart = 3;
+    private final static int xLocEnd = 4;
+    private final static int yLocEnd = 5;
+    
+    private void initialiseLocations() {
+        String[] sLoc = getLocation().split(",");
+        int iLoc[] = new int[sLoc.length];
+        
+        for(int i=0; i<sLoc.length; i++)
+            iLoc[i] = Integer.parseInt(sLoc[i], 16);
+        
+        locTask = new Point(iLoc[xLocTask], iLoc[yLocTask]);
+        locStart = new Point(iLoc[xLocStart], iLoc[yLocStart]);
+        locEnd = new Point(iLoc[xLocEnd], iLoc[yLocEnd]);
+    }
+
+    public Point getTaskLocation() {
+        if (locTask == null) {
+            initialiseLocations();
+        }
+        return locTask;
+    }
+
+    public Point getStartLocation() {
+        if (locTask == null) {
+            initialiseLocations();
+        }
+        return locStart;
+    }
+
+    public Point getEndLocation() {
+        if (locTask == null) {
+            initialiseLocations();
+        }
+        return locEnd;
     }
 }

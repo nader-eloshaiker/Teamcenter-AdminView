@@ -9,7 +9,7 @@
 
 package tceav.manager.access;
 
-import java.util.*;
+import java.util.ArrayList;
 import tceav.manager.compare.CompareInterface;
 
 /**

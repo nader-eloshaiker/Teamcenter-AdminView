@@ -10,9 +10,12 @@
 package tceav.manager.compare;
 
 import tceav.manager.ManagerAdapter;
-import tceav.manager.access.*;
 import java.io.File;
 import java.util.ArrayList;
+import tceav.manager.access.AccessManager;
+import tceav.manager.access.AccessRule;
+import tceav.manager.access.AccessRuleList;
+import tceav.manager.access.RuleTreeNode;
 
 /**
  *

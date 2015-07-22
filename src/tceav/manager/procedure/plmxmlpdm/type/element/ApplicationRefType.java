@@ -83,8 +83,6 @@ public class ApplicationRefType extends IdBase {
         setApplication(TagTools.getStringValue(attrib, applicationAttribute));
         setLabel(TagTools.getStringValue(attrib, labelAttribute));
         setVersion(TagTools.getStringValue(attrib, versionAttribute));
-
-        setTagType(TagTypeEnum.ApplicationRef);
     }
 
     /**

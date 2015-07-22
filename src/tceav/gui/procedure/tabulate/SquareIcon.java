@@ -9,8 +9,12 @@
 
 package tceav.gui.procedure.tabulate;
 
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import javax.swing.Icon;
-import java.awt.*;
 
 /**
  *

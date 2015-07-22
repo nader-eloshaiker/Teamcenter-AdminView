@@ -64,8 +64,6 @@ public class AssociatedDataSetType extends AttributeBase {
 
         setDataSetRef(TagTools.getStringValue(attrib, dataSetRefAttribute));
         setRole(TagTools.getStringValue(attrib, roleAttribute));
-        
-        setTagType(TagTypeEnum.AssociatedDataSet);
     }
     
     public String getDataSetRef() {

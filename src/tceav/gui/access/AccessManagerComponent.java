@@ -1,23 +1,16 @@
 package tceav.gui.access;
 
-import javax.naming.ldap.StartTlsRequest;
+import tceav.gui.tools.GUIutilities;
 import tceav.manager.access.AccessManager;
-import tceav.manager.access.RuleTreeNode;
-import tceav.manager.ManagerAdapter;
-import tceav.utils.PatternMatch;
 import tceav.gui.*;
 import tceav.resources.*;
 import tceav.Settings;
-import java.util.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.border.*;
-import javax.swing.table.*;
-import javax.swing.tree.*;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
-import java.io.File;
 
 /**
  *
@@ -25,7 +18,7 @@ import java.io.File;
  */
 public class AccessManagerComponent extends TabbedPanel {
     
-    private JFrame parentFrame;
+    private AdminViewFrame parentFrame;
     private RuleTreeComponent ruletree;
     private NamedRuleComponent namedACL;
     private AccessRuleComponent accessControl;
@@ -38,7 +31,7 @@ public class AccessManagerComponent extends TabbedPanel {
     /**
      * Creates a new instance of AccessManagerComponent
      */
-    public AccessManagerComponent(JFrame parent, AccessManager am) {
+    public AccessManagerComponent(AdminViewFrame parent, AccessManager am) {
         super();
         this.parentFrame = parent;
         this.am = am;
@@ -55,27 +48,26 @@ public class AccessManagerComponent extends TabbedPanel {
         /* Rules Panel */
         JPanel panelRule =  new JPanel();
         panelRule.setLayout(new BorderLayout(GUIutilities.GAP_MARGIN,GUIutilities.GAP_MARGIN));
-        panelRule.add("East", namedACL);
-        panelRule.add("Center",ruletree);
+        panelRule.add(GUIutilities.createPanelMargined(namedACL), BorderLayout.EAST);
+        panelRule.add(GUIutilities.createPanelMargined(ruletree), BorderLayout.CENTER);
         
         splitPane = new JSplitPane(
-                JSplitPane.VERTICAL_SPLIT,
-                true,
-                GUIutilities.createPanelMargined(panelRule),
+                JSplitPane.VERTICAL_SPLIT, true, panelRule,
                 GUIutilities.createPanelMargined(accessControl));
         splitPane.setDividerLocation(Settings.getAmSplitLocation());
         splitPane.setResizeWeight(1.0);
         splitPane.setOneTouchExpandable(true);
         splitPane.setBorder(null);
         ((BasicSplitPaneUI)splitPane.getUI()).getDivider().addComponentListener(new ComponentAdapter(){
+            @Override
             public void componentMoved(ComponentEvent e){
                 Settings.setAmSplitLocation(splitPane.getDividerLocation());
             }
         });
         
         /* And show it. */
-        this.setLayout(new BorderLayout());//GUIutilities.GAP_MARGIN,GUIutilities.GAP_MARGIN));
-        this.add("Center",splitPane);
+        this.setLayout(new BorderLayout());
+        this.add(splitPane, BorderLayout.CENTER);
         
     }
     

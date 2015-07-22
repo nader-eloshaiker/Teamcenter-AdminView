@@ -9,9 +9,8 @@
 
 package tceav.gui.procedure;
 
-import javax.swing.table.*;
-import java.util.List;
-import tceav.manager.procedure.ProcedureManager;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableModel;
 import tceav.manager.procedure.plmxmlpdm.base.IdBase;
 import tceav.manager.procedure.plmxmlpdm.type.AssociatedDataSetType;
 import tceav.manager.procedure.plmxmlpdm.type.AssociatedFolderType;
@@ -33,21 +32,22 @@ import tceav.manager.procedure.plmxmlpdm.type.element.UserDataElementType;
  *
  * @author NZR4DL
  */
-public class XMLTableData extends AbstractTableModel implements TableModel {
+public class PropertiesTableData extends AbstractTableModel implements TableModel {
     private IdBase data;
     //private ProcedureManager pm;
     
     /**
      * Creates a new instance of XMLTableData
      */
-    public XMLTableData(IdBase data) {
+    public PropertiesTableData(IdBase data) {
         this.data = data;
     }
     
-    public XMLTableData() {
+    public PropertiesTableData() {
         this(null);
     }
     
+    @Override
     public Class getColumnClass(int columnIndex) {
         return String.class;
     }
@@ -56,6 +56,7 @@ public class XMLTableData extends AbstractTableModel implements TableModel {
         return 2;
     }
     
+    @Override
     public String getColumnName(int columnIndex) {
         switch(columnIndex){
             case 0:
@@ -73,49 +74,50 @@ public class XMLTableData extends AbstractTableModel implements TableModel {
         if(data == null)
             return 0;
         
-        switch(data.getTagType()) {
-            case WorkflowTemplate:
-                return 12;
-                
-            case WorkflowAction:
-                return 6;
-                
-            case WorkflowHandler:
-                return 4;
-                
-            case WorkflowBusinessRule:
-                return 6;
-                
-            case WorkflowBusinessRuleHandler:
-                return 6;
-                
-            case WorkflowSignoffProfile:
-                return 9;
-                
-            case Organisation:
-                return 4;
-                
-            case Role:
-                return 4;
-                
-            case Arguments:
-            case UserData:
-                return 5;
-                
-            case UserValue:
-                return 15;
-                
-            case AssociatedDataSet:
-            case AssociatedFolder:
-            case AssociatedForm:
-                return 6;
-                
-            case ValidationResults:
-                return 5;
-                
-            default:
-                return 0;
-        }
+        if(data instanceof WorkflowTemplateType)
+            return 14;
+        
+        else if(data instanceof WorkflowActionType)
+            return 6;
+        
+        else if(data instanceof WorkflowHandlerType)
+            return 4;
+        
+        else if(data instanceof WorkflowBusinessRuleType)
+            return 6;
+        
+        else if(data instanceof WorkflowBusinessRuleHandlerType)
+            return 6;
+        
+        else if(data instanceof WorkflowSignoffProfileType)
+            return 9;
+        
+        else if(data instanceof OrganisationType)
+            return 4;
+        
+        else if(data instanceof RoleType)
+            return 4;
+        
+        else if(data instanceof UserDataType) //UserData & Argument
+            return 5;
+        
+        else if(data instanceof UserDataElementType) //UserValue
+            return 15;
+        
+        else if(data instanceof AssociatedDataSetType)
+            return 6;
+        
+        else if(data instanceof AssociatedFolderType)
+            return 6;
+        
+        else if(data instanceof AssociatedFormType)
+            return 6;
+        
+        else if(data instanceof ValidationResultsType)
+            return 5;
+        
+        else
+            return 0;
         
     }
     
@@ -123,60 +125,59 @@ public class XMLTableData extends AbstractTableModel implements TableModel {
         if(data == null)
             return null;
         
-        switch(data.getTagType()){
-            case WorkflowTemplate:
-                return getWorkflowTemplateValueAt(rowIndex, columnIndex);
-                
-            case WorkflowAction:
-                return getWorkflowActionValueAt(rowIndex, columnIndex);
-                
-            case WorkflowHandler:
-                return getWorkflowHandlerValueAt(rowIndex, columnIndex);
-                
-            case WorkflowBusinessRule:
-                return getWorkflowBusinessRuleValueAt(rowIndex, columnIndex);
-                
-            case WorkflowBusinessRuleHandler:
-                return getWorkflowBusinessRuleHandlerValueAt(rowIndex, columnIndex);
-                
-            case WorkflowSignoffProfile:
-                return getWorkflowSignoffProfileValueAt(rowIndex, columnIndex);
-                
-            case Organisation:
-                return getOrganisationValueAt(rowIndex, columnIndex);
-                
-            case Role:
-                return getRoleValueAt(rowIndex, columnIndex);
-                
-            case Arguments:
-            case UserData:
-                return getUserDataValueAt(rowIndex, columnIndex);
-                
-            case UserValue:
-                return getUserValueAt(rowIndex, columnIndex);
-                
-            case AssociatedDataSet:
-                return getAssociatedDataSetValueAt(rowIndex, columnIndex);
-                
-            case AssociatedFolder:
-                return getAssociatedFolderValueAt(rowIndex, columnIndex);
-                
-            case AssociatedForm:
-                return getAssociatedFormValueAt(rowIndex, columnIndex);
-                
-            case ValidationResults:
-                return getValidationResultsValueAt(rowIndex, columnIndex);
-                
-            default:
-                return null;
-        }
+        if(data instanceof WorkflowTemplateType)
+            return getWorkflowTemplateValueAt(rowIndex, columnIndex);
+        
+        else if(data instanceof WorkflowActionType)
+            return getWorkflowActionValueAt(rowIndex, columnIndex);
+        
+        else if(data instanceof WorkflowHandlerType)
+            return getWorkflowHandlerValueAt(rowIndex, columnIndex);
+        
+        else if(data instanceof WorkflowBusinessRuleType)
+            return getWorkflowBusinessRuleValueAt(rowIndex, columnIndex);
+        
+        else if(data instanceof WorkflowBusinessRuleHandlerType)
+            return getWorkflowBusinessRuleHandlerValueAt(rowIndex, columnIndex);
+        
+        else if(data instanceof WorkflowSignoffProfileType)
+            return getWorkflowSignoffProfileValueAt(rowIndex, columnIndex);
+        
+        else if(data instanceof OrganisationType)
+            return getOrganisationValueAt(rowIndex, columnIndex);
+        
+        else if(data instanceof RoleType)
+            return getRoleValueAt(rowIndex, columnIndex);
+        
+        else if(data instanceof UserDataType)
+            return getUserDataValueAt(rowIndex, columnIndex);
+        
+        else if(data instanceof UserDataElementType)
+            return getUserValueAt(rowIndex, columnIndex);
+        
+        else if(data instanceof AssociatedDataSetType)
+            return getAssociatedDataSetValueAt(rowIndex, columnIndex);
+        
+        else if(data instanceof AssociatedFolderType)
+            return getAssociatedFolderValueAt(rowIndex, columnIndex);
+        
+        else if(data instanceof AssociatedFormType)
+            return getAssociatedFormValueAt(rowIndex, columnIndex);
+        
+        else if(data instanceof ValidationResultsType)
+            return getValidationResultsValueAt(rowIndex, columnIndex);
+        
+        else
+            return null;
         
     }
     
+    @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         return false;
     }
     
+    @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
         
     }
@@ -203,7 +204,7 @@ public class XMLTableData extends AbstractTableModel implements TableModel {
                 if(columnIndex == 0)
                     return "Procedure Type";
                 else
-                    return data.getTagType().value();
+                    return data.getClass().getSimpleName();
             case 4:
                 if(columnIndex == 0)
                     return "Type";
@@ -226,7 +227,7 @@ public class XMLTableData extends AbstractTableModel implements TableModel {
                 if(columnIndex == 0)
                     return "Procedure Type";
                 else
-                    return data.getTagType().value();
+                    return data.getClass().getSimpleName();
             case 2:
                 if(columnIndex == 0)
                     return "Value";
@@ -323,7 +324,7 @@ public class XMLTableData extends AbstractTableModel implements TableModel {
                 if(columnIndex == 0)
                     return "Procedure Type";
                 else
-                    return data.getTagType().value();
+                    return data.getClass().getSimpleName();
             case 4:
                 if(columnIndex == 0)
                     return "Sign Off Quorum";
@@ -369,6 +370,16 @@ public class XMLTableData extends AbstractTableModel implements TableModel {
                     else
                         return null;
                 }
+            case 12:
+                if(columnIndex == 0)
+                    return "Dependency Tasks";
+                else
+                    return wt.getDependencyTaskTemplateRefs().toString();
+            case 13:
+                if(columnIndex == 0)
+                    return "Sub Tasks";
+                else
+                    return wt.getSubTemplateRefs().toString();
             default:
                 return null;
         }
@@ -396,7 +407,7 @@ public class XMLTableData extends AbstractTableModel implements TableModel {
                 if(columnIndex == 0)
                     return "Procedure Type";
                 else
-                    return data.getTagType().value();
+                    return data.getClass().getSimpleName();
             case 4:
                 if(columnIndex == 0)
                     return "Action Type";
@@ -434,7 +445,7 @@ public class XMLTableData extends AbstractTableModel implements TableModel {
                 if(columnIndex == 0)
                     return "Procedure Type";
                 else
-                    return data.getTagType().value();
+                    return data.getClass().getSimpleName();
             default:
                 return null;
         }
@@ -462,7 +473,7 @@ public class XMLTableData extends AbstractTableModel implements TableModel {
                 if(columnIndex == 0)
                     return "Procedure Type";
                 else
-                    return data.getTagType().value();
+                    return data.getClass().getSimpleName();
             case 4:
                 if(columnIndex == 0)
                     return "Sign Off Quorum";
@@ -500,7 +511,7 @@ public class XMLTableData extends AbstractTableModel implements TableModel {
                 if(columnIndex == 0)
                     return "Procedure Type";
                 else
-                    return data.getTagType().value();
+                    return data.getClass().getSimpleName();
             case 4:
                 if(columnIndex == 0)
                     return "Negated";
@@ -538,7 +549,7 @@ public class XMLTableData extends AbstractTableModel implements TableModel {
                 if(columnIndex == 0)
                     return "Procedure Type";
                 else
-                    return data.getTagType().value();
+                    return data.getClass().getSimpleName();
             case 4:
                 if(columnIndex == 0)
                     return "Sign Off Quorum";
@@ -557,7 +568,7 @@ public class XMLTableData extends AbstractTableModel implements TableModel {
             case 7:
                 if(columnIndex == 0)
                     return "Role Reference";
-                else 
+                else
                     return wsp.getRoleRef()+" "+wsp.getRole().getName();
             case 8:
                 if(columnIndex == 0)
@@ -591,7 +602,7 @@ public class XMLTableData extends AbstractTableModel implements TableModel {
                 if(columnIndex == 0)
                     return "Procedure Type";
                 else
-                    return data.getTagType().value();
+                    return data.getClass().getSimpleName();
             default:
                 return null;
         }
@@ -619,7 +630,7 @@ public class XMLTableData extends AbstractTableModel implements TableModel {
                 if(columnIndex == 0)
                     return "Procedure Type";
                 else
-                    return data.getTagType().value();
+                    return data.getClass().getSimpleName();
             default:
                 return null;
         }
@@ -647,7 +658,7 @@ public class XMLTableData extends AbstractTableModel implements TableModel {
                 if(columnIndex == 0)
                     return "Procedure Type";
                 else
-                    return data.getTagType().value();
+                    return data.getClass().getSimpleName();
             case 4:
                 if(columnIndex == 0)
                     return "Role";
@@ -685,7 +696,7 @@ public class XMLTableData extends AbstractTableModel implements TableModel {
                 if(columnIndex == 0)
                     return "Procedure Type";
                 else
-                    return data.getTagType().value();
+                    return data.getClass().getSimpleName();
             case 4:
                 if(columnIndex == 0)
                     return "Role";
@@ -694,7 +705,7 @@ public class XMLTableData extends AbstractTableModel implements TableModel {
             case 5:
                 if(columnIndex == 0)
                     return "Folder Reference";
-                else 
+                else
                     return af.getFolderRef();
             default:
                 return null;
@@ -723,7 +734,7 @@ public class XMLTableData extends AbstractTableModel implements TableModel {
                 if(columnIndex == 0)
                     return "Procedure Type";
                 else
-                    return data.getTagType().value();
+                    return data.getClass().getSimpleName();
             case 4:
                 if(columnIndex == 0)
                     return "Role";
@@ -732,7 +743,7 @@ public class XMLTableData extends AbstractTableModel implements TableModel {
             case 5:
                 if(columnIndex == 0)
                     return "Folder Reference";
-                else 
+                else
                     return af.getFormRef();
             default:
                 return null;
@@ -766,7 +777,7 @@ public class XMLTableData extends AbstractTableModel implements TableModel {
                 if(columnIndex == 0)
                     return "Procedure Type";
                 else
-                    return data.getTagType().value();
+                    return data.getClass().getSimpleName();
             default:
                 return null;
         }

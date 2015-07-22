@@ -97,13 +97,14 @@ public abstract class AttribOwnerBase extends DescriptionBase {
             switch(tagType) {
                 case Arguments:
                     UserDataType arg = new UserDataType(currentNode);
-                    arg.setTagType(TagTypeEnum.Arguments);
+                    arg.setUserDataType(TagTypeEnum.Arguments);
                     getAttribute().add(arg);
                     getAttributeRefs().add(arg.getId());
                     break;
 
                 case UserData:          
                     UserDataType ud = new UserDataType(currentNode);
+                    ud.setUserDataType(TagTypeEnum.UserData);
                     getAttribute().add(ud);
                     getAttributeRefs().add(ud.getId());
                     break;

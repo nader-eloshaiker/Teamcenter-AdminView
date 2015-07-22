@@ -16,8 +16,9 @@ import java.io.File;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import tceav.gui.tools.CustomFileFilter;
+import tceav.gui.tools.GUIutilities;
 import tceav.manager.ManagerAdapter;
-import tceav.utils.CustomFileFilter;
 import tceav.Settings;
 import tceav.gui.*;
 import tceav.resources.*;
@@ -34,10 +35,10 @@ public class CompareTabChooser extends JPanel {
     private JRadioButton ruletreeButton;
     private JRadioButton procedureButton;
     private String SelectionMode;
-    private JFrame parentFrame;
+    private AdminViewFrame parentFrame;
     
     /** Creates a new instance of CompareTabChooser */
-    public CompareTabChooser(JFrame parent) {
+    public CompareTabChooser(AdminViewFrame parent) {
         super();
         this.parentFrame = parent;
         

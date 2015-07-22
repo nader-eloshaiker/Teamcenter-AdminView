@@ -7,11 +7,17 @@
  * and open the template in the editor.
  */
 
-package tceav.gui;
+package tceav.gui.tools;
 
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.font.FontRenderContext;
+import java.awt.font.GlyphVector;
+import java.awt.font.LineMetrics;
 import javax.swing.Icon;
-import java.awt.*;
-import java.awt.font.*;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 
@@ -54,6 +60,7 @@ public class RotatedTextIcon implements Icon {
     }
     
     public void convertTextToGlyph(Font font, String s) {
+        int strPad = 4;
         String[] text = s.split("\n");
         
         FontRenderContext fontRenderContext = new FontRenderContext(null,true,true);
@@ -63,7 +70,7 @@ public class RotatedTextIcon implements Icon {
             
             for(int k=0; k<strList.size(); k++) {
                 glyphs.add(font.createGlyphVector(fontRenderContext,strList.get(k)));
-                width = Math.max(width, (int)glyphs.get(glyphs.size()-1).getLogicalBounds().getWidth() + 4);
+                width = Math.max(width, (int)glyphs.get(glyphs.size()-1).getLogicalBounds().getWidth() + strPad);
                 LineMetrics lineMetrics = font.getLineMetrics(strList.get(k), fontRenderContext);
                 ascent = lineMetrics.getAscent();
                 height = Math.max(height, (int)lineMetrics.getHeight());
@@ -81,7 +88,7 @@ public class RotatedTextIcon implements Icon {
     }
     
     private ArrayList<String> hyphenateString(String s) {
-        int stringLimit = 50;
+        int stringLimit = 45;
         int division;
         String indent;
         String pad = "   ";

@@ -33,7 +33,7 @@ public class ColumnHeaderRule extends ColumnHeaderAdapter {
             addHandler(wbrh[j]);
             for (int k = 0; k < wbrh[j].getAttribute().size(); k++) {
                 ud = (UserDataType) wbrh[j].getAttribute().get(k);
-                if (ud.getTagType() == TagTypeEnum.Arguments) {
+                if (ud.getUserDataType() == TagTypeEnum.Arguments) {
                     for (int i = 0; i < ud.getUserValue().size(); i++) {
                         getHandler(j).addArgument(ud.getUserValue().get(i).getValue());
                     }

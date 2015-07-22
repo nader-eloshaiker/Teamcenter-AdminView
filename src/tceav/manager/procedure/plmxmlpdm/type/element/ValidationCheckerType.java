@@ -92,8 +92,6 @@ public class ValidationCheckerType extends IdBase {
         setComments(TagTools.getStringValue(attrib, commentsAttribute));
         setName(TagTools.getStringValue(attrib, nameAttribute));
         setReportRef(TagTools.getStringValue(attrib, reportRefAttribute));
-        
-        setTagType(TagTypeEnum.Checker);
     }
 
     /**

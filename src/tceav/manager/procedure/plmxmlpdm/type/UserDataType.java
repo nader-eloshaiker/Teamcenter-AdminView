@@ -87,8 +87,6 @@ public class UserDataType extends AttributeBase {
         
         setType(TagTools.getStringValue(attrib, typeAttribute));
         
-        setTagType(TagTypeEnum.UserData);
-        
         TagTypeEnum tagType;
         for (int i=0; i<nodeList.getLength(); i++) {
             currentNode = nodeList.item(i);
@@ -120,5 +118,21 @@ public class UserDataType extends AttributeBase {
     public void setType(String value) {
         this.type = value;
     }
+    
+    /***************
+     * Customisation
+     ***************/
+     private TagTypeEnum userDataType;
+     
+     public void setUserDataType(TagTypeEnum userDataType) {
+         this.userDataType = userDataType;
+     }
+     
+     public TagTypeEnum getUserDataType() {
+         if(userDataType == null)
+             return TagTypeEnum.UserData;
+         else
+             return userDataType;
+     }
 
 }

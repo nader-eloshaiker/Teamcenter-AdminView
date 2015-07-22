@@ -84,8 +84,6 @@ public class ValidationResultsType extends AttributeBase {
         
         setApplication(TagTools.getStringValue(attrib, applicationAttribute));
         
-        setTagType(TagTypeEnum.ValidationResults);
-        
         TagTypeEnum tagType;
         for (int i=0; i<nodeList.getLength(); i++) {
             currentNode = nodeList.item(i);

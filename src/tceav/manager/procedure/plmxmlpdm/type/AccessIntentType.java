@@ -77,8 +77,6 @@ public class AccessIntentType extends AccessControlBase {
         s = TagTools.getStringValue(attrib, AccessIntentEnumAttribute);
         if(s != null)
             setIntent(AccessIntentEnum.fromValue(s));
-        
-        setTagType(TagTypeEnum.AccessIntent);
     }
 
     public AccessIntentEnum getIntent() {

@@ -82,7 +82,6 @@ public class PLMXMLType extends IdBase
         setDate(TagTools.getStringValue(attrib, dateAttribute));
         setTime(TagTools.getStringValue(attrib, timeAttribute));
         setAuthor(TagTools.getStringValue(attrib, authorAttribute));
-        setTagType(TagTypeEnum.PLMXML);
     }
 
     public String getSchemaVersion() {
