@@ -32,10 +32,12 @@ public class CompareAccessManager extends AbstractManager {
         compareRuletreeResult = new CompareResult[]{new CompareResult(),new CompareResult()};
         compareNamedACLResult = new CompareResult[]{new CompareResult(),new CompareResult()};
         
-        compareNamedACL(amList[0], amList[1], compareNamedACLResult[0]);
-        compareNamedACL(amList[1], amList[0], compareNamedACLResult[1]);
-        compareRuletree(amList[0].getAccessTreeList(), amList[1].getAccessTreeList(), compareNamedACLResult[0]);
-        compareRuletree(amList[1].getAccessTreeList(), amList[0].getAccessTreeList(), compareNamedACLResult[1]);
+        compare(amList[0].getAccessRuleList(), amList[1].getAccessRuleList(), compareNamedACLResult[0]);
+        compare(amList[1].getAccessRuleList(), amList[0].getAccessRuleList(), compareNamedACLResult[1]);
+        
+        compare(amList[0].getAccessTreeList(), amList[1].getAccessTreeList());
+        compare(amList[1].getAccessTreeList(), amList[0].getAccessTreeList(), compareRuletreeResult[1]);
+        compare(amList[0].getAccessTreeList(), amList[1].getAccessTreeList(), compareRuletreeResult[0]);
     }
     
     public AccessManager[] getAccessManagers() {
@@ -75,35 +77,46 @@ public class CompareAccessManager extends AbstractManager {
     public String getManagerType() {
         return super.ACCESS_COMPARE_MANAGER_TYPE;
     }
-    
-    private void compareRuletree(ArrayList<RuleTreeNode> am1, ArrayList<RuleTreeNode> am2, CompareResult results) {
-        int result = CompareInterface.NOT_FOUND;
-        
-        for (int i=0; i<am1.size(); i++) {
-            for (int j=0; j<am2.size(); j++){
-                result = am1.get(i).compare(am2.get(j)); 
-                if(result != CompareInterface.NOT_FOUND)
-                    break;
-            }
-            am1.get(i).setComparison(result);
-            results.increment(result);
-        }
+
+    private void compare(ArrayList<RuleTreeNode> am1, ArrayList<RuleTreeNode> am2) {
+        compare(am1, am2, null);
     }
     
-    private void compareNamedACL(AccessManager amOne, AccessManager amTwo, CompareResult results) {
+    private void compare(ArrayList<RuleTreeNode> am1, ArrayList<RuleTreeNode> am2, CompareResult results) {
         int result = CompareInterface.NOT_FOUND;
-        AccessRule ar;
-        
-        for(int j=0; j<amOne.getAccessRuleList().size(); j++){
-            ar = amOne.getAccessRuleList().get(j);
-            for(int l=0; l<amTwo.getAccessRuleList().size(); l++) {
-                result = ar.compare(amTwo.getAccessRuleList().get(l));
+        RuleTreeNode node;
+     
+        for (int i=0; i<am1.size(); i++) {
+            node = am1.get(i);
+            for (int j=0; j<am2.size(); j++){
+                result = node.compare(am2.get(j));
                 if(result != CompareInterface.NOT_FOUND)
                     break;
             }
-            ar.setComparison(result);
-            results.increment(result);
-            //System.out.println(amOne.getFile().getName()+" "+compareResult);
+            node.setComparison(result);
+            if(results != null)
+                results.increment(result);
+        }
+    }
+
+    private void compare(AccessRuleList am1, AccessRuleList am2) {
+        compare(am1, am2, null);
+    }
+    
+    private void compare(AccessRuleList am1, AccessRuleList am2, CompareResult results) {
+        int result = CompareInterface.NOT_FOUND;
+        AccessRule node;
+        
+        for(int j=0; j<am1.size(); j++){
+            node = am1.get(j);
+            for(int l=0; l<am2.size(); l++) {
+                result = node.compare(am2.get(l));
+                if(result != CompareInterface.NOT_FOUND)
+                    break;
+            }
+            node.setComparison(result);
+            if(results != null)
+                results.increment(result);
         }
     }
     

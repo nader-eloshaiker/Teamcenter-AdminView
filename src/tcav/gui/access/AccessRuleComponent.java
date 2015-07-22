@@ -27,13 +27,19 @@ public class AccessRuleComponent extends JPanel {
     private JTableAdvanced table;
     private AccessRuleTableModel tableModel;
     private AccessControlHeader header;
+    private boolean compareMode;
     
     /**
      * Creates a new instance of AccessRuleComponent
      */
     public AccessRuleComponent(AccessManager am) {
+        this(am, false);
+    }
+    
+    public AccessRuleComponent(AccessManager am, boolean compareMode) {
         super();
         this.header = am.getAccessControlColumns();
+        this.compareMode = compareMode;
 
         table = new JTableAdvanced();
         tableModel = new AccessRuleTableModel(header,new AccessRule());
@@ -47,7 +53,7 @@ public class AccessRuleComponent extends JPanel {
             column = table.getColumnModel().getColumn(i);
             column.setHeaderValue(tableModel.getColumn(i));
             column.setHeaderRenderer(new AccessRuleTableHearderRenderer());
-            column.setCellRenderer(new AccessRuleTableCellRenderer());
+            column.setCellRenderer(new AccessRuleTableCellRenderer(compareMode));
             if(i == 0 || i == 1) {
                 column.setResizable(true);
                 column.setPreferredWidth(80);
@@ -63,6 +69,7 @@ public class AccessRuleComponent extends JPanel {
         JScrollPane accessRuleComponentScroll = new JScrollPane();
         accessRuleComponentScroll.setPreferredSize(new Dimension(980,150));
         accessRuleComponentScroll.getViewport().add(table);
+        accessRuleComponentScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         accessRuleComponentScroll.setBorder(new BevelBorder(BevelBorder.LOWERED));
 
         this.setLayout(new GridLayout(1,1));
@@ -92,7 +99,7 @@ public class AccessRuleComponent extends JPanel {
             column = table.getColumnModel().getColumn(i);
             column.setHeaderValue(tableModel.getColumn(i));
             column.setHeaderRenderer(new AccessRuleTableHearderRenderer());
-            column.setCellRenderer(new AccessRuleTableCellRenderer());
+            column.setCellRenderer(new AccessRuleTableCellRenderer(compareMode));
             if(i == 0 || i == 1) {
                 column.setResizable(true);
                 column.setPreferredWidth(80);

@@ -10,6 +10,7 @@
 package tcav.gui.access;
 
 import tcav.manager.access.AccessRule;
+import tcav.manager.compare.CompareInterface;
 import java.util.*;
 
 /**
@@ -19,9 +20,9 @@ import java.util.*;
 public class NamedRuleDataFilterSort extends NamedRuleDataFilterAbstract implements NamedRuleDataFilterInterface {
     private ArrayList<Integer> sortingColumns = new ArrayList<Integer>();
     private boolean ascending = true;
-    private final int SORT_NONE_VALUE = 3;
     
-    public static final String[] SORT_COLUMN_SELECTION = new String[]{"Type","Instance Count","ACL Name","None"};
+    private static final String[] SORT_COLUMN_SELECTION = new String[]{"Type","Instance Count","ACL Name","None"};
+    private static final String[] SORT_COLUMN_SELECTION_COMPAREMODE = new String[]{"Type","Instance Count","ACL Name","Comparison","None"};
     
     /**
      * Creates a new instance of NamedRuleDataFilterSort
@@ -39,7 +40,18 @@ public class NamedRuleDataFilterSort extends NamedRuleDataFilterAbstract impleme
         ascending = state;
     }
     
-
+    public String[] getSortColumns() {
+        if(!isCompare())
+            return SORT_COLUMN_SELECTION;
+        else
+            return SORT_COLUMN_SELECTION_COMPAREMODE;
+    }
+    
+    public int getSortNoneValue() {
+        return getSortColumns().length - 1;
+        
+    }
+    
     
     public void setSort(int column, boolean ascending) {
         this.ascending = ascending;
@@ -52,25 +64,25 @@ public class NamedRuleDataFilterSort extends NamedRuleDataFilterAbstract impleme
         sortingColumns.clear();
         
         int length;
-        if (columns.length < TOTAL_COLUMNS)
+        if (columns.length < getColumnCount())
             length = columns.length;
         else
-            length = TOTAL_COLUMNS;
+            length = getColumnCount();
         
         for(int i=0; i<length; i++)
-            if(columns[i] != SORT_NONE_VALUE)
+            if(columns[i] != getSortNoneValue())
                 sortingColumns.add(new Integer(columns[i]));
     }
     
     public int getSort(int column) {
-        if ((column >= sortingColumns.size()) || (column >= TOTAL_COLUMNS))
-            return SORT_NONE_VALUE;
+        if ((column >= sortingColumns.size()) || (column >= getColumnCount()))
+            return getSortNoneValue();
         
         return sortingColumns.get(column).intValue();
     }
     
     public int[] getSort() {
-        int[] columns = new int[TOTAL_COLUMNS];
+        int[] columns = new int[getColumnCount()];
         for(int i=0; i<columns.length; i++)
             columns[i] = getSort(i);
         return columns;
@@ -118,56 +130,77 @@ public class NamedRuleDataFilterSort extends NamedRuleDataFilterAbstract impleme
         int result;
         int i1;
         int i2;
-        switch(column) {
-            case TYPE_COLUMN:
-                s1 = model.getAccessRule(row1).getRuleType();
-                s2 = model.getAccessRule(row2).getRuleType();
-                result = s1.compareToIgnoreCase(s2);
-                if (result < 0) {
-                    return -1;
-                } else if (result > 0) {
-                    return 1;
-                } else {
-                    return 0;
-                }
-                
-            case INSTANCES_COLUMN:
-                i1 = model.getAccessRule(row1).getRuleTreeReferences().size();
-                i2 = model.getAccessRule(row2).getRuleTreeReferences().size();
-                
-                if (i1 < i2) {
-                    return -1;
-                } else if (i1 > i2) {
-                    return 1;
-                } else {
-                    return 0;
-                }
-                
-            case NAME_COLUMN:
-                s1 = model.getAccessRule(row1).getRuleName();
-                s2 = model.getAccessRule(row2).getRuleName();
-                result = s1.compareToIgnoreCase(s2);
-                
-                if (result < 0) {
-                    return -1;
-                } else if (result > 0) {
-                    return 1;
-                } else {
-                    return 0;
-                }
-            default:
-                s1 = model.getValueAt(row1, column).toString();
-                s2 = model.getValueAt(row2, column).toString();
-                result = s1.compareToIgnoreCase(s2);
-                
-                if (result < 0) {
-                    return -1;
-                } else if (result > 0) {
-                    return 1;
-                } else {
-                    return 0;
-                }
+        if(!isCompare()) {
+            switch(column) {
+                case TYPE_COLUMN:
+                    return compareStr(
+                            model.getAccessRule(row1).getRuleType(),
+                            model.getAccessRule(row2).getRuleType());
+                    
+                case INSTANCES_COLUMN:
+                    return compareInt(
+                            model.getAccessRule(row1).getRuleTreeReferences().size(),
+                            model.getAccessRule(row2).getRuleTreeReferences().size());
+                    
+                case NAME_COLUMN:
+                    return compareStr(
+                            model.getAccessRule(row1).getRuleName(),
+                            model.getAccessRule(row2).getRuleName());
+                    
+                default:
+                    return compareStr(
+                            model.getValueAt(row1, column).toString(),
+                            model.getValueAt(row2, column).toString());
+                    
+            }
+        } else {
+            switch(column) {
+                case TYPE_COLUMN:
+                    return compareStr(
+                            model.getAccessRule(row1).getRuleType(),
+                            model.getAccessRule(row2).getRuleType());
+                    
+                case COMPARE_COLUMN:
+                    return compareInt(
+                            model.getAccessRule(row1).getComparison(),
+                            model.getAccessRule(row2).getComparison());
+                    
+                case INSTANCES_COLUMN:
+                    return compareInt(
+                            model.getAccessRule(row1).getRuleTreeReferences().size(),
+                            model.getAccessRule(row2).getRuleTreeReferences().size());
+                    
+                case NAME_COLUMN:
+                    return compareStr(
+                            model.getAccessRule(row1).getRuleName(),
+                            model.getAccessRule(row2).getRuleName());
+                    
+                default:
+                    return compareStr(
+                            model.getValueAt(row1, column).toString(),
+                            model.getValueAt(row2, column).toString());
+            }
         }
+    }
+    
+    private int compareStr(String s1, String s2) {
+        int result = s1.compareToIgnoreCase(s2);
+        
+        if (result < 0)
+            return -1;
+        else if (result > 0)
+            return 1;
+        else
+            return 0;
+    }
+    
+    private int compareInt(int i1, int i2) {
+        if (i1 < i2)
+            return -1;
+        else if (i1 > i2)
+            return 1;
+        else
+            return 0;
     }
     
     /*

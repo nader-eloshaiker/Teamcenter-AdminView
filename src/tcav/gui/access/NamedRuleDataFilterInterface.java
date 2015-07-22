@@ -21,7 +21,7 @@ public interface NamedRuleDataFilterInterface extends TableModel {
     public static final int TYPE_COLUMN = 0;
     public static final int INSTANCES_COLUMN = 1;
     public static final int NAME_COLUMN = 2;
-    public static final int TOTAL_COLUMNS = 3;
+    public static final int COMPARE_COLUMN = 3;
 
     
     public void applyFilter();
@@ -29,5 +29,7 @@ public interface NamedRuleDataFilterInterface extends TableModel {
     public AccessRule getAccessRule(int row);
     
     public void fireTableDataChanged();
-
+    
+    public void setCompareMode(boolean compareMode);
+   
 }

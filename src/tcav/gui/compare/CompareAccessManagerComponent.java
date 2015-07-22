@@ -9,12 +9,8 @@
 
 package tcav.gui.compare;
 
-import tcav.gui.access.AccessRuleComponent;
-import tcav.gui.access.NamedRuleComponent;
-import tcav.gui.access.RuleTreeComponent;
-import tcav.manager.compare.CompareAccessManager;
-
-import javax.naming.ldap.StartTlsRequest;
+import tcav.gui.access.*;
+import tcav.manager.compare.*;
 import tcav.gui.*;
 import tcav.manager.access.AccessManager;
 import tcav.manager.access.RuleTreeNode;
@@ -39,15 +35,15 @@ import java.io.File;
 public class CompareAccessManagerComponent extends TabbedPanel {
     
     private JFrame parentFrame;
-    private RuleTreeComponent[] ruletree;
-    private NamedRuleComponent[] namedACL;
+    private RuleTreeComponent[] ruleTree;
+    private NamedRuleComponent[] namedRule;
     private AccessRuleComponent accessControl;
     private JSplitPane splitPane;
-    private JPanel pane;
+    private JPanel panel;
     
     private final int compareCount = 2;
-    private final String MODE_ACL = "Named ACL";
-    private final String MODE_TREE = "Rule Tree";
+    public static final String MODE_ACL = "Named ACL";
+    public static final String MODE_TREE = "Rule Tree";
     
     private CompareAccessManager cam;
     
@@ -57,61 +53,32 @@ public class CompareAccessManagerComponent extends TabbedPanel {
         this.parentFrame = parent;
         this.cam = cam;
         
-        ruletree = new RuleTreeComponent[compareCount];
-        namedACL = new NamedRuleComponent[compareCount];
+        ruleTree = new RuleTreeComponent[compareCount];
+        namedRule = new NamedRuleComponent[compareCount];
+
+        accessControl = new AccessRuleComponent(cam.getAccessManagers()[0], true);
         
-        accessControl = new AccessRuleComponent(cam.getAccessManagers()[0]);
+        panel = new JPanel();
+        panel.setLayout(new CardLayout());
+        panel.add(buildRuletreeComponent(), MODE_TREE);
+        panel.add(buildNamedAclComponent(), MODE_ACL);
+        ((CardLayout)panel.getLayout()).show(panel,Settings.getAmCmpDisplayMode());
         
-        JRadioButton ruletreeButton = new JRadioButton("Rule Tree Mode");
-        ruletreeButton.setOpaque(false);
-        ruletreeButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                ((CardLayout)pane.getLayout()).show(pane,MODE_TREE);
-            }
-        });
-        JRadioButton namedAclButton = new JRadioButton("Named ACL Mode");
-        namedAclButton.setOpaque(false);
-        namedAclButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                ((CardLayout)pane.getLayout()).show(pane,MODE_ACL);
-            }
-        });
+         attachListeners();
         
-        ButtonGroup group = new ButtonGroup();
-        group.add(ruletreeButton);
-        group.add(namedAclButton);
-        namedAclButton.setSelected(true);
-        
-        JPanel panelMode = new JPanel();
-        panelMode.setLayout(new FlowLayout(FlowLayout.CENTER, GUIutilities.GAP_COMPONENT,0));
-        panelMode.add(ruletreeButton);
-        panelMode.add(namedAclButton);
-        
-        
-        pane = new JPanel();
-        pane.setLayout(new CardLayout());
-        pane.add(buildRuletreeComponent(), MODE_TREE);
-        pane.add(buildNamedAclComponent(), MODE_ACL);
-        ((CardLayout)pane.getLayout()).show(pane,MODE_ACL);
-        
-        /* Rules Panel */
-        JPanel panel =  new JPanel();
-        panel.setLayout(new BorderLayout(0,0));//GUIutilities.GAP_MARGIN,GUIutilities.GAP_MARGIN));
-        panel.add(BorderLayout.CENTER, pane);
-        panel.add(BorderLayout.SOUTH, panelMode);
         
         splitPane = new JSplitPane(
                 JSplitPane.VERTICAL_SPLIT,
                 true,
                 GUIutilities.createPanelMargined(panel),
                 GUIutilities.createPanelMargined(accessControl));
-        splitPane.setDividerLocation(Settings.getAMSplitLocation());
+        splitPane.setDividerLocation(Settings.getAmSplitLocation());
         splitPane.setResizeWeight(1.0);
         splitPane.setOneTouchExpandable(true);
         splitPane.setBorder(null);
         ((BasicSplitPaneUI)splitPane.getUI()).getDivider().addComponentListener(new ComponentAdapter(){
             public void componentMoved(ComponentEvent e){
-                Settings.setAMSplitLocation(splitPane.getDividerLocation());
+                Settings.setAmSplitLocation(splitPane.getDividerLocation());
             }
         });
         
@@ -121,16 +88,69 @@ public class CompareAccessManagerComponent extends TabbedPanel {
         
     }
     
+    private JToolBar toolBar;
+    private JCheckBox checkSync;
+    
+    public JToolBar getToolBar() {
+        
+        if(toolBar != null)
+            return toolBar;
+        
+        JRadioButton ruletreeButton = new JRadioButton("Rule Tree");
+        ruletreeButton.setOpaque(false);
+        ruletreeButton.setVerticalTextPosition(JRadioButton.CENTER);
+        ruletreeButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                ((CardLayout)panel.getLayout()).show(panel,MODE_TREE);
+                Settings.setAmCmpDisplayMode(MODE_TREE);
+            }
+        });
+        JRadioButton namedAclButton = new JRadioButton("Named ACL");
+        namedAclButton.setOpaque(false);
+        namedAclButton.setVerticalTextPosition(JRadioButton.CENTER);
+        namedAclButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                ((CardLayout)panel.getLayout()).show(panel,MODE_ACL);
+                Settings.setAmCmpDisplayMode(MODE_ACL);
+            }
+        });
+        
+        checkSync = new JCheckBox("Sync Selection", Settings.isAmCmpSyncSelection());
+        checkSync.setOpaque(false);
+        checkSync.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e){
+                for(int i=0; i<compareCount; i++) {
+                    ruleSelectionListener[i].setSync(checkSync.isSelected());
+                    treeSelectionListener[i].setSync(checkSync.isSelected());
+                    Settings.setAmCmpSyncSelection(checkSync.isSelected());
+                }
+            }
+        });
+        
+        ButtonGroup group = new ButtonGroup();
+        group.add(ruletreeButton);
+        group.add(namedAclButton);
+        namedAclButton.setSelected(Settings.getAmCmpDisplayMode().equals(MODE_ACL));
+        ruletreeButton.setSelected(Settings.getAmCmpDisplayMode().equals(MODE_TREE));
+        
+        
+        toolBar = new JToolBar();
+        toolBar.add(new JLabel(" Mode: "));
+        toolBar.add(ruletreeButton);
+        toolBar.add(namedAclButton);
+        toolBar.addSeparator();
+        toolBar.add(checkSync);
+        
+        return toolBar;
+    }
+    
     public JPanel buildNamedAclComponent() {
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(1,compareCount,GUIutilities.GAP_MARGIN,GUIutilities.GAP_MARGIN));
         
-        
         for(int index=0; index<compareCount; index++) {
-            namedACL[index] = new NamedRuleComponent(parentFrame, cam.getAccessManagers()[index], cam.getAccessManagers()[index].getName());
-            namedACL[index].getTable().getSelectionModel().addListSelectionListener(new NamedAclSelectionListener(index));
-            namedACL[index].attachCompareTab(cam.getCompareResult(CompareAccessManager.ACL_TYPE,index));
-            panel.add(namedACL[index]);
+            namedRule[index] = new NamedRuleComponent(parentFrame, cam.getAccessManagers()[index], cam.getAccessManagers()[index].getName(), true);
+            panel.add(namedRule[index]);
         }
         
         return panel;
@@ -141,74 +161,178 @@ public class CompareAccessManagerComponent extends TabbedPanel {
         panel.setLayout(new GridLayout(1,compareCount,GUIutilities.GAP_MARGIN,GUIutilities.GAP_MARGIN));
         
         for(int index=0; index<compareCount; index++) {
-            ruletree[index] = new RuleTreeComponent(parentFrame, cam.getAccessManagers()[index], cam.getAccessManagers()[index].getName());
-            ruletree[index].getTree().addTreeSelectionListener(new RuletreeSelectionListener(index));
-            panel.add(ruletree[index]);
+            ruleTree[index] = new RuleTreeComponent(parentFrame, cam.getAccessManagers()[index], cam.getAccessManagers()[index].getName(), true);
+            panel.add(ruleTree[index]);
         }
         
         return panel;
     }
     
+    private NamedRuleSelectionListener[] ruleSelectionListener;
+    private RuleTreeSelectionListener[] treeSelectionListener;
+    
+    public void attachListeners() {
+        ruleSelectionListener = new NamedRuleSelectionListener[compareCount];
+        treeSelectionListener = new RuleTreeSelectionListener[compareCount];
+        for(int index=0; index<compareCount; index++) {
+            ruleSelectionListener[index] = new NamedRuleSelectionListener(index, namedRule, ruleTree, accessControl, Settings.isAmCmpSyncSelection());
+            treeSelectionListener[index] = new RuleTreeSelectionListener(index, namedRule, ruleTree, accessControl, Settings.isAmCmpSyncSelection());
+            namedRule[index].getTable().getSelectionModel().addListSelectionListener(ruleSelectionListener[index]);
+            ruleTree[index].getTree().addTreeSelectionListener(treeSelectionListener[index]);
+        }        
+    }
+    
+    private String getStr(int value) {
+        String s = Integer.toString(value);
+        if(s.length() < 3)
+            for(int i=s.length(); i<3; i++)
+                s = '0'+s;
+        return s;
+    }
+    
     private JPanel statusBar;
     
     public JComponent getStatusBar() {
-        if(statusBar == null) {
-            JLabel textAuthor = new JLabel(" Author: "+cam.getAccessManagers()[0].getMetaData().getUserDetails()+" ");
-            textAuthor.setBorder(new BevelBorder(BevelBorder.LOWERED));
-            JLabel textDate = new JLabel(" Date: "+cam.getAccessManagers()[0].getMetaData().getTimeDetails()+" ");
-            textDate.setBorder(new BevelBorder(BevelBorder.LOWERED));
-            JLabel textFile = new JLabel(" Path: "+cam.getAccessManagers()[0].getFile().getParent()+" ");
-            textFile.setBorder(new BevelBorder(BevelBorder.LOWERED));
-            statusBar = new JPanel();
-            statusBar.setLayout(new BorderLayout(1,1));
-            statusBar.add("Center", textAuthor);
-            statusBar.add("West", textFile);
-            statusBar.add("East", textDate);
-        }
+        if(statusBar != null)
+            return statusBar;
+        
+        CompareResult cmp1 = cam.getCompareResult(CompareAccessManager.ACL_TYPE, 0);
+        CompareResult cmp2 = cam.getCompareResult(CompareAccessManager.ACL_TYPE, 1);
+        
+        JLabel labelNotFound1Rule = new JLabel(" "+getStr(cmp1.getResult(CompareInterface.NOT_FOUND))+" ");
+        labelNotFound1Rule.setOpaque(true);
+        labelNotFound1Rule.setBorder(new BevelBorder(BevelBorder.LOWERED));
+        labelNotFound1Rule.setForeground(CompareInterface.NOT_FOUND_COLOR_FOREGROUND);
+        labelNotFound1Rule.setBackground(CompareInterface.NOT_FOUND_COLOR);
+        
+        JLabel labelNotEqual1Rule = new JLabel(" "+getStr(cmp1.getResult(CompareInterface.NOT_EQUAL))+" ");
+        labelNotEqual1Rule.setOpaque(true);
+        labelNotEqual1Rule.setBorder(new BevelBorder(BevelBorder.LOWERED));
+        labelNotEqual1Rule.setForeground(CompareInterface.NOT_EQUAL_COLOR_FOREGROUND);
+        labelNotEqual1Rule.setBackground(CompareInterface.NOT_EQUAL_COLOR);
+        
+        JLabel labelNotFound2Rule = new JLabel(" "+getStr(cmp2.getResult(CompareInterface.NOT_FOUND))+" ");
+        labelNotFound2Rule.setOpaque(true);
+        labelNotFound2Rule.setBorder(new BevelBorder(BevelBorder.LOWERED));
+        labelNotFound2Rule.setForeground(CompareInterface.NOT_FOUND_COLOR_FOREGROUND);
+        labelNotFound2Rule.setBackground(CompareInterface.NOT_FOUND_COLOR);
+        
+        JLabel labelNotEqual2Rule = new JLabel(" "+getStr(cmp2.getResult(CompareInterface.NOT_EQUAL))+" ");
+        labelNotEqual2Rule.setOpaque(true);
+        labelNotEqual2Rule.setBorder(new BevelBorder(BevelBorder.LOWERED));
+        labelNotEqual2Rule.setForeground(CompareInterface.NOT_EQUAL_COLOR_FOREGROUND);
+        labelNotEqual2Rule.setBackground(CompareInterface.NOT_EQUAL_COLOR);
+        
+        
+        cmp1 = cam.getCompareResult(CompareAccessManager.TREE_TYPE, 0);
+        cmp2 = cam.getCompareResult(CompareAccessManager.TREE_TYPE, 1);
+        
+        JLabel labelNotFound1Tree = new JLabel(" "+getStr(cmp1.getResult(CompareInterface.NOT_FOUND))+" ");
+        labelNotFound1Tree.setOpaque(true);
+        labelNotFound1Tree.setBorder(new BevelBorder(BevelBorder.LOWERED));
+        labelNotFound1Tree.setForeground(CompareInterface.NOT_FOUND_COLOR_FOREGROUND);
+        labelNotFound1Tree.setBackground(CompareInterface.NOT_FOUND_COLOR);
+        
+        JLabel labelNotEqual1Tree = new JLabel(" "+getStr(cmp1.getResult(CompareInterface.NOT_EQUAL))+" ");
+        labelNotEqual1Tree.setOpaque(true);
+        labelNotEqual1Tree.setBorder(new BevelBorder(BevelBorder.LOWERED));
+        labelNotEqual1Tree.setForeground(CompareInterface.NOT_EQUAL_COLOR_FOREGROUND);
+        labelNotEqual1Tree.setBackground(CompareInterface.NOT_EQUAL_COLOR);
+        
+        JLabel labelNotFound2Tree = new JLabel(" "+getStr(cmp2.getResult(CompareInterface.NOT_FOUND))+" ");
+        labelNotFound2Tree.setOpaque(true);
+        labelNotFound2Tree.setBorder(new BevelBorder(BevelBorder.LOWERED));
+        labelNotFound2Tree.setForeground(CompareInterface.NOT_FOUND_COLOR_FOREGROUND);
+        labelNotFound2Tree.setBackground(CompareInterface.NOT_FOUND_COLOR);
+        
+        JLabel labelNotEqual2Tree = new JLabel(" "+getStr(cmp2.getResult(CompareInterface.NOT_EQUAL))+" ");
+        labelNotEqual2Tree.setOpaque(true);
+        labelNotEqual2Tree.setBorder(new BevelBorder(BevelBorder.LOWERED));
+        labelNotEqual2Tree.setForeground(CompareInterface.NOT_EQUAL_COLOR_FOREGROUND);
+        labelNotEqual2Tree.setBackground(CompareInterface.NOT_EQUAL_COLOR);
+        
+        
+        JLabel labelNotFound = new JLabel(" "+CompareInterface.NOT_FOUND_LABEL+" ");
+        labelNotFound.setOpaque(true);
+        labelNotFound.setBorder(new BevelBorder(BevelBorder.LOWERED));
+        labelNotFound.setForeground(CompareInterface.NOT_FOUND_COLOR_FOREGROUND);
+        labelNotFound.setBackground(CompareInterface.NOT_FOUND_COLOR);
+        
+        JLabel labelNotEqual = new JLabel(" "+CompareInterface.NOT_EQUAL_LABEL+" ");
+        labelNotEqual.setOpaque(true);
+        labelNotEqual.setBorder(new BevelBorder(BevelBorder.LOWERED));
+        labelNotEqual.setForeground(CompareInterface.NOT_EQUAL_COLOR_FOREGROUND);
+        labelNotEqual.setBackground(CompareInterface.NOT_EQUAL_COLOR);
+        
+        
+        
+        
+        JPanel panel1Rule = new JPanel();
+        panel1Rule.setLayout(new GridLayout(1,2,2,0));
+        panel1Rule.add(labelNotFound1Rule);
+        panel1Rule.add(labelNotEqual1Rule);
+
+        JPanel panel1Tree = new JPanel();
+        panel1Tree.setLayout(new GridLayout(1,2,2,0));
+        panel1Tree.add(labelNotFound1Tree);
+        panel1Tree.add(labelNotEqual1Tree);
+        
+        
+        JPanel panel2Rule = new JPanel();
+        panel2Rule.setLayout(new GridLayout(1,2,2,0));
+        panel2Rule.add(labelNotFound2Rule);
+        panel2Rule.add(labelNotEqual2Rule);
+
+        JPanel panel2Tree = new JPanel();
+        panel2Tree.setLayout(new GridLayout(1,2,2,0));
+        panel2Tree.add(labelNotFound2Tree);
+        panel2Tree.add(labelNotEqual2Tree);
+        
+        JPanel panelKey = new JPanel();
+        panelKey.setLayout(new GridLayout(1,2,2,0));
+        panelKey.add(labelNotFound);
+        panelKey.add(labelNotEqual);
+
+
+        JLabel labelFile1 = new JLabel("    "+cam.getAccessManagers()[0].getName()+" ");
+        labelFile1.setFont(labelFile1.getFont().deriveFont(Font.BOLD));
+        
+        JLabel labelFile2 = new JLabel("    "+cam.getAccessManagers()[1].getName()+" ");
+        labelFile2.setFont(labelFile2.getFont().deriveFont(Font.BOLD));
+
+        JPanel panel1 = new JPanel();
+        panel1.setLayout(new FlowLayout(FlowLayout.LEFT,2,1));
+        panel1.add(labelFile1);
+        panel1.add(new JLabel("  ACL:"));
+        panel1.add(panel1Rule);
+        panel1.add(new JLabel("  Tree:"));
+        panel1.add(panel1Tree);
+
+        JPanel panel2 = new JPanel();
+        panel2.setLayout(new FlowLayout(FlowLayout.LEFT,2,1));
+        panel2.add(labelFile2);
+        panel2.add(new JLabel("  ACL:"));
+        panel2.add(panel2Rule);
+        panel2.add(new JLabel("  Tree:"));
+        panel2.add(panel2Tree);
+        
+        JPanel panelRight = new JPanel();
+        panelRight.setLayout(new GridLayout(1,2));
+        panelRight.add(panel1);
+        panelRight.add(panel2);
+
+        JPanel panelLeft = new JPanel();
+        panelLeft.setLayout(new FlowLayout(FlowLayout.LEFT,2,1));
+        panelLeft.add(new JLabel(" Key:"));
+        panelLeft.add(panelKey);
+        
+        statusBar = new JPanel();
+        statusBar.setLayout(new BorderLayout());
+        statusBar.add(panelLeft, BorderLayout.WEST);
+        statusBar.add(panelRight, BorderLayout.CENTER);
+
         return statusBar;
     }
-    
-    public int indexOfTreePath(TreePath path, TreePath[] paths) {
-        if((path == null) || (paths == null))
-            return -1;
-        
-        for(int i=0; i<paths.length; i++)
-            if(path.equals(paths[i]))
-                return i;
-        
-        return -1;
-    }
-    
-    public boolean isTreePathAvailable(TreePath[] src, TreePath[] dst) {
-        for(int i=0; i<src.length; i++)
-            if(indexOfTreePath(src[i], dst) > -1)
-                return true;
-        
-        return false;
-    }
-    
-    private TreePath[] getTreePaths(JTreeAdvanced tree, ArrayList<RuleTreeNode> components) {
-        ArrayList<TreePath> paths = new ArrayList<TreePath>();
-        
-        searchTree(tree, tree.getPathForRow(0), paths, components);
-        
-        return paths.toArray(new TreePath[components.size()]);
-    }
-    
-    private void searchTree(JTreeAdvanced tree, TreePath currentPath, ArrayList<TreePath> paths, ArrayList<RuleTreeNode> components) {
-        if(components.indexOf((RuleTreeNode)currentPath.getLastPathComponent()) > -1)
-            paths.add(currentPath);
-        
-        int childCount = tree.getModel().getChildCount(currentPath.getLastPathComponent());
-        if(childCount > 0) {
-            for (int e=0; e<childCount; e++ ) {
-                TreePath newPath = currentPath.pathByAddingChild(tree.getModel().getChild(currentPath.getLastPathComponent(), e));
-                searchTree(tree, newPath, paths, components);
-            }
-        }
-    }
-    
-    
     
     public AbstractManager getManager() {
         return cam;
@@ -227,91 +351,6 @@ public class CompareAccessManagerComponent extends TabbedPanel {
         return iconRuleTree;
     }
     
-    class NamedAclSelectionListener implements ListSelectionListener {
-        private int index;
-        
-        public NamedAclSelectionListener(int index) {
-            this.index = index;
-        }
-        
-        public void valueChanged(ListSelectionEvent e) {
-            int i = namedACL[index].getTable().getSelectedRow();
-            if (i > -1) {
-                if(namedACL[index].getModel().getAccessRule(i).getRuleTreeReferences().size() > 0) {
-                    
-                    TreePath[] paths = getTreePaths(ruletree[index].getTree(), namedACL[index].getModel().getAccessRule(i).getRuleTreeReferences());
-                    if(!isTreePathAvailable(paths, ruletree[index].getTree().getSelectionPaths())) {
-                        ruletree[index].getTree().setSelectionPaths(paths);
-                        ruletree[index].getTree().scrollPathToVisible(paths[0]);
-                    }
-                    
-                } else
-                    ruletree[index].getTree().clearSelection();
-                
-                namedACL[index].updateReferences(i);
-                accessControl.updateTable(namedACL[index].getModel().getAccessRule(i));
-                
-                for(int k=0; k<namedACL.length; k++)
-                    if(k != index)
-                        if(namedACL[k].getTable().getSelectedRowCount() != 0)
-                            namedACL[k].getTable().clearSelection();
-                
-            } else
-                accessControl.updateTable();
-        }
-    }
     
-    class RuletreeSelectionListener implements TreeSelectionListener {
-        private TreePath oldPath;
-        private int index;
         
-        public RuletreeSelectionListener(int index) {
-            this.index = index;
-        }
-        
-        public void valueChanged(TreeSelectionEvent e) {
-            TreePath newPath = e.getPath();
-            
-            if(oldPath != null){
-                if(e.isAddedPath(e.getPath()) && newPath.equals(oldPath))
-                    return;
-            }
-            
-            RuleTreeNode treeNode = (RuleTreeNode)e.getPath().getLastPathComponent();
-            
-            if(e.isAddedPath(e.getPath())){
-                oldPath = newPath;
-                
-                for(int k=0; k<ruletree.length; k++)
-                    if(k != index)
-                        if(ruletree[k].getTree().getSelectionCount() != 0)
-                            ruletree[k].getTree().clearSelection();
-                
-                if(treeNode.getAccessRule() != null){
-                    int selIndex = namedACL[index].getModel().indexOfRuleName(treeNode.getAccessRuleName());
-                    if(selIndex > -1) {
-                        namedACL[index].getTable().setRowSelectionInterval(selIndex,selIndex);
-                        namedACL[index].getTable().getSelectionModel().setAnchorSelectionIndex(selIndex);
-                        namedACL[index].getTable().scrollRectToVisible(
-                                namedACL[index].getTable().getCellRect(
-                                namedACL[index].getTable().getSelectionModel().getAnchorSelectionIndex(),
-                                namedACL[index].getTable().getColumnModel().getSelectionModel().getAnchorSelectionIndex(),
-                                false)
-                                );
-                    } else
-                        accessControl.updateTable(treeNode.getAccessRule());
-                    
-                } else {
-                    namedACL[index].getTable().clearSelection();
-                    accessControl.updateTable();
-                }
-            } else {
-                oldPath = null;
-                namedACL[index].getTable().clearSelection();
-                accessControl.updateTable();
-            }
-        }
-        
-    }
-    
 }

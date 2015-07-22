@@ -13,6 +13,7 @@ import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import java.awt.Color;
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.io.File;
 
 import tcav.resources.*;
@@ -26,7 +27,7 @@ import tcav.manager.empty.EmptyManager;
 public class EmptyComponent extends TabbedPanel {
     
     private EmptyManager manager;
-
+    
     
     /** Creates a new instance of EmptyComponent */
     public EmptyComponent() {
@@ -37,8 +38,7 @@ public class EmptyComponent extends TabbedPanel {
         } catch (Exception e) {
             System.out.println("Couldn't load images: " + e);
         }
-        JLabel label = new JLabel(iconBanner);
-        //label.setEnabled(false);
+        JLabel label = new JLabel(iconBanner, JLabel.RIGHT);
         this.setLayout(new BorderLayout());
         this.add("East", label);
         //this.setBackground(Color.WHITE);
@@ -48,17 +48,37 @@ public class EmptyComponent extends TabbedPanel {
     private JPanel statusBar;
     
     public JComponent getStatusBar() {
-        if(statusBar == null) {
-            JLabel text = new JLabel(ResourceStrings.getApplicationName()+
-                    " version: "+ResourceStrings.getVersion()+
-                    " Build: "+ ResourceStrings.getBuild());
-            text.setBorder(new BevelBorder(BevelBorder.LOWERED));;
-            
-            statusBar = new JPanel();
-            statusBar.setLayout(new BorderLayout());
-            statusBar.add("Center", text);
-        }
+        if(statusBar != null)
+            return statusBar;
+
+        JLabel textVersion = new JLabel(" "+ResourceStrings.getVersion()+" ");
+        textVersion.setBorder(new BevelBorder(BevelBorder.LOWERED));
+
+        JLabel textBuild = new JLabel(" "+ResourceStrings.getBuild()+" ");
+        textBuild.setBorder(new BevelBorder(BevelBorder.LOWERED));
+        JPanel panelBuild = new JPanel();
+
+        JLabel text = new JLabel("   Supporting the TeamCenter Community");
+        
+        statusBar = new JPanel();
+        statusBar.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        statusBar.add(new JLabel(" Version:"));
+        statusBar.add(textVersion);
+        statusBar.add(new JLabel("   Build:"));
+        statusBar.add(textBuild);
+        statusBar.add(text);
+        
         return statusBar;
+    }
+    
+    JPanel toolBar;
+    
+    public JComponent getToolBar() {
+        if(toolBar != null)
+            return toolBar;
+        
+        toolBar = new JPanel();
+        return toolBar;
     }
     
     private ImageIcon iconApp;

@@ -23,15 +23,15 @@ public enum AccessControlHeaderEnum {
     AssignToProject("ASSIGN_TO_PROJECT", "Assign to Project", ImageEnum.aclAssignToProject),
     Change("CHANGE", "Change", ImageEnum.aclChange),
     ChangeOwnership("CHANGE_OWNER", "Change Ownership", ImageEnum.aclChangeOwnership),
-    CheckInCheckOut("CICO", "CheckIn CheckOut", ImageEnum.aclUndefined),
+    CheckInCheckOut("CICO", "CheckIn CheckOut", ImageEnum.aclCheckInCheckOut),
     Classification("WRITE_ICOS", "Write Classification ICO's", ImageEnum.aclClassification),
     Copy("COPY", "Copy", ImageEnum.aclCopy),
     Delete("DELETE", "Delete", ImageEnum.aclDelete),
     Demote("DEMOTE", "Demote", ImageEnum.aclDemote),
     Export("EXPORT", "Export", ImageEnum.aclExport),
     Import("IMPORT", "Import", ImageEnum.aclImport),
-    IPAdmin("IP_ADMIN", "IP Admin", ImageEnum.aclUndefined),
-    ITARAdmin("ITAR_ADMIN", "ITAR Admin", ImageEnum.aclUndefined),
+    IPAdmin("IP_ADMIN", "IP Admin", ImageEnum.aclIPAdmin),
+    ITARAdmin("ITAR_ADMIN", "ITAR Admin", ImageEnum.aclITARAdmin),
     Promote("PROMOTE", "Promote", ImageEnum.aclPromote),
     Publish("PUBLISH", "Publish", ImageEnum.aclPublish),
     Read("READ", "Read", ImageEnum.aclRead),
@@ -41,7 +41,7 @@ public enum AccessControlHeaderEnum {
     TransferIn("TRANSFER_IN", "Transfer In", ImageEnum.aclTransferIn),
     TransferOut("TRANSFER_OUT", "Transfer Out", ImageEnum.aclTransferOut),
     Write("WRITE", "Write", ImageEnum.aclWrite),
-    Unamanged("UNMANAGE", "Unmanaged",ImageEnum.aclUndefined),
+    Unamanged("UNMANAGE", "Unmanaged",ImageEnum.aclUnmanaged),
     Undefined("UNDEFINED", null, ImageEnum.aclUndefined);
     
     private String value;

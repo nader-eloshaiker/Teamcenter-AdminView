@@ -34,6 +34,16 @@ public class RuleTreeNodeRenderer implements TreeCellRenderer {
         }
     }
     
+    private boolean compareMode;
+    
+    public RuleTreeNodeRenderer() {
+        this(false);
+    }
+    
+    public RuleTreeNodeRenderer(boolean compareMode) {
+        this.compareMode = compareMode;
+    }
+    
     /**
      * This is messaged from JTree whenever it needs to get the size
      * of the component or it wants to draw it.
@@ -67,6 +77,10 @@ public class RuleTreeNodeRenderer implements TreeCellRenderer {
             cell.setIcon(ruleBranchIcon);
             cell.setFont(cell.getFont().deriveFont(Font.BOLD));
         }
+        
+        if(!compareMode)
+            return cell;
+        
         
         int result = amItem.getComparison();
         switch(result) {

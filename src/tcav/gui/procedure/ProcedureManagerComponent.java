@@ -98,18 +98,18 @@ public class ProcedureManagerComponent extends TabbedPanel {
         panelLeft.add(GUIutilities.createPanelMargined(actionComponent));
         
         JPanel panelRight = new JPanel();
-        panelRight.setLayout(new BorderLayout());
+        panelRight.setLayout(new GridLayout(1,1,GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
         panelRight.add("Center",GUIutilities.createPanelMargined(attributeComponent));
-        panelRight.add("South", GUIutilities.createPanelMargined(xmlComponent));
+        //panelRight.add("South", GUIutilities.createPanelMargined(xmlComponent));
         
         splitPane1 = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, panelLeft, panelRight);
         splitPane1.setResizeWeight(1.0);
         splitPane1.setBorder(null);
-        splitPane1.setDividerLocation(Settings.getPMSplitLocation());
+        splitPane1.setDividerLocation(Settings.getPmSplitLocation());
         splitPane1.setOneTouchExpandable(true);
         ((BasicSplitPaneUI)splitPane1.getUI()).getDivider().addComponentListener(new ComponentAdapter(){
             public void componentMoved(ComponentEvent e){
-                Settings.setPMSplitLocation(splitPane1.getDividerLocation());
+                Settings.setPmSplitLocation(splitPane1.getDividerLocation());
             }
         });
         
@@ -135,22 +135,91 @@ public class ProcedureManagerComponent extends TabbedPanel {
         return iconProcedure;
     }
     
+    private JToolBar toolBar;
+    
+    public JToolBar getToolBar() {
+        
+        if(toolBar != null)
+            return toolBar;
+        
+        JButton buttonXML = new JButton("XML Properties");
+        buttonXML.setOpaque(false);
+        buttonXML.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e){
+                xmlComponent.show(parentFrame);
+            }
+        });
+        
+        
+        toolBar = new JToolBar();
+        toolBar.add(buttonXML);
+        
+        return toolBar;
+    }
+    
     private JPanel statusBar;
     
     public JComponent getStatusBar() {
-        if(statusBar == null) {
-            JLabel textAuthor = new JLabel(" Author: "+pm.getPLMXML().getAuthor()+"   Schema: "+pm.getPLMXML().getSchemaVersion()+" ");
-            textAuthor.setBorder(new BevelBorder(BevelBorder.LOWERED));
-            JLabel textDate = new JLabel(" Date: "+pm.getPLMXML().getDate()+"   Time: "+pm.getPLMXML().getTime()+" ");
-            textDate.setBorder(new BevelBorder(BevelBorder.LOWERED));
-            JLabel textFile = new JLabel(" Path: "+pm.getFile().getParent()+" ");
-            textFile.setBorder(new BevelBorder(BevelBorder.LOWERED));
-            statusBar = new JPanel();
-            statusBar.setLayout(new BorderLayout(1,1));
-            statusBar.add("Center", textAuthor);
-            statusBar.add("West", textFile);
-            statusBar.add("East", textDate);
-        }
+        if(statusBar != null)
+            return statusBar;
+        
+        JLabel textFileLabel = new JLabel(" Path:");
+        JLabel textFile = new JLabel(" "+pm.getFile().getParent()+" ");
+        textFile.setBorder(new BevelBorder(BevelBorder.LOWERED));
+        JPanel panelFile = new JPanel();
+        panelFile.setLayout(new BorderLayout());
+        panelFile.add(textFileLabel, BorderLayout.WEST);
+        panelFile.add(textFile, BorderLayout.CENTER);
+        
+        JLabel textSchemaLabel = new JLabel("  Schema:");
+        JLabel textSchema = new JLabel(" "+pm.getPLMXML().getSchemaVersion()+" ");
+        textSchema.setBorder(new BevelBorder(BevelBorder.LOWERED));
+        JPanel panelSchema = new JPanel();
+        panelSchema.setLayout(new BorderLayout());
+        panelSchema.add(textSchemaLabel, BorderLayout.WEST);
+        panelSchema.add(textSchema, BorderLayout.CENTER);
+        
+        JPanel panelPathSchema = new JPanel();
+        panelPathSchema.setLayout(new BorderLayout());
+        panelPathSchema.add(panelFile, BorderLayout.WEST);
+        panelPathSchema.add(panelSchema, BorderLayout.EAST);
+        
+        JLabel textAuthorLabel = new JLabel("  Author:");
+        JLabel textAuthor = new JLabel(" "+pm.getPLMXML().getAuthor()+" ");
+        textAuthor.setBorder(new BevelBorder(BevelBorder.LOWERED));
+        JPanel panelAuthor = new JPanel();
+        panelAuthor.setLayout(new BorderLayout());
+        panelAuthor.add(textAuthorLabel, BorderLayout.WEST);
+        panelAuthor.add(textAuthor, BorderLayout.CENTER);
+        
+        JLabel textDateLabel = new JLabel("  Date:");
+        JLabel textDate = new JLabel(" "+pm.getPLMXML().getDate()+" ");
+        textDate.setBorder(new BevelBorder(BevelBorder.LOWERED));
+        JPanel panelDate = new JPanel();
+        panelDate.setLayout(new BorderLayout());
+        panelDate.add(textDateLabel, BorderLayout.WEST);
+        panelDate.add(textDate, BorderLayout.CENTER);
+        
+        JLabel textTimeLabel = new JLabel("  Time:");
+        JLabel textTime = new JLabel(" "+pm.getPLMXML().getTime()+" ");
+        textTime.setBorder(new BevelBorder(BevelBorder.LOWERED));
+        JPanel panelTime = new JPanel();
+        panelTime.setLayout(new BorderLayout());
+        panelTime.add(textTimeLabel, BorderLayout.WEST);
+        panelTime.add(textTime, BorderLayout.CENTER);
+        
+        JPanel panelDateTime = new JPanel();
+        panelDateTime.setLayout(new BorderLayout());
+        panelDateTime.add(panelDate, BorderLayout.WEST);
+        panelDateTime.add(panelTime, BorderLayout.EAST);
+        
+        
+        statusBar = new JPanel();
+        statusBar.setLayout(new BorderLayout());
+        statusBar.add(panelPathSchema, BorderLayout.WEST);
+        statusBar.add(panelAuthor, BorderLayout.CENTER);
+        statusBar.add(panelDateTime, BorderLayout.EAST);
+        
         return statusBar;
     }
     

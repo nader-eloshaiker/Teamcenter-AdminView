@@ -34,7 +34,7 @@ public class ProcessComponent extends JComponent {
         this.procedureManager = pm;
         
         // Workflow Process Tree
-        tree = new JTreeAdvanced(new ProcedureTreeModel(pm.getWorkflowProcesses(), pm.getSite(), Settings.getPMProcedureMode()));
+        tree = new JTreeAdvanced(new ProcedureTreeModel(pm.getWorkflowProcesses(), pm.getSite(), Settings.getPmProcedureMode()));
         tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         tree.setCellRenderer(new ProcessRenderer());
         if(tree.getRowHeight() < 18)
@@ -52,16 +52,16 @@ public class ProcessComponent extends JComponent {
         radioDependantTasks.setOpaque(false);
         radioDependantTasks.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                Settings.setPMProcedureMode(ProcedureTreeModel.MODE_DEPENDANT_TASKS);
-                tree.setModel(new ProcedureTreeModel(procedureManager.getWorkflowProcesses(), procedureManager.getSite(), Settings.getPMProcedureMode()));
+                Settings.setPmProcedureMode(ProcedureTreeModel.MODE_DEPENDANT_TASKS);
+                tree.setModel(new ProcedureTreeModel(procedureManager.getWorkflowProcesses(), procedureManager.getSite(), Settings.getPmProcedureMode()));
             }
         });
         radioSubWorkflow = new JRadioButton("Sub Workflows");
         radioSubWorkflow.setOpaque(false);
         radioSubWorkflow.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                Settings.setPMProcedureMode(ProcedureTreeModel.MODE_SUB_WORKFLOWS);
-                tree.setModel(new ProcedureTreeModel(procedureManager.getWorkflowProcesses(), procedureManager.getSite(), Settings.getPMProcedureMode()));
+                Settings.setPmProcedureMode(ProcedureTreeModel.MODE_SUB_WORKFLOWS);
+                tree.setModel(new ProcedureTreeModel(procedureManager.getWorkflowProcesses(), procedureManager.getSite(), Settings.getPmProcedureMode()));
             }
         });
         ButtonGroup buttonGroupProcedureMode = new ButtonGroup();
@@ -69,10 +69,10 @@ public class ProcessComponent extends JComponent {
         buttonGroupProcedureMode.add(radioSubWorkflow);
         buttonGroupProcedureMode.setSelected(
                 radioDependantTasks.getModel(),
-                (Settings.getPMProcedureMode() == ProcedureTreeModel.MODE_DEPENDANT_TASKS));
+                (Settings.getPmProcedureMode() == ProcedureTreeModel.MODE_DEPENDANT_TASKS));
         buttonGroupProcedureMode.setSelected(
                 radioSubWorkflow.getModel(),
-                (Settings.getPMProcedureMode() == ProcedureTreeModel.MODE_SUB_WORKFLOWS));
+                (Settings.getPmProcedureMode() == ProcedureTreeModel.MODE_SUB_WORKFLOWS));
         
         
         JToolBar toolBarWorkflowView = new GUIutilities().createTreeExpandToolbar(tree, parentFrame);

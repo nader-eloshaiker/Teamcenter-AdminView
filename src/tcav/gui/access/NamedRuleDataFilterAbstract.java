@@ -21,6 +21,11 @@ public abstract class NamedRuleDataFilterAbstract extends NamedRuleDataAbstractM
     protected int[] indexes;
     protected NamedRuleDataFilterInterface model;
     
+    public void setCompareMode(boolean compareMode) {
+        super.setCompareMode(compareMode);
+        model.setCompareMode(compareMode);
+    }
+    
     public final Object getValueAt(int aRow, int aColumn) {
         return model.getValueAt(indexes[aRow], aColumn);
     }

@@ -21,11 +21,14 @@ public enum ImageEnum {
     aclChange("images/acl/changeaccess_16.png"),
     aclChangeOwnership("images/acl/changeownership_16.png"),
     aclClassification("images/acl/classified_16.png"),
+    aclCheckInCheckOut("images/acl/cico_16.png"),
     aclCopy("images/acl/copy_16.png"),
     aclDelete("images/acl/deleteaccess_16.png"),
     aclDemote("images/acl/demoteaccess_16.png"),
     aclExport("images/acl/exportaccess_16.png"),
     aclImport("images/acl/importaccess_16.png"),
+    aclIPAdmin("images/acl/Intellectual_property_16.png"),
+    aclITARAdmin("images/acl/ITAR_admin_16.png"),
     aclPromote("images/acl/promoteaccess_16.png"),
     aclPublish("images/acl/publish_16.png"),
     aclRead("images/acl/readaccess_16.png"),
@@ -34,6 +37,7 @@ public enum ImageEnum {
     aclSubscribe("images/acl/subscribe_16.png"),
     aclTransferIn("images/acl/unreserve_16.png"),
     aclTransferOut("images/acl/reserve_16.png"),
+    aclUnmanaged("images/acl/unmanaged_16.png"),
     aclWrite("images/acl/writeaccess_16.png"),
     aclUndefined("images/acl/error_16.png"),
 
@@ -45,6 +49,12 @@ public enum ImageEnum {
     amSystemNamedAclType("images/accessmanager/systemnamedacl_16.png"),
     amWorkflowType("images/accessmanager/workflownamedacl_16.png"),
     amYes("images/accessmanager/yes_16.png"),
+    amCompare("images/accessmanager/bid_package_rev_16.png"),
+    
+    amcmpEqual("images/compare/equal_16.png"),
+    amcmpNotEqual("images/compare/not_equal_16.png"),
+    amcmpNotFound("images/compare/not_found_16.png"),
+    
     
     pmAssociatedDataSet("images/proceduremanager/dataset_16.png"),
     pmAssociatedFolder("images/proceduremanager/foldertype_16.png"),
@@ -92,7 +102,8 @@ public enum ImageEnum {
     utilExpandAll("images/util/expand_16.png"),
     utilExit("images/util/exit_16.png"),
     utilFind("images/util/find_16.png"),
-    
+    utilCompare("images/util/bid_package_rev_16.png"),
+
     appLogo("images/app/logoIcon.gif"),
     appLogoBanner("images/app/logoBanner.gif");
     

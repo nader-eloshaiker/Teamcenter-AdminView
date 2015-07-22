@@ -43,6 +43,8 @@ public class NamedRuleDataModel extends NamedRuleDataAbstractModel implements Na
                 return accessRuleList.get(row).getRuleTreeReferences().size();
             case NAME_COLUMN:
                 return accessRuleList.get(row).getRuleName();
+            case COMPARE_COLUMN:
+                return accessRuleList.get(row).getComparison();
             default:
                 return null;
         }
