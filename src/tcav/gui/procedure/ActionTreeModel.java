@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.tree.*;
 import javax.swing.event.*;
-import tcav.procedure.ProcedureManager;
+import tcav.procedure.*;
 import tcav.plmxmlpdm.*;
 import tcav.plmxmlpdm.type.*;
 import tcav.plmxmlpdm.classtype.*;
@@ -28,109 +28,47 @@ import tcav.plmxmlpdm.base.*;
  */
 public class ActionTreeModel implements TreeModel {
     
-    private ProcedureManager pm;
-    private WorkflowTemplateType root;
-    private ArrayList<Integer> rootActions;
+    private IdBase root;
     
     public static final int MODE_DEPENDANT_TASKS = 0;
     public static final int MODE_SUB_WORKFLOWS = 1;
     
     /** Creates a new instance of RuleTreeModel */
-    public ActionTreeModel(NodeReference nr, ProcedureManager pm) {
-        this.pm = pm;
-        this.root = pm.getWorkflowTemplates().get(pm.getIdIndex(nr.getId()));
-        rootActions = new ArrayList<Integer>();
-        for(int i=0; i<root.getActions().size(); i++)
-            rootActions.add(pm.getIdIndex(root.getActions().get(i)));
+    public ActionTreeModel(IdBase root) {
+        this.root = root;
     }
     
-    public ActionTreeModel(WorkflowTemplateType root, ProcedureManager pm) {
-        this.pm = pm;
-        this.root = root;
-        rootActions = new ArrayList<Integer>();
-        for(int i=0; i<root.getActions().size(); i++)
-            rootActions.add(pm.getIdIndex(root.getActions().get(i)));
-    }
-
     public ActionTreeModel() {
-        rootActions = new ArrayList<Integer>();
+        this.root = null;
     }
 
     public Object getRoot(){
-        if(rootActions.size() == 0)
-            return null;
-        else
-            return new NodeReference(
-                    root.getId(),
-                    root.getName(),
-                    NodeReference.PROCEDURE_WORKFLOW_PROCESS,
-                    TagTypeEnum.WorkflowTemplate,
-                    root.getIconKey());
+        return root;
     }
     
     public Object getChild(Object parent, int index){
-        NodeReference nrParent = (NodeReference)parent;
-        String childId;
-        NodeReference nr;
-        WorkflowActionType wa;
-        WorkflowBusinessRuleType wbr;
-        WorkflowBusinessRuleHandlerType wbrh;
         
-        switch(nrParent.getClassType()){
+        switch(((IdBase)parent).getTagType()){
             case WorkflowTemplate:
-                if(root.getActions().size() != 0) {
-                    
-                    childId = root.getActions().get(index);
-                    wa = pm.getWorkflowActions().get(pm.getIdIndex(childId));
-                    return new NodeReference(
-                            wa.getId(),
-                            "Action: Type "+wa.getActionType(),
-                            NodeReference.PROCEDURE_WORKFLOW_ACTION,
-                            TagTypeEnum.WorkflowAction,
-                            wa.getActionType());
-                    
-                } else
-                    return null;
+                WorkflowTemplateType wt = (WorkflowTemplateType)parent;
+                return wt.getActions()[index];
                 
             case WorkflowAction:
-                wa = pm.getWorkflowActions().get(pm.getIdIndex(nrParent.getId()));
+                WorkflowActionType wa = (WorkflowActionType)parent;
+                int handlerSize = wa.getActionHandlers().length;
                 
-                int handlerSize = wa.getActionHandlerRefs().size();
-                
-                if((wa.getActionHandlerRefs().size() != 0) && (index < handlerSize)) {
-                    
-                    childId = wa.getActionHandlerRefs().get(index);
-                    WorkflowHandlerType wh = pm.getWorkflowHandlers().get(pm.getIdIndex(childId));
-                    return new NodeReference(
-                            wh.getId(),
-                            wh.getName(),
-                            NodeReference.PROCEDURE_WORKFLOW_HANDLER,
-                            TagTypeEnum.WorkflowHandler);
-                    
-                } else if((wa.getRuleRefs().size() != 0) && (index >= handlerSize)) {
-                    
-                    childId = wa.getRuleRefs().get(index - handlerSize);
-                    wbr = pm.getWorkflowBusinessRules().get(pm.getIdIndex(childId));
-                    return new NodeReference(
-                            wbr.getId(),
-                            "Business Rule ",
-                            NodeReference.PROCEDURE_WORKFLOW_BUSINESS_RULE,
-                            TagTypeEnum.WorkflowBusinessRule);
-                    
-                } else
-                    System.out.println("getChild WorkflowAction should not reach this point");
+                if((handlerSize != 0) && (index < handlerSize))
+                    return wa.getActionHandlers()[index];
+                else if((wa.getRules().length != 0) && (index >= handlerSize))
+                    return wa.getRules()[index - handlerSize];
+                else
+                    System.out.println("getChild WorkflowActionType should not reach this point");
                 
                 return null;
                 
             case WorkflowBusinessRule:
-                wbr = pm.getWorkflowBusinessRules().get(pm.getIdIndex(nrParent.getId()));
-                childId = wbr.getRuleHandlerRefs().get(index);
-                wbrh = pm.getWorkflowBusinessRuleHandlers().get(pm.getIdIndex(childId));
-                return new NodeReference(
-                        wbrh.getId(),
-                        wbrh.getName(),
-                        NodeReference.PROCEDURE_WORKFLOW_BUSINESS_RULE_HANDLER,
-                        TagTypeEnum.WorkflowBusinessRuleHandler);
+                WorkflowBusinessRuleType br = (WorkflowBusinessRuleType)parent;
+                return br.getRuleHandlers()[index];
                 
             default:
                 System.out.println("getChild -ITEM- default Class Type should not reach this point");
@@ -139,30 +77,24 @@ public class ActionTreeModel implements TreeModel {
     }
     
     public int getChildCount(Object parent){
-        NodeReference nrParent = (NodeReference)parent;
-        int counter = 0;
-        WorkflowActionType wa;
-        WorkflowBusinessRuleType wbr;
-        WorkflowTemplateType wt;
         
-        switch(nrParent.getClassType()){
+        switch(((IdBase)parent).getTagType()){
             case WorkflowTemplate:
-                return root.getActions().size();
+                WorkflowTemplateType wt = (WorkflowTemplateType)parent;
+                return wt.getActions().length;
                 
             case WorkflowAction:
-                wa = pm.getWorkflowActions().get(pm.getIdIndex(nrParent.getId()));
-                counter = 0;
-                counter += wa.getActionHandlerRefs().size();
-                counter += wa.getRuleRefs().size();
-                return counter;
+                WorkflowActionType wa = (WorkflowActionType)parent;
+                return wa.getActionHandlers().length + wa.getRules().length;
                 
             case WorkflowBusinessRule:
-                wbr = pm.getWorkflowBusinessRules().get(pm.getIdIndex(nrParent.getId()));
-                return wbr.getRuleHandlerRefs().size();
+                WorkflowBusinessRuleType br = (WorkflowBusinessRuleType)parent;
+                return br.getRuleHandlers().length;
                 
                 
             case WorkflowBusinessRuleHandler:
             case WorkflowHandler:
+            case Site:
                 return 0;
                 
             default:
@@ -172,29 +104,23 @@ public class ActionTreeModel implements TreeModel {
     }
     
     public boolean isLeaf(Object node){
-        NodeReference nr = (NodeReference)node;
-        AttribOwnerBase aob;
-        int counter = 0;
         
-        switch(nr.getClassType()){
+        switch(((IdBase)node).getTagType()){
             case WorkflowTemplate:
-                return (root.getActions().size() == 0);
+                WorkflowTemplateType wt = (WorkflowTemplateType)node;
+                return (wt.getActions().length == 0);
                 
             case WorkflowAction:
-                WorkflowActionType wa =
-                        pm.getWorkflowActions().get(pm.getIdIndex(nr.getId()));
-                counter = 0;
-                counter += wa.getActionHandlerRefs().size();
-                counter += wa.getRuleRefs().size();
-                return (counter == 0);
+                WorkflowActionType wa = (WorkflowActionType)node;
+                return (wa.getActionHandlers().length + wa.getRules().length == 0);
                 
             case WorkflowBusinessRule:
-                WorkflowBusinessRuleType wbr =
-                        pm.getWorkflowBusinessRules().get(pm.getIdIndex(nr.getId()));
-                return (wbr.getRuleHandlerRefs().size()==0);
+                WorkflowBusinessRuleType br = (WorkflowBusinessRuleType)node;
+                return (br.getRuleHandlers().length == 0);
                 
             case WorkflowBusinessRuleHandler:
             case WorkflowHandler:
+            case Site:
                 return true;
                 
             default:
@@ -204,40 +130,39 @@ public class ActionTreeModel implements TreeModel {
     }
     
     public int getIndexOfChild(Object parent, Object child){
-        NodeReference nrParent = (NodeReference)parent;
-        NodeReference nrChild = (NodeReference)child;
-        
-        WorkflowTemplateType wt;
         WorkflowActionType wa;
-        WorkflowBusinessRuleType wbr;
+        WorkflowBusinessRuleType br;
         
-        switch(nrParent.getClassType()){
+        switch(((IdBase)parent).getTagType()){
             case WorkflowTemplate:
-                        return root.getActions().indexOf('#'+nrChild.getId());
+                WorkflowTemplateType wt = (WorkflowTemplateType)parent;
+                wa = (WorkflowActionType)child;
+                return wt.getActionRefs().indexOf(wa.getId());
                 
             case WorkflowAction:
-                wa = pm.getWorkflowActions().get(pm.getIdIndex(nrParent.getId()));
-                switch(nrChild.getProcedureType()){
-                    case NodeReference.PROCEDURE_WORKFLOW_HANDLER:
-                        wa = pm.getWorkflowActions().get(pm.getIdIndex(nrParent.getId()));
-                        return wa.getActionHandlerRefs().indexOf('#'+nrChild.getId());
+                wa = (WorkflowActionType)parent;
+                switch(((IdBase)child).getTagType()){
+                    case WorkflowHandler:
+                        WorkflowHandlerType wh = (WorkflowHandlerType)child;
+                        return wa.getActionHandlerRefs().indexOf(wh.getId());
                         
-                    case NodeReference.PROCEDURE_WORKFLOW_BUSINESS_RULE:
-                        wa = pm.getWorkflowActions().get(pm.getIdIndex(nrParent.getId()));
-                        return wa.getRuleRefs().indexOf('#'+nrChild.getId())+wa.getActionHandlerRefs().size();
+                    case WorkflowBusinessRule:
+                        br = (WorkflowBusinessRuleType)child;
+                        return wa.getRuleRefs().indexOf(br.getId());
                         
                     default:
-                        System.out.println("getIndexOfChild WorkflowAction should not reach this point");
-                        return 0;
+                        System.out.println("getIndexOfChild WorkflowActionType should not reach this point");
+                        return -1;
                 }
                 
             case WorkflowBusinessRule:
-                wbr = pm.getWorkflowBusinessRules().get(pm.getIdIndex(nrParent.getId()));
-                return wbr.getRuleHandlerRefs().indexOf('#'+nrChild.getId());
+                br = (WorkflowBusinessRuleType)parent;
+                WorkflowBusinessRuleHandlerType brh = (WorkflowBusinessRuleHandlerType)child;
+                return br.getRuleHandlerRefs().indexOf(br.getId());
                 
             default:
                 System.out.println("getIndexOfChild -ITEM- default class type should not reach this point");
-                return 0;
+                return -1;
         }
     }
     

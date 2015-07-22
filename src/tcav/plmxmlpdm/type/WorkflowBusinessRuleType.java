@@ -74,57 +74,22 @@ public class WorkflowBusinessRuleType extends AttribOwnerBase {
         NamedNodeMap attrib = currentNode.getAttributes();
         NodeList nodeList = currentNode.getChildNodes();
 
-        TagTools.addToList(attrib, ruleHandlerRefsAttribute, getRuleHandlerRefs());
         setRuleQuorum(TagTools.getIntegerValue(attrib, ruleQuorumAttribute));
         setParentRef(TagTools.getStringValue(attrib, parentRefAttribute));
+        
+        TagTools.addToList(attrib, ruleHandlerRefsAttribute, getRuleHandlerRefs());
+
+        setTagType(TagTypeEnum.WorkflowBusinessRule);
     }
 
-    /**
-     * Gets the value of the parentRef property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getParentRef() {
         return parentRef;
     }
 
-    /**
-     * Sets the value of the parentRef property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setParentRef(String value) {
         this.parentRef = value;
     }
 
-    /**
-     * Gets the value of the ruleHandlerRefs property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the ruleHandlerRefs property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getRuleHandlerRefs().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link String }
-     * 
-     * 
-     */
     public List<String> getRuleHandlerRefs() {
         if (ruleHandlerRefs == null) {
             ruleHandlerRefs = new ArrayList<String>();
@@ -132,28 +97,23 @@ public class WorkflowBusinessRuleType extends AttribOwnerBase {
         return this.ruleHandlerRefs;
     }
 
-    /**
-     * Gets the value of the ruleQuorum property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigInteger }
-     *     
-     */
     public Integer getRuleQuorum() {
         return ruleQuorum;
     }
 
-    /**
-     * Sets the value of the ruleQuorum property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigInteger }
-     *     
-     */
     public void setRuleQuorum(Integer value) {
         this.ruleQuorum = value;
     }
 
+    /***************
+     * Customisation
+     ***************/
+    private WorkflowBusinessRuleHandlerType[] businessRuleHandlers;
+
+    public WorkflowBusinessRuleHandlerType[] getRuleHandlers() {
+        if(businessRuleHandlers == null)
+            businessRuleHandlers = new WorkflowBusinessRuleHandlerType[getRuleHandlerRefs().size()];
+        
+        return businessRuleHandlers;
+    }
 }

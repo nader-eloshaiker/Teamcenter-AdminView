@@ -19,8 +19,7 @@ import org.w3c.dom.Node;
  */
 public class TagTools {
     
-    public static void addToList(NamedNodeMap nodeMap, String attribute, List<String> list)
-    {
+    public static void addToList(NamedNodeMap nodeMap, String attribute, List<String> list) {
         Node node = nodeMap.getNamedItem(attribute);
         if(node == null)
             return;
@@ -31,15 +30,22 @@ public class TagTools {
         
         String[] s = listValues.split(" ");
         for(int i=0; i<s.length; i++)
-            list.add(s[i]);
+            if(s[i].indexOf('#') == 0)
+                list.add(s[i].substring(1));
+            else
+                list.add(s[i]);
     }
     
     public static String getStringValue(NamedNodeMap nodeMap, String attribute) {
         Node node = nodeMap.getNamedItem(attribute);
-        if(node != null)
-            return node.getNodeValue();
-        else
-            return null;
+        if(node != null) {
+            String s = node.getNodeValue();
+            if(s != null)
+                if(s.indexOf('#') == 0)
+                    s = s.substring(1);
+            return s;
+        }
+        return null;
     }
     
     public static Double getDoubleValue(NamedNodeMap nodeMap, String attribute) {
@@ -65,7 +71,7 @@ public class TagTools {
         else
             return Boolean.parseBoolean(s);
     }
-
+    
     public static Integer getIntegerValue(NamedNodeMap nodeMap, String attribute) {
         Node node = nodeMap.getNamedItem(attribute);
         if(node == null)

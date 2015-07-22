@@ -58,16 +58,10 @@ public class WorkflowBusinessRuleHandlerType extends WorkflowHandlerType {
         
          setNegated(TagTools.getBooleanValue(attrib, negatedAttribute));
          setOverride(TagTools.getBooleanValue(attrib, overrideAttribute));
+         
+         setTagType(TagTypeEnum.WorkflowBusinessRuleHandler);
     }
 
-    /**
-     * Gets the value of the negated property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
-     */
     public Boolean isNegated() {
         if (negated == null) {
             return false;
@@ -76,26 +70,10 @@ public class WorkflowBusinessRuleHandlerType extends WorkflowHandlerType {
         }
     }
 
-    /**
-     * Sets the value of the negated property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
-     */
     public void setNegated(Boolean value) {
         this.negated = value;
     }
 
-    /**
-     * Gets the value of the override property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
-     */
     public Boolean isOverride() {
         if (override == null) {
             return false;
@@ -104,14 +82,6 @@ public class WorkflowBusinessRuleHandlerType extends WorkflowHandlerType {
         }
     }
 
-    /**
-     * Sets the value of the override property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
-     */
     public void setOverride(Boolean value) {
         this.override = value;
     }

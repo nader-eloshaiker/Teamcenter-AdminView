@@ -11,7 +11,7 @@ package tcav.plmxmlpdm.type.element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NamedNodeMap;
 import tcav.plmxmlpdm.*;
-
+import tcav.plmxmlpdm.base.IdBase;
 
 /**
  * 
@@ -43,7 +43,7 @@ import tcav.plmxmlpdm.*;
  */
 //@XmlAccessorType(XmlAccessType.FIELD)
 //@XmlType(name = "UserListElementType")
-public class UserListElementType {
+public class UserListElementType extends IdBase {
 
     //@XmlAttribute
     protected final String descriptionAttribute = "description";
@@ -57,11 +57,10 @@ public class UserListElementType {
         Node currentNode = node;
         NamedNodeMap attrib = node.getAttributes();
         
-         setDescription(
-                TagTools.getStringValue(attrib, descriptionAttribute));
-         setValue(
-                TagTools.getStringValue(attrib, valueAttribute));
+         setDescription(TagTools.getStringValue(attrib, descriptionAttribute));
+         setValue(TagTools.getStringValue(attrib, valueAttribute));
         
+         setTagType(TagTypeEnum.UserListValue);
     }
 
     /**

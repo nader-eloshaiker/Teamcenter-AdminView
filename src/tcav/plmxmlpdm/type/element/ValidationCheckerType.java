@@ -9,16 +9,12 @@
 package tcav.plmxmlpdm.type.element;
 
 import tcav.plmxmlpdm.TagTools;
+import tcav.plmxmlpdm.TagTypeEnum;
 import tcav.plmxmlpdm.base.AttributeBase;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.NamedNodeMap;
-/*
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlType;
-*/
+import tcav.plmxmlpdm.base.IdBase;
 
 /**
  * 
@@ -57,7 +53,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 //@XmlAccessorType(XmlAccessType.FIELD)
 //@XmlType(name = "ValidationCheckerType")
-public class ValidationCheckerType {
+public class ValidationCheckerType extends IdBase {
 
     //@XmlAttribute
     protected final String adHocAttribute = "adHoc";
@@ -97,6 +93,7 @@ public class ValidationCheckerType {
         setName(TagTools.getStringValue(attrib, nameAttribute));
         setReportRef(TagTools.getStringValue(attrib, reportRefAttribute));
         
+        setTagType(TagTypeEnum.Checker);
     }
 
     /**

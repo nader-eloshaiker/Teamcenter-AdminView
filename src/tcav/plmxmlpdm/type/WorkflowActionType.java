@@ -75,35 +75,15 @@ public class WorkflowActionType extends AttribOwnerBase {
         NamedNodeMap attrib = currentNode.getAttributes();
         NodeList nodeList = currentNode.getChildNodes();
         
-        TagTools.addToList(attrib, actionHandlerRefsAttribute, getActionHandlerRefs());
         setActionType(TagTools.getStringValue(attrib, actionTypeAttribute));
         setParentRef(TagTools.getStringValue(attrib, parentRefAttribute));
+
+        TagTools.addToList(attrib, actionHandlerRefsAttribute, getActionHandlerRefs());
         TagTools.addToList(attrib, ruleRefsAttribute, getRuleRefs());
 
+        setTagType(TagTypeEnum.WorkflowAction);
     }
 
-    /**
-     * Gets the value of the actionHandlerRefs property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the actionHandlerRefs property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getActionHandlerRefs().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link String }
-     * 
-     * 
-     */
     public List<String> getActionHandlerRefs() {
         if (actionHandlerRefs == null) {
             actionHandlerRefs = new ArrayList<String>();
@@ -111,81 +91,46 @@ public class WorkflowActionType extends AttribOwnerBase {
         return this.actionHandlerRefs;
     }
 
-    /**
-     * Gets the value of the actionType property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getActionType() {
         return actionType;
     }
 
-    /**
-     * Sets the value of the actionType property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setActionType(String value) {
         this.actionType = value;
     }
 
-    /**
-     * Gets the value of the parentRef property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getParentRef() {
         return parentRef;
     }
 
-    /**
-     * Sets the value of the parentRef property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setParentRef(String value) {
         this.parentRef = value;
     }
 
-    /**
-     * Gets the value of the ruleRefs property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the ruleRefs property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getRuleRefs().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link String }
-     * 
-     * 
-     */
     public List<String> getRuleRefs() {
         if (ruleRefs == null) {
             ruleRefs = new ArrayList<String>();
         }
         return this.ruleRefs;
     }
+    
+    /***************
+     * Customisation
+     ***************/
 
+    private WorkflowHandlerType[] handlers;
+    private WorkflowBusinessRuleType[] businessRules;
+    
+    public WorkflowHandlerType[] getActionHandlers() {
+        if(handlers == null)
+            handlers = new WorkflowHandlerType[getActionHandlerRefs().size()];
+        return handlers;
+    }
+
+    public WorkflowBusinessRuleType[] getRules() {
+        if(businessRules == null)
+            businessRules = new WorkflowBusinessRuleType[getRuleRefs().size()];
+        return businessRules;
+    }
+    
 }

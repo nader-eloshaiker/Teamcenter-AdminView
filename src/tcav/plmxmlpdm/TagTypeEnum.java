@@ -39,6 +39,7 @@ public enum TagTypeEnum {
     TaskDescription("TaskDescription"),
     UserData("UserData"),
     UserList("UserList"),
+    UserListValue("UserListValue"),
     UserValue("UserValue"),
     ValidationResults("ValidationResults"),
     WorkflowAction("WorkflowAction"),

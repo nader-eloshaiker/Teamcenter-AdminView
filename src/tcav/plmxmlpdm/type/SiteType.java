@@ -75,78 +75,35 @@ public class SiteType extends OwnerBase
         setAddressRef(TagTools.getStringValue(attrib, addressRefAttribute));
         setOwnerRef(TagTools.getStringValue(attrib, ownerRefAttribute));
         setSiteId(TagTools.getStringValue(attrib, siteIdAttribute));
+        
+        setTagType(TagTypeEnum.Site);
     }
 
-    /**
-     * Gets the value of the addressRef property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getAddressRef() {
         return addressRef;
     }
 
-    /**
-     * Sets the value of the addressRef property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setAddressRef(String value) {
         this.addressRef = value;
     }
 
-    /**
-     * Gets the value of the ownerRef property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getOwnerRef() {
         return ownerRef;
     }
 
-    /**
-     * Sets the value of the ownerRef property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setOwnerRef(String value) {
         this.ownerRef = value;
     }
 
-    /**
-     * Gets the value of the siteId property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getSiteId() {
         return siteId;
     }
 
-    /**
-     * Sets the value of the siteId property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setSiteId(String value) {
         this.siteId = value;
     }
 
+    /***************
+     * Customisation
+     ***************/
 }

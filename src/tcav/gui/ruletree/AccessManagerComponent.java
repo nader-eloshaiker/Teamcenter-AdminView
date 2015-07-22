@@ -59,19 +59,19 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         JPanel panelRuleTable =  new JPanel();
         panelRuleTable.setLayout(new GridLayout(1,1));
         panelRuleTable.setBorder(new TitledBorder(new EtchedBorder(),"Access Control"));
-        panelRuleTable.add(Utilities.createPanelMargined(accessRuleComponentScroll));
+        panelRuleTable.add(GUIutilities.createPanelMargined(accessRuleComponentScroll));
         
         /* Rules Panel */
         JPanel panelRule =  new JPanel();
-        panelRule.setLayout(new BorderLayout(Utilities.GAP_MARGIN,Utilities.GAP_MARGIN));
+        panelRule.setLayout(new BorderLayout(GUIutilities.GAP_MARGIN,GUIutilities.GAP_MARGIN));
         panelRule.add("East", createPanelNamedACL());
         panelRule.add("Center",createPanelRuleTree());
         
         splitPane = new JSplitPane(
                 JSplitPane.VERTICAL_SPLIT,
                 true,
-                Utilities.createPanelMargined(panelRule),
-                Utilities.createPanelMargined(panelRuleTable));
+                GUIutilities.createPanelMargined(panelRule),
+                GUIutilities.createPanelMargined(panelRuleTable));
         splitPane.setDividerLocation(Settings.getAMSplitLocation());
         splitPane.setResizeWeight(1.0);
         splitPane.setOneTouchExpandable(true);
@@ -82,8 +82,11 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
             }
         });
         
+        ToolTipManager.sharedInstance().registerComponent(treeReferences);
+        ToolTipManager.sharedInstance().registerComponent(treeRuleTree);
+        
         /* And show it. */
-        this.setLayout(new BorderLayout());//Utilities.GAP_MARGIN,Utilities.GAP_MARGIN));
+        this.setLayout(new BorderLayout());//GUIutilities.GAP_MARGIN,GUIutilities.GAP_MARGIN));
         this.add("Center",splitPane);
         
     }
@@ -230,7 +233,7 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
             public void actionPerformed(ActionEvent e) {
                 new Thread() {
                     public void run() {
-                        Utilities.expandTree(treeRuleTree, parentFrame);
+                        GUIutilities.expandTree(treeRuleTree, parentFrame);
                     }
                 }.start();
             }
@@ -242,7 +245,7 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
             public void actionPerformed(ActionEvent e) {
                 new Thread() {
                     public void run() {
-                        Utilities.expandTreeBranch(treeRuleTree, parentFrame);
+                        GUIutilities.expandTreeBranch(treeRuleTree, parentFrame);
                     }
                 }.start();
             }
@@ -254,7 +257,7 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
             public void actionPerformed(ActionEvent e) {
                 new Thread() {
                     public void run() {
-                        Utilities.collapseTree(treeRuleTree, parentFrame);
+                        GUIutilities.collapseTree(treeRuleTree, parentFrame);
                     }
                 }.start();
             }
@@ -266,7 +269,7 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
             public void actionPerformed(ActionEvent e) {
                 new Thread() {
                     public void run() {
-                        Utilities.collapseTreeBranch(treeRuleTree, parentFrame);
+                        GUIutilities.collapseTreeBranch(treeRuleTree, parentFrame);
                     }
                 }.start();
             }
@@ -395,10 +398,10 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         
         JToolBar toolBarRuletree = new JToolBar();
         toolBarRuletree.setMargin(new Insets(
-                Utilities.GAP_INSET,
-                Utilities.GAP_INSET,
-                Utilities.GAP_INSET,
-                Utilities.GAP_INSET));
+                GUIutilities.GAP_INSET,
+                GUIutilities.GAP_INSET,
+                GUIutilities.GAP_INSET,
+                GUIutilities.GAP_INSET));
         //toolBarRuletree.setFloatable(false);
         toolBarRuletree.add(buttonExpandAll);
         toolBarRuletree.add(buttonExpandBelow);
@@ -415,14 +418,14 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         toolBarRuletree.add(buttonRuleTreeFind);
         
         JPanel panelRuleTree =  new JPanel();
-        panelRuleTree.setLayout(new BorderLayout(Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
+        panelRuleTree.setLayout(new BorderLayout(GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
         panelRuleTree.add("Center",treeScroll);
         panelRuleTree.add("South",toolBarRuletree);
         
         JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(1,1,Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
+        panel.setLayout(new GridLayout(1,1,GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
         panel.setBorder(new TitledBorder(new EtchedBorder(),"Access Manager Tree"));
-        panel.add(Utilities.createPanelMargined(panelRuleTree));
+        panel.add(GUIutilities.createPanelMargined(panelRuleTree));
         
         return panel;
     }
@@ -457,11 +460,11 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         panelRuleList.add(namedAclComponentScroll);
         
         tabNamedAcl = new JTabbedPane();
-        tabNamedAcl.add("Details",Utilities.createPanelMargined(createACLTabDetails()));
-        tabNamedAcl.add("Unused",Utilities.createPanelMargined(createACLTabMissing()));
-        tabNamedAcl.add("Sort",Utilities.createPanelMargined(createACLTabSort()));
-        tabNamedAcl.add("Filter",Utilities.createPanelMargined(createACLTabFilter()));
-        tabNamedAcl.add("Search",Utilities.createPanelMargined(createACLTabSearch()));
+        tabNamedAcl.add("Details",GUIutilities.createPanelMargined(createACLTabDetails()));
+        tabNamedAcl.add("Unused",GUIutilities.createPanelMargined(createACLTabMissing()));
+        tabNamedAcl.add("Sort",GUIutilities.createPanelMargined(createACLTabSort()));
+        tabNamedAcl.add("Filter",GUIutilities.createPanelMargined(createACLTabFilter()));
+        tabNamedAcl.add("Search",GUIutilities.createPanelMargined(createACLTabSearch()));
         tabNamedAcl.add("Tree",createACLTabReferences());
         tabNamedAcl.setSelectedIndex(Settings.getAMACLTab());
         tabNamedAcl.addChangeListener(new ChangeListener(){
@@ -472,14 +475,14 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         
         
         JPanel panelACL = new JPanel();
-        panelACL.setLayout(new BorderLayout(Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
+        panelACL.setLayout(new BorderLayout(GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
         panelACL.add("Center",panelRuleList);
         panelACL.add("South",tabNamedAcl);
         
         JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(1,1,Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
+        panel.setLayout(new GridLayout(1,1,GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
         panel.setBorder(new TitledBorder(new EtchedBorder(), "Named ACL"));
-        panel.add(Utilities.createPanelMargined(panelACL));
+        panel.add(GUIutilities.createPanelMargined(panelACL));
         
         return panel;
         
@@ -490,8 +493,8 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         panelNamedACLDetailsLeft.setLayout(new GridLayout(
                 am.getAccessRuleList().getACLTypes().size()+1,
                 1,
-                Utilities.GAP_COMPONENT,
-                Utilities.GAP_COMPONENT));
+                GUIutilities.GAP_COMPONENT,
+                GUIutilities.GAP_COMPONENT));
         for(int i=0; i<am.getAccessRuleList().getACLTypes().size(); i++){
             panelNamedACLDetailsLeft.add(new JLabel(am.getAccessRuleList().getACLTypes().get(i)+" ACLs"));
         }
@@ -500,10 +503,10 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         panelNamedACLDetailsRight.setLayout(new GridLayout(
                 am.getAccessRuleList().getACLTypes().size()+1,
                 1,
-                Utilities.GAP_COMPONENT,
-                Utilities.GAP_COMPONENT));
+                GUIutilities.GAP_COMPONENT,
+                GUIutilities.GAP_COMPONENT));
         for(int i=0; i<am.getAccessRuleList().getACLTypes().size(); i++){
-            panelNamedACLDetailsRight.add(Utilities.createProgressBar(
+            panelNamedACLDetailsRight.add(GUIutilities.createProgressBar(
                     0,
                     am.getAccessRuleList().size(),
                     am.getAccessRuleList().getACLTypeSize(am.getAccessRuleList().getACLTypes().get(i)),
@@ -511,7 +514,7 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         }
         panelNamedACLDetailsRight.add(new JPanel());
         JPanel panelNamedACLDetails = new JPanel();
-        panelNamedACLDetails.setLayout(new BorderLayout(Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
+        panelNamedACLDetails.setLayout(new BorderLayout(GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
         panelNamedACLDetails.add("West",panelNamedACLDetailsLeft);
         panelNamedACLDetails.add("Center",panelNamedACLDetailsRight);
         
@@ -520,9 +523,9 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
     
     private JPanel createACLTabMissing() {
         JPanel panelNamedACLMissing = new JPanel();
-        panelNamedACLMissing.setLayout(new BorderLayout(Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
+        panelNamedACLMissing.setLayout(new BorderLayout(GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
         panelNamedACLMissing.add("West",new JLabel("Total Unused Named ACLs"));
-        panelNamedACLMissing.add("Center",Utilities.createProgressBar(
+        panelNamedACLMissing.add("Center",GUIutilities.createProgressBar(
                 0,
                 am.getAccessRuleList().size(),
                 am.getUnusedRulesSize(),
@@ -550,7 +553,7 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         
         
         JPanel panelNamedACLMissingFull = new JPanel();
-        panelNamedACLMissingFull.setLayout(new GridLayout(3,1,Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
+        panelNamedACLMissingFull.setLayout(new GridLayout(3,1,GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
         panelNamedACLMissingFull.add(panelNamedACLMissing);
         panelNamedACLMissingFull.add(listUnusedNamedACL);
         panelNamedACLMissingFull.add(new JPanel());
@@ -590,7 +593,7 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         buttonSortNamedACL.setIcon(iconFind);
         
         JPanel panelNamedACLSortTop = new JPanel();
-        panelNamedACLSortTop.setLayout(new GridLayout(2,3,Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
+        panelNamedACLSortTop.setLayout(new GridLayout(2,3,GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
         panelNamedACLSortTop.add(new JLabel("Sort By"));
         panelNamedACLSortTop.add(new JLabel("Then By"));
         panelNamedACLSortTop.add(new JLabel("Finally By"));
@@ -598,7 +601,7 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         panelNamedACLSortTop.add(boxSecondSort);
         panelNamedACLSortTop.add(boxThirdSort);
         JPanel panelNamedACLSortBottom = new JPanel();
-        panelNamedACLSortBottom.setLayout(new FlowLayout(FlowLayout.RIGHT,Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
+        panelNamedACLSortBottom.setLayout(new FlowLayout(FlowLayout.RIGHT,GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
         panelNamedACLSortBottom.add(checkAscending);
         panelNamedACLSortBottom.add(buttonSortNamedACL);
         JPanel panelNamedACLSort = new JPanel();
@@ -669,7 +672,7 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         buttonReset.setIcon(iconReset);
         
         JPanel panelNamedACLFilterTop = new JPanel();
-        panelNamedACLFilterTop.setLayout(new GridLayout(2,3,Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
+        panelNamedACLFilterTop.setLayout(new GridLayout(2,3,GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
         panelNamedACLFilterTop.add(new JLabel("Match Type"));
         panelNamedACLFilterTop.add(new JLabel("Match Count"));
         panelNamedACLFilterTop.add(new JLabel("Match Name"));
@@ -677,7 +680,7 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         panelNamedACLFilterTop.add(textFilterInstanceCount);
         panelNamedACLFilterTop.add(textFilterName);
         JPanel panelNamedACLFilterBottom = new JPanel();
-        panelNamedACLFilterBottom.setLayout(new FlowLayout(FlowLayout.RIGHT,Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
+        panelNamedACLFilterBottom.setLayout(new FlowLayout(FlowLayout.RIGHT,GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
         panelNamedACLFilterBottom.add(buttonReset);
         panelNamedACLFilterBottom.add(buttonFilter);
         JPanel panelNamedACLFilter = new JPanel();
@@ -798,13 +801,13 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         
         
         JPanel panelSearchTop = new JPanel();
-        panelSearchTop.setLayout(new GridLayout(2,2,Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
+        panelSearchTop.setLayout(new GridLayout(2,2,GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
         panelSearchTop.add(new JLabel("Type of Accessor:", iconAccessorType, JLabel.LEFT));
         panelSearchTop.add(new JLabel("ID of Accessor:", iconAccessorId, JLabel.LEFT));
         panelSearchTop.add(boxTypeAccessor);
         panelSearchTop.add(textAccessorID);
         JPanel panelSearchBottom = new JPanel();
-        panelSearchBottom.setLayout(new FlowLayout(FlowLayout.RIGHT,Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
+        panelSearchBottom.setLayout(new FlowLayout(FlowLayout.RIGHT,GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
         panelSearchBottom.add(labelACLSearchResult);
         panelSearchBottom.add(buttonNamedACLSearchReset);
         panelSearchBottom.add(buttonNamedACLSearchNext);
@@ -827,7 +830,7 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         scrollReferences.getViewport().add(treeReferences);
         scrollReferences.setBorder(new BevelBorder(BevelBorder.LOWERED));
         JPanel panelNamedACLReferences = new JPanel();
-        panelNamedACLReferences.setLayout(new GridLayout(1,1,Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
+        panelNamedACLReferences.setLayout(new GridLayout(1,1,GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
         panelNamedACLReferences.add(scrollReferences);
         
         return panelNamedACLReferences;

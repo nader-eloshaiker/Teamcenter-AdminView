@@ -11,15 +11,8 @@ package tcav.plmxmlpdm.type;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.NamedNodeMap;
-import tcav.plmxmlpdm.base.AttributeBase;
+import tcav.plmxmlpdm.base.*;
 import tcav.plmxmlpdm.*;
-
-/*
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlType;
-*/
 
 /**
  * 
@@ -67,58 +60,38 @@ public class AssociatedDataSetType extends AttributeBase {
         NamedNodeMap attrib = currentNode.getAttributes();
         NodeList nodeList = currentNode.getChildNodes();
 
-        setDataSetRef(
-                TagTools.getStringValue(attrib, dataSetRefAttribute));
-        setRole(
-                TagTools.getStringValue(attrib, roleAttribute));
+        setDataSetRef(TagTools.getStringValue(attrib, dataSetRefAttribute));
+        setRole(TagTools.getStringValue(attrib, roleAttribute));
+        
+        setTagType(TagTypeEnum.AssociatedDataSet);
     }
     
-    /**
-     * Gets the value of the dataSetRef property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getDataSetRef() {
         return dataSetRef;
     }
 
-    /**
-     * Sets the value of the dataSetRef property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setDataSetRef(String value) {
         this.dataSetRef = value;
     }
 
-    /**
-     * Gets the value of the role property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getRole() {
         return role;
     }
 
-    /**
-     * Sets the value of the role property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setRole(String value) {
         this.role = value;
     }
 
+    /***************
+     * Customisation
+     ***************/
+    private IdBase dataSet;
+    
+    public IdBase getDataSet() {
+        return dataSet;
+    }
+
+    public void setDataSet(IdBase dataSet) {
+        this.dataSet = dataSet;
+    }
 }

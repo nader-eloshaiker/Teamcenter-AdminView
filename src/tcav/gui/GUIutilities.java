@@ -1,5 +1,5 @@
 /*
- * Utilities.java
+ * GUIutilities.java
  *
  * Created on 20 July 2007, 13:28
  *
@@ -14,12 +14,11 @@ import javax.swing.table.*;
 import javax.swing.tree.*;
 import javax.swing.border.*;
 import java.awt.*;
-import tcav.gui.procedure.NodeReference;
 /**
  *
  * @author nzr4dl
  */
-public class Utilities {
+public class GUIutilities {
     public final static int GAP_COMPONENT = 4;
     public final static int GAP_INSET = 1;
     public final static int GAP_MARGIN = 4;
@@ -27,9 +26,9 @@ public class Utilities {
     public static int progressLimit = 0;
     
     /**
-     * Creates a new instance of Utilities
+     * Creates a new instance of GUIutilities
      */
-    public Utilities() {
+    public GUIutilities() {
     }
     
     public static JPanel createPanelMargined(JComponent component) {
@@ -177,7 +176,7 @@ public class Utilities {
                 TreePath path = parent.pathByAddingChild(tree.getModel().getChild(parent.getLastPathComponent(), e));
                 if(monitor.isCanceled())
                     break;
-
+                
                 setCascadeTreeExpansion(tree, path, expand, monitor);
             }
         }
@@ -188,5 +187,4 @@ public class Utilities {
             tree.collapsePath(parent);
         }
     }
-    
 }

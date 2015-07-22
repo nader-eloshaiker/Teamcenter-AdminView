@@ -14,7 +14,8 @@ import java.util.List;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.NamedNodeMap;
-import tcav.plmxmlpdm.*;
+import tcav.plmxmlpdm.TagTools;
+import tcav.plmxmlpdm.TagTypeEnum;
 import tcav.plmxmlpdm.base.AttribOwnerBase;
 import tcav.plmxmlpdm.classtype.WorkflowTemplateClassificationEnum;
 import tcav.plmxmlpdm.classtype.WorkflowTemplateStageEnum;
@@ -80,8 +81,14 @@ public class WorkflowTemplateType extends AttribOwnerBase {
     protected String dependencyTaskTemplates;
     
     //@XmlAttribute
-    protected final String actionsAttribute = "actions";
-    protected List<String> actions;
+    /**************
+     *Customisation
+     *
+     * actionsAttribute renamed to actionRefsAttribute
+     * actions renamed to actionRefs
+     **************/
+    protected final String actionRefsAttribute = "actions";
+    protected List<String> actionRefs;
     
     //@XmlAttribute
     protected final String dependencyTaskTemplateRefsAttribute = "dependencyTaskTemplateRefs";
@@ -131,18 +138,12 @@ public class WorkflowTemplateType extends AttribOwnerBase {
         NodeList nodeList = currentNode.getChildNodes();
         
         
-        setIconKey(
-                TagTools.getStringValue(attrib, iconKeyAttribute));
-        setLocation(
-                TagTools.getStringValue(attrib, locationAttribute));
-        setObjectType(
-                TagTools.getStringValue(attrib, objectTypeAttribute));
-        setParentTaskTemplateRef(
-                TagTools.getStringValue(attrib, parentTaskTemplateRefAttribute));
-        setShowInProcessStage(
-                TagTools.getBooleanValue(attrib, showInProcessStageAttribute));
-        setSignoffQuorum(
-                TagTools.getIntegerValue(attrib, signoffQuorumAttribute));
+        setIconKey(TagTools.getStringValue(attrib, iconKeyAttribute));
+        setLocation(TagTools.getStringValue(attrib, locationAttribute));
+        setObjectType(TagTools.getStringValue(attrib, objectTypeAttribute));
+        setParentTaskTemplateRef(TagTools.getStringValue(attrib, parentTaskTemplateRefAttribute));
+        setShowInProcessStage(TagTools.getBooleanValue(attrib, showInProcessStageAttribute));
+        setSignoffQuorum(TagTools.getIntegerValue(attrib, signoffQuorumAttribute));
         
         String s;
         
@@ -155,11 +156,10 @@ public class WorkflowTemplateType extends AttribOwnerBase {
             setTemplateClassification(WorkflowTemplateClassificationEnum.fromValue(s));
         
         TagTools.addToList(attrib, subTemplateRefsAttribute, getSubTemplateRefs());
-        
-        TagTools.addToList(attrib, actionsAttribute, getActions());
-        
         TagTools.addToList(attrib, dependencyTaskTemplateRefsAttribute, getDependencyTaskTemplateRefs());
+        TagTools.addToList(attrib, actionRefsAttribute, getActionRefs());
         
+        setTagType(TagTypeEnum.WorkflowTemplate);
         
         TagTypeEnum tagType;
         for (int i=0; i<nodeList.getLength(); i++) {
@@ -186,129 +186,42 @@ public class WorkflowTemplateType extends AttribOwnerBase {
         
     }
     
-    /**
-     * Gets the value of the taskDescription property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link UserListDataType }
-     *     
-     */
     public UserListDataType getTaskDescription() {
         return taskDescription;
     }
 
-    /**
-     * Sets the value of the taskDescription property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link UserListDataType }
-     *     
-     */
     public void setTaskDescription(UserListDataType value) {
         this.taskDescription = value;
     }
 
-    /**
-     * Gets the value of the dependencyTaskActions property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getDependencyTaskActions() {
         return dependencyTaskActions;
     }
 
-    /**
-     * Sets the value of the dependencyTaskActions property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setDependencyTaskActions(String value) {
         this.dependencyTaskActions = value;
     }
 
-    /**
-     * Gets the value of the dependencyTaskTemplates property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getDependencyTaskTemplates() {
         return dependencyTaskTemplates;
     }
 
-    /**
-     * Sets the value of the dependencyTaskTemplates property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setDependencyTaskTemplates(String value) {
         this.dependencyTaskTemplates = value;
     }
 
-    /**
-     * Gets the value of the actions property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the actions property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getActions().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link String }
-     * 
-     * 
-     */
-    public List<String> getActions() {
-        if (actions == null) {
-            actions = new ArrayList<String>();
+    /***************
+     * Customisation
+     *
+     * getActions() changed to getActionRefs()
+     ***************/
+    public List<String> getActionRefs() {
+        if (actionRefs == null) {
+            actionRefs = new ArrayList<String>();
         }
-        return this.actions;
+        return this.actionRefs;
     }
     
-    /**
-     * Gets the value of the dependencyTaskTemplateRefs property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the dependencyTaskTemplateRefs property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getDependencyTaskTemplateRefs().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link String }
-     * 
-     * 
-     */
     public List<String> getDependencyTaskTemplateRefs() {
         if (dependencyTaskTemplateRefs == null) {
             dependencyTaskTemplateRefs = new ArrayList<String>();
@@ -316,150 +229,54 @@ public class WorkflowTemplateType extends AttribOwnerBase {
         return this.dependencyTaskTemplateRefs;
     }
 
-    /**
-     * Gets the value of the iconKey property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getIconKey() {
         return iconKey;
     }
 
-    /**
-     * Sets the value of the iconKey property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setIconKey(String value) {
         this.iconKey = value;
     }
 
-    /**
-     * Gets the value of the location property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getLocation() {
         return location;
     }
 
-    /**
-     * Sets the value of the location property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setLocation(String value) {
         this.location = value;
     }
 
-    /**
-     * Gets the value of the objectType property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getObjectType() {
         return objectType;
     }
 
-    /**
-     * Sets the value of the objectType property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setObjectType(String value) {
         this.objectType = value;
     }
 
-    /**
-     * Gets the value of the parentTaskTemplateRef property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getParentTaskTemplateRef() {
         return parentTaskTemplateRef;
     }
 
-    /**
-     * Sets the value of the parentTaskTemplateRef property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setParentTaskTemplateRef(String value) {
         this.parentTaskTemplateRef = value;
     }
 
-    /**
-     * Gets the value of the showInProcessStage property.
-     * 
-     */
     public Boolean isShowInProcessStage() {
         return showInProcessStage;
     }
 
-    /**
-     * Sets the value of the showInProcessStage property.
-     * 
-     */
     public void setShowInProcessStage(Boolean value) {
         this.showInProcessStage = value;
     }
 
-    /**
-     * Gets the value of the signoffQuorum property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigInteger }
-     *     
-     */
     public Integer getSignoffQuorum() {
         return signoffQuorum;
     }
 
-    /**
-     * Sets the value of the signoffQuorum property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigInteger }
-     *     
-     */
     public void setSignoffQuorum(Integer value) {
         this.signoffQuorum = value;
     }
 
-    /**
-     * Gets the value of the stage property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link WorkflowTemplateStageEnum }
-     *     
-     */
     public WorkflowTemplateStageEnum getStage() {
         if (stage == null) {
             return WorkflowTemplateStageEnum.AVAILABLE;
@@ -468,40 +285,10 @@ public class WorkflowTemplateType extends AttribOwnerBase {
         }
     }
 
-    /**
-     * Sets the value of the stage property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link WorkflowTemplateStageEnum }
-     *     
-     */
     public void setStage(WorkflowTemplateStageEnum value) {
         this.stage = value;
     }
 
-    /**
-     * Gets the value of the subTemplateRefs property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the subTemplateRefs property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getSubTemplateRefs().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link String }
-     * 
-     * 
-     */
     public List<String> getSubTemplateRefs() {
         if (subTemplateRefs == null) {
             subTemplateRefs = new ArrayList<String>();
@@ -509,14 +296,6 @@ public class WorkflowTemplateType extends AttribOwnerBase {
         return this.subTemplateRefs;
     }
 
-    /**
-     * Gets the value of the templateClassification property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link WorkflowTemplateClassificationEnum }
-     *     
-     */
     public WorkflowTemplateClassificationEnum getTemplateClassification() {
         if (templateClassification == null) {
             return WorkflowTemplateClassificationEnum.TASK;
@@ -525,16 +304,33 @@ public class WorkflowTemplateType extends AttribOwnerBase {
         }
     }
 
-    /**
-     * Sets the value of the templateClassification property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link WorkflowTemplateClassificationEnum }
-     *     
-     */
     public void setTemplateClassification(WorkflowTemplateClassificationEnum value) {
         this.templateClassification = value;
     }
 
+    /***************
+     * Customisation
+     ***************/
+    
+    private WorkflowTemplateType[] subTemplates;
+    private WorkflowTemplateType[] dependantTasks;
+    private WorkflowActionType[] actions;
+
+    public WorkflowTemplateType[] getDependantTaskTemplates() {
+        if(dependantTasks == null)
+            dependantTasks = new WorkflowTemplateType[getDependencyTaskTemplateRefs().size()];
+        return dependantTasks;
+    }
+
+    public WorkflowTemplateType[] getSubTemplates() {
+        if(subTemplates == null)
+            subTemplates = new WorkflowTemplateType[getSubTemplateRefs().size()];
+        return subTemplates;
+    }
+
+    public WorkflowActionType[] getActions() {
+        if(actions == null)
+            actions = new WorkflowActionType[getActionRefs().size()];
+        return actions;
+    }
 }

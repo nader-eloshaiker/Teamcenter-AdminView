@@ -76,16 +76,10 @@ public class AccessIntentType extends AccessControlBase {
         s = TagTools.getStringValue(attrib, AccessIntentEnumAttribute);
         if(s != null)
             setIntent(AccessIntentEnum.fromValue(s));
+        
+        setTagType(TagTypeEnum.AccessIntent);
     }
 
-    /**
-     * Gets the value of the intent property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link AccessIntentEnum }
-     *     
-     */
     public AccessIntentEnum getIntent() {
         if (intent == null) {
             return AccessIntentEnum.MODIFIABLE;
@@ -94,45 +88,28 @@ public class AccessIntentType extends AccessControlBase {
         }
     }
 
-    /**
-     * Sets the value of the intent property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link AccessIntentEnum }
-     *     
-     */
     public void setIntent(AccessIntentEnum value) {
         this.intent = value;
     }
 
-    /**
-     * Gets the value of the ownerRefs property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the ownerRefs property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getOwnerRefs().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link String }
-     * 
-     * 
-     */
     public List<String> getOwnerRefs() {
         if (ownerRefs == null) {
             ownerRefs = new ArrayList<String>();
         }
         return this.ownerRefs;
+    }
+    
+    /***************
+     * Customisation
+     ***************/
+    protected SiteType owner;
+    
+    public SiteType getOwner() {
+        return owner;
+    }
+    
+    public void setOwner(SiteType owner) {
+        this.owner = owner;
     }
 
 }

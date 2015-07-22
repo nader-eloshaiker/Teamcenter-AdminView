@@ -82,7 +82,10 @@ public class Settings {
     }
     
     public static void load() throws Exception {
-        File file = new File("TcAdminView.cfg");
+        File path = new File(System.getenv("USERPROFILE"),".TcAV");
+        if(!path.exists())
+            path.mkdir();
+        File file = new File(path,"TcAdminView.cfg");
         if(file.exists()) {
             FileInputStream fis =  new FileInputStream(file);
             property.load(fis);
@@ -118,7 +121,7 @@ public class Settings {
                 PROPERTY_FRAMELOCATIONY,
                 PROPERTY_FRAMELOCATIONY_DEFAULT));
         
-
+        
         setAMSplitLocation(
                 getPropertyAsInt(
                 PROPERTY_AM_SPLITLOCATION,
@@ -161,8 +164,6 @@ public class Settings {
     }
     
     public static void store() throws Exception  {
-        File file = new File("TcAdminView.cfg");
-        FileOutputStream fos = new FileOutputStream(file);
         property.setProperty(
                 PROPERTY_USERINTERFACE,
                 getUserInterface());
@@ -216,8 +217,20 @@ public class Settings {
                 PROPERTY_PM_ACTIONEXPANDEDVIEW,
                 Boolean.toString(getPMActionExpandedView()));
         
-        property.store(fos, ResourceLocator.getVersion());
-        fos.close();
+        File path = new File(System.getenv("USERPROFILE"),".TcAV");
+        if(!path.exists())
+            path.mkdir();
+        File file = new File(path,"TcAdminView.cfg");
+        
+        if(file.exists())
+            if(!file.canWrite())
+                return;
+        
+        if(path.canWrite()) {
+            FileOutputStream fos = new FileOutputStream(file);
+            property.store(fos, ResourceLocator.getVersion());
+            fos.close();
+        }
     }
     
     public static String getAMLoadPath() {
@@ -251,7 +264,7 @@ public class Settings {
     public static void setSaveSettingsOnExit(boolean saveSettingsOnExit){
         Settings.saveSettingsOnExit = saveSettingsOnExit;
     }
-
+    
     public static int getFrameSizeX() {
         return frameSizeX;
     }
@@ -364,7 +377,7 @@ public class Settings {
     public static void setPMActionExpandedView(boolean pmActionExpandedView) {
         Settings.pmActionExpandedView = pmActionExpandedView;
     }
-
+    
     private static int getPropertyAsInt(String name, int defaultValue) throws NumberFormatException {
         int intValue = defaultValue;
         String stringValue = property.getProperty(name);

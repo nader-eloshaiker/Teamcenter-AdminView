@@ -74,6 +74,8 @@ public class WorkflowHandlerType extends AttribOwnerBase {
         NodeList nodeList = currentNode.getChildNodes();
         
         setParentRef(TagTools.getStringValue(attrib, parentRefAttribute));
+        
+        setTagType(TagTypeEnum.WorkflowHandler);
         /*
          * Moved to AttibOwnerBase
         TagTypeEnum tagType;
@@ -93,58 +95,22 @@ public class WorkflowHandlerType extends AttribOwnerBase {
         */
     }
 
-    /**
-     * Gets the value of the arguments property.
-     *
-     * @return
-     *     possible object is
-     *     {@link UserDataType }
-     *
-     */
     /*
      * Moved to AttibOwnerBase
      *
     public UserDataType getArguments() {
         return arguments;
     }
-     */
 
-    /**
-     * Sets the value of the arguments property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link UserDataType }
-     *
-     */
-    /*    
-     * Moved to AttibOwnerBase
-     *
-    public void setArguments(UserDataType value) {
+     public void setArguments(UserDataType value) {
         this.arguments = value;
     }
     */
     
-    /**
-     * Gets the value of the parentRef property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
-     */
     public String getParentRef() {
         return parentRef;
     }
     
-    /**
-     * Sets the value of the parentRef property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
-     */
     public void setParentRef(String value) {
         this.parentRef = value;
     }
