@@ -41,7 +41,7 @@ public class RuleTreeNodeRenderer implements TreeCellRenderer {
             boolean isSelected, boolean expanded,
             boolean leaf, int row,
             boolean hasFocus) {
-        
+
         DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer();
         DefaultTreeCellRenderer cell = (DefaultTreeCellRenderer)renderer.getTreeCellRendererComponent(tree, value, isSelected, expanded, leaf, row, hasFocus);
         
@@ -52,7 +52,9 @@ public class RuleTreeNodeRenderer implements TreeCellRenderer {
         
         cell.setText(amItem.toString());
         cell.setToolTipText(amItem.toString());
-        cell.setIcon(ruleIcon);
+        if (leaf) {
+            cell.setIcon(ruleIcon);
+        }
         return cell;
     }
 }

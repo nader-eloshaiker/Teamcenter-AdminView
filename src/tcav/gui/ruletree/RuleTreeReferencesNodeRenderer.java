@@ -19,7 +19,7 @@ import tcav.ResourceLocator;
  *
  * @author nzr4dl
  */
-public class RuleTreeReferencesNodeRenderer extends DefaultTreeCellRenderer implements TreeCellRenderer{
+public class RuleTreeReferencesNodeRenderer implements TreeCellRenderer{
     
     static protected ImageIcon ruleIcon;
     
@@ -31,7 +31,7 @@ public class RuleTreeReferencesNodeRenderer extends DefaultTreeCellRenderer impl
             System.out.println("Couldn't load images: " + e);
         }
     }
-
+    
     /**
      * This is messaged from JTree whenever it needs to get the size
      * of the component or it wants to draw it.
@@ -43,47 +43,24 @@ public class RuleTreeReferencesNodeRenderer extends DefaultTreeCellRenderer impl
             boolean leaf, int row,
             boolean hasFocus) {
         
-        super.selected = isSelected;
-        super.hasFocus = hasFocus;
+        DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer();
+        DefaultTreeCellRenderer cell = (DefaultTreeCellRenderer)renderer.getTreeCellRendererComponent(tree, value, isSelected, expanded, leaf, row, hasFocus);
+        
+        if(value == null)
+            return cell;
+        
         
         DefaultMutableTreeNode node = (DefaultMutableTreeNode)value;
         
-        if(node == null)
-            return this;
-        
         String s = (String)node.getUserObject();
-        this.setLeafIcon(ruleIcon);
         
-        setText(s);
-        setToolTipText(s);
+        cell.setText(s);
+        cell.setToolTipText(s);
         
-	if(isSelected)
-	    setForeground(getTextSelectionColor());
-	else
-	    setForeground(getTextNonSelectionColor());
-	// There needs to be a way to specify disabled icons.
-	if (!tree.isEnabled()) {
-	    setEnabled(false);
-	    if (leaf) {
-		setDisabledIcon(getLeafIcon());
-	    } else if (expanded) {
-		setDisabledIcon(getOpenIcon());
-	    } else {
-		setDisabledIcon(getClosedIcon());
-	    }
-	}
-	else {
-	    setEnabled(true);
-	    if (leaf) {
-		setIcon(getLeafIcon());
-	    } else if (expanded) {
-		setIcon(getOpenIcon());
-	    } else {
-		setIcon(getClosedIcon());
-	    }
-	}
-        setComponentOrientation(tree.getComponentOrientation());
+        if (leaf) {
+            cell.setIcon(ruleIcon);
+        }
         
-        return this;
+        return cell;
     }
 }
