@@ -16,8 +16,8 @@ import java.awt.event.*;
 import java.awt.*;
 import tcav.gui.*;
 import tcav.Settings;
-import tcav.procedure.plmxmlpdm.base.IdBase;
-import tcav.procedure.ProcedureManager;
+import tcav.manager.procedure.plmxmlpdm.base.IdBase;
+import tcav.manager.procedure.ProcedureManager;
 
 /**
  *

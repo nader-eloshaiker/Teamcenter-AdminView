@@ -2,8 +2,10 @@ package tcav.gui.ruletree;
 
 import javax.naming.ldap.StartTlsRequest;
 import tcav.gui.*;
+import tcav.manager.access.AccessManager;
+import tcav.manager.access.RuleTreeNode;
+import tcav.manager.AbstractManager;
 import tcav.utils.PatternMatch;
-import tcav.ruletree.*;
 import tcav.resources.*;
 import tcav.Settings;
 import java.util.*;
@@ -21,7 +23,7 @@ import java.io.File;
  *
  * @author NZR4DL
  */
-public class AccessManagerComponent extends JPanel implements TabbedPanel {
+public class AccessManagerComponent extends TabbedPanel {
     
     protected JFrame parentFrame;
     protected RuleTreeComponent ruletree;
@@ -132,12 +134,8 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         
     }
     
-    public File getFile() {
-        return am.getFile();
-    }
-    
-    public JComponent getComponent() {
-        return this;
+    public AbstractManager getManager() {
+        return am;
     }
     
     private ImageIcon iconRuleTree;

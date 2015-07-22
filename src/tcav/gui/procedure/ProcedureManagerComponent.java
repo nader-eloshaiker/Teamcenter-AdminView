@@ -10,9 +10,10 @@
 package tcav.gui.procedure;
 
 import tcav.*;
+import tcav.manager.procedure.ProcedureManager;
+import tcav.manager.AbstractManager;
 import tcav.gui.*;
-import tcav.procedure.*;
-import tcav.procedure.plmxmlpdm.base.IdBase;
+import tcav.manager.procedure.plmxmlpdm.base.IdBase;
 import tcav.resources.*;
 import tcav.utils.*;
 import tcav.xml.*;
@@ -32,7 +33,7 @@ import java.io.File;
  *
  * @author nzr4dl
  */
-public class ProcedureManagerComponent extends JPanel implements TabbedPanel {
+public class ProcedureManagerComponent extends TabbedPanel {
     
     private JFrame parentFrame;
     private ProcedureManager pm;
@@ -121,12 +122,8 @@ public class ProcedureManagerComponent extends JPanel implements TabbedPanel {
         return (pm.getWorkflowProcesses().size() == 0);
     }
     
-    public File getFile() {
-        return pm.getFile();
-    }
-    
-    public JComponent getComponent() {
-        return this;
+    public AbstractManager getManager() {
+        return pm;
     }
     
     private ImageIcon iconProcedure;

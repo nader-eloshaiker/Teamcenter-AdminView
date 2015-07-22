@@ -11,7 +11,7 @@ package tcav.gui;
 
 import java.util.ArrayList;
 import tcav.gui.JTableAdvanced;
-import tcav.ruletree.AccessRule;
+import tcav.manager.access.AccessRule;
 /**
  *
  * @author NZR4DL

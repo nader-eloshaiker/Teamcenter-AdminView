@@ -15,7 +15,7 @@ package tcav.gui.ruletree;
 import javax.swing.*;
 import javax.swing.tree.*;
 import java.awt.*;
-import tcav.ruletree.RuleTreeNode;
+import tcav.manager.access.RuleTreeNode;
 import tcav.resources.*;
 
 public class RuleTreeNodeRenderer implements TreeCellRenderer {

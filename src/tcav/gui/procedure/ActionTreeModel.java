@@ -15,13 +15,12 @@ import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.tree.*;
 import javax.swing.event.*;
-import tcav.procedure.*;
-import tcav.procedure.plmxmlpdm.base.IdBase;
-import tcav.procedure.plmxmlpdm.type.WorkflowActionType;
-import tcav.procedure.plmxmlpdm.type.WorkflowBusinessRuleHandlerType;
-import tcav.procedure.plmxmlpdm.type.WorkflowBusinessRuleType;
-import tcav.procedure.plmxmlpdm.type.WorkflowHandlerType;
-import tcav.procedure.plmxmlpdm.type.WorkflowTemplateType;
+import tcav.manager.procedure.plmxmlpdm.base.IdBase;
+import tcav.manager.procedure.plmxmlpdm.type.WorkflowActionType;
+import tcav.manager.procedure.plmxmlpdm.type.WorkflowBusinessRuleHandlerType;
+import tcav.manager.procedure.plmxmlpdm.type.WorkflowBusinessRuleType;
+import tcav.manager.procedure.plmxmlpdm.type.WorkflowHandlerType;
+import tcav.manager.procedure.plmxmlpdm.type.WorkflowTemplateType;
 
 
 /**

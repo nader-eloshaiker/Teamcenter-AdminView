@@ -14,7 +14,9 @@ import javax.swing.*;
 import javax.swing.table.*;
 import javax.swing.border.*;
 import tcav.gui.*;
-import tcav.ruletree.*;
+import tcav.manager.access.AccessControlHeader;
+import tcav.manager.access.AccessManager;
+import tcav.manager.access.AccessRule;
 
 /**
  *

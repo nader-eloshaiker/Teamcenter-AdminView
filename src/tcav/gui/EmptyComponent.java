@@ -13,17 +13,24 @@ import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import java.awt.Color;
 import java.awt.BorderLayout;
-import tcav.resources.*;
 import java.io.File;
+
+import tcav.resources.*;
+import tcav.manager.AbstractManager;
+import tcav.manager.empty.EmptyManager;
 
 /**
  *
  * @author nzr4dl
  */
-public class EmptyComponent extends JPanel implements TabbedPanel  {
+public class EmptyComponent extends TabbedPanel {
+    
+    private EmptyManager manager;
+
     
     /** Creates a new instance of EmptyComponent */
     public EmptyComponent() {
+        manager = new EmptyManager();
         ImageIcon iconBanner = new ImageIcon();
         try {
             iconBanner = ResourceLoader.getImage(ImageEnum.appLogoBanner);
@@ -54,16 +61,6 @@ public class EmptyComponent extends JPanel implements TabbedPanel  {
         return statusBar;
     }
     
-    private File file = new File("TcAV");
-    
-    public File getFile() {
-        return file;
-    }
-    
-    public JComponent getComponent() {
-        return this;
-    }
-    
     private ImageIcon iconApp;
     
     public ImageIcon getIcon() {
@@ -76,5 +73,9 @@ public class EmptyComponent extends JPanel implements TabbedPanel  {
         }
         return iconApp;
         
+    }
+    
+    public AbstractManager getManager() {
+        return manager;
     }
 }

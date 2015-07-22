@@ -9,7 +9,8 @@
 
 package tcav.gui.ruletree;
 
-import tcav.ruletree.*;
+import tcav.manager.access.AccessRule;
+import tcav.manager.access.AccessRuleList;
 import javax.swing.table.*;
 
 /**

@@ -21,7 +21,7 @@ import javax.swing.JTable;
 import javax.swing.JLabel;
 import java.awt.Component;
 import tcav.resources.*;
-import tcav.ruletree.AccessControlHeaderItem;
+import tcav.manager.access.AccessControlHeaderItem;
 
 /**
  *

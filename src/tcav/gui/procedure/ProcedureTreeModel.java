@@ -13,10 +13,9 @@ import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.tree.*;
 import javax.swing.event.*;
-import tcav.procedure.*;
-import tcav.procedure.plmxmlpdm.base.IdBase;
-import tcav.procedure.plmxmlpdm.type.SiteType;
-import tcav.procedure.plmxmlpdm.type.WorkflowTemplateType;
+import tcav.manager.procedure.plmxmlpdm.base.IdBase;
+import tcav.manager.procedure.plmxmlpdm.type.SiteType;
+import tcav.manager.procedure.plmxmlpdm.type.WorkflowTemplateType;
 
 
 /**

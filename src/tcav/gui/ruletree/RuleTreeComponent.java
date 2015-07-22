@@ -16,7 +16,8 @@ import javax.swing.*;
 import javax.swing.tree.*;
 import javax.swing.event.*;
 import tcav.gui.*;
-import tcav.ruletree.*;
+import tcav.manager.access.AccessManager;
+import tcav.manager.access.RuleTreeNode;
 import tcav.resources.*;
 
 /**

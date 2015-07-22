@@ -9,10 +9,11 @@
 
 package tcav.gui;
 
+import tcav.gui.compare.CompareTabChooser;
 import tcav.gui.ruletree.AccessManagerComponent;
 import tcav.gui.procedure.ProcedureManagerComponent;
-import tcav.ruletree.AccessManager;
-import tcav.procedure.ProcedureManager;
+import tcav.manager.access.AccessManager;
+import tcav.manager.procedure.ProcedureManager;
 import tcav.utils.CustomFileFilter;
 import tcav.resources.*;
 import tcav.Settings;
@@ -88,12 +89,12 @@ public class AdminViewFrame extends JFrame{
         tabbedpane = new JTabbedPane();
         tabbedpane.addChangeListener(new ChangeListener(){
             public void stateChanged(ChangeEvent e) {
-                if(tabbedpane.getTabCount() > 1) 
+                if(tabbedpane.getTabCount() > 1)
                     showStatusBarComponent((TabbedPanel)tabbedpane.getSelectedComponent());
             }
         });
         emptyPane = new EmptyComponent();
-
+        
         mainPanel = new JPanel();
         mainPanel.setLayout(new CardLayout());
         mainPanel.add(tabbedpane, TABPANE);
@@ -101,7 +102,7 @@ public class AdminViewFrame extends JFrame{
         ((CardLayout)mainPanel.getLayout()).show(mainPanel,EMPTYPANE);
         addStatusBarComponent(emptyPane);
         showStatusBarComponent(emptyPane);
-
+        
         
         this.getContentPane().add("Center", mainPanel);
         this.getContentPane().add("North", toolbar);
@@ -158,10 +159,18 @@ public class AdminViewFrame extends JFrame{
     
     private void addTabbedPane(TabbedPanel tab) {
         ((CardLayout)mainPanel.getLayout()).show(mainPanel, TABPANE);
-        tabbedpane.addTab(tab.getFile().getName(), tab.getIcon(), tab.getComponent());
-        tabbedpane.setSelectedComponent(tab.getComponent());
+        tabbedpane.addTab(tab.getFile().getName(), tab.getIcon(), tab);
+        tabbedpane.setSelectedComponent(tab);
         addStatusBarComponent(tab);
         showStatusBarComponent(tab);
+        
+        buttonClose.setEnabled(true);
+        menuClose.setEnabled(true);
+        
+        if(tabbedpane.getTabCount() > 1) {
+            buttonCompare.setEnabled(true);
+            menuCompare.setEnabled(true);
+        }
     }
     
     private void removeTabbedPane(TabbedPanel tab) {
@@ -173,9 +182,19 @@ public class AdminViewFrame extends JFrame{
         if(tabbedpane.getTabCount() == 0) {
             ((CardLayout)mainPanel.getLayout()).show(mainPanel, EMPTYPANE);
             showStatusBarComponent(emptyPane);
+            buttonClose.setEnabled(false);
+            menuClose.setEnabled(false);
         }
-    }
 
+        if(tabbedpane.getTabCount() <= 1) {
+            buttonCompare.setEnabled(false);
+            menuCompare.setEnabled(false);
+        }
+}
+    
+    private JButton buttonClose;
+    private JButton buttonCompare;
+    
     private JToolBar constructToolBar() {
         JToolBar toolbar = new JToolBar("Main ToolBar");
         
@@ -201,9 +220,21 @@ public class AdminViewFrame extends JFrame{
             }
         });
         
-        JButton buttonClose = new JButton("Close Tab");
+        buttonCompare = new JButton("Compare");
+        buttonCompare.setOpaque(false);
+        buttonCompare.setEnabled(false);
+        buttonCompare.setHorizontalTextPosition(SwingConstants.RIGHT);
+        buttonCompare.setToolTipText("Compare tabbs");
+        buttonCompare.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                actionCompare();
+            }
+        });
+        
+        buttonClose = new JButton("Close Tab");
         buttonClose.setOpaque(false);
         buttonClose.setIcon(iconClose);
+        buttonClose.setEnabled(false);
         buttonClose.setHorizontalTextPosition(SwingConstants.RIGHT);
         buttonClose.setToolTipText("Close the current tabb");
         buttonClose.addActionListener(new ActionListener() {
@@ -231,13 +262,17 @@ public class AdminViewFrame extends JFrame{
         toolbar.add(buttonOpenRuleTree);
         toolbar.add(buttonOpenProcedure);
         toolbar.addSeparator();
+        toolbar.add(buttonCompare);
+        toolbar.addSeparator();
         toolbar.add(buttonClose);
         toolbar.add(buttonExit);
         
         return toolbar;
     }
     
-    protected JCheckBoxMenuItem menuItemSaveSettingsOnExit;
+    private JCheckBoxMenuItem menuItemSaveSettingsOnExit;
+    private JMenuItem menuClose;
+    private JMenuItem menuCompare;
     
     /** Construct a menu. */
     private JMenuBar constructMenuBar() {
@@ -272,10 +307,11 @@ public class AdminViewFrame extends JFrame{
         
         menu.addSeparator();
         
-        menuItem = menu.add(new JMenuItem("Close Tab", 'C'));
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, Event.CTRL_MASK));
-        menuItem.setIcon(iconClose);
-        menuItem.addActionListener(new ActionListener() {
+        menuClose = menu.add(new JMenuItem("Close Tab", 'C'));
+        menuClose.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, Event.CTRL_MASK));
+        menuClose.setIcon(iconClose);
+        menuClose.setEnabled(false);
+        menuClose.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 actionCloseTab();
             }
@@ -289,6 +325,21 @@ public class AdminViewFrame extends JFrame{
                 actionExit();
             }
         });
+        
+        /* Tools */
+        menu = new JMenu("Tools");
+        menu.setMnemonic('T');
+        menuBar.add(menu);
+        
+        menuCompare = menu.add(new JMenuItem("Compare", 'o'));
+        menuCompare.setEnabled(false);
+        menuCompare.setAccelerator(KeyStroke.getKeyStroke('O', Event.CTRL_MASK));
+        menuCompare.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                actionCompare();
+            }
+        });
+        
         
         /* Edit. */
         menu = new JMenu("Edit");
@@ -356,8 +407,7 @@ public class AdminViewFrame extends JFrame{
                     JPanel panel = new JPanel(true);
                     panel.setLayout(new GridLayout(1,1));
                     panel.setBorder(new TitledBorder("Change Log"));
-                    JOptionPane.showMessageDialog(
-                            getFrame(),scroll);
+                    JOptionPane.showMessageDialog(getFrame(),scroll,"Change Log",JOptionPane.PLAIN_MESSAGE,null);
                 }
             }
         });
@@ -511,5 +561,10 @@ public class AdminViewFrame extends JFrame{
                 System.gc();
             }
         }.start();
+    }
+    
+    private void actionCompare(){
+        CompareTabChooser chooser = new CompareTabChooser(tabbedpane);
+        JOptionPane.showConfirmDialog(getFrame(),chooser,"Compare Managers",JOptionPane.OK_CANCEL_OPTION,JOptionPane.PLAIN_MESSAGE,null);
     }
 }

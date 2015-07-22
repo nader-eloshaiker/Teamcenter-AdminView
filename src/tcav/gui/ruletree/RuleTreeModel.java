@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.tree.*;
 import javax.swing.event.*;
-import tcav.ruletree.RuleTreeNode;
+import tcav.manager.access.RuleTreeNode;
 
 
 /**

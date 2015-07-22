@@ -11,20 +11,25 @@ package tcav.gui;
 
 import javax.swing.JComponent;
 import javax.swing.ImageIcon;
+import javax.swing.JPanel;
 import java.io.File;
+
+import tcav.manager.AbstractManager;
 
 /**
  *
  * @author nzr4dl
  */
-public interface TabbedPanel {
+public abstract class TabbedPanel extends JPanel {
     
-    public JComponent getStatusBar();
+    abstract public JComponent getStatusBar();
     
-    public JComponent getComponent();
+    abstract public AbstractManager getManager();
     
-    public File getFile();
+    abstract public ImageIcon getIcon();
     
-    public ImageIcon getIcon();
+    public File getFile() {
+        return getManager().getFile();
+    }
     
 }

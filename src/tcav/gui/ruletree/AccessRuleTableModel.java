@@ -8,9 +8,9 @@ package tcav.gui.ruletree;
  * and open the template in the editor.
  */
 
-import tcav.ruletree.AccessControlHeader;
-import tcav.ruletree.AccessControlHeaderItem;
-import tcav.ruletree.AccessRule;
+import tcav.manager.access.AccessControlHeader;
+import tcav.manager.access.AccessControlHeaderItem;
+import tcav.manager.access.AccessRule;
 import javax.swing.table.*;
 
 /**
