@@ -212,136 +212,57 @@ public class ProcedureManager {
     }
     
     private void processAttributes(WorkflowTemplateType node, Hashtable<String,IdBase> tagCache) {
+        AttributeModel model = new AttributeModel(tagCache);
+        model.processNodeAttributes(node);
         
-        processAttribOwnerBase(node, tagCache);
         for(int k=0; k<node.getActionRefs().size(); k++)
-            attachAttributeToAction(node.getActions()[k], tagCache);
+            model.processNodeAttributes(node.getActions()[k]);
         
         for(int j=0; j<node.getSubTemplateRefs().size(); j++) {
-            processAttribOwnerBase(node.getSubTemplates()[j], tagCache);
+            model.processNodeAttributes(node.getSubTemplates()[j]);
         }
-    }
-    
-    private void processAttribOwnerBase(AttribOwnerBase node, Hashtable<String, IdBase> tagCache){
-        for(int i=0; i<node.getAttributeRefs().size(); i++) {
-            switch(node.getAttribute().get(i).getTagType()){
-                case AssociatedDataSet:
-                    AssociatedDataSetType ad = (AssociatedDataSetType)node.getAttribute().get(i);
-                    if(ad.getDataSetRef() != null) {
-                        ad.setDataSet(tagCache.get(ad.getDataSetRef()));
-                        if(tagCache.get(ad.getDataSetRef()).getTagType() == TagTypeEnum.WorkflowSignoffProfile)
-                            attachAttributeToSignoffProfile((WorkflowSignoffProfileType)ad.getDataSet(),tagCache);
-                    }
-                    break;
-                    
-                case AssociatedFolder:
-                    AssociatedFolderType afd = (AssociatedFolderType)node.getAttribute().get(i);
-                    if(afd.getFolderRef() != null) {
-                        afd.setFolder(tagCache.get(afd.getFolderRef()));
-                        if(tagCache.get(afd.getFolderRef()).getTagType() == TagTypeEnum.WorkflowSignoffProfile)
-                            attachAttributeToSignoffProfile((WorkflowSignoffProfileType)afd.getFolder(),tagCache);
-                    }
-                    break;
-                    
-                case AssociatedForm:
-                    AssociatedFormType afm = (AssociatedFormType)node.getAttribute().get(i);
-                    if(afm.getFormRef() != null) {
-                        afm.setForm(tagCache.get(afm.getFormRef()));
-                        if(tagCache.get(afm.getFormRef()).getTagType() == TagTypeEnum.WorkflowSignoffProfile)
-                            attachAttributeToSignoffProfile((WorkflowSignoffProfileType)afm.getForm(),tagCache);
-                        
-                    }
-                    break;
-                    
-                case Arguments:
-                case UserData:
-                    UserDataType ud = (UserDataType)node.getAttribute().get(i);
-                    for(int k=0; k<ud.getUserValue().size(); k++) {
-                        if(ud.getUserValue().get(k).getDataRef() != null) {
-                            ud.getUserValue().get(k).setData((WorkflowTemplateType)tagCache.get(ud.getUserValue().get(k).getDataRef()));
-                            processAttribOwnerBase(ud.getUserValue().get(k).getData(), tagCache);
-                        }
-                    }
-                    
-                case ValidationResults:
-                default:
-                    break;
-            }
-        }
-    }
-    
-    private void attachAttributeToAction(WorkflowActionType wa, Hashtable<String,IdBase> tagCache) {
-        for(int i=0; i<wa.getActionHandlerRefs().size(); i++) {
-            processAttribOwnerBase(wa.getActionHandlers()[i], tagCache);
-        }
-    }
-    
-    private void attachAttributeToSignoffProfile(WorkflowSignoffProfileType wsp, Hashtable<String,IdBase> tagCache) {
-        if(wsp.getRoleRef() != null)
-            wsp.setRole((RoleType)tagCache.get(wsp.getRoleRef()));
-        if(wsp.getGroupRef() != null)
-            wsp.setGroup((OrganisationType)tagCache.get(wsp.getGroupRef()));
     }
     
     private void processSubWorkflows(WorkflowTemplateType node, Hashtable<String, IdBase> tagCache) {
         processActions(node, tagCache);
         
         for(int i=0; i<node.getSubTemplateRefs().size(); i++) {
-            if(tagCache.containsKey(node.getSubTemplateRefs().get(i))) {
-                node.getSubTemplates()[i] = (WorkflowTemplateType)tagCache.get(node.getSubTemplateRefs().get(i));
-                processSubWorkflows(node.getSubTemplates()[i], tagCache);
-            } else
-                System.out.println("Mapping Workflow Cache Error: Could not find "+node.getSubTemplates()[i]);
+            node.getSubTemplates()[i] = (WorkflowTemplateType)tagCache.get(node.getSubTemplateRefs().get(i));
+            processSubWorkflows(node.getSubTemplates()[i], tagCache);
         }
     }
     
     private void processDependantTasks(WorkflowTemplateType node, Hashtable<String, IdBase> tagCache) {
         for(int iD=0; iD<node.getDependencyTaskTemplateRefs().size(); iD++) {
-            if(tagCache.containsKey(node.getDependencyTaskTemplateRefs().get(iD))) {
-                node.getDependantTaskTemplates()[iD] = (WorkflowTemplateType)tagCache.get(node.getDependencyTaskTemplateRefs().get(iD));
-                processDependantTasks(node.getDependantTaskTemplates()[iD], tagCache);
-            } else
-                System.out.println("Mapping Dependant Task Cache Error: Could not find "+node.getDependencyTaskTemplateRefs().get(iD));
+            node.getDependantTaskTemplates()[iD] = (WorkflowTemplateType)tagCache.get(node.getDependencyTaskTemplateRefs().get(iD));
+            processDependantTasks(node.getDependantTaskTemplates()[iD], tagCache);
         }
     }
     
     private void processActions(WorkflowTemplateType node, Hashtable<String, IdBase> tagCache) {
         for(int iA=0; iA<node.getActionRefs().size(); iA++) {
-            if(tagCache.containsKey(node.getActionRefs().get(iA))) {
-                node.getActions()[iA] = (WorkflowActionType)tagCache.get(node.getActionRefs().get(iA));
-                attachActionHandlers(node.getActions()[iA], tagCache);
-                attachBusinessRules(node.getActions()[iA], tagCache);
-            } else
-                System.out.println("Mapping Action Cache Error: Could not find "+node.getActions()[iA]);
+            node.getActions()[iA] = (WorkflowActionType)tagCache.get(node.getActionRefs().get(iA));
+            attachActionHandlers(node.getActions()[iA], tagCache);
+            attachBusinessRules(node.getActions()[iA], tagCache);
         }
     }
     
     private void attachActionHandlers(WorkflowActionType node, Hashtable<String, IdBase> tagCache) {
         for(int iH=0; iH<node.getActionHandlerRefs().size(); iH++) {
-            if(tagCache.containsKey(node.getActionHandlerRefs().get(iH))) {
-                node.getActionHandlers()[iH] = (WorkflowHandlerType)tagCache.get(node.getActionHandlerRefs().get(iH));
-            } else
-                System.out.println("Mapping Handler Cache Error: Could not find "+node.getActionHandlerRefs().get(iH));
+            node.getActionHandlers()[iH] = (WorkflowHandlerType)tagCache.get(node.getActionHandlerRefs().get(iH));
         }
     }
     
     private void attachBusinessRules(WorkflowActionType node, Hashtable<String, IdBase> tagCache){
         for(int iR=0; iR<node.getRuleRefs().size(); iR++) {
-            if(tagCache.containsKey(node.getRuleRefs().get(iR))) {
-                node.getRules()[iR] = (WorkflowBusinessRuleType)tagCache.get(node.getRuleRefs().get(iR));
-                attachBusinessRuleHandlers(node.getRules()[iR], tagCache);
-                
-            } else
-                System.out.println("Mapping Business Rule Cache Error: Could not find "+node.getRuleRefs().get(iR));
+            node.getRules()[iR] = (WorkflowBusinessRuleType)tagCache.get(node.getRuleRefs().get(iR));
+            attachBusinessRuleHandlers(node.getRules()[iR], tagCache);
         }
     }
     
     private void attachBusinessRuleHandlers(WorkflowBusinessRuleType node, Hashtable<String, IdBase> tagCache){
         for(int irh=0; irh<node.getRuleHandlerRefs().size(); irh++) {
-            if(tagCache.containsKey(node.getRuleHandlerRefs().get(irh))) {
-                node.getRuleHandlers()[irh] = (WorkflowBusinessRuleHandlerType)tagCache.get(node.getRuleHandlerRefs().get(irh));
-            } else
-                System.out.println("Mapping Business Rule Handler Cache Error: Could not find "+node.getRuleHandlerRefs().get(irh));
+            node.getRuleHandlers()[irh] = (WorkflowBusinessRuleHandlerType)tagCache.get(node.getRuleHandlerRefs().get(irh));
         }
     }
     

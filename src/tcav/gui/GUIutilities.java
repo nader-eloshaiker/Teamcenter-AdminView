@@ -14,6 +14,8 @@ import javax.swing.table.*;
 import javax.swing.tree.*;
 import javax.swing.border.*;
 import java.awt.*;
+import java.awt.event.*;
+import tcav.resources.*;
 /**
  *
  * @author nzr4dl
@@ -104,6 +106,106 @@ public class GUIutilities {
         }
         
     }
+    
+    public JToolBar createTreeExpandToolbar(JTreeAdvanced tree, JFrame parentFrame) {
+        JButton buttonExpandBelow = new JButton();
+        buttonExpandBelow.setOpaque(false);
+        buttonExpandBelow.setToolTipText("Expand Below");
+        buttonExpandBelow.addActionListener(new TreeToolBarExpandAction(tree, parentFrame){
+            public void actionPerformed(ActionEvent e) {
+                new Thread() {
+                    public void run() {
+                        GUIutilities.expandTreeBranch(tree, parent);
+                    }
+                }.start();
+            }
+        });
+        JButton buttonExpandAll = new JButton();
+        buttonExpandAll.setOpaque(false);
+        buttonExpandAll.setToolTipText("Expand All");
+        buttonExpandAll.addActionListener(new TreeToolBarExpandAction(tree, parentFrame){
+            public void actionPerformed(ActionEvent e) {
+                new Thread() {
+                    public void run() {
+                        GUIutilities.expandTree(tree, parent);
+                    }
+                }.start();
+            }
+        });
+        JButton buttonCollapseBelow = new JButton();
+        buttonCollapseBelow.setOpaque(false);
+        buttonCollapseBelow.setToolTipText("Collapse Below");
+        buttonCollapseBelow.addActionListener(new TreeToolBarExpandAction(tree, parentFrame){
+            public void actionPerformed(ActionEvent e) {
+                new Thread() {
+                    public void run() {
+                        GUIutilities.collapseTreeBranch(tree, parent);
+                    }
+                }.start();
+            }
+        });
+        JButton buttonCollapseAll = new JButton();
+        buttonCollapseAll.setOpaque(false);
+        buttonCollapseAll.setToolTipText("Collapse Below");
+        buttonCollapseAll.addActionListener(new TreeToolBarExpandAction(tree, parentFrame){
+            public void actionPerformed(ActionEvent e) {
+                new Thread() {
+                    public void run() {
+                        GUIutilities.collapseTree(tree, parent);
+                    }
+                }.start();
+            }
+        });
+        
+        ImageIcon iconExpandAll = new ImageIcon();
+        ImageIcon iconExpandBelow = new ImageIcon();
+        ImageIcon iconCollapseAll = new ImageIcon();
+        ImageIcon iconCollapseBelow = new ImageIcon();
+        try {
+            iconExpandAll = ResourceLoader.getImage(ImageEnum.utilExpandAll);
+            iconExpandBelow = ResourceLoader.getImage(ImageEnum.utilExpand);
+            iconCollapseAll = ResourceLoader.getImage(ImageEnum.utilCollapseAll);
+            iconCollapseBelow = ResourceLoader.getImage(ImageEnum.utilCollapse);
+        } catch (Exception e) {
+            System.out.println("Couldn't load images: " + e);
+        }
+        
+        buttonExpandAll.setIcon(iconExpandAll);
+        buttonExpandBelow.setIcon(iconExpandBelow);
+        buttonCollapseAll.setIcon(iconCollapseAll);
+        buttonCollapseBelow.setIcon(iconCollapseBelow);
+        
+        
+        JToolBar toolbar = new JToolBar();
+        toolbar.setMargin(new Insets(
+                GUIutilities.GAP_INSET,
+                GUIutilities.GAP_INSET,
+                GUIutilities.GAP_INSET,
+                GUIutilities.GAP_INSET));
+        toolbar.setFloatable(false);
+        toolbar.add(buttonExpandAll);
+        toolbar.add(buttonCollapseAll);
+        toolbar.add(buttonExpandBelow);
+        toolbar.add(buttonCollapseBelow);
+        
+        return toolbar;
+    }
+    
+    class TreeToolBarExpandAction extends AbstractAction {
+        protected JTreeAdvanced tree;
+        protected JFrame parent;
+        
+        protected TreeToolBarExpandAction(JTreeAdvanced tree, JFrame parent) {
+            super("Tree ToolBar Expand Action");
+            this.tree = tree;
+            this.parent = parent;
+        }
+        
+        public void actionPerformed(ActionEvent e) {
+            
+        }
+    }
+    
     
     public static void collapseTree(JTreeAdvanced tree, JFrame parentFrame){
         tree.clearToggledPaths();
