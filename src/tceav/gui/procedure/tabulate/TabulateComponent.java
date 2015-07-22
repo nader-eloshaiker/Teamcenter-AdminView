@@ -13,6 +13,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
 import javax.swing.border.*;
+import java.util.Calendar;
 import java.awt.*;
 import java.awt.event.*;
 import java.text.DecimalFormat;
@@ -312,57 +313,13 @@ public class TabulateComponent extends TabbedPanel {
         return true;
     }
     
-    private final int TaskTable = 0;
-    private final int HandlerTable = 1;
-    private final int TaskHandlerMapTable = 2;
-    
-    private void exportToDataBaseTables(File file) {
-        String s = file.getName();
-        String tableName = "";
-        File tableFile;
-        int tableCount = 3;
-        
-        for(int i=0; i<tableCount; i++) {
-            switch(i) {
-                case TaskTable:
-                    if(s.toLowerCase().endsWith(".xml"))
-                        tableName = s.substring(0, s.length()-4)+".TaskTable.xml";
-                    else
-                        tableName = s + ".TaskTable.xml";
-                    break;
-                    
-                case HandlerTable:
-                    if(s.toLowerCase().endsWith(".xml"))
-                        tableName = s.substring(0, s.length()-4)+".HandlerTable.xml";
-                    else
-                        tableName = s + ".HandlerTable.xml";
-                    break;
-                    
-                case TaskHandlerMapTable:
-                    if(s.toLowerCase().endsWith(".xml"))
-                        tableName = s.substring(0, s.length()-4)+".TaskHandlerMapTable.xml";
-                    else
-                        tableName = s + ".TaskHandlerMapTable.xml";
-                    break;
-            }
-            
-            tableFile = new File(file.getParent(), tableName);
-            if(!accessToFile(tableFile))
-                return;
-            
-            exportToDataBaseTables(tableFile, i);
-            
-        }
-        
-    }
-    
     private String padding = "000000000";
     
     private String StrFormat(String num) {
         return padding.substring(0,padding.length()-num.length()) + num;
     }
     
-    private void attachXMLRow(Document dom, Element table, String name, String value) {
+    private void attachXMLDataRow(Document dom, Element table, String name, String value) {
         Element rowName = dom.createElement(name);
         table.appendChild(rowName);
         
@@ -370,7 +327,92 @@ public class TabulateComponent extends TabbedPanel {
         rowName.appendChild(rowValue);
     }
     
-    private void exportToDataBaseTables(File file, int tableMode) {
+    private Element attachSchemaSequence(Document dom, Element schema, String name) {
+        return attachSchemaSequence(dom, schema, name, false);
+    }
+    
+    private Element attachSchemaSequence(Document dom, Element schema, String name, boolean addDateInfo) {
+        Element schemaElement = dom.createElement("xsd:element");
+        schemaElement.setAttribute("name", name);
+        schema.appendChild(schemaElement);
+        
+        Element schemaType = dom.createElement("xsd:complexType");
+        schemaElement.appendChild(schemaType);
+        
+        Element schemaSequence = dom.createElement("xsd:sequence");
+        schemaType.appendChild(schemaSequence);
+        
+        if(addDateInfo) {
+            Element dateInfo = dom.createElement("xsd:attribute");
+            dateInfo.setAttribute("name", "generated");
+            dateInfo.setAttribute("type", "xsd:dateTime");
+            schemaType.appendChild(dateInfo);
+        }
+        
+        return schemaSequence;
+    }
+    
+    private void attachSchemaTableRef(Document dom, Element schemaSequence, String tableName) {
+        Element schemaTable = dom.createElement("xsd:element");
+        schemaTable.setAttribute("ref", tableName);
+        schemaTable.setAttribute("minOccurs", "0");
+        schemaTable.setAttribute("maxOccurs", "unbounded");
+        schemaSequence.appendChild(schemaTable);
+    }
+    
+    private void attachSchemaTableTextCol(Document dom, Element schemaSequence, String colName) {
+        attachSchemaTableCol(dom, schemaSequence, colName, 1);
+    }
+    
+    private void attachSchemaTableMemoCol(Document dom, Element schemaSequence, String colName) {
+        attachSchemaTableCol(dom, schemaSequence, colName, 2);
+    }
+    
+    private void attachSchemaTableCol(Document dom, Element schemaSequence, String colName, int mode) {
+        Element schemaCol = dom.createElement("xsd:element");
+        schemaCol.setAttribute("name", colName);
+        schemaCol.setAttribute("minOccurs", "0");
+        switch(mode) {
+            case 1:
+                schemaCol.setAttribute("od:jetType", "text");
+                schemaCol.setAttribute("od:sqlSType", "nvarchar");
+                break;
+            case 2:
+                schemaCol.setAttribute("od:jetType", "memo");
+                schemaCol.setAttribute("od:sqlSType", "ntext");
+                break;
+        }
+        schemaSequence.appendChild(schemaCol);
+        
+        Element schemaColType = dom.createElement("xsd:simpleType");
+        schemaCol.appendChild(schemaColType);
+        
+        Element schemaColTypeRestriction = dom.createElement("xsd:restriction");
+        schemaColTypeRestriction.setAttribute("base", "xsd:string");
+        schemaColType.appendChild(schemaColTypeRestriction);
+        
+        Element schemaColTypeRestrictionLength = dom.createElement("xsd:maxLength");
+        switch(mode) {
+            case 1:
+                schemaColTypeRestrictionLength.setAttribute("value", "255");
+                break;
+            case 2:
+                schemaColTypeRestrictionLength.setAttribute("value", "536870910");
+                break;
+        }
+        schemaColTypeRestriction.appendChild(schemaColTypeRestrictionLength);
+    }
+    
+    private void exportToDataBaseTables(File file) {
+        String tableName = file.getName();
+        File tableFile;
+        if(!tableName.toLowerCase().endsWith(".xml"))
+            tableName += ".xml";
+        
+        tableFile = new File(file.getParent(), tableName);
+        if(!accessToFile(tableFile))
+            return;
+        
         RowOneModel rowHeader = (RowOneModel) tableRowOne.getModel();
         DataModel dataModel = (DataModel) table.getModel();
         
@@ -378,90 +420,126 @@ public class TabulateComponent extends TabbedPanel {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document dom =  builder.newDocument();
-            Element rootElement = dom.createElement("dataroot");
+            Element rootElement = dom.createElement("root");
+            rootElement.setAttribute("xmlns:xsd", "http://www.w3.org/2001/XMLSchema");
             rootElement.setAttribute("xmlns:od", "urn:schemas-microsoft-com:officedata");
             dom.appendChild(rootElement);
-            Element table;
             
+            // Build Schema
+            Element schema = dom.createElement("xsd:schema");
+            rootElement.appendChild(schema);
+            Element schemaSequence;
+            schemaSequence = attachSchemaSequence(dom, schema, "dataroot", true);
+            attachSchemaTableRef(dom, schemaSequence, "TaskTable");
+            attachSchemaTableRef(dom, schemaSequence, "MapTable");
+            attachSchemaTableRef(dom, schemaSequence, "HandlerTable");
+            
+            schemaSequence = attachSchemaSequence(dom, schema, "TaskTable");
+            attachSchemaTableTextCol(dom, schemaSequence, "TaskId");
+            attachSchemaTableTextCol(dom, schemaSequence, "ParentId");
+            attachSchemaTableTextCol(dom, schemaSequence, "RootId");
+            attachSchemaTableTextCol(dom, schemaSequence, "SiteId");
+            attachSchemaTableTextCol(dom, schemaSequence, "ProcedureName");
+            attachSchemaTableTextCol(dom, schemaSequence, "ProcedureType");
+            
+            schemaSequence = attachSchemaSequence(dom, schema, "MapTable");
+            attachSchemaTableTextCol(dom, schemaSequence, "MapId");
+            attachSchemaTableTextCol(dom, schemaSequence, "SiteId");
+            attachSchemaTableTextCol(dom, schemaSequence, "TaskId");
+            attachSchemaTableTextCol(dom, schemaSequence, "HandlerId");
+            attachSchemaTableTextCol(dom, schemaSequence, "MapValue");
+            
+            schemaSequence = attachSchemaSequence(dom, schema, "HandlerTable");
+            attachSchemaTableTextCol(dom, schemaSequence, "HandlerId");
+            attachSchemaTableTextCol(dom, schemaSequence, "SiteId");
+            attachSchemaTableTextCol(dom, schemaSequence, "HandlerType");
+            attachSchemaTableTextCol(dom, schemaSequence, "RuleValue");
+            attachSchemaTableTextCol(dom, schemaSequence, "HandlerName");
+            attachSchemaTableMemoCol(dom, schemaSequence, "Argument");
+            
+            // Build Data
+            DecimalFormat dateformat = new DecimalFormat("00");
+            Calendar date  = Calendar.getInstance();
+            String dYear   = dateformat.format(date.get(Calendar.YEAR));
+            String dMonth  = dateformat.format(date.get(Calendar.MONTH)+1);
+            String dDate   = dateformat.format(date.get(Calendar.DATE));
+            String dHour   = dateformat.format(date.get(Calendar.HOUR_OF_DAY));
+            String dMinute = dateformat.format(date.get(Calendar.MINUTE));
+            String dSecond = dateformat.format(date.get(Calendar.SECOND));
+            Element dataElement = dom.createElement("dataroot");
+            dataElement.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+            dataElement.setAttribute("generated", dYear+"-"+dMonth+"-"+dDate+"T"+dHour+":"+dMinute+":"+dSecond);
+            rootElement.appendChild(dataElement);
+            
+            Element table;
             DecimalFormat df = new DecimalFormat(padding);
             
-            switch(tableMode) {
-                case TaskTable:
-                    
-                    for(int row=0; row<dataModel.getRowCount(); row++) {
-                        
-                        table = dom.createElement("TaskTable");
-                        rootElement.appendChild(table);
-                        
-                        attachXMLRow(dom, table, "TaskId", StrFormat(rowOneModel.getId(row)) + "_" + rowOneModel.getSiteId());
-                        
-                        if(!rowOneModel.getParentId(row).equals(""))
-                            attachXMLRow(dom, table, "ParentId", StrFormat(rowOneModel.getParentId(row)) + "_" + rowOneModel.getSiteId());
-                        
-                        if(!rowOneModel.getRootId(row).equals(""))
-                            attachXMLRow(dom, table, "RootId", StrFormat(rowOneModel.getRootId(row)) + "_" + rowOneModel.getSiteId());
-                        
-                        attachXMLRow(dom, table, "SiteId", rowOneModel.getSiteId());
-                        
-                        for(int col=0; col<rowOneModel.getColumnCount(); col++)
-                            attachXMLRow(dom, table, rowHeader.getColumnName(col), rowHeader.getRawValueAt(row, col));
-                    }
-                    
-                    break;
-                    
-                case HandlerTable:
-                    
-                    for(int col=0; col<dataModel.getColumnCount(); col++) {
-                        table = dom.createElement("HandlerTable");
-                        rootElement.appendChild(table);
-                        
-                        attachXMLRow(dom, table, "HandlerId", df.format(col) + "_" + rowOneModel.getSiteId());
-                        attachXMLRow(dom, table, "SiteId", rowOneModel.getSiteId());
-                        attachXMLRow(dom, table, "HandlerType", dataModel.getColumn(col).getClassification());
-                        
-                        if(dataModel.getColumn(col).isRuleClassicifaction())
-                            attachXMLRow(dom, table, "RuleValue", dataModel.getColumn(col).getRule());
-                        
-                        attachXMLRow(dom, table, "HandlerName", dataModel.getColumn(col).getHandler());
-                        
-                        if(!dataModel.getColumn(col).getArgument().equals(""))
-                            attachXMLRow(dom, table, "Argument", dataModel.getColumn(col).getArgument());
-                        
-                    }
-                    
-                    break;
-                    
-                case TaskHandlerMapTable:
-                    int idCount = 0;
-                    
-                    for(int row=0; row<dataModel.getRowCount(); row++) {
-                        for(int col=0; col<dataModel.getColumnCount(); col++) {
-                            
-                            if(dataModel.getValueAt(row, col).equals(""))
-                                continue;
-                            
-                            idCount++;
-                            table = dom.createElement("MapTable");
-                            rootElement.appendChild(table);
-                            
-                            attachXMLRow(dom, table, "MapId", df.format(idCount) + "_" + rowOneModel.getSiteId());
-                            attachXMLRow(dom, table, "SiteId", dataModel.getSiteId());
-                            attachXMLRow(dom, table, "TaskId", StrFormat(rowOneModel.getId(row)) + "_"+rowOneModel.getSiteId());
-                            attachXMLRow(dom, table, "HandlerId", df.format(col) + "_" + rowOneModel.getSiteId());
-                            attachXMLRow(dom, table, "MapValue", (String)dataModel.getValueAt(row, col));
-                        }
-                    }
-                    
-                    break;
+            for(int row=0; row<dataModel.getRowCount(); row++) {
+                
+                table = dom.createElement("TaskTable");
+                dataElement.appendChild(table);
+                
+                attachXMLDataRow(dom, table, "TaskId", StrFormat(rowOneModel.getId(row)) + "_" + rowOneModel.getSiteId());
+                
+                if(!rowOneModel.getParentId(row).equals(""))
+                    attachXMLDataRow(dom, table, "ParentId", StrFormat(rowOneModel.getParentId(row)) + "_" + rowOneModel.getSiteId());
+                
+                if(!rowOneModel.getRootId(row).equals(""))
+                    attachXMLDataRow(dom, table, "RootId", StrFormat(rowOneModel.getRootId(row)) + "_" + rowOneModel.getSiteId());
+                
+                attachXMLDataRow(dom, table, "SiteId", rowOneModel.getSiteId());
+                
+                for(int col=0; col<rowOneModel.getColumnCount(); col++)
+                    attachXMLDataRow(dom, table, rowHeader.getColumnName(col), rowHeader.getRawValueAt(row, col));
             }
             
-            //FileOutputStream fos = new FileOutputStream(file);
             
-            Transformer tr = TransformerFactory.newInstance().newTransformer();
+            for(int col=0; col<dataModel.getColumnCount(); col++) {
+                table = dom.createElement("HandlerTable");
+                dataElement.appendChild(table);
+                
+                attachXMLDataRow(dom, table, "HandlerId", df.format(col) + "_" + rowOneModel.getSiteId());
+                attachXMLDataRow(dom, table, "SiteId", rowOneModel.getSiteId());
+                attachXMLDataRow(dom, table, "HandlerType", dataModel.getColumn(col).getClassification());
+                
+                if(dataModel.getColumn(col).isRuleClassicifaction())
+                    attachXMLDataRow(dom, table, "RuleValue", dataModel.getColumn(col).getRule());
+                
+                attachXMLDataRow(dom, table, "HandlerName", dataModel.getColumn(col).getHandler());
+                
+                if(!dataModel.getColumn(col).getArgument().equals(""))
+                    attachXMLDataRow(dom, table, "Argument", dataModel.getColumn(col).getArgument());
+                
+            }
+            
+            int idCount = 0;
+            
+            for(int row=0; row<dataModel.getRowCount(); row++) {
+                for(int col=0; col<dataModel.getColumnCount(); col++) {
+                    
+                    if(dataModel.getValueAt(row, col).equals(""))
+                        continue;
+                    
+                    idCount++;
+                    table = dom.createElement("MapTable");
+                    dataElement.appendChild(table);
+                    
+                    attachXMLDataRow(dom, table, "MapId", df.format(idCount) + "_" + rowOneModel.getSiteId());
+                    attachXMLDataRow(dom, table, "SiteId", dataModel.getSiteId());
+                    attachXMLDataRow(dom, table, "TaskId", StrFormat(rowOneModel.getId(row)) + "_"+rowOneModel.getSiteId());
+                    attachXMLDataRow(dom, table, "HandlerId", df.format(col) + "_" + rowOneModel.getSiteId());
+                    attachXMLDataRow(dom, table, "MapValue", (String)dataModel.getValueAt(row, col));
+                }
+            }
+            
+            TransformerFactory tf = TransformerFactory.newInstance();
+            tf.setAttribute("indent-number", new Integer(4));
+            Transformer tr = tf.newTransformer();
             tr.setOutputProperty(OutputKeys.METHOD,"xml");
             tr.setOutputProperty(OutputKeys.INDENT, "yes");
             tr.setOutputProperty(OutputKeys.ENCODING,"UTF-8");
-            tr.transform( new DOMSource(dom),new StreamResult(new FileOutputStream(file)));
+            tr.setOutputProperty("{http://xml.apache.org/xalan}indent-amount", "4");
+            tr.transform( new DOMSource(dom),new StreamResult(new OutputStreamWriter(new FileOutputStream(tableFile), "utf-8")));
             
         } catch(Exception e) {
             JOptionPane.showMessageDialog(parentFrame, e.getMessage(), "Save Error", JOptionPane.ERROR_MESSAGE);
