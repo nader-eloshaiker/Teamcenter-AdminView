@@ -62,116 +62,104 @@ public class NodeTableModel extends AbstractTableModel implements TableModel {
         if((nr == null) || (pm == null))
             return 0;
         
-        switch(nr.getEntryType()){
-            case NodeReference.ENTRY_ITEM:
-                switch(nr.getClassType()) {
-                    case WorkflowTemplate:
-                        return 12;
-                        
-                    case WorkflowAction:
-                        return 6;
-                        
-                    case WorkflowHandler:
-                        return 4;
-                        
-                    case WorkflowBusinessRule:
-                        return 6;
-                        
-                    case WorkflowBusinessRuleHandler:
-                        return 6;
-                        
-                    case WorkflowSignoffProfile:
-                        return 9;
-                        
-                    case Organisation:
-                        return 4;
-                        
-                    case Role:
-                        return 4;
-                        
-                    case Arguments:
-                    case UserData:
-                        return 5;
-                        
-                    case UserValue:
-                        return 15;
-                        
-                    case AssociatedDataSet:
-                    case AssociatedFolder:
-                    case AssociatedForm:
-                        return 6;
-                        
-                    case ValidationResults:
-                        return 5;
-                        
-                    default:
-                        return 0;
-                }
+        switch(nr.getClassType()) {
+            case WorkflowTemplate:
+                return 12;
                 
-            case NodeReference.ENTRY_COLLECTOR:
+            case WorkflowAction:
+                return 6;
+                
+            case WorkflowHandler:
+                return 4;
+                
+            case WorkflowBusinessRule:
+                return 6;
+                
+            case WorkflowBusinessRuleHandler:
+                return 6;
+                
+            case WorkflowSignoffProfile:
+                return 9;
+                
+            case Organisation:
+                return 4;
+                
+            case Role:
+                return 4;
+                
+            case Arguments:
+            case UserData:
+                return 5;
+                
+            case UserValue:
+                return 15;
+                
+            case AssociatedDataSet:
+            case AssociatedFolder:
+            case AssociatedForm:
+                return 6;
+                
+            case ValidationResults:
+                return 5;
+                
             default:
                 return 0;
         }
+        
     }
     
     public Object getValueAt(int rowIndex, int columnIndex) {
         if((nr == null) || (pm == null))
             return null;
         
-        switch(nr.getEntryType()){
-            case NodeReference.ENTRY_ITEM:
-                switch(nr.getClassType()){
-                    case WorkflowTemplate:
-                        return getWorkflowTemplateValueAt(rowIndex, columnIndex);
-                        
-                    case WorkflowAction:
-                        return getWorkflowActionValueAt(rowIndex, columnIndex);
-                        
-                    case WorkflowHandler:
-                        return getWorkflowHandlerValueAt(rowIndex, columnIndex);
-                        
-                    case WorkflowBusinessRule:
-                        return getWorkflowBusinessRuleValueAt(rowIndex, columnIndex);
-                        
-                    case WorkflowBusinessRuleHandler:
-                        return getWorkflowBusinessRuleHandlerValueAt(rowIndex, columnIndex);
-                        
-                    case WorkflowSignoffProfile:
-                        return getWorkflowSignoffProfileValueAt(rowIndex, columnIndex);
-                        
-                    case Organisation:
-                        return getOrganisationValueAt(rowIndex, columnIndex);
-                        
-                    case Role:
-                        return getRoleValueAt(rowIndex, columnIndex);
-                        
-                    case Arguments:
-                    case UserData:
-                        return getUserDataValueAt(rowIndex, columnIndex);
-                        
-                    case UserValue:
-                        return getUserValueAt(rowIndex, columnIndex);
-                        
-                    case AssociatedDataSet:
-                        return getAssociatedDataSetValueAt(rowIndex, columnIndex);
-                        
-                    case AssociatedFolder:
-                        return getAssociatedFolderValueAt(rowIndex, columnIndex);
-                        
-                    case AssociatedForm:
-                        return getAssociatedFormValueAt(rowIndex, columnIndex);
-                        
-                    case ValidationResults:
-                        return getValidationResultsValueAt(rowIndex, columnIndex);
-                        
-                    default:
-                        return null;
-                }
+        switch(nr.getClassType()){
+            case WorkflowTemplate:
+                return getWorkflowTemplateValueAt(rowIndex, columnIndex);
                 
-            case NodeReference.ENTRY_COLLECTOR:
+            case WorkflowAction:
+                return getWorkflowActionValueAt(rowIndex, columnIndex);
+                
+            case WorkflowHandler:
+                return getWorkflowHandlerValueAt(rowIndex, columnIndex);
+                
+            case WorkflowBusinessRule:
+                return getWorkflowBusinessRuleValueAt(rowIndex, columnIndex);
+                
+            case WorkflowBusinessRuleHandler:
+                return getWorkflowBusinessRuleHandlerValueAt(rowIndex, columnIndex);
+                
+            case WorkflowSignoffProfile:
+                return getWorkflowSignoffProfileValueAt(rowIndex, columnIndex);
+                
+            case Organisation:
+                return getOrganisationValueAt(rowIndex, columnIndex);
+                
+            case Role:
+                return getRoleValueAt(rowIndex, columnIndex);
+                
+            case Arguments:
+            case UserData:
+                return getUserDataValueAt(rowIndex, columnIndex);
+                
+            case UserValue:
+                return getUserValueAt(rowIndex, columnIndex);
+                
+            case AssociatedDataSet:
+                return getAssociatedDataSetValueAt(rowIndex, columnIndex);
+                
+            case AssociatedFolder:
+                return getAssociatedFolderValueAt(rowIndex, columnIndex);
+                
+            case AssociatedForm:
+                return getAssociatedFormValueAt(rowIndex, columnIndex);
+                
+            case ValidationResults:
+                return getValidationResultsValueAt(rowIndex, columnIndex);
+                
             default:
-                return 0;
+                return null;
         }
+        
     }
     
     public boolean isCellEditable(int rowIndex, int columnIndex) {

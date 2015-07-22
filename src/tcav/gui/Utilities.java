@@ -177,59 +177,15 @@ public class Utilities {
                 TreePath path = parent.pathByAddingChild(tree.getModel().getChild(parent.getLastPathComponent(), e));
                 if(monitor.isCanceled())
                     break;
-                if(!tree.getModel().isLeaf(path.getLastPathComponent()))
-                    setCascadeTreeExpansion(tree, path, expand, monitor);
+
+                setCascadeTreeExpansion(tree, path, expand, monitor);
             }
         }
         
-        // Expansion or collapse must be done bottom-up
         if (expand) {
             tree.expandPath(parent);
         } else {
             tree.collapsePath(parent);
-        }
-    }
-    
-    public static void expandWorkflow(JTreeAdvanced tree, JFrame parentFrame, int procedureType) {
-        progressCounter = 0;
-        progressLimit = 0;
-        ProgressMonitor monitor = new ProgressMonitor(
-                parentFrame,
-                "Expanding Tree",
-                "",
-                0,
-                0);
-        setCascadeTreeExpansionWorkflow(tree, tree.getSelectionPath(), true, monitor, procedureType);
-        monitor.close();
-    }
-    
-    public static void setCascadeTreeExpansionWorkflow(JTreeAdvanced tree, TreePath parent, boolean expand, ProgressMonitor monitor, int procedureType) {
-        NodeReference nrParent = (NodeReference)parent.getLastPathComponent();
-        int childCount = tree.getModel().getChildCount(parent.getLastPathComponent());
-        progressLimit += childCount;
-        monitor.setMaximum(progressLimit);
-        if(childCount > 0) {
-            for (int e=0; e<childCount; e++ ) {
-                progressCounter++;
-                monitor.setProgress(progressCounter);
-                monitor.setNote(progressCounter+" "+tree.getModel().getChild(parent.getLastPathComponent(),e).toString());
-                
-                TreePath path = parent.pathByAddingChild(tree.getModel().getChild(parent.getLastPathComponent(), e));
-                NodeReference nrChild = (NodeReference)path.getLastPathComponent();
-                if(monitor.isCanceled())
-                    break;
-                if( (!tree.getModel().isLeaf(path.getLastPathComponent())) && 
-                       ( (nrChild.getProcedureType() == procedureType) || (nrChild.getProcedureType() == NodeReference.PROCEDURE_WORKFLOW_PROCESS)) )
-                    setCascadeTreeExpansionWorkflow(tree, path, expand, monitor, procedureType);
-            }
-        }
-        
-        // Expansion or collapse must be done bottom-up
-        if(nrParent.getProcedureType() == procedureType) {
-            if (expand)
-                tree.expandPath(parent);
-            else
-                tree.collapsePath(parent);
         }
     }
     

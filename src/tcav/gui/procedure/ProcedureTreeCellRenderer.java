@@ -134,142 +134,123 @@ public class ProcedureTreeCellRenderer  extends DefaultTreeCellRenderer implemen
             default:
                 setText(nr.getName());
         }
-        */
+         */
         setText(nr.getName());
         setToolTipText(nr.getName());
         
         if(!isSelected){
-            switch(nr.getEntryType()){
-                case NodeReference.ENTRY_ITEM:
-                    setForeground(this.textNonSelectionColor);
-                    break;
-                case NodeReference.ENTRY_COLLECTOR:
-                    setForeground(COLOR_COLLECTOR);
-                    break;
-                default:
-                    setForeground(this.textNonSelectionColor);
-                    break;
-            }
+            setForeground(this.textNonSelectionColor);
         }
         
-        switch(nr.getEntryType()){
-            case NodeReference.ENTRY_ITEM:
-                switch(nr.getClassType()) {
-                    case WorkflowTemplate:
-                        String s = nr.getIconKey();
-                        if(s == null)
-                            setIcon(workflow);
-                        else if(s.equals("acknowledgeTask"))
-                            setIcon(acknowledgeTask);
-                        else if(s.equals("addStatusTask"))
-                            setIcon(addStatusTask);
-                        else if(s.equals("checkListTask"))
-                            setIcon(checkListTask);
-                        else if(s.equals("conditionTask"))
-                            setIcon(conditionTask);
-                        else if(s.equals("doTask"))
-                            setIcon(doTask);
-                        else if(s.equals("impactAnalysisTask"))
-                            setIcon(impactAnalysisTask);
-                        else if(s.equals("notifyTask"))
-                            setIcon(notifyTask);
-                        else if(s.equals("orTask"))
-                            setIcon(orTask);
-                        else if(s.equals("performSignoffTask"))
-                            setIcon(performSignoffTask);
-                        else if(s.equals("prepareecoTask"))
-                            setIcon(prepareecoTask);
-                        else if(s.equals("process"))
-                            setIcon(process);
-                        else if(s.equals("reviewProcess"))
-                            setIcon(reviewProcess);
-                        else if(s.equals("reviewTask"))
-                            setIcon(reviewTask);
-                        else if(s.equals("routeTask"))
-                            setIcon(routeTask);
-                        else if(s.equals("selectSignoffTask"))
-                            setIcon(selectSignoffTask);
-                        else if(s.equals("syncTask"))
-                            setIcon(syncTask);
-                        else if(s.equals("task"))
-                            setIcon(task);
-                        else if(s.equals("taskProperties"))
-                            setIcon(taskProperties);
-                        break;
-                        
-                    case Arguments:
-                        setIcon(argument);
-                        break;
-                        
-                    case AssociatedDataSet:
-                        setIcon(associatedDataSet);
-                        break;
-                        
-                    case AssociatedFolder:
-                        setIcon(associatedFolder);
-                        break;
-                        
-                    case AssociatedForm:
-                        setIcon(associatedForm);
-                        break;
-                        
-                    case Organisation:
-                        setIcon(organisation);
-                        break;
-                        
-                    case Site:
-                        setIcon(site);
-                        break;
-                        
-                    case Role:
-                        setIcon(role);
-                        break;
-                        
-                    case UserData:
-                        setIcon(userData);
-                        break;
-                        
-                    case UserValue:
-                        setIcon(userValue);
-                        break;
-                        
-                    case ValidationResults:
-                        setIcon(validationResult);
-                        break;
-                        
-                    case Checker:
-                        setIcon(validationResult);
-                        break;
-                        
-                    case WorkflowSignoffProfile:
-                        setIcon(signoffProfile);
-                        break;
-                        
-                    case WorkflowHandler:
-                        setIcon(workflowHandler);
-                        break;
-                        
-                    case WorkflowBusinessRuleHandler:
-                        setIcon(businessRuleHandler);
-                        break;
-                        
-                    case WorkflowBusinessRule:
-                        setIcon(businessRule);
-                        break;
-                        
-                    case WorkflowAction:
-                        setIcon(workflowAction);
-                        break;
-                        
-                    default:
-                        setIcon(workflow);
-                        break;
-                }
+        switch(nr.getClassType()) {
+            case WorkflowTemplate:
+                String s = nr.getIconKey();
+                if(s == null)
+                    setIcon(workflow);
+                else if(s.equals("acknowledgeTask"))
+                    setIcon(acknowledgeTask);
+                else if(s.equals("addStatusTask"))
+                    setIcon(addStatusTask);
+                else if(s.equals("checkListTask"))
+                    setIcon(checkListTask);
+                else if(s.equals("conditionTask"))
+                    setIcon(conditionTask);
+                else if(s.equals("doTask"))
+                    setIcon(doTask);
+                else if(s.equals("impactAnalysisTask"))
+                    setIcon(impactAnalysisTask);
+                else if(s.equals("notifyTask"))
+                    setIcon(notifyTask);
+                else if(s.equals("orTask"))
+                    setIcon(orTask);
+                else if(s.equals("performSignoffTask"))
+                    setIcon(performSignoffTask);
+                else if(s.equals("prepareecoTask"))
+                    setIcon(prepareecoTask);
+                else if(s.equals("process"))
+                    setIcon(process);
+                else if(s.equals("reviewProcess"))
+                    setIcon(reviewProcess);
+                else if(s.equals("reviewTask"))
+                    setIcon(reviewTask);
+                else if(s.equals("routeTask"))
+                    setIcon(routeTask);
+                else if(s.equals("selectSignoffTask"))
+                    setIcon(selectSignoffTask);
+                else if(s.equals("syncTask"))
+                    setIcon(syncTask);
+                else if(s.equals("task"))
+                    setIcon(task);
+                else if(s.equals("taskProperties"))
+                    setIcon(taskProperties);
                 break;
                 
-            case NodeReference.ENTRY_COLLECTOR:
+            case Arguments:
+                setIcon(argument);
+                break;
+                
+            case AssociatedDataSet:
+                setIcon(associatedDataSet);
+                break;
+                
+            case AssociatedFolder:
+                setIcon(associatedFolder);
+                break;
+                
+            case AssociatedForm:
+                setIcon(associatedForm);
+                break;
+                
+            case Organisation:
+                setIcon(organisation);
+                break;
+                
+            case Site:
+                setIcon(site);
+                break;
+                
+            case Role:
+                setIcon(role);
+                break;
+                
+            case UserData:
+                setIcon(userData);
+                break;
+                
+            case UserValue:
+                setIcon(userValue);
+                break;
+                
+            case ValidationResults:
+                setIcon(validationResult);
+                break;
+                
+            case Checker:
+                setIcon(validationResult);
+                break;
+                
+            case WorkflowSignoffProfile:
+                setIcon(signoffProfile);
+                break;
+                
+            case WorkflowHandler:
+                setIcon(workflowHandler);
+                break;
+                
+            case WorkflowBusinessRuleHandler:
+                setIcon(businessRuleHandler);
+                break;
+                
+            case WorkflowBusinessRule:
+                setIcon(businessRule);
+                break;
+                
+            case WorkflowAction:
+                setIcon(workflowAction);
+                break;
+                
             default:
-                setIcon(collector);
+                setIcon(workflow);
                 break;
         }
         

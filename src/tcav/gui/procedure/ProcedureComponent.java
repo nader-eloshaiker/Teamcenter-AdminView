@@ -9,6 +9,7 @@
 
 package tcav.gui.procedure;
 
+import javax.naming.ldap.StartTlsRequest;
 import tcav.*;
 import tcav.gui.*;
 import tcav.procedure.*;
@@ -38,16 +39,11 @@ import java.util.ArrayList;
  */
 public class ProcedureComponent extends JPanel implements TabbedPanel {
     
-    protected JTable tableDepTaskTemplateRef;
-    protected JTable tableWorkflowTemplatesProcess;
-    protected JTable tableWorkflowTemplatesSub;
-    protected JTable tableActionsRef;
-    protected JTable tableSubTemplateRef;
     protected JTreeAdvanced treeWorkflowProcess;
     protected JFrame parentFrame;
     protected ProcedureManager pm;
     protected JSplitPane splitPane1;
-    
+    protected ProcedureTreeModel modelProcedure;
     
     /**
      * Creates a new instance of ProcedureComponent
@@ -80,11 +76,13 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
     protected JButton buttonWorkflowFindClear;
     protected JComboBox boxSearchWorkflowType;
     protected JTextField textSearchValue;
+    protected JRadioButton radioProcedureDependantTasks;
+    protected JRadioButton radioProcedureSubWorkflow;
     
     public JComponent createWorkflowProcessPanel() {
         
         // Workflow Process Tree
-        treeWorkflowProcess = new JTreeAdvanced(new ProcedureTreeModel(pm));
+        treeWorkflowProcess = new JTreeAdvanced(new ProcedureTreeModel(pm, Settings.getPMProcedureMode()));
         treeWorkflowProcess.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         treeWorkflowProcess.setLargeModel(true);
         treeWorkflowProcess.setCellRenderer(new ProcedureTreeCellRenderer());
@@ -143,30 +141,36 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
                 }.start();
             }
         });
-        JButton buttonExpandDependTask = new JButton("Dependant Task");
-        buttonExpandDependTask.setHorizontalTextPosition(SwingConstants.RIGHT);
-        buttonExpandDependTask.setToolTipText("Show all Dependant Workflow Tasks");
-        buttonExpandDependTask.addActionListener(new ActionListener(){
+        
+        radioProcedureDependantTasks = new JRadioButton("Dependant Tasks");
+        radioProcedureDependantTasks.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                new Thread() {
-                    public void run() {
-                        Utilities.expandWorkflow(treeWorkflowProcess, parentFrame, NodeReference.PROCEDURE_DEPENDANT_TASKS);
-                    }
-                }.start();
+                Settings.setPMProcedureMode(ProcedureTreeModel.MODE_DEPENDANT_TASKS);
+                treeWorkflowProcess.setModel(new ProcedureTreeModel(pm, Settings.getPMProcedureMode()));
+                //modelProcedure.setProcedureMode(ProcedureTreeModel.MODE_DEPENDANT_TASKS);
+                //treeWorkflowProcess.reloadModel();
+                //treeWorkflowProcess.validate();
             }
         });
-        JButton buttonExpandSubTask = new JButton("Sub Workflow");
-        buttonExpandSubTask.setHorizontalTextPosition(SwingConstants.RIGHT);
-        buttonExpandSubTask.setToolTipText("Show all Sub Workflows");
-        buttonExpandSubTask.addActionListener(new ActionListener(){
+        radioProcedureSubWorkflow = new JRadioButton("Sub Workflows");
+        radioProcedureSubWorkflow.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                new Thread() {
-                    public void run() {
-                        Utilities.expandWorkflow(treeWorkflowProcess, parentFrame, NodeReference.PROCEDURE_SUB_WORKFLOW);
-                    }
-                }.start();
+                Settings.setPMProcedureMode(ProcedureTreeModel.MODE_SUB_WORKFLOWS);
+                treeWorkflowProcess.setModel(new ProcedureTreeModel(pm, Settings.getPMProcedureMode()));
+                //modelProcedure.setProcedureMode(ProcedureTreeModel.MODE_SUB_WORKFLOWS);
+                //treeWorkflowProcess.reloadModel();
+                //treeWorkflowProcess.validate();
             }
         });
+        ButtonGroup buttonGroupProcedureMode = new ButtonGroup();
+        buttonGroupProcedureMode.add(radioProcedureDependantTasks);
+        buttonGroupProcedureMode.add(radioProcedureSubWorkflow);
+        buttonGroupProcedureMode.setSelected(
+                radioProcedureDependantTasks.getModel(),
+                (Settings.getPMProcedureMode() == ProcedureTreeModel.MODE_DEPENDANT_TASKS));
+        buttonGroupProcedureMode.setSelected(
+                radioProcedureSubWorkflow.getModel(),
+                (Settings.getPMProcedureMode() == ProcedureTreeModel.MODE_SUB_WORKFLOWS));
         
         
         ImageIcon iconExpandAll = new ImageIcon();
@@ -184,8 +188,6 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
         
         buttonExpandAll.setIcon(iconExpandAll);
         buttonExpandBelow.setIcon(iconExpandBelow);
-        buttonExpandDependTask.setIcon(iconExpandBelow);
-        buttonExpandSubTask.setIcon(iconExpandBelow);
         buttonCollapseAll.setIcon(iconCollapseAll);
         buttonCollapseBelow.setIcon(iconCollapseBelow);
         
@@ -202,36 +204,40 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
         buttonWorkflowFind = new JButton("Find");
         buttonWorkflowFind.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                String workflowString = "";
-                String valueString = "";
-                
-                if(boxSearchWorkflowType.getSelectedIndex() > 0)
-                    workflowString = ProcedureManager.WORKFLOW_TYPES[boxSearchWorkflowType.getSelectedIndex() - 1].value();
-                valueString = textSearchValue.getText();
-                
-                if( (workflowString.equals(""))  &&
-                        ((valueString == null) || (valueString.equals(""))))
-                    JOptionPane.showMessageDialog(parentFrame, "Search requires either a Workflow Type, value/name or any combination.", "No Search Criteria", JOptionPane.ERROR_MESSAGE);
-                else {
-                    findProcedure(treeWorkflowProcess, workflowString, valueString);
-                    
-                    if (workflowSearchResults.size() == 0) {
-                        JOptionPane.showMessageDialog(parentFrame, "No matches found", "No Matches Found", JOptionPane.WARNING_MESSAGE);
-                        buttonWorkflowFindNext.setEnabled(false);
-                        buttonWorkflowFindClear.setEnabled(false);
-                        buttonWorkflowFind.setEnabled(true);
-                        boxSearchWorkflowType.setEnabled(true);
-                        textSearchValue.setEnabled(true);
-                    } else {
-                        int k = workflowSearchIndex + 1;
-                        buttonWorkflowFind.setText(k+" / "+workflowSearchResults.size());
-                        buttonWorkflowFindNext.setEnabled(true);
-                        buttonWorkflowFindClear.setEnabled(true);
-                        buttonWorkflowFind.setEnabled(false);
-                        boxSearchWorkflowType.setEnabled(false);
-                        textSearchValue.setEnabled(false);
+                new Thread() {
+                    public void run() {
+                        String workflowString = "";
+                        String valueString = "";
+                        
+                        if(boxSearchWorkflowType.getSelectedIndex() > 0)
+                            workflowString = ProcedureManager.WORKFLOW_TYPES[boxSearchWorkflowType.getSelectedIndex() - 1].value();
+                        valueString = textSearchValue.getText();
+                        
+                        if( (workflowString.equals(""))  &&
+                                ((valueString == null) || (valueString.equals(""))))
+                            JOptionPane.showMessageDialog(parentFrame, "Search requires either a Workflow Type, value/name or any combination.", "No Search Criteria", JOptionPane.ERROR_MESSAGE);
+                        else {
+                            findProcedure(treeWorkflowProcess, workflowString, valueString);
+                            
+                            if (workflowSearchResults.size() == 0) {
+                                JOptionPane.showMessageDialog(parentFrame, "No matches found", "No Matches Found", JOptionPane.WARNING_MESSAGE);
+                                buttonWorkflowFindNext.setEnabled(false);
+                                buttonWorkflowFindClear.setEnabled(false);
+                                buttonWorkflowFind.setEnabled(true);
+                                boxSearchWorkflowType.setEnabled(true);
+                                textSearchValue.setEnabled(true);
+                            } else {
+                                int k = workflowSearchIndex + 1;
+                                buttonWorkflowFind.setText(k+" / "+workflowSearchResults.size());
+                                buttonWorkflowFindNext.setEnabled(true);
+                                buttonWorkflowFindClear.setEnabled(true);
+                                buttonWorkflowFind.setEnabled(false);
+                                boxSearchWorkflowType.setEnabled(false);
+                                textSearchValue.setEnabled(false);
+                            }
+                        }
                     }
-                }
+                }.start();
             }
         });
         
@@ -281,9 +287,10 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
         toolBarWorkflowTreeTop.add(buttonCollapseAll);
         toolBarWorkflowTreeTop.add(buttonCollapseBelow);
         toolBarWorkflowTreeTop.addSeparator();
-        toolBarWorkflowTreeTop.add(buttonExpandDependTask);
-        toolBarWorkflowTreeTop.add(buttonExpandSubTask);
-
+        toolBarWorkflowTreeTop.add(new JLabel("Default View:"));
+        toolBarWorkflowTreeTop.add(radioProcedureDependantTasks);
+        toolBarWorkflowTreeTop.add(radioProcedureSubWorkflow);
+        
         JToolBar toolBarWorkflowTreeBottom = new JToolBar();
         toolBarWorkflowTreeBottom.setMargin(new Insets(
                 Utilities.GAP_INSET,
@@ -328,7 +335,7 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
     private JComponent createNodeDetailsPanel() {
         treeAttributes = new JTreeAdvanced(new AttributeTreeModel());
         treeAttributes.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-        treeAttributes.setLargeModel(false);
+        treeAttributes.setLargeModel(true);
         treeAttributes.setCellRenderer(new ProcedureTreeCellRenderer());
         treeAttributes.addTreeSelectionListener(new TreeSelectionListener() {
             public void valueChanged(TreeSelectionEvent e) {
@@ -460,7 +467,7 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
         
         JPanel panelAttributeDetails = new JPanel();
         panelAttributeDetails.setLayout(new BorderLayout(Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
-        panelAttributeDetails.setBorder(new TitledBorder(new EtchedBorder(),"Attribute Details"));
+        panelAttributeDetails.setBorder(new TitledBorder(new EtchedBorder(),"Details"));
         panelAttributeDetails.add("Center",Utilities.createPanelMargined(scrollTableAttribute));
         
         
@@ -497,6 +504,9 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
     
     private int workflowSearchIndex;
     private ArrayList<TreePath> workflowSearchResults;
+    private final int SEARCH_CONDITION_VALUE = 0;
+    private final int SEARCH_CONDITION = 1;
+    private final int SEARCH_VALUE = 2;
     
     private boolean findNextProcedure(JTreeAdvanced tree) {
         workflowSearchIndex++;
@@ -515,7 +525,27 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
     private boolean findProcedure(JTreeAdvanced tree, String condition, String value) {
         workflowSearchResults = new ArrayList<TreePath>();
         workflowSearchIndex = 0;
-        findProcedureItems(tree, tree.getPathForRow(0), condition, value);
+        if((!condition.equals("")) && (!value.equals("")) )
+            findProcedureItems(
+                    tree,
+                    tree.getPathForRow(0),
+                    SEARCH_CONDITION_VALUE,
+                    condition,
+                    value);
+        else if(!condition.equals(""))
+            findProcedureItems(
+                    tree,
+                    tree.getPathForRow(0),
+                    SEARCH_CONDITION,
+                    condition,
+                    value);
+        else if(!value.equals(""))
+            findProcedureItems(
+                    tree,
+                    tree.getPathForRow(0),
+                    SEARCH_VALUE,
+                    condition,
+                    value);
         if(workflowSearchResults.size() > 0) {
             tree.expandPath(workflowSearchResults.get(workflowSearchIndex));
             tree.setSelectionPath(workflowSearchResults.get(workflowSearchIndex));
@@ -528,27 +558,31 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
     /*
      * Both condition and value cannot be empty, either one or the other.
      */
-    private void findProcedureItems(JTreeAdvanced tree, TreePath parent, String condition, String value) {
+    private void findProcedureItems(JTreeAdvanced tree, TreePath parent, int searchBias, String condition, String value) {
         // Traverse children
         NodeReference nr = (NodeReference)parent.getLastPathComponent();
         Boolean matched = false;
-        
-        if(!matched)
-            matched = isMatched(nr.getClassType().value(), condition);
-        
-        if(!matched)
-            matched = isMatched(nr.getName(), value);
-        
+        switch(searchBias) {
+            case SEARCH_CONDITION_VALUE:
+                matched = isMatched(nr.getClassType().value(), condition) & isMatched(nr.getName(), value);
+                break;
+            case SEARCH_CONDITION:
+                matched = isMatched(nr.getClassType().value(), condition);
+                break;
+            case SEARCH_VALUE:
+                matched = isMatched(nr.getName(), value);
+                break;
+            default:
+                matched = false;
+        }
         if(matched)
             workflowSearchResults.add(parent);
         
         int childCount = tree.getModel().getChildCount(nr);
-        //if (node.getChildCount() >= 0) {
         if(childCount > 0) {
-            //for (Enumeration e=node.children(); e.hasMoreElements(); ) {
             for (int e=0; e<childCount; e++ ) {
                 TreePath path = parent.pathByAddingChild(tree.getModel().getChild(nr, e));
-                findProcedureItems(tree, path, condition, value);
+                findProcedureItems(tree, path, searchBias, condition, value);
             }
         }
     }

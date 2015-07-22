@@ -115,7 +115,7 @@ public class AdminViewFrame extends JFrame{
         JButton buttonOpenRuleTree = new JButton("Load Tree");
         buttonOpenRuleTree.setIcon(iconRuleTree);
         buttonOpenRuleTree.setHorizontalTextPosition(SwingConstants.RIGHT);
-        buttonOpenRuleTree.setToolTipText("Import TcAE ruletree");
+        buttonOpenRuleTree.setToolTipText("Import TcAE Ruletree File");
         buttonOpenRuleTree.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 actionLoadRuleTree();
@@ -125,7 +125,7 @@ public class AdminViewFrame extends JFrame{
         JButton buttonOpenProcedure = new JButton("Load Procedure");
         buttonOpenProcedure.setIcon(iconProcedure);
         buttonOpenProcedure.setHorizontalTextPosition(SwingConstants.RIGHT);
-        buttonOpenProcedure.setToolTipText("Import TcAE ruletree");
+        buttonOpenProcedure.setToolTipText("Import TcAE Procedure File");
         buttonOpenProcedure.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 actionLoadProcedure();
@@ -288,6 +288,10 @@ public class AdminViewFrame extends JFrame{
     
     private void actionSaveSettings() {
         try{
+            Settings.setFrameSizeX(parentFrame.getSize().width);
+            Settings.setFrameSizeY(parentFrame.getSize().height);
+            Settings.setFrameLocationX(parentFrame.getLocation().x);
+            Settings.setFrameLocationY(parentFrame.getLocation().y);
             Settings.store();
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Save Settings Error", JOptionPane.ERROR_MESSAGE);
@@ -314,7 +318,7 @@ public class AdminViewFrame extends JFrame{
             public void run() {
                 JFileChooser fc = createFileChooser();
                 fc.addChoosableFileFilter(new CustomFileFilter(
-                        new String[]{"txt"},"Text File"));
+                        new String[]{"txt",""},"Text File (*.txt; *.)"));
                 int result = fc.showOpenDialog(getFrame());
                 if(result == JFileChooser.APPROVE_OPTION) {
                     try {
@@ -354,7 +358,7 @@ public class AdminViewFrame extends JFrame{
             public void run() {
                 JFileChooser fc = createFileChooser();
                 fc.addChoosableFileFilter(new CustomFileFilter(
-                        new String[]{"xml","plmxml"},"XML File"));
+                        new String[]{"xml","plmxml"},"XML File (*.xml; *.plmxml)"));
                 int result = fc.showOpenDialog(getFrame());
                 if(result == JFileChooser.APPROVE_OPTION) {
                     try {

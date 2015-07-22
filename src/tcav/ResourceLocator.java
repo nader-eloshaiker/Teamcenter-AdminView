@@ -56,11 +56,15 @@ public class ResourceLocator {
     }
     
     public static String getVersion() {
-        return "0.3.25 Beta 3 Build 25";
+        return "1.0";
+    }
+    
+    public static String getBuild() {
+        return "32";
     }
     
     public static String getReleaseDate() {
-        return "06-Sep-07";
+        return "13-Sep-07";
     }
     
     public static String getApplicationName() {
@@ -70,11 +74,11 @@ public class ResourceLocator {
     public static String getAboutInfo() {
         return "<html><p>TcAE Admin View</p><p></p>" +
                         "<p>Version: "+getVersion()+"</p>" +
+                        "<p>Build: "+getBuild()+"</p>" +
                         "<p>Release Date: "+getReleaseDate()+"</p>"+
                         "<p></p>" +
                         "<p>Developed by"+
                         "<br>Nader Eloshaiker"+
-                        "<br>Senior Engineer: Product Data Management"+
                         "<br>email: nader.eloshaiker@gm.com"+
                         "<br>phone: +61 3 9647 5271</p>"+
                         "<p></p>" +
