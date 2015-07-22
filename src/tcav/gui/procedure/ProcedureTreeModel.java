@@ -14,10 +14,9 @@ import javax.swing.*;
 import javax.swing.tree.*;
 import javax.swing.event.*;
 import tcav.procedure.*;
-import tcav.plmxmlpdm.*;
-import tcav.plmxmlpdm.type.*;
-import tcav.plmxmlpdm.classtype.*;
-import tcav.plmxmlpdm.base.*;
+import tcav.procedure.plmxmlpdm.base.IdBase;
+import tcav.procedure.plmxmlpdm.type.SiteType;
+import tcav.procedure.plmxmlpdm.type.WorkflowTemplateType;
 
 
 /**

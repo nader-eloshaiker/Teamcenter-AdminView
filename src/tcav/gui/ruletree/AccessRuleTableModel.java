@@ -8,8 +8,8 @@ package tcav.gui.ruletree;
  * and open the template in the editor.
  */
 
-import tcav.ruletree.AccessControlColumns;
-import tcav.ruletree.AccessControlColumnsEntry;
+import tcav.ruletree.AccessControlHeader;
+import tcav.ruletree.AccessControlHeaderEntry;
 import tcav.ruletree.AccessRule;
 import javax.swing.table.*;
 
@@ -19,17 +19,17 @@ import javax.swing.table.*;
  */
 public class AccessRuleTableModel extends AbstractTableModel implements TableModel {
     
-    private AccessControlColumns acColumns;
+    private AccessControlHeader acHeader;
     private AccessRule accessRule;
     
     /** Creates a new instance of AccessRuleTableModel */
-    public AccessRuleTableModel(AccessControlColumns acc, AccessRule ar) {
-        this.acColumns = acc;
+    public AccessRuleTableModel(AccessControlHeader acHeader, AccessRule ar) {
+        this.acHeader = acHeader;
         this.accessRule = ar;
     }
     
-    public AccessRuleTableModel(AccessControlColumns acc) {
-        this(acc, new AccessRule());
+    public AccessRuleTableModel(AccessControlHeader acHeader) {
+        this(acHeader, new AccessRule());
     }
 
     
@@ -51,7 +51,7 @@ public class AccessRuleTableModel extends AbstractTableModel implements TableMod
         if (accessRule == null)
             return 0;
         else
-            return acColumns.getSize(); 
+            return acHeader.size(); 
     }
     
     public int getRowCount() { 
@@ -68,16 +68,16 @@ public class AccessRuleTableModel extends AbstractTableModel implements TableMod
             return null;
     }
     
-    public AccessControlColumnsEntry[] getColumns() {
-        return acColumns.getColumns();
+    public AccessControlHeaderEntry[] getColumns() {
+        return acHeader.getColumns();
     }
     
-    public AccessControlColumnsEntry getColumn(int index) {
-        return acColumns.getColumns()[index];
+    public AccessControlHeaderEntry getColumn(int index) {
+        return acHeader.getColumn(index);
     }
 
     public String getColumnName(int col) {
-        return acColumns.getName(col);
+        return acHeader.getName(col);
     }
     
     public Class getColumnClass(int c) {

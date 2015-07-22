@@ -9,15 +9,24 @@
 
 package tcav.gui.procedure;
 
-import tcav.plmxmlpdm.*;
-import tcav.plmxmlpdm.type.*;
-import tcav.plmxmlpdm.type.element.*;
-import tcav.plmxmlpdm.base.*;
 import tcav.procedure.*;
 import javax.swing.JTree;
 import javax.swing.tree.*;
 import javax.swing.event.*;
 import java.util.*;
+import tcav.procedure.plmxmlpdm.TagTypeEnum;
+import tcav.procedure.plmxmlpdm.base.AttribOwnerBase;
+import tcav.procedure.plmxmlpdm.base.IdBase;
+import tcav.procedure.plmxmlpdm.type.AssociatedDataSetType;
+import tcav.procedure.plmxmlpdm.type.AssociatedFolderType;
+import tcav.procedure.plmxmlpdm.type.AssociatedFormType;
+import tcav.procedure.plmxmlpdm.type.OrganisationType;
+import tcav.procedure.plmxmlpdm.type.UserDataType;
+import tcav.procedure.plmxmlpdm.type.ValidationResultsType;
+import tcav.procedure.plmxmlpdm.type.WorkflowSignoffProfileType;
+import tcav.procedure.plmxmlpdm.type.WorkflowTemplateType;
+import tcav.procedure.plmxmlpdm.type.element.UserDataElementType;
+import tcav.procedure.plmxmlpdm.type.element.ValidationCheckerType;
 /**
  *
  * @author NZR4DL

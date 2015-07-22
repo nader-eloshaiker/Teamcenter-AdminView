@@ -12,7 +12,7 @@ package tcav.gui.ruletree;
 import javax.swing.*;
 import javax.swing.tree.*;
 import java.awt.*;
-import tcav.ruletree.AccessManagerItem;
+import tcav.ruletree.RuleTreeItem;
 import tcav.ResourceLocator;
 
 /**

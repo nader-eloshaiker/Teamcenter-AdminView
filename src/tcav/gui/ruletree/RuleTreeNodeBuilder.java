@@ -8,8 +8,7 @@
  */
 
 package tcav.gui.ruletree;
-import tcav.ruletree.AccessManagerTree;
-import tcav.ruletree.AccessManagerItem;
+import tcav.ruletree.RuleTreeItem;
 import tcav.ruletree.AccessRule;
 import javax.swing.JTree;
 import javax.swing.tree.*;
@@ -25,18 +24,18 @@ public class RuleTreeNodeBuilder {
      * Depreciated as it is nolonger required. The JTree component is now
      * implemented instead of populated.
      */
-    public static DefaultMutableTreeNode getRuleTreeNodes(AccessManagerTree amTree) {
+    public static DefaultMutableTreeNode getRuleTreeNodes(ArrayList<RuleTreeItem> amTree) {
         int currentIndent = 0;
         int newIndent = 0;
         int indentVariance = 0;
         DefaultMutableTreeNode newNode;
         DefaultMutableTreeNode currentNode;
-        DefaultMutableTreeNode topNode = new DefaultMutableTreeNode(amTree.elementAt(0));
+        DefaultMutableTreeNode topNode = new DefaultMutableTreeNode(amTree.get(0));
         currentNode = topNode;
         
         for(int index = 1; index<amTree.size(); index++) {
-            newIndent = amTree.elementAt(index).getIndentLevel();
-            newNode = new DefaultMutableTreeNode(amTree.elementAt(index));
+            newIndent = amTree.get(index).getIndentLevel();
+            newNode = new DefaultMutableTreeNode(amTree.get(index));
             
             if (newIndent >  currentIndent) {
                 currentNode.add(newNode);
@@ -59,13 +58,13 @@ public class RuleTreeNodeBuilder {
         return topNode;
     }
     
-    public static DefaultMutableTreeNode getRuleTreePathsForRule(AccessManagerTree amTree, AccessRule ar) {
+    public static DefaultMutableTreeNode getRuleTreePathsForRule(ArrayList<RuleTreeItem> amTree, AccessRule ar) {
         DefaultMutableTreeNode topNode = new DefaultMutableTreeNode(ar.toString());
         DefaultMutableTreeNode currentNode = topNode;
         DefaultMutableTreeNode newNode;
         
-        AccessManagerItem amItem;
-        AccessManagerItem amItemTemp;
+        RuleTreeItem amItem;
+        RuleTreeItem amItemTemp;
         int[] paths;
         
         for(int i=0; i<ar.getTreeIndexSize(); i++) {

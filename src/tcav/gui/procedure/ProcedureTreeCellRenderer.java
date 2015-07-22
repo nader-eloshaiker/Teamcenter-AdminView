@@ -11,13 +11,14 @@ package tcav.gui.procedure;
 
 import tcav.ResourceLocator;
 
-import tcav.plmxmlpdm.TagTypeEnum;
-import tcav.plmxmlpdm.base.IdBase;
-import tcav.plmxmlpdm.type.*;
+import tcav.procedure.plmxmlpdm.TagTypeEnum;
+import tcav.procedure.plmxmlpdm.base.IdBase;
 import tcav.procedure.*;
 import javax.swing.tree.*;
 import javax.swing.*;
 import java.awt.*;
+import tcav.procedure.plmxmlpdm.type.SiteType;
+import tcav.procedure.plmxmlpdm.type.WorkflowTemplateType;
 /**
  *
  * @author nzr4dl
