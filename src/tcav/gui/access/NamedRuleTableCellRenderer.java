@@ -67,7 +67,7 @@ public class NamedRuleTableCellRenderer implements TableCellRenderer {
                 break;
         }
         
-        int result = ((NamedRuleDataStreamAbstract)table.getModel()).getAccessRule(row).getComparison();
+        int result = ((NamedRuleDataFilterAbstract)table.getModel()).getAccessRule(row).getComparison();
         switch(result) {
             case CompareInterface.NOT_EQUAL:
                 if (isSelected) {

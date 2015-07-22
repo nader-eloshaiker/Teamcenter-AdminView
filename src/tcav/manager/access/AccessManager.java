@@ -24,6 +24,7 @@ public class AccessManager extends AbstractManager {
     private AccessRuleList arList;
     private ArrayList<AccessRule> unusedRules;
     private RuleTreeNode rootTreeNode;
+    private ArrayList<RuleTreeNode> treeNodeList;
     private File file;
     
     
@@ -32,6 +33,7 @@ public class AccessManager extends AbstractManager {
     public AccessManager() {
         arList = new AccessRuleList();
         unusedRules = new ArrayList<AccessRule>();
+        treeNodeList = new ArrayList<RuleTreeNode>();
         rootTreeNode = new RuleTreeNode();
     }
     
@@ -74,8 +76,12 @@ public class AccessManager extends AbstractManager {
         return acHeader;
     }
     
-    public RuleTreeNode getAccessManagerTree() {
+    public RuleTreeNode getAccessTree() {
         return rootTreeNode;
+    }
+    
+    public ArrayList<RuleTreeNode> getAccessTreeList() {
+        return treeNodeList;
     }
     
     public AccessRuleList getAccessRuleList() {
@@ -173,6 +179,7 @@ public class AccessManager extends AbstractManager {
                 case MODE_RULE_TREE:
                     if (thisLine.length() != 0) {
                         newNode = new RuleTreeNode(thisLine);
+                        treeNodeList.add(newNode);
                         
                         // Build Conditions List
                         if(conditionsList.indexOf(newNode.getCondition()) == -1) {
@@ -241,9 +248,8 @@ public class AccessManager extends AbstractManager {
             s += "\n\n";
         }
         
-        for (Enumeration e=rootTreeNode.nodes(); e.hasMoreElements();) {
-            amItem = (RuleTreeNode)e;
-            s += amItem.toString()+"\n";
+        for (int i=0; i<treeNodeList.size(); i++) {
+            s += treeNodeList.get(i).toString()+"\n";
         }
         
         return s;

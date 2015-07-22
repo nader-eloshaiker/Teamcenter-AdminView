@@ -16,7 +16,7 @@ import tcav.manager.access.AccessRuleList;
  *
  * @author nzr4dl
  */
-public class NamedRuleDataModel extends NamedRuleDataAbstractModel implements NamedRuleDataStreamInterface {
+public class NamedRuleDataModel extends NamedRuleDataAbstractModel implements NamedRuleDataFilterInterface {
     
     protected AccessRuleList accessRuleList;
     
@@ -48,5 +48,5 @@ public class NamedRuleDataModel extends NamedRuleDataAbstractModel implements Na
         }
     }
     
-    public void apply() {}
+    public void applyFilter() {}
 }

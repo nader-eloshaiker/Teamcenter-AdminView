@@ -37,7 +37,7 @@ public class RuleTreeComponent extends JPanel {
     public RuleTreeComponent(JFrame parent, AccessManager am, String title) {
         super();
         parentFrame = parent;
-        tree = new JTreeAdvanced(new RuleTreeModel(am.getAccessManagerTree()));
+        tree = new JTreeAdvanced(new RuleTreeModel(am.getAccessTree()));
         //tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         tree.setCellRenderer(new RuleTreeNodeRenderer());
         if(tree.getRowHeight() < 18)

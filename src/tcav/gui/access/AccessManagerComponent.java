@@ -79,27 +79,31 @@ public class AccessManagerComponent extends TabbedPanel {
                         return;
                 }
                 
-                if(e.isAddedPath(e.getPath()))
-                    oldPath = newPath;
-                else
-                    oldPath = null;
-                
                 RuleTreeNode treeNode = (RuleTreeNode)e.getPath().getLastPathComponent();
                 
-                if(e.isAddedPath(e.getPath()) && treeNode.getAccessRule() != null){
-                    int index = namedACL.getModel().indexOfRuleName(treeNode.getAccessRuleName());
-                    if(index > -1) {
-                        namedACL.getTable().setRowSelectionInterval(index,index);
-                        namedACL.getTable().getSelectionModel().setAnchorSelectionIndex(index);
-                        namedACL.getTable().scrollRectToVisible(
-                                namedACL.getTable().getCellRect(
-                                namedACL.getTable().getSelectionModel().getAnchorSelectionIndex(),
-                                namedACL.getTable().getColumnModel().getSelectionModel().getAnchorSelectionIndex(),
-                                false)
-                                );
-                    } else
-                        accessControl.updateTable(treeNode.getAccessRule());
-                } else if(e.isAddedPath(e.getPath()) && treeNode.getAccessRule() == null){
+                if(e.isAddedPath(e.getPath())) {
+                    oldPath = newPath;
+                    
+                    if(treeNode.getAccessRule() != null){
+                        int index = namedACL.getModel().indexOfRuleName(treeNode.getAccessRuleName());
+                        if(index > -1) {
+                            namedACL.getTable().setRowSelectionInterval(index,index);
+                            namedACL.getTable().getSelectionModel().setAnchorSelectionIndex(index);
+                            namedACL.getTable().scrollRectToVisible(
+                                    namedACL.getTable().getCellRect(
+                                    namedACL.getTable().getSelectionModel().getAnchorSelectionIndex(),
+                                    namedACL.getTable().getColumnModel().getSelectionModel().getAnchorSelectionIndex(),
+                                    false)
+                                    );
+                        } else
+                            accessControl.updateTable(treeNode.getAccessRule());
+                        
+                    } else {
+                        namedACL.getTable().clearSelection();
+                        accessControl.updateTable();
+                    }
+                } else {
+                    oldPath = null;
                     namedACL.getTable().clearSelection();
                     accessControl.updateTable();
                 }

@@ -1,5 +1,5 @@
 /*
- * NamedRuleDataStreamAbstract.java
+ * NamedRuleDataFilterAbstract.java
  *
  * Created on 18 March 2008, 13:49
  *
@@ -16,31 +16,31 @@ import tcav.manager.access.AccessRule;
  *
  * @author nzr4dl
  */
-public abstract class NamedRuleDataStreamAbstract extends NamedRuleDataAbstractModel implements NamedRuleDataStreamInterface {
-
-    protected int[] indexes;
-    protected NamedRuleDataStreamInterface model;
+public abstract class NamedRuleDataFilterAbstract extends NamedRuleDataAbstractModel implements NamedRuleDataFilterInterface {
     
-    public Object getValueAt(int aRow, int aColumn) {
+    protected int[] indexes;
+    protected NamedRuleDataFilterInterface model;
+    
+    public final Object getValueAt(int aRow, int aColumn) {
         return model.getValueAt(indexes[aRow], aColumn);
     }
     
-    public int getRowCount() {
+    public final int getRowCount() {
         return indexes.length;
     }
     
-    public AccessRule getAccessRule(int row) {
+    public final AccessRule getAccessRule(int row) {
         return model.getAccessRule(indexes[row]);
     }
     
-    public int indexOfRuleName(String name) {
+    public final int indexOfRuleName(String name) {
         for(int i=0; i<getRowCount(); i++)
             if(getAccessRule(i).getRuleName().equals(name))
                 return i;
         return -1;
     }
     
-    public void reallocateIndexes() {
+    public final void reallocateIndexes() {
         int rowCount = model.getRowCount();
         indexes = new int[rowCount];
         
@@ -49,14 +49,27 @@ public abstract class NamedRuleDataStreamAbstract extends NamedRuleDataAbstractM
         
     }
     
+    public final void applyFilter(){
+        model.applyFilter();
+        reallocateIndexes();
+        filter();
+    }
+    
+    public final void fireTableDataChanged() {
+        model.fireTableDataChanged();
+        super.fireTableDataChanged();
+    }
+    
+    protected abstract void filter();
     
     
-    protected boolean isStringMatch(String checkString, String pattern) {
+    
+    protected final boolean isStringMatch(String checkString, String pattern) {
         return isStringMatchCaseSensitive(checkString.toLowerCase(), pattern.toLowerCase());
     }
     
     /** Creates a new instance of PatternMatch */
-    protected boolean isStringMatchCaseSensitive(String checkString, String pattern) {
+    protected final boolean isStringMatchCaseSensitive(String checkString, String pattern) {
         char patternChar;
         int patternPos = 0;
         char lastPatternChar;

@@ -16,6 +16,7 @@ import javax.swing.*;
 import javax.swing.tree.*;
 import java.awt.*;
 import tcav.manager.access.RuleTreeNode;
+import tcav.manager.compare.CompareInterface;
 import tcav.resources.*;
 
 public class RuleTreeNodeRenderer implements TreeCellRenderer {
@@ -67,9 +68,31 @@ public class RuleTreeNodeRenderer implements TreeCellRenderer {
             cell.setFont(cell.getFont().deriveFont(Font.BOLD));
         }
         
-        //cell.setBackgroundNonSelectionColor(new Color(255,0,0));
-        //cell.setBorderSelectionColor(new Color(255,0,0));
-        
+        int result = amItem.getComparison();
+        switch(result) {
+            case CompareInterface.NOT_EQUAL:
+                if (isSelected) {
+                    cell.setForeground(CompareInterface.NOT_EQUAL_COLOR);
+                    //cell.setBackgroundSelectionColor(CompareInterface.NOT_EQUAL_COLOR_BACKGROUND);
+                } else {
+                    cell.setBackgroundNonSelectionColor(CompareInterface.NOT_EQUAL_COLOR);
+                    //cell.setForeground(tree.getForeground());
+                }
+                break;
+            case CompareInterface.NOT_FOUND:
+                if (isSelected) {
+                    cell.setForeground(CompareInterface.NOT_FOUND_COLOR);
+                    //cell.setBackgroundSelectionColor(CompareInterface.NOT_FOUND_COLOR_BACKGROUND);
+                } else {
+                    cell.setBackgroundNonSelectionColor(CompareInterface.NOT_FOUND_COLOR);
+                    //cell.setForeground(tree.getForeground());
+                }
+                break;
+            case CompareInterface.EQUAL:
+            default:
+                break;
+        }
+
         
         return cell;
     }

@@ -36,11 +36,11 @@ public class ResourceStrings {
     }
     
     public static String getBuild() {
-        return "86";
+        return "87";
     }
     
     public static String getReleaseDate() {
-        return "19-Mar-08";
+        return "20-Mar-08";
     }
     
     public static String getApplicationName() {

@@ -1,5 +1,5 @@
 /*
- * NamedRuleDataStreamInterface.java
+ * NamedRuleDataFilterInterface.java
  *
  * Created on 18 March 2008, 12:02
  *
@@ -16,7 +16,7 @@ import tcav.manager.access.AccessRule;
  *
  * @author nzr4dl
  */
-public interface NamedRuleDataStreamInterface extends TableModel {
+public interface NamedRuleDataFilterInterface extends TableModel {
     
     public static final int TYPE_COLUMN = 0;
     public static final int INSTANCES_COLUMN = 1;
@@ -24,8 +24,10 @@ public interface NamedRuleDataStreamInterface extends TableModel {
     public static final int TOTAL_COLUMNS = 3;
 
     
-    public void apply();
+    public void applyFilter();
     
     public AccessRule getAccessRule(int row);
+    
+    public void fireTableDataChanged();
 
 }

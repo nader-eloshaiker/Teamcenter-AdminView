@@ -10,12 +10,13 @@
 package tcav.manager.access;
 
 import java.util.*;
+import tcav.manager.compare.CompareInterface;
 
 /**
  *
  * @author NZR4DL
  */
-public class RuleTreeNode extends Object {
+public class RuleTreeNode extends Object implements CompareInterface {
     
     private String condition;
     private String value;
@@ -26,14 +27,14 @@ public class RuleTreeNode extends Object {
     
     private ArrayList<RuleTreeNode> children;
     private RuleTreeNode parent;
-
+    
     /**
      * Creates a new instance of RuleTreeNode
      */
     public RuleTreeNode() {
         this(null);
     }
-
+    
     public RuleTreeNode(String s) {
         children = new ArrayList<RuleTreeNode>();
         if(s == null)
@@ -119,7 +120,7 @@ public class RuleTreeNode extends Object {
         return s;
     }
     
-
+    
     public RuleTreeNode getChild(int index) {
         return children.get(index);
     }
@@ -167,11 +168,11 @@ public class RuleTreeNode extends Object {
             path.add(root);
             root = root.getParent();
         }
-
+        
         if(!reverseOrder) {
             ArrayList<RuleTreeNode> pathReversed = new ArrayList<RuleTreeNode>();
             
-            for(int i=path.size()-1; i>=0; i++)
+            for(int i=path.size()-1; i>=0; i--)
                 pathReversed.add(path.get(i));
             
             path = pathReversed;
@@ -188,11 +189,68 @@ public class RuleTreeNode extends Object {
         return (parent == null);
     }
     
+    
+    /********************
+     * Comapare interface
+     ********************/
+    
+    private int compare_result = CompareInterface.EQUAL;
+    
+    public int getComparison() {
+        return compare_result;
+    }
+    
+    public void setComparison(int compare_result) {
+        this.compare_result = compare_result;
+    }
+    
+    public int compare(Object o) {
+        RuleTreeNode node = (RuleTreeNode)o;
+        
+        if(equalString(getCondition(), node.getCondition()))
+            if(equalString(getValue(), node.getValue())) {
+            
+                if(getAccessRuleName() == null && node.getAccessRuleName() == null) {
+                    if(equalPaths(getPath(), node.getPath()))
+                        return CompareInterface.EQUAL;
+                } else if(getAccessRuleName() != null && node.getAccessRuleName() != null) {
+                    if(getAccessRuleName().equals(node.getAccessRuleName()))
+                        if(equalPaths(getPath(), node.getPath()))
+                            return getAccessRule().getComparison();
+                }
+            }
+        
+        return CompareInterface.NOT_FOUND;
+    }
+    
+    private boolean equalString(String s1, String s2) {
+        if (s1 == null && s2 == null)
+            return true;
+        else if(s1 == null || s2 == null)
+            return false;
+        else
+            return s1.equals(s2);
+    }
+    
+    private boolean equalPaths(ArrayList<RuleTreeNode> path1, ArrayList<RuleTreeNode> path2){
+        if (path1.size() != path2.size())
+            return false;
+        
+        for(int i=0; i<path1.size(); i++)
+            if(!path1.get(i).getCondition().equals(path2.get(i).getCondition()) || !path1.get(i).getValue().equals(path2.get(i).getValue()))
+                return false;
+        
+        return true;
+    }
+    
+    
+    /*
     public Enumeration<RuleTreeNode> nodes() {
         return new Enumerator<RuleTreeNode>(this);
     }
     
-    private class Entry {
+    
+    class Entry {
         private RuleTreeNode node;
         private Entry[] children;
         private int childIndex;
@@ -277,5 +335,5 @@ public class RuleTreeNode extends Object {
         }
         
     }
-    
+*/    
 }

@@ -44,7 +44,7 @@ public class CompareAccessManagerComponent extends TabbedPanel {
     private AccessRuleComponent accessControl;
     private JSplitPane splitPane;
     private JPanel pane;
-
+    
     private final int compareCount = 2;
     private final String MODE_ACL = "Named ACL";
     private final String MODE_TREE = "Rule Tree";
@@ -132,7 +132,7 @@ public class CompareAccessManagerComponent extends TabbedPanel {
             namedACL[index].attachCompareTab(cam.getCompareResult(CompareAccessManager.ACL_TYPE,index));
             panel.add(namedACL[index]);
         }
-
+        
         return panel;
     }
     
@@ -145,7 +145,7 @@ public class CompareAccessManagerComponent extends TabbedPanel {
             ruletree[index].getTree().addTreeSelectionListener(new RuletreeSelectionListener(index));
             panel.add(ruletree[index]);
         }
-
+        
         return panel;
     }
     
@@ -245,9 +245,9 @@ public class CompareAccessManagerComponent extends TabbedPanel {
                         ruletree[index].getTree().scrollPathToVisible(paths[0]);
                     }
                     
-                } else {
+                } else
                     ruletree[index].getTree().clearSelection();
-                }
+                
                 namedACL[index].updateReferences(i);
                 accessControl.updateTable(namedACL[index].getModel().getAccessRule(i));
                 
@@ -277,30 +277,41 @@ public class CompareAccessManagerComponent extends TabbedPanel {
                     return;
             }
             
-            if(e.isAddedPath(e.getPath()))
-                oldPath = newPath;
-            else
-                oldPath = null;
-            
             RuleTreeNode treeNode = (RuleTreeNode)e.getPath().getLastPathComponent();
             
-            if(e.isAddedPath(e.getPath()) && treeNode.getAccessRule() != null){
-                int selIndex = namedACL[index].getModel().indexOfRuleName(treeNode.getAccessRuleName());
-                if(selIndex > -1) {
-                    namedACL[index].getTable().setRowSelectionInterval(selIndex,selIndex);
-                    namedACL[index].getTable().getSelectionModel().setAnchorSelectionIndex(selIndex);
-                    namedACL[index].getTable().scrollRectToVisible(
-                            namedACL[index].getTable().getCellRect(
-                            namedACL[index].getTable().getSelectionModel().getAnchorSelectionIndex(),
-                            namedACL[index].getTable().getColumnModel().getSelectionModel().getAnchorSelectionIndex(),
-                            false)
-                            );
-                } else
-                    accessControl.updateTable(treeNode.getAccessRule());
-            } else if(e.isAddedPath(e.getPath()) && treeNode.getAccessRule() == null){
+            if(e.isAddedPath(e.getPath())){
+                oldPath = newPath;
+                
+                for(int k=0; k<ruletree.length; k++)
+                    if(k != index)
+                        if(ruletree[k].getTree().getSelectionCount() != 0)
+                            ruletree[k].getTree().clearSelection();
+                
+                if(treeNode.getAccessRule() != null){
+                    int selIndex = namedACL[index].getModel().indexOfRuleName(treeNode.getAccessRuleName());
+                    if(selIndex > -1) {
+                        namedACL[index].getTable().setRowSelectionInterval(selIndex,selIndex);
+                        namedACL[index].getTable().getSelectionModel().setAnchorSelectionIndex(selIndex);
+                        namedACL[index].getTable().scrollRectToVisible(
+                                namedACL[index].getTable().getCellRect(
+                                namedACL[index].getTable().getSelectionModel().getAnchorSelectionIndex(),
+                                namedACL[index].getTable().getColumnModel().getSelectionModel().getAnchorSelectionIndex(),
+                                false)
+                                );
+                    } else
+                        accessControl.updateTable(treeNode.getAccessRule());
+                    
+                } else {
+                    namedACL[index].getTable().clearSelection();
+                    accessControl.updateTable();
+                }
+            } else {
+                oldPath = null;
                 namedACL[index].getTable().clearSelection();
                 accessControl.updateTable();
             }
         }
+        
     }
+    
 }

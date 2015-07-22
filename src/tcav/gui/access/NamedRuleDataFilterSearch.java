@@ -1,5 +1,5 @@
 /*
- * NamedRuleDataStreamFilter.java
+ * NamedRuleDataFilterSearch.java
  *
  * Created on 18 March 2008, 11:02
  *
@@ -16,16 +16,16 @@ import java.util.*;
  *
  * @author nzr4dl
  */
-public class NamedRuleDataStreamFilter extends NamedRuleDataStreamAbstract implements NamedRuleDataStreamInterface {
+public class NamedRuleDataFilterSearch extends NamedRuleDataFilterAbstract implements NamedRuleDataFilterInterface {
     
     private String strPattern;
     private ArrayList<Integer> filteringColumns = new ArrayList<Integer>();
     private ArrayList<String> filteringPatterns = new ArrayList<String>();
     
     /**
-     * Creates a new instance of NamedRuleDataStreamFilter
+     * Creates a new instance of NamedRuleDataFilterSearch
      */
-    public NamedRuleDataStreamFilter(NamedRuleDataStreamInterface model) {
+    public NamedRuleDataFilterSearch(NamedRuleDataFilterInterface model) {
         this.model = model;
         reallocateIndexes();
     }
@@ -88,17 +88,16 @@ public class NamedRuleDataStreamFilter extends NamedRuleDataStreamAbstract imple
         reallocateIndexes();
     }
     
-    public void apply(){
-        reallocateIndexes();
-        indexes = filter(indexes);
+    protected void filter() {
+        indexes = searchFilter(indexes);
     }
     
-    private int[] filter(int[] list){
+    private int[] searchFilter(int[] list){
         Vector<Integer> newList = new Vector<Integer>();
         int[] newIndexes;
         
         for(int i=0; i<list.length; i++)
-            if(compareFilter(list[i]))
+            if(compare(list[i]))
                 newList.addElement(list[i]);
         
         newIndexes = new int[newList.size()];
@@ -108,11 +107,11 @@ public class NamedRuleDataStreamFilter extends NamedRuleDataStreamAbstract imple
         return newIndexes;
     }
     
-    private boolean compareFilter(int row) {
+    private boolean compare(int row) {
         boolean result;
         for (int level = 0; level < filteringColumns.size(); level++) {
             Integer column = filteringColumns.get(level);
-            result = compareFilterRowsByColumn(row, filteringPatterns.get(level), column.intValue());
+            result = compare(row, filteringPatterns.get(level), column.intValue());
             if (!result) {
                 return result;
             }
@@ -120,7 +119,7 @@ public class NamedRuleDataStreamFilter extends NamedRuleDataStreamAbstract imple
         return true;
     }
     
-    private boolean compareFilterRowsByColumn(int row, String strPattern, int column) {
+    private boolean compare(int row, String strPattern, int column) {
         // Check for nulls.
         Object o1 = model.getValueAt(row, column);
         // If both values are null, return 0.

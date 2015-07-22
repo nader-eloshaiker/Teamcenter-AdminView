@@ -13,6 +13,7 @@ import tcav.manager.access.*;
 import tcav.manager.AbstractManager;
 import tcav.manager.compare.*;
 import java.io.File;
+import java.util.ArrayList;
 
 /**
  *
@@ -33,6 +34,8 @@ public class CompareAccessManager extends AbstractManager {
         
         compareNamedACL(amList[0], amList[1], compareNamedACLResult[0]);
         compareNamedACL(amList[1], amList[0], compareNamedACLResult[1]);
+        compareRuletree(amList[0].getAccessTreeList(), amList[1].getAccessTreeList(), compareNamedACLResult[0]);
+        compareRuletree(amList[1].getAccessTreeList(), amList[0].getAccessTreeList(), compareNamedACLResult[1]);
     }
     
     public AccessManager[] getAccessManagers() {
@@ -73,19 +76,33 @@ public class CompareAccessManager extends AbstractManager {
         return super.ACCESS_COMPARE_MANAGER_TYPE;
     }
     
+    private void compareRuletree(ArrayList<RuleTreeNode> am1, ArrayList<RuleTreeNode> am2, CompareResult results) {
+        int result = CompareInterface.NOT_FOUND;
+        
+        for (int i=0; i<am1.size(); i++) {
+            for (int j=0; j<am2.size(); j++){
+                result = am1.get(i).compare(am2.get(j)); 
+                if(result != CompareInterface.NOT_FOUND)
+                    break;
+            }
+            am1.get(i).setComparison(result);
+            results.increment(result);
+        }
+    }
+    
     private void compareNamedACL(AccessManager amOne, AccessManager amTwo, CompareResult results) {
-        int compareResult = CompareInterface.NOT_FOUND;
+        int result = CompareInterface.NOT_FOUND;
         AccessRule ar;
         
         for(int j=0; j<amOne.getAccessRuleList().size(); j++){
             ar = amOne.getAccessRuleList().get(j);
             for(int l=0; l<amTwo.getAccessRuleList().size(); l++) {
-                compareResult = ar.compare(amTwo.getAccessRuleList().get(l));
-                if(compareResult != CompareInterface.NOT_FOUND)
+                result = ar.compare(amTwo.getAccessRuleList().get(l));
+                if(result != CompareInterface.NOT_FOUND)
                     break;
             }
-            ar.setComparison(compareResult);
-            results.increment(compareResult);
+            ar.setComparison(result);
+            results.increment(result);
             //System.out.println(amOne.getFile().getName()+" "+compareResult);
         }
     }

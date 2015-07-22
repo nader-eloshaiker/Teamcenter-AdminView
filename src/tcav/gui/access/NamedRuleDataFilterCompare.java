@@ -1,5 +1,5 @@
 /*
- * NamedRuleDataStreamCompareFilter.java
+ * NamedRuleDataFilterCompare.java
  *
  * Created on 18 March 2008, 15:59
  *
@@ -17,14 +17,16 @@ import java.util.*;
  *
  * @author nzr4dl
  */
-public class NamedRuleDataStreamCompareFilter extends NamedRuleDataStreamAbstract implements NamedRuleDataStreamInterface {
+public class NamedRuleDataFilterCompare extends NamedRuleDataFilterAbstract implements NamedRuleDataFilterInterface {
     
     private boolean filterEqual;
     private boolean filterNotEqual;
     private boolean filterNotFound;
     
-    /** Creates a new instance of NamedRuleDataStreamCompareFilter */
-    public NamedRuleDataStreamCompareFilter(NamedRuleDataStreamInterface model) {
+    /**
+     * Creates a new instance of NamedRuleDataFilterCompare
+     */
+    public NamedRuleDataFilterCompare(NamedRuleDataFilterInterface model) {
         this.model = model;
         reallocateIndexes();
         
@@ -57,18 +59,17 @@ public class NamedRuleDataStreamCompareFilter extends NamedRuleDataStreamAbstrac
         return filterNotFound;
     }
     
-    public void apply(){
-        reallocateIndexes();
+    protected void filter(){
         if(!isFilterNotFound() || !isFilterNotEqual() || !isFilterEqual())
-            indexes = filter(indexes);
+            indexes = compareFilter(indexes);
     }
     
-    private int[] filter(int[] list){
+    private int[] compareFilter(int[] list){
         Vector<Integer> newList = new Vector<Integer>();
         int[] newIndexes;
         
         for(int i=0; i<list.length; i++)
-            if(compareFilter(list[i]))
+            if(compare(list[i]))
                 newList.addElement(list[i]);
         
         newIndexes = new int[newList.size()];
@@ -78,7 +79,7 @@ public class NamedRuleDataStreamCompareFilter extends NamedRuleDataStreamAbstrac
         return newIndexes;
     }
     
-    private boolean compareFilter(int row) {
+    private boolean compare(int row) {
         int result = model.getAccessRule(row).getComparison();
 
         switch(result){

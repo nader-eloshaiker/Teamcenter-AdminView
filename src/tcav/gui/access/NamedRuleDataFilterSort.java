@@ -1,5 +1,5 @@
 /*
- * NamedRuleDataStreamSort.java
+ * NamedRuleDataFilterSort.java
  *
  * Created on 12 July 2007, 13:24
  *
@@ -16,7 +16,7 @@ import java.util.*;
  *
  * @author NZR4DL
  */
-public class NamedRuleDataStreamSort extends NamedRuleDataStreamAbstract implements NamedRuleDataStreamInterface {
+public class NamedRuleDataFilterSort extends NamedRuleDataFilterAbstract implements NamedRuleDataFilterInterface {
     private ArrayList<Integer> sortingColumns = new ArrayList<Integer>();
     private boolean ascending = true;
     private final int SORT_NONE_VALUE = 3;
@@ -24,9 +24,9 @@ public class NamedRuleDataStreamSort extends NamedRuleDataStreamAbstract impleme
     public static final String[] SORT_COLUMN_SELECTION = new String[]{"Type","Instance Count","ACL Name","None"};
     
     /**
-     * Creates a new instance of NamedRuleDataStreamSort
+     * Creates a new instance of NamedRuleDataFilterSort
      */
-    public NamedRuleDataStreamSort(NamedRuleDataStreamInterface model) {
+    public NamedRuleDataFilterSort(NamedRuleDataFilterInterface model) {
         this.model = model;
         reallocateIndexes();
     }
@@ -76,9 +76,7 @@ public class NamedRuleDataStreamSort extends NamedRuleDataStreamAbstract impleme
         return columns;
     }
     
-    public void apply() {
-        reallocateIndexes();
-        
+    protected void filter() {
         if(sortingColumns.size() > 0)
             shuttlesort((int[])indexes.clone(), indexes, 0, indexes.length);
     }

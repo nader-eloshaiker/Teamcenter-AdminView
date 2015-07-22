@@ -30,9 +30,9 @@ public class NamedRuleComponent extends JPanel {
     
     private JTableAdvanced table;
     private NamedRuleDataModel data;
-    private NamedRuleDataStreamSort dataSort;
-    private NamedRuleDataStreamCompareFilter dataCompareFilter;
-    private NamedRuleDataStreamFilter dataFilter;
+    private NamedRuleDataFilterSort dataSort;
+    private NamedRuleDataFilterCompare dataCompareFilter;
+    private NamedRuleDataFilterSearch dataFilter;
     private AccessManager am;
     private JFrame parentFrame;
     
@@ -52,11 +52,11 @@ public class NamedRuleComponent extends JPanel {
         table = new JTableAdvanced();
         
         data = new NamedRuleDataModel(am.getAccessRuleList());
-        dataSort = new NamedRuleDataStreamSort(data);
+        dataSort = new NamedRuleDataFilterSort(data);
         dataSort.setSort(Settings.getAMACLSort(),Settings.getAMACLSortAscending());
-        dataCompareFilter = new NamedRuleDataStreamCompareFilter(dataSort);
-        dataFilter = new NamedRuleDataStreamFilter(dataCompareFilter);
-        applyModelChanges();
+        dataCompareFilter = new NamedRuleDataFilterCompare(dataSort);
+        dataFilter = new NamedRuleDataFilterSearch(dataCompareFilter);
+        applyFilter();
         
         table.setModel(dataFilter);
         table.setRowSelectionAllowed(true);
@@ -120,24 +120,14 @@ public class NamedRuleComponent extends JPanel {
         this.add(GUIutilities.createPanelMargined(panel));
     }
     
-    private NamedRuleDataStreamAbstract getFinalModel() {
-        return dataFilter;
-    }
-    
-    private void applyModelChanges() {
-        dataSort.apply();
-        dataCompareFilter.apply();
-        dataFilter.apply();
-        
-        dataSort.fireTableDataChanged();
-        dataCompareFilter.fireTableDataChanged();
-        dataFilter.fireTableDataChanged();
-        
+    private void applyFilter() {
+        getModel().applyFilter();
+        getModel().fireTableDataChanged();
         table.repaint();
     }
     
-    public NamedRuleDataStreamAbstract getModel() {
-        return getFinalModel();
+    public NamedRuleDataFilterAbstract getModel() {
+        return dataFilter;
     }
     
     public JTableAdvanced getTable() {
@@ -241,11 +231,11 @@ public class NamedRuleComponent extends JPanel {
     }
     
     private JPanel createTabSort() {
-        boxFirstSort = new JComboBox(NamedRuleDataStreamSort.SORT_COLUMN_SELECTION);
+        boxFirstSort = new JComboBox(NamedRuleDataFilterSort.SORT_COLUMN_SELECTION);
         boxFirstSort.setSelectedIndex(dataSort.getSort(0));
-        boxSecondSort = new JComboBox(NamedRuleDataStreamSort.SORT_COLUMN_SELECTION);
+        boxSecondSort = new JComboBox(NamedRuleDataFilterSort.SORT_COLUMN_SELECTION);
         boxSecondSort.setSelectedIndex(dataSort.getSort(1));
-        boxThirdSort = new JComboBox(NamedRuleDataStreamSort.SORT_COLUMN_SELECTION);
+        boxThirdSort = new JComboBox(NamedRuleDataFilterSort.SORT_COLUMN_SELECTION);
         boxThirdSort.setSelectedIndex(dataSort.getSort(2));
         checkAscending = new JCheckBox("Ascending",dataSort.isAscending());
         JButton buttonSortNamed = new JButton("Sort");
@@ -258,7 +248,7 @@ public class NamedRuleComponent extends JPanel {
                 Settings.setAMACLSort(sort);
                 Settings.setAMACLSortAscending(checkAscending.isSelected());
                 dataSort.setSort(sort, checkAscending.isSelected());
-                applyModelChanges();
+                applyFilter();
             }
         });
         
@@ -297,15 +287,15 @@ public class NamedRuleComponent extends JPanel {
         for(int i=0; i<am.getAccessRuleList().getACLTypes().size(); i++)
             boxfilterType.addItem(am.getAccessRuleList().getACLTypes().get(i));
         
-        boxfilterType.setSelectedItem(dataFilter.getFilterPattern(NamedRuleDataStreamInterface.TYPE_COLUMN));
+        boxfilterType.setSelectedItem(dataFilter.getFilterPattern(NamedRuleDataFilterInterface.TYPE_COLUMN));
         FilterActionListener filterActionListener = new FilterActionListener();
         textFilterInstanceCount = new JTextField();
         textFilterInstanceCount.setToolTipText("Must be a number");
-        textFilterInstanceCount.setText(dataFilter.getFilterPattern(NamedRuleDataStreamInterface.INSTANCES_COLUMN));
+        textFilterInstanceCount.setText(dataFilter.getFilterPattern(NamedRuleDataFilterInterface.INSTANCES_COLUMN));
         textFilterInstanceCount.addActionListener(filterActionListener);
         textFilterName = new JTextField();
         textFilterName.setToolTipText("* ? [ - ] accepted");
-        textFilterName.setText(dataFilter.getFilterPattern(NamedRuleDataStreamInterface.NAME_COLUMN));
+        textFilterName.setText(dataFilter.getFilterPattern(NamedRuleDataFilterInterface.NAME_COLUMN));
         textFilterName.addActionListener(filterActionListener);
         JButton buttonFilter = new JButton("Filter");
         buttonFilter.addActionListener(filterActionListener);
@@ -319,7 +309,7 @@ public class NamedRuleComponent extends JPanel {
                 textFilterInstanceCount.setText(null);
                 textFilterName.setText(null);
                 dataFilter.resetFilter();
-                applyModelChanges();
+                applyFilter();
             }
         });
         
@@ -374,7 +364,7 @@ public class NamedRuleComponent extends JPanel {
                 textFilterInstanceCount.setEnabled(false);
                 textFilterName.setEnabled(false);
                 dataFilter.setFilter(filterColumns,filterPatterns);
-                applyModelChanges();
+                applyFilter();
             }
         }
     }
@@ -383,7 +373,7 @@ public class NamedRuleComponent extends JPanel {
         search = new SearchTableComponent(){
             public boolean compare(int row, String type, String value) {
                 boolean matched = false;
-                AccessRule ar = getFinalModel().getAccessRule(row);
+                AccessRule ar = getModel().getAccessRule(row);
                 for(int j=0; j<ar.size(); j++) {
                     if((!type.equals("")) && (!value.equals("")) )
                         matched = isMatched(ar.get(j).getTypeOfAccessor(), type) & isMatched(ar.get(j).getIdOfAccessor(), value);
@@ -545,7 +535,7 @@ public class NamedRuleComponent extends JPanel {
                 dataCompareFilter.setFilterEqual(checkCompareEqual.isSelected());
                 dataCompareFilter.setFilterNotEqual(checkCompareNotEqual.isSelected());
                 dataCompareFilter.setFilterNotFound(checkCompareNotFound.isSelected());
-                applyModelChanges();
+                applyFilter();
             }
         });
         
@@ -607,7 +597,7 @@ public class NamedRuleComponent extends JPanel {
     }
     
     public void updateReferences(int index) {
-        AccessRule ar = getFinalModel().getAccessRule(index);
+        AccessRule ar = getModel().getAccessRule(index);
         treeReferences.setModel(new RuleTreeReferencesModel(ar));
         treeReferences.repaint();
     }
