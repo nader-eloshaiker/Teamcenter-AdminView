@@ -10,6 +10,7 @@
 package tcadminview.gui.procedure;
 
 import tcadminview.procedure.*;
+import tcadminview.plmxmlpdm.TagTypeEnum;
 import tcadminview.plmxmlpdm.type.*;
 import tcadminview.plmxmlpdm.base.*;
 import tcadminview.plmxmlpdm.classtype.*;
@@ -27,14 +28,15 @@ public class ProcedureNodeBuilder {
     public static DefaultMutableTreeNode buildProcessNodes(ProcedureManager pm) {
         DefaultMutableTreeNode topNode = new DefaultMutableTreeNode(
                 new WorkflowTreeItem(
-                     pm.getSites().get(0).getId(),pm.getSites().get(0).getName()));
+                     pm.getSites().get(0).getId(), pm.getSites().get(0).getName(), TagTypeEnum.Site));
         ArrayList<Integer> WorkflowProcessIds = pm.getWorkflowTemplates().getIndexesForClassification(WorkflowTemplateClassificationEnum.PROCESS);
         List<String> taskWorkflows;
         
         //Build process Nodes from root
         for(int i=0; i<WorkflowProcessIds.size(); i++){
             WorkflowTemplateType wt = pm.getWorkflowTemplates().get(WorkflowProcessIds.get(i));
-            WorkflowTreeItem wti = new WorkflowTreeItem(wt.getId(), wt.getName(), wt.getIconKey());
+            WorkflowTreeItem wti = new WorkflowTreeItem(
+                    wt.getId(), wt.getName(), wt.getIconKey(), TagTypeEnum.WorkflowTemplate);
             DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(wti);
             topNode.add(newNode);
             buildWorkflows(pm, wt, newNode);
@@ -49,13 +51,13 @@ public class ProcedureNodeBuilder {
         List<String> actionWorkflows = wt.getActions();
         DefaultMutableTreeNode dependTaskNode = new DefaultMutableTreeNode(
                 new WorkflowTreeItem(
-                    "Dependant Workflow Tasks", WorkflowTreeItem.DEPENDANT_TASKS));
+                    wt.getId(), "Dependant Workflow Tasks", WorkflowTreeItem.DEPENDANT_TASKS));
         DefaultMutableTreeNode subWorkflowNode = new DefaultMutableTreeNode(
                 new WorkflowTreeItem(
-                    "Sub Workflows", WorkflowTreeItem.SUB_WORKFLOW));
+                    wt.getId(), "Sub Workflows", WorkflowTreeItem.SUB_WORKFLOW));
         DefaultMutableTreeNode actionWorkflowNode = new DefaultMutableTreeNode(
                 new WorkflowTreeItem(
-                    "Workflow Actions",WorkflowTreeItem.WORKFLOW_ACTION));
+                    wt.getId(), "Workflow Actions", WorkflowTreeItem.WORKFLOW_ACTION));
         int maxLength = 0;
         int taskLength = 0;
         int subLength = 0;
@@ -86,21 +88,24 @@ public class ProcedureNodeBuilder {
             
             if(k<taskLength) {
                 WorkflowTemplateType wtTemp = pm.getWorkflowTemplates().get(pm.getIdIndex(taskWorkflows.get(k)));
-                WorkflowTreeItem wti = new WorkflowTreeItem(wtTemp.getId(), wtTemp.getName(), wtTemp.getIconKey());
+                WorkflowTreeItem wti = new WorkflowTreeItem(
+                        wtTemp.getId(), wtTemp.getName(), wtTemp.getIconKey(), TagTypeEnum.WorkflowTemplate);
                 DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(wti);
                 dependTaskNode.add(newNode);
                 buildWorkflows(pm, wtTemp, newNode);
             }
             if(k<subLength){
                 WorkflowTemplateType wtTemp = pm.getWorkflowTemplates().get(pm.getIdIndex(subWorkflows.get(k)));
-                WorkflowTreeItem wti = new WorkflowTreeItem(wtTemp.getId(), wtTemp.getName(), wtTemp.getIconKey());
+                WorkflowTreeItem wti = new WorkflowTreeItem(
+                        wtTemp.getId(), wtTemp.getName(), wtTemp.getIconKey(), TagTypeEnum.WorkflowTemplate);
                 DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(wti);
                 subWorkflowNode.add(newNode);
                 buildWorkflows(pm, wtTemp, newNode);
             }
             if(k<actionLength){
                 WorkflowActionType waTemp = pm.getWorkflowActions().get(pm.getIdIndex(actionWorkflows.get(k)));
-                WorkflowTreeItem wti = new WorkflowTreeItem(waTemp.getId(), "Action "+k, waTemp.getActionType());
+                WorkflowTreeItem wti = new WorkflowTreeItem(
+                        waTemp.getId(), "Action "+k, waTemp.getActionType(), TagTypeEnum.WorkflowAction);
                 DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(wti);
                 actionWorkflowNode.add(newNode);
                 buildActionHandlers(pm, waTemp, newNode);
@@ -113,10 +118,10 @@ public class ProcedureNodeBuilder {
         List<String> rules = wa.getRuleRefs();
         DefaultMutableTreeNode actionHandlerNode = new DefaultMutableTreeNode(
                 new WorkflowTreeItem(
-                    "Workflow Handler",WorkflowTreeItem.WORKFLOW_HANDLER));
+                    wa.getId(), "Workflow Handler", WorkflowTreeItem.WORKFLOW_HANDLER));
         DefaultMutableTreeNode businessRulesNode = new DefaultMutableTreeNode(
                 new WorkflowTreeItem(
-                    "Workflow Business Rules",WorkflowTreeItem.WORKFLOW_BUSINESS_RULE));
+                    wa.getId(), "Workflow Business Rules", WorkflowTreeItem.WORKFLOW_BUSINESS_RULE));
         int actionLength = 0;
         int rulesLength = 0;
         int maxLength = 0;
@@ -140,7 +145,8 @@ public class ProcedureNodeBuilder {
             
             if(k < rulesLength){
                 WorkflowBusinessRuleType wbrTemp = pm.getWorkflowBusinessRules().get(pm.getIdIndex(rules.get(k)));
-                WorkflowTreeItem wti = new WorkflowTreeItem(wbrTemp.getId(), "Rule "+k);
+                WorkflowTreeItem wti = new WorkflowTreeItem(
+                        wbrTemp.getId(), "Rule "+k, TagTypeEnum.WorkflowBusinessRule);
                 DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(wti);
                 businessRulesNode.add(newNode);
                 buildBusinessRuleHandler(pm, wbrTemp, newNode);
@@ -148,7 +154,8 @@ public class ProcedureNodeBuilder {
             
             if(k < actionLength) {
                 WorkflowHandlerType wh = pm.getWorkflowHandlers().get(pm.getIdIndex(actionHandlers.get(k)));
-                WorkflowTreeItem wti = new WorkflowTreeItem(wh.getId(), wh.getName());
+                WorkflowTreeItem wti = new WorkflowTreeItem(
+                        wh.getId(), wh.getName(), TagTypeEnum.WorkflowHandler);
                 DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(wti);
                 actionHandlerNode.add(newNode);
             }
@@ -160,7 +167,7 @@ public class ProcedureNodeBuilder {
         List<String> businessRuleHandlers = wbr.getRuleHandlerRefs();
         DefaultMutableTreeNode businessRuleHandlerNode = new DefaultMutableTreeNode(
                 new WorkflowTreeItem(
-                    "Business Rule Handler",WorkflowTreeItem.WORKFLOW_BUSINESS_RULE_HANDLER));
+                    wbr.getId(),"Business Rule Handler",WorkflowTreeItem.WORKFLOW_BUSINESS_RULE_HANDLER));
         int ruleHandlerLength = businessRuleHandlers.size();
         
         if(businessRuleHandlers.size() != 0){
@@ -170,7 +177,8 @@ public class ProcedureNodeBuilder {
         
         for(int k=0; k<ruleHandlerLength; k++) {
             WorkflowBusinessRuleHandlerType wbrh = pm.getWorkflowBusinessRuleHandlers().get(pm.getIdIndex(businessRuleHandlers.get(k)));
-            WorkflowTreeItem wti = new WorkflowTreeItem(wbrh.getId(), wbrh.getName());
+            WorkflowTreeItem wti = new WorkflowTreeItem(
+                    wbrh.getId(), wbrh.getName(), TagTypeEnum.WorkflowBusinessRuleHandler);
             DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(wti);
             businessRuleHandlerNode.add(newNode);
         }

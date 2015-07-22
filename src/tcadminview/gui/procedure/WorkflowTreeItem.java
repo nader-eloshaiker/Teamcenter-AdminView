@@ -10,10 +10,7 @@
 package tcadminview.gui.procedure;
 
 import tcadminview.procedure.*;
-import tcadminview.plmxmlpdm.*;
-import tcadminview.plmxmlpdm.type.*;
-import tcadminview.plmxmlpdm.base.*;
-import tcadminview.plmxmlpdm.classtype.*;
+import tcadminview.plmxmlpdm.TagTypeEnum;
 import javax.swing.JTree;
 import javax.swing.tree.*;
 import java.util.*;
@@ -25,7 +22,8 @@ public class WorkflowTreeItem {
     
     private String id;
     private String name;
-    private int type;
+    private int itemType;
+    private TagTypeEnum classType;
     private String iconKey;
     
     public static final int ITEM = 0;
@@ -38,28 +36,29 @@ public class WorkflowTreeItem {
     
     
     /** Creates a new instance of WorkflowTreeItem */
-    public WorkflowTreeItem(String id, String name, int type, String iconKey) {
+    public WorkflowTreeItem(String id, String name, int itemType, String iconKey, TagTypeEnum classType) {
         this.id = id;
         this.name = name;
-        this.type = type;
+        this.itemType = itemType;
         this.iconKey = iconKey;
+        this.classType = classType;
     }
     
     /** Creates a new instance of WorkflowTreeItem */
-    public WorkflowTreeItem(String name, int type) {
-        this(null, name, type, null);
+    public WorkflowTreeItem(String id, String name, int itemType) {
+        this(id, name, itemType, null, null);
     }
     
     /** Creates a new instance of WorkflowTreeItem */
-    public WorkflowTreeItem(String id, String name) {
-        this(id, name, 0, null);
+    public WorkflowTreeItem(String id, String name, String iconKey, TagTypeEnum classType) {
+        this(id, name, 0, iconKey, classType);
     }
-    
+
     /** Creates a new instance of WorkflowTreeItem */
-    public WorkflowTreeItem(String id, String name, String iconKey) {
-        this(id, name, 0, iconKey);
+    public WorkflowTreeItem(String id, String name, TagTypeEnum classType) {
+        this(id, name, 0, null, classType);
     }
-    
+
     public String getId(){
         return id;
     }
@@ -68,8 +67,12 @@ public class WorkflowTreeItem {
         return name;
     }
     
-    public int getType() {
-        return type;
+    public int getItemType() {
+        return itemType;
+    }
+    
+    public TagTypeEnum getClassType() {
+        return classType;
     }
     
     public String getIconKey() {

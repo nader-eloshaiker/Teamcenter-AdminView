@@ -13,12 +13,14 @@ import tcadminview.gui.*;
 import tcadminview.xml.DOMUtil;
 import tcadminview.utils.GUITools;
 import tcadminview.procedure.*;
-import tcadminview.plmxmlpdm.classtype.WorkflowTemplateClassificationEnum;
-import tcadminview.plmxmlpdm.type.WorkflowTemplateType;
+import tcadminview.plmxmlpdm.classtype.*;
+import tcadminview.plmxmlpdm.type.*;
+import tcadminview.plmxmlpdm.TagTypeEnum;
 import org.xml.sax.InputSource;
 import javax.swing.border.*;
 import javax.swing.*;
 import javax.swing.table.*;
+import javax.swing.tree.*;
 import javax.swing.event.*;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -68,11 +70,36 @@ public class ProcedureComponent extends JPanel{
         panelDebug.setLayout(new GridLayout(1,1,GUITools.GAP_COMPONENT,GUITools.GAP_COMPONENT));
         panelDebug.setBorder(new TitledBorder(new EtchedBorder(),"PLMXML Debug Window"));
         panelDebug.add(GUITools.createPanelMargined(scrollTreeXML));
-        */
+         */
         
         // Workflow Process Tree
         treeWorkflowProcess = new JTree(ProcedureNodeBuilder.buildProcessNodes(pm));
         treeWorkflowProcess.setCellRenderer(new WorkflowTreeCellRenderer());
+        treeWorkflowProcess.setRowHeight(20);
+        treeWorkflowProcess.addTreeSelectionListener(new TreeSelectionListener() {
+            public void valueChanged(TreeSelectionEvent e) {
+                TreePath path = e.getPath();
+                DefaultMutableTreeNode  nodes = (DefaultMutableTreeNode)path.getLastPathComponent();
+                WorkflowTreeItem wti = (WorkflowTreeItem)nodes.getUserObject();
+                
+                if(wti.getClassType() == null)
+                    return;
+                
+                TagTypeEnum classType = wti.getClassType();
+                switch(classType) {
+                    case WorkflowTemplate:
+                        WorkflowTemplateType wt = pm.getWorkflowTemplates().get(pm.getIdIndex(wti.getId()));
+                        labelId.setText(wt.getId());
+                        labelSignOffQuorum.setText(wt.getSignoffQuorum().toString());
+                        labelClassification.setText(wt.getTemplateClassification().value());
+                        labelShowProcessStage.setText(wt.isShowInProcessStage().toString());
+                        labelObjectType.setText(wt.getObjectType());
+                        labelParentTask.setText(wt.getParentTaskTemplateRef());
+                        labelStage.setText(wt.getStage().value());
+                        break;
+                }
+            }
+        });
         JScrollPane scrollTreeWorkflowProcess = new JScrollPane();
         //scrollTreeWorkflowProcess.setPreferredSize(new Dimension(600,500));
         scrollTreeWorkflowProcess.setBorder(new BevelBorder(BevelBorder.LOWERED));
@@ -81,182 +108,70 @@ public class ProcedureComponent extends JPanel{
         panelTreeWorkflowProcess.setLayout(new BorderLayout(GUITools.GAP_COMPONENT,GUITools.GAP_COMPONENT));
         panelTreeWorkflowProcess.setBorder(new TitledBorder(new EtchedBorder(),"Workflow Templates: PROCESS"));
         panelTreeWorkflowProcess.add(GUITools.createPanelMargined(scrollTreeWorkflowProcess));
-
-        
-        TableColumn column;
-        
-        // Process Workflows
-        WorkflowTemplateTableModel wtProcessModel = new WorkflowTemplateTableModel(pm.getWorkflowTemplates(), WorkflowTemplateClassificationEnum.PROCESS);
-        tableWorkflowTemplatesProcess = new JTable(wtProcessModel);
-        tableWorkflowTemplatesProcess.setRowSelectionAllowed(true);
-        tableWorkflowTemplatesProcess.setSelectionMode(0);
-        tableWorkflowTemplatesProcess.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
-        tableWorkflowTemplatesProcess.doLayout();
-        tableWorkflowTemplatesProcess.setRowHeight(20);
-        tableWorkflowTemplatesProcess.getSelectionModel().addListSelectionListener( new ListSelectionListener() {
-           public void valueChanged(ListSelectionEvent e) {
-               WorkflowTemplateList wtl = pm.getWorkflowTemplates();
-               WorkflowTemplateClassificationEnum filterType = ((WorkflowTemplateTableModel)tableWorkflowTemplatesProcess.getModel()).getFilter();
-               WorkflowTemplateType wt = wtl.get(wtl.getIndexesForClassification(filterType).get(tableWorkflowTemplatesProcess.getSelectedRow()));
-               List<String> listRefs;
-               listRefs = wt.getDependencyTaskTemplateRefs();
-               tableDepTaskTemplateRef.setModel(new ReferencesTableModel(listRefs,pm));
-               listRefs = wt.getActions();
-               tableActionsRef.setModel(new ReferencesTableModel(listRefs,pm));
-               listRefs = wt.getSubTemplateRefs();
-               tableSubTemplateRef.setModel(new ReferencesTableModel(listRefs,pm));
-           } 
-        });
-        for (int i=0; i<tableWorkflowTemplatesProcess.getColumnCount(); i++){
-            column = tableWorkflowTemplatesProcess.getColumnModel().getColumn(i);
-            if(column.getHeaderValue().equals("id")) {
-                column.setResizable(false);
-                column.setPreferredWidth(50);
-                column.setMaxWidth(50);
-                column.setMinWidth(50);
-                column.setWidth(50);
-            } else if(column.getHeaderValue().equals("iconKey")) {
-                column.setCellRenderer(new WorkflowIconKeyRenderer());
-                column.setResizable(false);
-                column.setPreferredWidth(30);
-                column.setMaxWidth(30);
-                column.setMinWidth(30);
-                column.setWidth(30);
-            }
-        }
-        JScrollPane scrollWorkflowTemplatesProcess = new JScrollPane();
-        //scrollWorkflowTemplatesProcess.setPreferredSize(new Dimension(600,500));
-        scrollWorkflowTemplatesProcess.setBorder(new BevelBorder(BevelBorder.LOWERED));
-        scrollWorkflowTemplatesProcess.getViewport().add(tableWorkflowTemplatesProcess);
-        JPanel panelWorkflowTemplatesProcess = new JPanel();
-        panelWorkflowTemplatesProcess.setLayout(new BorderLayout(GUITools.GAP_COMPONENT,GUITools.GAP_COMPONENT));
-        panelWorkflowTemplatesProcess.setBorder(new TitledBorder(new EtchedBorder(),"Workflow Templates: PROCESS"));
-        panelWorkflowTemplatesProcess.add(GUITools.createPanelMargined(scrollWorkflowTemplatesProcess));
-
-        //Sub Workflows
-        WorkflowTemplateTableModel wtSubModel = new WorkflowTemplateTableModel(pm.getWorkflowTemplates());
-        tableWorkflowTemplatesSub = new JTable(wtSubModel);
-        tableWorkflowTemplatesSub.setRowSelectionAllowed(true);
-        tableWorkflowTemplatesSub.setSelectionMode(0);
-        tableWorkflowTemplatesSub.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
-        tableWorkflowTemplatesSub.doLayout();
-        tableWorkflowTemplatesSub.setRowHeight(20);
-        tableWorkflowTemplatesSub.getSelectionModel().addListSelectionListener( new ListSelectionListener() {
-           public void valueChanged(ListSelectionEvent e) {
-               WorkflowTemplateList wtl = pm.getWorkflowTemplates();
-               WorkflowTemplateClassificationEnum filterType = ((WorkflowTemplateTableModel)tableWorkflowTemplatesSub.getModel()).getFilter();
-               WorkflowTemplateType wt = wtl.get(wtl.getIndexesForClassification(filterType).get(tableWorkflowTemplatesSub.getSelectedRow()));
-               List<String> listRefs;
-               listRefs = wt.getDependencyTaskTemplateRefs();
-               tableDepTaskTemplateRef.setModel(new ReferencesTableModel(listRefs,pm));
-               listRefs = wt.getActions();
-               tableActionsRef.setModel(new ReferencesTableModel(listRefs,pm));
-               listRefs = wt.getSubTemplateRefs();
-               tableSubTemplateRef.setModel(new ReferencesTableModel(listRefs,pm));
-           } 
-        });
-        for (int i=0; i<tableWorkflowTemplatesSub.getColumnCount(); i++){
-            column = tableWorkflowTemplatesSub.getColumnModel().getColumn(i);
-            if(column.getHeaderValue().equals("id")) {
-                column.setResizable(false);
-                column.setPreferredWidth(50);
-                column.setMaxWidth(50);
-                column.setMinWidth(50);
-                column.setWidth(50);
-            } else if(column.getHeaderValue().equals("iconKey")) {
-                column.setCellRenderer(new WorkflowIconKeyRenderer());
-                column.setResizable(false);
-                column.setPreferredWidth(30);
-                column.setMaxWidth(30);
-                column.setMinWidth(30);
-                column.setWidth(30);
-            }
-        }
-        JScrollPane scrollWorkflowTemplatesSub = new JScrollPane();
-        //scrollWorkflowTemplatesSub.setPreferredSize(new Dimension(600,500));
-        scrollWorkflowTemplatesSub.setBorder(new BevelBorder(BevelBorder.LOWERED));
-        scrollWorkflowTemplatesSub.getViewport().add(tableWorkflowTemplatesSub);
-        JPanel panelWorkflowTemplatesSub = new JPanel();
-        panelWorkflowTemplatesSub.setLayout(new BorderLayout(GUITools.GAP_COMPONENT,GUITools.GAP_COMPONENT));
-        panelWorkflowTemplatesSub.setBorder(new TitledBorder(new EtchedBorder(),"Sub Workflow Templates"));
-        panelWorkflowTemplatesSub.add(GUITools.createPanelMargined(scrollWorkflowTemplatesSub));
-
-        
-        JPanel panelWorkflowTamplates = new JPanel();
-        /*
-        panelWorkflowTamplates.setLayout(new GridLayout(2,1,GUITools.GAP_COMPONENT,GUITools.GAP_COMPONENT));
-        panelWorkflowTamplates.add(panelWorkflowTemplatesProcess);
-        panelWorkflowTamplates.add(panelWorkflowTemplatesSub);
-        */
-        panelWorkflowTamplates.setLayout(new GridLayout(1,1,GUITools.GAP_COMPONENT,GUITools.GAP_COMPONENT));
-        panelWorkflowTamplates.add(panelTreeWorkflowProcess);
         
         
-        tableDepTaskTemplateRef = new JTable();
-        tableDepTaskTemplateRef.setModel(new ReferencesTableModel(pm));
-        JScrollPane scrollDepTaskTemplateRef = new JScrollPane();
-        scrollDepTaskTemplateRef.setBorder(new BevelBorder(BevelBorder.LOWERED));
-        scrollDepTaskTemplateRef.getViewport().add(tableDepTaskTemplateRef);
-        JPanel panelDepTaskTemplateRef = new JPanel();
-        panelDepTaskTemplateRef.setLayout(new BorderLayout(GUITools.GAP_COMPONENT,GUITools.GAP_COMPONENT));
-        panelDepTaskTemplateRef.setBorder(new TitledBorder(new EtchedBorder(),"Dependancy Task Templates"));
-        panelDepTaskTemplateRef.add(GUITools.createPanelMargined(scrollDepTaskTemplateRef));
-
-        tableSubTemplateRef = new JTable();
-        tableSubTemplateRef.setModel(new ReferencesTableModel(pm));
-        JScrollPane scrollSubTemplateRef = new JScrollPane();
-        scrollSubTemplateRef.setBorder(new BevelBorder(BevelBorder.LOWERED));
-        scrollSubTemplateRef.getViewport().add(tableSubTemplateRef);
-        JPanel panelSubTemplateRef = new JPanel();
-        panelSubTemplateRef.setLayout(new BorderLayout(GUITools.GAP_COMPONENT,GUITools.GAP_COMPONENT));
-        panelSubTemplateRef.setBorder(new TitledBorder(new EtchedBorder(),"Sub Templates"));
-        panelSubTemplateRef.add(GUITools.createPanelMargined(scrollSubTemplateRef));
-
-        tableActionsRef = new JTable();
-        tableActionsRef.setModel(new ReferencesTableModel(pm));
-        JScrollPane scrollActionsRef = new JScrollPane();
-        scrollActionsRef.setBorder(new BevelBorder(BevelBorder.LOWERED));
-        scrollActionsRef.getViewport().add(tableActionsRef);
-        JPanel panelActionsRef = new JPanel();
-        panelActionsRef.setLayout(new BorderLayout(GUITools.GAP_COMPONENT,GUITools.GAP_COMPONENT));
-        panelActionsRef.setBorder(new TitledBorder(new EtchedBorder(),"Actions"));
-        panelActionsRef.add(GUITools.createPanelMargined(scrollActionsRef));
-        
-        JPanel processRefsPanel = new JPanel();
-        processRefsPanel.setLayout(new GridLayout(3,1,GUITools.GAP_COMPONENT,GUITools.GAP_COMPONENT));
-        processRefsPanel.add(panelDepTaskTemplateRef);
-        processRefsPanel.add(panelActionsRef);
-        processRefsPanel.add(panelSubTemplateRef);
-        
-        JPanel processPanel = new JPanel();
-        processPanel.setLayout(new BorderLayout(GUITools.GAP_COMPONENT,GUITools.GAP_COMPONENT));
-        processPanel.add("Center", panelWorkflowTamplates);
-        processPanel.add("East", processRefsPanel);
         
         
-        JPanel panelSummary = new JPanel();
-        panelSummary.setLayout(new GridLayout(2,5,GUITools.GAP_COMPONENT,GUITools.GAP_COMPONENT));
-        panelSummary.add(new JLabel("AccessIntent: "+pm.getAccessIntents().size()));
-        panelSummary.add(new JLabel("WorkflowActions: "+pm.getWorkflowActions().size()));
-        panelSummary.add(new JLabel("WorkflowBusinessRules: "+pm.getWorkflowBusinessRules().size()));
-        panelSummary.add(new JLabel("WorkflowBusinessRuleHandlers: "+pm.getWorkflowBusinessRuleHandlers().size()));
-        panelSummary.add(new JLabel("WorkflowHandlers: "+pm.getWorkflowHandlers().size()));
-        panelSummary.add(new JLabel("WorkflowSignoffProfiles: "+pm.getWorkflowSignoffProfiles().size()));
-        panelSummary.add(new JLabel("WorkflowTemplates: "+pm.getWorkflowTemplates().size()));
-        panelSummary.add(new JLabel("Organisations: "+pm.getOrganisations().size()));
-        panelSummary.add(new JLabel("Roles: "+pm.getRoles().size()));
-        panelSummary.add(new JLabel("Sites: "+pm.getSites().size()));
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(1,2,GUITools.GAP_COMPONENT,GUITools.GAP_COMPONENT));
+        panel.add(panelTreeWorkflowProcess);
+        panel.add(createWorkflowProcessPanel());
         
-        JPanel panelWorkflowTeamplates = new JPanel();
-        panelWorkflowTeamplates.setLayout(new BorderLayout(GUITools.GAP_COMPONENT,GUITools.GAP_COMPONENT));
-        //panelWorkflowTeamplates.setBorder(new TitledBorder(new EtchedBorder(),"PLMXML WorkFlow"));
-        panelWorkflowTeamplates.add("Center", processPanel);
         
         
         this.setLayout(new BorderLayout(GUITools.GAP_COMPONENT,GUITools.GAP_COMPONENT));
-        this.add("Center",panelWorkflowTeamplates);
-        this.add("South",GUITools.createPanelMargined(panelSummary));
+        this.add("Center",GUITools.createPanelMargined(panel));
         
+    }
+    
+    protected JLabel labelId = new JLabel("#");
+    protected JLabel labelSignOffQuorum = new JLabel("#");
+    protected JLabel labelClassification = new JLabel("#");
+    protected JLabel labelShowProcessStage = new JLabel("#");
+    protected JLabel labelObjectType = new JLabel("#");
+    protected JLabel labelParentTask = new JLabel("#");
+    protected JLabel labelStage = new JLabel("#");
+    
+    private JPanel createWorkflowProcessPanel() {
+        
+        JPanel panelInnerDetails = new JPanel();
+        panelInnerDetails.setLayout(new GridLayout(7,2,GUITools.GAP_COMPONENT,GUITools.GAP_COMPONENT));
+        panelInnerDetails.add(new JLabel("Id:"));
+        panelInnerDetails.add(labelId);
+        panelInnerDetails.add(new JLabel("Sign off Quorum:"));
+        panelInnerDetails.add(labelSignOffQuorum);
+        panelInnerDetails.add(new JLabel("Classification:"));
+        panelInnerDetails.add(labelClassification);
+        panelInnerDetails.add(new JLabel("Show in Process Stage:"));
+        panelInnerDetails.add(labelShowProcessStage);
+        panelInnerDetails.add(new JLabel("Object Type:"));
+        panelInnerDetails.add(labelObjectType);
+        panelInnerDetails.add(new JLabel("Parent Task:"));
+        panelInnerDetails.add(labelParentTask);
+        panelInnerDetails.add(new JLabel("Stage:"));
+        panelInnerDetails.add(labelStage);
+        JPanel panelDetails = new JPanel();
+        panelDetails.setBorder(new TitledBorder(new EtchedBorder(),"Workflow Details"));
+        panelDetails.setLayout(new BorderLayout(GUITools.GAP_COMPONENT,GUITools.GAP_COMPONENT));
+        panelDetails.add("Center",GUITools.createPanelMargined(panelInnerDetails));
+        
+        JPanel panelUserData = new JPanel();
+        panelUserData.setLayout(new BorderLayout(GUITools.GAP_COMPONENT,GUITools.GAP_COMPONENT));
+        panelUserData.setBorder(new TitledBorder(new EtchedBorder(),"User Data"));
+        //panelUserData.add("Center",GUITools.createPanelMargined(new JTable()));
+        
+        JPanel panelTaskDescription = new JPanel();
+        panelTaskDescription.setLayout(new BorderLayout(GUITools.GAP_COMPONENT,GUITools.GAP_COMPONENT));
+        panelTaskDescription.setBorder(new TitledBorder(new EtchedBorder(),"Task Description"));
+        //panelTaskDescription.add("Center",GUITools.createPanelMargined(new JTable()));
+        
+        JPanel panel = new JPanel();
+        panel.setLayout(new BorderLayout(GUITools.GAP_COMPONENT,GUITools.GAP_COMPONENT));
+        panel.add("North",panelDetails);
+        panel.add("Center",panelUserData);
+        panel.add("South",panelTaskDescription);
+        
+        return panel;
     }
     
 }

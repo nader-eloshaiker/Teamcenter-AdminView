@@ -14,6 +14,10 @@ package tcadminview.plmxmlpdm;
  * @author NZR4DL
  */
 public enum TagTypeEnum {
+
+    UNDEFINED("Undefined"),
+    //NULL(null),
+    
     Document("#document"),
     Text("#text"),
     
@@ -43,8 +47,9 @@ public enum TagTypeEnum {
     WorkflowBusinessRuleHandler("WorkflowBusinessRuleHandler"),
     WorkflowHandler("WorkflowHandler"),
     WorkflowSignoffProfile("WorkflowSignoffProfile"),
-    WorkflowTemplate("WorkflowTemplate"),
-    UNDEFINED("Undefined");
+    WorkflowTemplate("WorkflowTemplate");
+    
+    
 
     private final String value;
 

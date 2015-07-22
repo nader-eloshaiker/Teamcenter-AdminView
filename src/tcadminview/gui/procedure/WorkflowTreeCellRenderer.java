@@ -10,6 +10,8 @@
 package tcadminview.gui.procedure;
 
 import tcadminview.ResourceLocator;
+
+import tcadminview.plmxmlpdm.TagTypeEnum;
 import javax.swing.tree.*;
 import javax.swing.*;
 import java.awt.*;
@@ -19,12 +21,10 @@ import java.awt.*;
  */
 public class WorkflowTreeCellRenderer  extends DefaultTreeCellRenderer implements TreeCellRenderer {
     
-    protected static Color COLOR_DEPENDANT_TASKS;
-    protected static Color COLOR_SUB_WORKFLOW;
-    protected static Color COLOR_WORKFLOW_ACTION;
-    protected static Color COLOR_WORKFLOW_BUSINESS_RULE;
-    protected static Color COLOR_WORKFLOW_BUSINESS_RULE_HANDLER;
-    protected static Color COLOR_WORKFLOW_HANDLER;
+    //Item Type
+    protected static Color COLOR_COLLECTOR;
+    
+    //Workflow Template
     protected static ImageIcon acknowledgeTask;
     protected static ImageIcon addStatusTask;
     protected static ImageIcon checkListTask;
@@ -44,13 +44,17 @@ public class WorkflowTreeCellRenderer  extends DefaultTreeCellRenderer implement
     protected static ImageIcon task;
     protected static ImageIcon taskProperties;
     
+    //Class Type
+    protected static ImageIcon site;
+    protected static ImageIcon workflowHandler;
+    protected static ImageIcon workflowAction;
+    protected static ImageIcon businessRuleHandler;
+    protected static ImageIcon businessRule;
+    protected static ImageIcon collector;
+    protected static ImageIcon workflow;
+    
     static {
-        COLOR_DEPENDANT_TASKS                 = new Color(0, 0, 128);
-        COLOR_SUB_WORKFLOW                    = new Color(0, 128, 0);
-        COLOR_WORKFLOW_ACTION                 = new Color(128, 0, 0);
-        COLOR_WORKFLOW_BUSINESS_RULE          = new Color(128, 128, 0);
-        COLOR_WORKFLOW_BUSINESS_RULE_HANDLER  = new Color(0, 128, 128);
-        COLOR_WORKFLOW_HANDLER                = new Color(128, 128, 128);
+        COLOR_COLLECTOR = new Color(128, 128, 128);
         
         
         try {
@@ -72,6 +76,15 @@ public class WorkflowTreeCellRenderer  extends DefaultTreeCellRenderer implement
             syncTask = new ImageIcon(ResourceLocator.getWorkflowImage("syncTask.gif"));
             task = new ImageIcon(ResourceLocator.getWorkflowImage("task.gif"));
             taskProperties = new ImageIcon(ResourceLocator.getWorkflowImage("taskProperties.gif"));
+            
+            site = new ImageIcon(ResourceLocator.getProcedureImage("site.gif"));
+            workflowHandler = new ImageIcon(ResourceLocator.getProcedureImage("workflowHandler.gif"));
+            workflowAction = new ImageIcon(ResourceLocator.getProcedureImage("workflowAction.gif"));
+            businessRuleHandler = new ImageIcon(ResourceLocator.getProcedureImage("businessRuleHandler.gif"));
+            businessRule = new ImageIcon(ResourceLocator.getProcedureImage("businessRule.gif"));
+            collector = new ImageIcon(ResourceLocator.getProcedureImage("collector.gif"));
+            workflow = new ImageIcon(ResourceLocator.getProcedureImage("workflow.gif"));
+            
         } catch (Exception e) {
             System.out.println("Couldn't load images: " + e);
         }
@@ -92,7 +105,7 @@ public class WorkflowTreeCellRenderer  extends DefaultTreeCellRenderer implement
         DefaultMutableTreeNode node = (DefaultMutableTreeNode)value;
         WorkflowTreeItem wti = (WorkflowTreeItem)node.getUserObject();
         
-        switch(wti.getType()){
+        switch(wti.getItemType()){
             case WorkflowTreeItem.ITEM:
                 setText(wti.getName());
                 break;
@@ -109,27 +122,17 @@ public class WorkflowTreeCellRenderer  extends DefaultTreeCellRenderer implement
         }
         
         if(!isSelected){
-            switch(wti.getType()){
+            switch(wti.getItemType()){
                 case WorkflowTreeItem.ITEM:
                     setForeground(this.textNonSelectionColor);
                     break;
                 case WorkflowTreeItem.DEPENDANT_TASKS:
-                    setForeground(COLOR_DEPENDANT_TASKS);
-                    break;
                 case WorkflowTreeItem.SUB_WORKFLOW:
-                    setForeground(COLOR_SUB_WORKFLOW);
-                    break;
                 case WorkflowTreeItem.WORKFLOW_ACTION:
-                    setForeground(COLOR_WORKFLOW_ACTION);
-                    break;
                 case WorkflowTreeItem.WORKFLOW_BUSINESS_RULE:
-                    setForeground(COLOR_WORKFLOW_BUSINESS_RULE);
-                    break;
                 case WorkflowTreeItem.WORKFLOW_BUSINESS_RULE_HANDLER:
-                    setForeground(COLOR_WORKFLOW_BUSINESS_RULE_HANDLER);
-                    break;
                 case WorkflowTreeItem.WORKFLOW_HANDLER:
-                    setForeground(COLOR_WORKFLOW_HANDLER);
+                    setForeground(COLOR_COLLECTOR);
                     break;
                 default:
                     setForeground(this.textNonSelectionColor);
@@ -137,124 +140,78 @@ public class WorkflowTreeCellRenderer  extends DefaultTreeCellRenderer implement
             }
         }
         
-        String s = wti.getIconKey();
-        /*
-        if(s == null){
-            setLeafIcon(UIManager.getIcon("Tree.leafIcon"));
-            setClosedIcon(UIManager.getIcon("Tree.closedIcon"));
-            setOpenIcon(UIManager.getIcon("Tree.openIcon"));
-        }else if(s.equals("acknowledgeTask")){
-            setLeafIcon(acknowledgeTask);
-            setOpenIcon(acknowledgeTask);
-            setClosedIcon(acknowledgeTask);
-        }else if(s.equals("addStatusTask")){
-            setLeafIcon(addStatusTask);
-            setOpenIcon(addStatusTask);
-            setClosedIcon(addStatusTask);
-        }else if(s.equals("checkListTask")){
-            setLeafIcon(checkListTask);
-            setOpenIcon(checkListTask);
-            setClosedIcon(checkListTask);
-        }else if(s.equals("conditionTask")){
-            setLeafIcon(conditionTask);
-            setOpenIcon(conditionTask);
-            setClosedIcon(conditionTask);
-        }else if(s.equals("doTask")){
-            setLeafIcon(doTask);
-            setOpenIcon(doTask);
-            setClosedIcon(doTask);
-        }else if(s.equals("impactAnalysisTask")){
-            setLeafIcon(impactAnalysisTask);
-            setOpenIcon(impactAnalysisTask);
-            setClosedIcon(impactAnalysisTask);
-        }else if(s.equals("notifyTask")){
-            setLeafIcon(notifyTask);
-            setOpenIcon(notifyTask);
-            setClosedIcon(notifyTask);
-        }else if(s.equals("orTask")){
-            setLeafIcon(orTask);
-            setOpenIcon(orTask);
-            setClosedIcon(orTask);
-        }else if(s.equals("performSignoffTask")){
-            setLeafIcon(performSignoffTask);
-            setOpenIcon(performSignoffTask);
-            setClosedIcon(performSignoffTask);
-        }else if(s.equals("prepareecoTask")){
-            setLeafIcon(prepareecoTask);
-            setOpenIcon(prepareecoTask);
-            setClosedIcon(prepareecoTask);
-        }else if(s.equals("process")){
-            setLeafIcon(process);
-            setOpenIcon(process);
-            setClosedIcon(process);
-        }else if(s.equals("reviewProcess")){
-            setLeafIcon(reviewProcess);
-            setOpenIcon(reviewProcess);
-            setClosedIcon(reviewProcess);
-        }else if(s.equals("reviewTask")){
-            setLeafIcon(reviewTask);
-            setOpenIcon(reviewTask);
-            setClosedIcon(reviewTask);
-        }else if(s.equals("routeTask")){
-            setLeafIcon(routeTask);
-            setOpenIcon(routeTask);
-            setClosedIcon(routeTask);
-        }else if(s.equals("selectSignoffTask")){
-            setLeafIcon(selectSignoffTask);
-            setOpenIcon(selectSignoffTask);
-            setClosedIcon(selectSignoffTask);
-        }else if(s.equals("syncTask")){
-            setLeafIcon(syncTask);
-            setOpenIcon(syncTask);
-            setClosedIcon(syncTask);
-        }else if(s.equals("task")){
-            setLeafIcon(task);
-            setOpenIcon(task);
-            setClosedIcon(task);
-        }else if(s.equals("taskProperties")){
-            setLeafIcon(taskProperties);
-            setOpenIcon(taskProperties);
-            setClosedIcon(taskProperties);
-        }
-        */
-        if(s == null){
-            setIcon(null);
-        }else if(s.equals("acknowledgeTask")){
-            setIcon(acknowledgeTask);
-        }else if(s.equals("addStatusTask")){
-            setIcon(addStatusTask);
-        }else if(s.equals("checkListTask")){
-            setIcon(checkListTask);
-        }else if(s.equals("conditionTask")){
-            setIcon(conditionTask);
-        }else if(s.equals("doTask")){
-            setIcon(doTask);
-        }else if(s.equals("impactAnalysisTask")){
-            setIcon(impactAnalysisTask);
-        }else if(s.equals("notifyTask")){
-            setIcon(notifyTask);
-        }else if(s.equals("orTask")){
-            setIcon(orTask);
-        }else if(s.equals("performSignoffTask")){
-            setIcon(performSignoffTask);
-        }else if(s.equals("prepareecoTask")){
-            setIcon(prepareecoTask);
-        }else if(s.equals("process")){
-            setIcon(process);
-        }else if(s.equals("reviewProcess")){
-            setIcon(reviewProcess);
-        }else if(s.equals("reviewTask")){
-            setIcon(reviewTask);
-        }else if(s.equals("routeTask")){
-            setIcon(routeTask);
-        }else if(s.equals("selectSignoffTask")){
-            setIcon(selectSignoffTask);
-        }else if(s.equals("syncTask")){
-            setIcon(syncTask);
-        }else if(s.equals("task")){
-            setIcon(task);
-        }else if(s.equals("taskProperties")){
-            setIcon(taskProperties);
+        //TagTypeEnum classType = TagTypeEnum.UNDEFINED;
+        if(wti.getClassType() == null) {
+            setIcon(collector);
+        } else {
+            TagTypeEnum classType = wti.getClassType();
+            switch(classType) {
+                case WorkflowTemplate:
+                    String s = wti.getIconKey();
+                    if(s == null)
+                        setIcon(workflow);
+                    else if(s.equals("acknowledgeTask"))
+                        setIcon(acknowledgeTask);
+                    else if(s.equals("addStatusTask"))
+                        setIcon(addStatusTask);
+                    else if(s.equals("checkListTask"))
+                        setIcon(checkListTask);
+                    else if(s.equals("conditionTask"))
+                        setIcon(conditionTask);
+                    else if(s.equals("doTask"))
+                        setIcon(doTask);
+                    else if(s.equals("impactAnalysisTask"))
+                        setIcon(impactAnalysisTask);
+                    else if(s.equals("notifyTask"))
+                        setIcon(notifyTask);
+                    else if(s.equals("orTask"))
+                        setIcon(orTask);
+                    else if(s.equals("performSignoffTask"))
+                        setIcon(performSignoffTask);
+                    else if(s.equals("prepareecoTask"))
+                        setIcon(prepareecoTask);
+                    else if(s.equals("process"))
+                        setIcon(process);
+                    else if(s.equals("reviewProcess"))
+                        setIcon(reviewProcess);
+                    else if(s.equals("reviewTask"))
+                        setIcon(reviewTask);
+                    else if(s.equals("routeTask"))
+                        setIcon(routeTask);
+                    else if(s.equals("selectSignoffTask"))
+                        setIcon(selectSignoffTask);
+                    else if(s.equals("syncTask"))
+                        setIcon(syncTask);
+                    else if(s.equals("task"))
+                        setIcon(task);
+                    else if(s.equals("taskProperties"))
+                        setIcon(taskProperties);
+                    break;
+                    
+                case Site:
+                    setIcon(site);
+                    break;
+                    
+                case WorkflowHandler:
+                    setIcon(workflowHandler);
+                    break;
+                    
+                case WorkflowBusinessRuleHandler:
+                    setIcon(businessRuleHandler);
+                    break;
+                    
+                case WorkflowBusinessRule:
+                    setIcon(businessRule);
+                    break;
+                    
+                case WorkflowAction:
+                    setIcon(workflowAction);
+                    break;
+                    
+                default:
+                    setIcon(workflow);
+                    break;
+            }
         }
         
         return this;
