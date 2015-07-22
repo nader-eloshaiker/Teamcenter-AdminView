@@ -14,21 +14,27 @@ import javax.swing.*;
 import java.awt.*;
 import tcav.resources.*;
 import tcav.manager.compare.CompareInterface;
-
+import tcav.gui.TableShadedRenderer;
 /**
  *
  * @author NZR4DL
  */
-public class NamedRuleTableCellRenderer implements TableCellRenderer {
+public class NamedRuleTableCellRenderer extends TableShadedRenderer implements TableCellRenderer {
     
     static protected ImageIcon typeRuletreeIcon;
     static protected ImageIcon typeWorkflowIcon;
+    static protected ImageIcon iconEqual;
+    static protected ImageIcon iconNotEqual;
+    static protected ImageIcon iconNotFound;
     
     static
     {
         try {
             typeRuletreeIcon = ResourceLoader.getImage(ImageEnum.amNamedAclType);
             typeWorkflowIcon = ResourceLoader.getImage(ImageEnum.amWorkflowType);
+            iconEqual = ResourceLoader.getImage(ImageEnum.amcmpEqual);
+            iconNotEqual = ResourceLoader.getImage(ImageEnum.amcmpNotEqual);
+            iconNotFound = ResourceLoader.getImage(ImageEnum.amcmpNotFound);
         } catch (Exception e) {
             System.out.println("Couldn't load images: " + e);
         }
@@ -36,11 +42,13 @@ public class NamedRuleTableCellRenderer implements TableCellRenderer {
     
     private boolean compareMode;
     
+    
     public NamedRuleTableCellRenderer() {
         this(false);
     }
     
     public NamedRuleTableCellRenderer(boolean compareMode) {
+        super();
         this.compareMode = compareMode;
     }
 
@@ -48,71 +56,48 @@ public class NamedRuleTableCellRenderer implements TableCellRenderer {
     public Component getTableCellRendererComponent(JTable table,
             Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         
-        TableCellRenderer temp = table.getDefaultRenderer(String.class);
-        DefaultTableCellRenderer cell = (DefaultTableCellRenderer)temp.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+        super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         
         String s = value.toString();
         
         switch (column) {
-            case 0:
+            case NamedRuleDataFilterInterface.TYPE_COLUMN:
                 if(s.equals("WORKFLOW"))
-                    cell.setIcon(typeWorkflowIcon);
+                    setIcon(typeWorkflowIcon);
                 else if(s.equals("RULETREE"))
-                    cell.setIcon(typeRuletreeIcon);
-                cell.setToolTipText("Rule Type: "+s);
-                cell.setText(null);
-                cell.setHorizontalAlignment(SwingConstants.CENTER);
+                    setIcon(typeRuletreeIcon);
+                setToolTipText("Rule Type: "+s);
+                setValue(null);
+                setHorizontalAlignment(SwingConstants.CENTER);
                 break;
-            case 1:
-                cell.setIcon(null);
-                cell.setHorizontalAlignment(SwingConstants.CENTER);
-                cell.setText(s);
-                cell.setToolTipText("Instances in RuleTree: "+s);
+            case NamedRuleDataFilterInterface.INSTANCES_COLUMN:
+                setIcon(null);
+                setHorizontalAlignment(SwingConstants.CENTER);
+                //setValue(s);
+                setToolTipText("Instances in RuleTree: "+s);
+                break;
+            case NamedRuleDataFilterInterface.COMPARE_COLUMN:
+                if(s.equals(CompareInterface.NOT_EQUAL_STRING)) {
+                    setIcon(iconNotEqual);
+                    setToolTipText(CompareInterface.NOT_EQUAL_LABEL);
+                } else if(s.equals(CompareInterface.NOT_FOUND_STRING)) {
+                    setIcon(iconNotFound);
+                    setToolTipText(CompareInterface.NOT_FOUND_LABEL);
+                } else if(s.equals(CompareInterface.EQUAL_STRING)) {
+                    setIcon(null);
+                    setToolTipText(CompareInterface.EQUAL_LABEL);
+                }
+                setValue(null);
+                setHorizontalAlignment(SwingConstants.CENTER);
                 break;
             default:
-                cell.setHorizontalAlignment(SwingConstants.LEFT);
-                cell.setIcon(null);
-                cell.setText(s);
-                cell.setToolTipText(s);
+                setHorizontalAlignment(SwingConstants.LEFT);
+                setIcon(null);
+                //setValue(s);
+                setToolTipText(s);
                 break;
         }
         
-        if(!compareMode)
-            return cell;
-        
-        
-        int result = ((NamedRuleDataFilterAbstract)table.getModel()).getAccessRule(row).getComparison();
-        switch(result) {
-            case CompareInterface.NOT_EQUAL:
-                if (isSelected) {
-                    cell.setForeground(CompareInterface.NOT_EQUAL_COLOR);
-                    cell.setBackground(table.getSelectionBackground());
-                } else {
-                    cell.setBackground(CompareInterface.NOT_EQUAL_COLOR);
-                    cell.setForeground(table.getForeground());
-                }
-                break;
-            case CompareInterface.NOT_FOUND:
-                if (isSelected) {
-                    cell.setForeground(CompareInterface.NOT_FOUND_COLOR);
-                    cell.setBackground(table.getSelectionBackground());
-                } else {
-                    cell.setBackground(CompareInterface.NOT_FOUND_COLOR);
-                    cell.setForeground(table.getForeground());
-                }
-                break;
-            case CompareInterface.EQUAL:
-            default:
-                if (isSelected) {
-                    cell.setForeground(table.getSelectionForeground());
-                    cell.setBackground(table.getSelectionBackground());
-                } else {
-                    cell.setForeground(table.getForeground());
-                    cell.setBackground(table.getBackground());
-                }
-                break;
-        }
-        
-        return cell;
+        return this;
     }
 }

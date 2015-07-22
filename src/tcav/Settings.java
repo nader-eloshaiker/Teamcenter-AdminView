@@ -106,6 +106,12 @@ public class Settings {
     private static int amCmpFilterNotFound;
     private static final String PROPERTY_AM_CMP_FILTERNOTFOUND = "tcav.am.cmp.filterNotFound";
     private static final int PROPERTY_AM_CMP_FILTERNOTFOUND_DEFAULT = NamedRuleComponent.COMPARE_SHOW_INDEX;
+    private static int[] amCmpACLSort;
+    private static final String PROPERTY_AM_CMP_ACLSORT = "tcav.am.cmp.aclSort";
+    private static final String PROPERTY_AM_CMP_ACLSORT_DEFAULT = "3,0,2";
+    private static boolean amCmpACLSortAscending;
+    private static final String PROPERTY_AM_CMP_ACLSORTASCENDING = "tcav.am.cmp.aclSortAscending";
+    private static final boolean PROPERTY_AM_CMP_ACLSORTASCENDING_DEFAULT = true;
     
     
     private static Properties property = new Properties();
@@ -182,6 +188,14 @@ public class Settings {
                 getPropertyAsString(
                 PROPERTY_AM_CMP_DISPLAYMODE,
                 PROPERTY_AM_CMP_DISPLAYMODE_DEFAULT));
+        setAmCmpRuleSort(
+                getPropertyAsIntArray(
+                PROPERTY_AM_CMP_ACLSORT,
+                PROPERTY_AM_CMP_ACLSORT_DEFAULT));
+        setAmCmpRuleSortAscending(
+                getPropertyAsBoolean(
+                PROPERTY_AM_CMP_ACLSORTASCENDING,
+                PROPERTY_AM_CMP_ACLSORTASCENDING_DEFAULT));
         
         
         setAmLoadPath(
@@ -275,6 +289,12 @@ public class Settings {
         property.setProperty(
                 PROPERTY_AM_CMP_DISPLAYMODE,
                 getAmCmpDisplayMode());
+        property.setProperty(
+                PROPERTY_AM_CMP_ACLSORT,
+                convertIntArrayToString(getAmCmpRuleSort()));
+        property.setProperty(
+                PROPERTY_AM_CMP_ACLSORTASCENDING,
+                Boolean.toString(isAmCmpRuleSortAscending()));
         
         
         property.setProperty(
@@ -285,7 +305,7 @@ public class Settings {
                 Integer.toString(getAmSplitLocation()));
         property.setProperty(
                 PROPERTY_AM_ACLSORTASCENDING,
-                Boolean.toString(isAmRuleAscending()));
+                Boolean.toString(isAmRuleSortAscending()));
         property.setProperty(
                 PROPERTY_AM_ACLTAB,
                 Integer.toString(getAmRuleTab()));
@@ -385,6 +405,24 @@ public class Settings {
         Settings.amCmpFilterNotFound = amCmpFilterNotFound;
     }
     
+    public static int[] getAmCmpRuleSort() {
+        return amCmpACLSort;
+    }
+    
+    public static void setAmCmpRuleSort(int[] amCmpACLSort) {
+        Settings.amCmpACLSort = amCmpACLSort;
+    }
+
+    public static boolean isAmCmpRuleSortAscending() {
+        return amCmpACLSortAscending;
+    }
+    
+    public static void setAmCmpRuleSortAscending(boolean amCmpACLSortAscending) {
+        Settings.amCmpACLSortAscending = amCmpACLSortAscending;
+    }
+    
+    
+
     public static String getAmLoadPath() {
         return amLoadPath;
     }
@@ -476,7 +514,7 @@ public class Settings {
         Settings.amACLSort = amACLSort;
     }
     
-    public static boolean isAmRuleAscending() {
+    public static boolean isAmRuleSortAscending() {
         return amACLSortAscending;
     }
     

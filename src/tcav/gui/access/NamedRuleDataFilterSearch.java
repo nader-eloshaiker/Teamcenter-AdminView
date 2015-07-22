@@ -45,10 +45,10 @@ public class NamedRuleDataFilterSearch extends NamedRuleDataFilterAbstract imple
         filteringPatterns.clear();
         
         int length;
-        if (columns.length < TOTAL_COLUMNS)
+        if (columns.length < getColumnCount())
             length = columns.length;
         else
-            length = TOTAL_COLUMNS;
+            length = getColumnCount();
         
         for(int i=0; i<length; i++) {
             if((patterns[i] != null) &&(!patterns[i].equals(""))) {

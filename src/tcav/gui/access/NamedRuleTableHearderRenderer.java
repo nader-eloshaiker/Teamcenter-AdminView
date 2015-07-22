@@ -12,7 +12,6 @@ package tcav.gui.access;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
-import javax.swing.table.JTableHeader;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.CompoundBorder;
@@ -21,6 +20,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JTable;
 import java.awt.Component;
 import tcav.resources.*;
+import tcav.gui.access.NamedRuleDataFilterInterface;
 
 /**
  *
@@ -30,12 +30,14 @@ public class NamedRuleTableHearderRenderer implements TableCellRenderer {
     
     static protected ImageIcon iconType;
     static protected ImageIcon iconCount;
+    static protected ImageIcon iconCompare;
     
     static
     {
         try {
             iconType = ResourceLoader.getImage(ImageEnum.aclAccessorType);
             iconCount = ResourceLoader.getImage(ImageEnum.aclCopy);
+            iconCompare = ResourceLoader.getImage(ImageEnum.amCompare);
         } catch (Exception e) {
             System.out.println("Couldn't load images: " + e);
         }
@@ -46,21 +48,26 @@ public class NamedRuleTableHearderRenderer implements TableCellRenderer {
             Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         
         String s = (String)value;
-        JTableHeader header = table.getTableHeader();
-        TableCellRenderer temp = header.getDefaultRenderer();
+        
+        TableCellRenderer temp = table.getTableHeader().getDefaultRenderer();
         DefaultTableCellRenderer cell = (DefaultTableCellRenderer)temp.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         
         Border border = cell.getBorder();
         cell.setBorder(new CompoundBorder(border, new EmptyBorder(1,1,1,1)));
         
-        if(column == 0) {
+        if(column == NamedRuleDataFilterInterface.TYPE_COLUMN) {
             cell.setText(null);
             cell.setIcon(iconType);
             cell.setToolTipText(s);
             cell.setHorizontalAlignment(SwingConstants.CENTER);
-        } else if(column == 1) {
+        } else if(column == NamedRuleDataFilterInterface.INSTANCES_COLUMN) {
             cell.setText(null);
             cell.setIcon(iconCount);
+            cell.setToolTipText(s);
+            cell.setHorizontalAlignment(SwingConstants.CENTER);
+        } else if(column == NamedRuleDataFilterInterface.COMPARE_COLUMN) {
+            cell.setText(null);
+            cell.setIcon(iconCompare);
             cell.setToolTipText(s);
             cell.setHorizontalAlignment(SwingConstants.CENTER);
         } else {

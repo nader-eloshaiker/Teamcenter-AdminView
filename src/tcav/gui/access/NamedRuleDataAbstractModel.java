@@ -18,28 +18,41 @@ import javax.swing.table.*;
 public abstract class NamedRuleDataAbstractModel extends AbstractTableModel {
     
     private final String[] columns = new String[]{"Type","Count","Named ACL"};
+    private final String[] columnsCompare = new String[]{"Type","Count","Named ACL","Compare"};
+    private boolean compareMode = false;
     
+    
+    public boolean isCompare() {
+        return compareMode;
+    }
+    
+    public void setCompareMode(boolean compareMode) {
+        this.compareMode = compareMode;
+    }
     
     public int getColumnCount() {
-        return 3;
+        return getColumns().length;
     }
     
     public String[] getColumns() {
-        return columns;
+        if(isCompare())
+            return columnsCompare;
+        else
+            return columns;
     }
     
     public String getColumn(int col) {
-        return columns[col];
+        return getColumns()[col];
     }
     
     public String getColumnName(int col) {
-        return columns[col];
+        return getColumn(col);
     }
     
     public Class getColumnClass(int c) {
         return getValueAt(0, c).getClass();
     }
     
-
+    
     
 }

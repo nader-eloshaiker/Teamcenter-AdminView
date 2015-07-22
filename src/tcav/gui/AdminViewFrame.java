@@ -43,6 +43,7 @@ public class AdminViewFrame extends JFrame{
     private ImageIcon iconExit;
     private ImageIcon iconApp;
     private ImageIcon iconRuleTree;
+    private ImageIcon iconCompare;
     private JPanel mainPanel;
     
     private final String TABPANE = "TABPANE";
@@ -80,6 +81,7 @@ public class AdminViewFrame extends JFrame{
             iconClose = ResourceLoader.getImage(ImageEnum.utilClose);
             iconExit  = ResourceLoader.getImage(ImageEnum.utilExit);
             iconApp = ResourceLoader.getImage(ImageEnum.appLogo);
+            iconCompare = ResourceLoader.getImage(ImageEnum.utilCompare);
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Error Load Images", JOptionPane.ERROR_MESSAGE);
         }
@@ -232,6 +234,7 @@ public class AdminViewFrame extends JFrame{
         
         buttonCompare = new JButton("Compare");
         buttonCompare.setOpaque(false);
+        buttonCompare.setIcon(iconCompare );
         buttonCompare.setHorizontalTextPosition(SwingConstants.RIGHT);
         buttonCompare.setToolTipText("Compare tabbs");
         buttonCompare.addActionListener(new ActionListener() {
@@ -348,6 +351,7 @@ public class AdminViewFrame extends JFrame{
         menuBar.add(menu);
         
         menuCompare = menu.add(new JMenuItem("Compare", 'o'));
+        menuCompare.setIcon(iconCompare );
         menuCompare.setAccelerator(KeyStroke.getKeyStroke('O', Event.CTRL_MASK));
         menuCompare.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {

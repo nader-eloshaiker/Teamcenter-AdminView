@@ -299,30 +299,40 @@ public class CompareAccessManagerComponent extends TabbedPanel {
         
         JLabel labelFile2 = new JLabel("    "+cam.getAccessManagers()[1].getName()+" ");
         labelFile2.setFont(labelFile2.getFont().deriveFont(Font.BOLD));
+
+        JPanel panel1 = new JPanel();
+        panel1.setLayout(new FlowLayout(FlowLayout.LEFT,2,1));
+        panel1.add(labelFile1);
+        panel1.add(new JLabel("  ACL:"));
+        panel1.add(panel1Rule);
+        panel1.add(new JLabel("  Tree:"));
+        panel1.add(panel1Tree);
+
+        JPanel panel2 = new JPanel();
+        panel2.setLayout(new FlowLayout(FlowLayout.LEFT,2,1));
+        panel2.add(labelFile2);
+        panel2.add(new JLabel("  ACL:"));
+        panel2.add(panel2Rule);
+        panel2.add(new JLabel("  Tree:"));
+        panel2.add(panel2Tree);
+        
+        JPanel panelRight = new JPanel();
+        panelRight.setLayout(new GridLayout(1,2));
+        panelRight.add(panel1);
+        panelRight.add(panel2);
+
+        JPanel panelLeft = new JPanel();
+        panelLeft.setLayout(new FlowLayout(FlowLayout.LEFT,2,1));
+        panelLeft.add(new JLabel(" Key:"));
+        panelLeft.add(panelKey);
         
         statusBar = new JPanel();
-        statusBar.setLayout(new FlowLayout(FlowLayout.LEFT,2,1));
-        statusBar.add(new JLabel(" Key:"));
-        statusBar.add(panelKey);
-        
-        statusBar.add(labelFile1);
-        statusBar.add(new JLabel("  ACL:"));
-        statusBar.add(panel1Rule);
-        statusBar.add(new JLabel("  Tree:"));
-        statusBar.add(panel1Tree);
-        
-        statusBar.add(labelFile2);
-        statusBar.add(new JLabel("  ACL:"));
-        statusBar.add(panel2Rule);
-        statusBar.add(new JLabel("  Tree:"));
-        statusBar.add(panel2Tree);
-        
+        statusBar.setLayout(new BorderLayout());
+        statusBar.add(panelLeft, BorderLayout.WEST);
+        statusBar.add(panelRight, BorderLayout.CENTER);
 
         return statusBar;
     }
-    
-    
-    
     
     public AbstractManager getManager() {
         return cam;

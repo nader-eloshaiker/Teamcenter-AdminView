@@ -14,12 +14,13 @@ import javax.swing.table.*;
 import javax.swing.*;
 import java.awt.Component;
 import tcav.manager.compare.CompareInterface;
+import tcav.gui.TableShadedRenderer;
 
 /**
  *
  * @author nzr4dl
  */
-public class AccessRuleTableCellRenderer implements TableCellRenderer {
+public class AccessRuleTableCellRenderer extends TableShadedRenderer implements TableCellRenderer {
     
     static protected ImageIcon yesIcon;
     static protected ImageIcon noIcon;
@@ -43,72 +44,71 @@ public class AccessRuleTableCellRenderer implements TableCellRenderer {
     }
     
     public AccessRuleTableCellRenderer(boolean compareMode) {
+        super();
         this.compareMode = compareMode;
-        //System.out.println("Constructor Called: "+compareMode);
     }
      
     /** Creates a new instance of AccessRuleTableHearderRenderer */
     public Component getTableCellRendererComponent(JTable table,
             Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         
-        TableCellRenderer temp = table.getDefaultRenderer(String.class);
-        DefaultTableCellRenderer cell = (DefaultTableCellRenderer)temp.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+        super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
         String s = (String)value;
         
         if(column > 1) {
-            cell.setHorizontalAlignment(SwingConstants.CENTER);
-            cell.setVerticalAlignment(SwingConstants.CENTER);
+            setHorizontalAlignment(SwingConstants.CENTER);
+            setVerticalAlignment(SwingConstants.CENTER);
             if(s.equals("Y"))
-                cell.setIcon(yesIcon);
+                setIcon(yesIcon);
             else if(s.equals("N"))
-                cell.setIcon(noIcon);
+                setIcon(noIcon);
             else
-                cell.setIcon(null);
-            cell.setText(null);
+                setIcon(null);
+            setValue(null);
         } else {
-            cell.setHorizontalAlignment(SwingConstants.LEFT);
-            cell.setIcon(null);
-            cell.setText(s);
+            setHorizontalAlignment(SwingConstants.LEFT);
+            setIcon(null);
+            setText(s);
         }
         
         if(!compareMode)
-            return cell;
+            return this;
         
         
         int result = ((AccessRuleTableModel)table.getModel()).getAccessRule().get(row).getComparison();
         switch(result) {
             case CompareInterface.NOT_EQUAL:
                 if (isSelected) {
-                    cell.setForeground(CompareInterface.NOT_EQUAL_COLOR);
-                    cell.setBackground(table.getSelectionBackground());
+                    setForeground(CompareInterface.NOT_EQUAL_COLOR);
+                    //setBackground(table.getSelectionBackground());
                 } else {
-                    cell.setBackground(CompareInterface.NOT_EQUAL_COLOR);
-                    cell.setForeground(table.getForeground());
+                    setBackground(CompareInterface.NOT_EQUAL_COLOR);
+                    setForeground(table.getForeground());
                 }
                 break;
             case CompareInterface.NOT_FOUND:
                 if (isSelected) {
-                    cell.setForeground(CompareInterface.NOT_FOUND_COLOR);
-                    cell.setBackground(table.getSelectionBackground());
+                    setForeground(CompareInterface.NOT_FOUND_COLOR);
+                    //setBackground(table.getSelectionBackground());
                 } else {
-                    cell.setBackground(CompareInterface.NOT_FOUND_COLOR);
-                    cell.setForeground(table.getForeground());
+                    setBackground(CompareInterface.NOT_FOUND_COLOR);
+                    setForeground(table.getForeground());
                 }
                 break;
             case CompareInterface.EQUAL:
             default:
                 if (isSelected) {
-                    cell.setForeground(table.getSelectionForeground());
-                    cell.setBackground(table.getSelectionBackground());
+                    setForeground(table.getSelectionForeground());
+                    //setBackground(table.getSelectionBackground());
                 } else {
-                    cell.setForeground(table.getForeground());
-                    cell.setBackground(table.getBackground());
+                    setForeground(table.getForeground());
+                    //setBackground(table.getBackground());
                 }
                 break;
         }
 
-        return cell;
+        return this;
     }
     
 }

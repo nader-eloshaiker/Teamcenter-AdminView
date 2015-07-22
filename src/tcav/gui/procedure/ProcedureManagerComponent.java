@@ -98,7 +98,7 @@ public class ProcedureManagerComponent extends TabbedPanel {
         panelLeft.add(GUIutilities.createPanelMargined(actionComponent));
         
         JPanel panelRight = new JPanel();
-        panelRight.setLayout(new BorderLayout());
+        panelRight.setLayout(new GridLayout(1,1,GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
         panelRight.add("Center",GUIutilities.createPanelMargined(attributeComponent));
         //panelRight.add("South", GUIutilities.createPanelMargined(xmlComponent));
         

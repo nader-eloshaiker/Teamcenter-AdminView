@@ -76,18 +76,12 @@ public class AttributeComponent extends JComponent {
         toolBarAttributeView.add(radioCollapseAttributes);
         
         
-        JPanel panelAttributeInner =  new JPanel();
-        panelAttributeInner.setLayout(new BorderLayout(GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
-        panelAttributeInner.add("Center",scrolltree);
-        panelAttributeInner.add("South",toolBarAttributeView);
-        
-        
         this.setLayout(new BorderLayout(GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
         this.setBorder(new CompoundBorder(
                 new TitledBorder(new EtchedBorder(),"Attributes"),
                 new EmptyBorder(GUIutilities.GAP_MARGIN,GUIutilities.GAP_MARGIN,GUIutilities.GAP_MARGIN,GUIutilities.GAP_MARGIN)));
-        
-        this.add("Center",GUIutilities.createPanelMargined(panelAttributeInner));
+        this.add(toolBarAttributeView, BorderLayout.SOUTH);
+        this.add(scrolltree, BorderLayout.CENTER);
         
     }
     
@@ -100,9 +94,4 @@ public class AttributeComponent extends JComponent {
         if(Settings.isPmWorkflowExpandedView())
             GUIutilities.expandTree(tree, parentFrame);
     }
-    /*
-    public boolean equals(idBase procedure) {
-        return ((IdBase)tree.getModel().getRoot()).getId().equals()
-    }
-    */
 }

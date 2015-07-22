@@ -17,6 +17,7 @@ import javax.swing.table.*;
 import javax.swing.border.*;
 import javax.swing.tree.*;
 import tcav.gui.*;
+import tcav.gui.access.NamedRuleDataFilterInterface;
 import tcav.manager.access.AccessManager;
 import tcav.manager.access.AccessRule;
 import tcav.Settings;
@@ -59,17 +60,19 @@ public class NamedRuleComponent extends JPanel {
         
         data = new NamedRuleDataModel(am.getAccessRuleList());
         dataSort = new NamedRuleDataFilterSort(data);
-        dataSort.setSort(Settings.getAmRuleSort(),Settings.isAmRuleAscending());
         if(compareMode) {
-            dataCompareFilter = new NamedRuleDataFilterCompare(dataSort);
             
+            dataCompareFilter = new NamedRuleDataFilterCompare(dataSort);
             dataCompareFilter.setFilterEqual(Settings.getAmCmpFilterEqual() == COMPARE_SHOW_INDEX);
             dataCompareFilter.setFilterNotEqual(Settings.getAmCmpFilterNotEqual() == COMPARE_SHOW_INDEX);
             dataCompareFilter.setFilterNotFound(Settings.getAmCmpFilterNotFound() == COMPARE_SHOW_INDEX);
             
             dataFilter = new NamedRuleDataFilterSearch(dataCompareFilter);
+            dataFilter.setCompareMode(true);
+            dataSort.setSort(Settings.getAmCmpRuleSort(),Settings.isAmCmpRuleSortAscending());
         } else {
             dataFilter = new NamedRuleDataFilterSearch(dataSort);
+            dataSort.setSort(Settings.getAmRuleSort(),Settings.isAmRuleSortAscending());
         }
         
         applyFilter();
@@ -86,7 +89,9 @@ public class NamedRuleComponent extends JPanel {
             column = table.getColumnModel().getColumn(i);
             column.setHeaderRenderer(new NamedRuleTableHearderRenderer());
             column.setCellRenderer(new NamedRuleTableCellRenderer(mode));
-            if(i == 0 || i == 1) {
+            if(i == NamedRuleDataFilterInterface.TYPE_COLUMN ||
+                    i == NamedRuleDataFilterInterface.INSTANCES_COLUMN ||
+                    i == NamedRuleDataFilterInterface.COMPARE_COLUMN) {
                 column.setResizable(false);
                 column.setPreferredWidth(28);
                 column.setMaxWidth(28);
@@ -107,6 +112,7 @@ public class NamedRuleComponent extends JPanel {
         panelRuleList.add(namedComponentScroll);
         
         tabNamed = new JTabbedPane();
+        tabNamed.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
         tabNamed.add("Details",GUIutilities.createPanelMargined(createTabDetails()));
         tabNamed.add("Unused",GUIutilities.createPanelMargined(createTabMissing()));
         tabNamed.add("Sort",GUIutilities.createPanelMargined(createTabSort()));
@@ -114,7 +120,7 @@ public class NamedRuleComponent extends JPanel {
         tabNamed.add("Search",GUIutilities.createPanelMargined(createTabSearch()));
         tabNamed.add("Tree",createTabReferences());
         if(mode) {
-            tabNamed.add("Compare",GUIutilities.createPanelMargined(createTabCompare()));
+            tabNamed.add("Compare Filter",GUIutilities.createPanelMargined(createTabCompare()));
             tabNamed.setSelectedIndex(Settings.getAmCmpRuleTab());
         } else
             tabNamed.setSelectedIndex(Settings.getAmRuleTab());
@@ -126,7 +132,7 @@ public class NamedRuleComponent extends JPanel {
                     Settings.setAmCmpRuleTab(tabNamed.getSelectedIndex());
             }
         });
-
+        
         
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout(GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
@@ -248,11 +254,11 @@ public class NamedRuleComponent extends JPanel {
     }
     
     private JPanel createTabSort() {
-        boxFirstSort = new JComboBox(NamedRuleDataFilterSort.SORT_COLUMN_SELECTION);
+        boxFirstSort = new JComboBox(dataSort.getSortColumns());
         boxFirstSort.setSelectedIndex(dataSort.getSort(0));
-        boxSecondSort = new JComboBox(NamedRuleDataFilterSort.SORT_COLUMN_SELECTION);
+        boxSecondSort = new JComboBox(dataSort.getSortColumns());
         boxSecondSort.setSelectedIndex(dataSort.getSort(1));
-        boxThirdSort = new JComboBox(NamedRuleDataFilterSort.SORT_COLUMN_SELECTION);
+        boxThirdSort = new JComboBox(dataSort.getSortColumns());
         boxThirdSort.setSelectedIndex(dataSort.getSort(2));
         checkAscending = new JCheckBox("Ascending",dataSort.isAscending());
         JButton buttonSortNamed = new JButton("Sort");
@@ -262,8 +268,14 @@ public class NamedRuleComponent extends JPanel {
                 sort[0] = boxFirstSort.getSelectedIndex();
                 sort[1] = boxSecondSort.getSelectedIndex();
                 sort[2] = boxThirdSort.getSelectedIndex();
-                Settings.setAmRuleSort(sort);
-                Settings.setAmRuleSortAscending(checkAscending.isSelected());
+                if(dataSort.isCompare()) {
+                    Settings.setAmCmpRuleSort(sort);
+                    Settings.setAmCmpRuleSortAscending(checkAscending.isSelected());
+                    
+                } else {
+                    Settings.setAmRuleSort(sort);
+                    Settings.setAmRuleSortAscending(checkAscending.isSelected());
+                }
                 dataSort.setSort(sort, checkAscending.isSelected());
                 applyFilter();
             }
