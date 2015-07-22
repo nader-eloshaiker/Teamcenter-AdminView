@@ -92,7 +92,7 @@ public enum ImageEnum {
     utilExpandAll("images/util/expand_16.png"),
     utilExit("images/util/exit_16.png"),
     utilFind("images/util/find_16.png"),
-    
+
     appLogo("images/app/logoIcon.gif"),
     appLogoBanner("images/app/logoBanner.gif");
     

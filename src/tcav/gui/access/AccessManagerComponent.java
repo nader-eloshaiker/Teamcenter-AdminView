@@ -32,6 +32,8 @@ public class AccessManagerComponent extends TabbedPanel {
     private JSplitPane splitPane;
     
     private AccessManager am;
+    private NamedRuleSelectionListener ruleSelectionListener;
+    private RuleTreeSelectionListener treeSelectionListener;
     
     /**
      * Creates a new instance of AccessManagerComponent
@@ -44,71 +46,11 @@ public class AccessManagerComponent extends TabbedPanel {
         accessControl = new AccessRuleComponent(am);
         
         namedACL = new NamedRuleComponent(parentFrame, am);
-        namedACL.getTable().getSelectionModel().addListSelectionListener( new ListSelectionListener() {
-            public void valueChanged(ListSelectionEvent e) {
-                int i = namedACL.getTable().getSelectedRow();
-                if (i > -1) {
-                    if(namedACL.getModel().getAccessRule(i).getRuleTreeReferences().size() > 0) {
-                        
-                        TreePath[] paths = getTreePaths(ruletree.getTree(), namedACL.getModel().getAccessRule(i).getRuleTreeReferences());
-                        if(!isTreePathAvailable(paths, ruletree.getTree().getSelectionPaths())) {
-                            ruletree.getTree().setSelectionPaths(paths);
-                            ruletree.getTree().scrollPathToVisible(paths[0]);
-                        }
-                        
-                    } else {
-                        ruletree.getTree().clearSelection();
-                    }
-                    namedACL.updateReferences(i);
-                    accessControl.updateTable(namedACL.getModel().getAccessRule(i));
-                    
-                } else
-                    accessControl.updateTable();
-            }
-        });
-        
         ruletree = new RuleTreeComponent(parentFrame, am);
-        ruletree.getTree().addTreeSelectionListener(new TreeSelectionListener() {
-            private TreePath oldPath;
-            
-            public void valueChanged(TreeSelectionEvent e) {
-                TreePath newPath = e.getPath();
-                
-                if(oldPath != null){
-                    if(e.isAddedPath(e.getPath()) && newPath.equals(oldPath))
-                        return;
-                }
-                
-                RuleTreeNode treeNode = (RuleTreeNode)e.getPath().getLastPathComponent();
-                
-                if(e.isAddedPath(e.getPath())) {
-                    oldPath = newPath;
-                    
-                    if(treeNode.getAccessRule() != null){
-                        int index = namedACL.getModel().indexOfRuleName(treeNode.getAccessRuleName());
-                        if(index > -1) {
-                            namedACL.getTable().setRowSelectionInterval(index,index);
-                            namedACL.getTable().getSelectionModel().setAnchorSelectionIndex(index);
-                            namedACL.getTable().scrollRectToVisible(
-                                    namedACL.getTable().getCellRect(
-                                    namedACL.getTable().getSelectionModel().getAnchorSelectionIndex(),
-                                    namedACL.getTable().getColumnModel().getSelectionModel().getAnchorSelectionIndex(),
-                                    false)
-                                    );
-                        } else
-                            accessControl.updateTable(treeNode.getAccessRule());
-                        
-                    } else {
-                        namedACL.getTable().clearSelection();
-                        accessControl.updateTable();
-                    }
-                } else {
-                    oldPath = null;
-                    namedACL.getTable().clearSelection();
-                    accessControl.updateTable();
-                }
-            }
-        });
+        ruleSelectionListener = new NamedRuleSelectionListener(namedACL, ruletree, accessControl, Settings.isAmSyncSelection());
+        namedACL.getTable().getSelectionModel().addListSelectionListener(ruleSelectionListener);
+        treeSelectionListener = new RuleTreeSelectionListener(namedACL, accessControl, Settings.isAmSyncSelection()); 
+        ruletree.getTree().addTreeSelectionListener(treeSelectionListener);
         
         /* Rules Panel */
         JPanel panelRule =  new JPanel();
@@ -121,13 +63,13 @@ public class AccessManagerComponent extends TabbedPanel {
                 true,
                 GUIutilities.createPanelMargined(panelRule),
                 GUIutilities.createPanelMargined(accessControl));
-        splitPane.setDividerLocation(Settings.getAMSplitLocation());
+        splitPane.setDividerLocation(Settings.getAmSplitLocation());
         splitPane.setResizeWeight(1.0);
         splitPane.setOneTouchExpandable(true);
         splitPane.setBorder(null);
         ((BasicSplitPaneUI)splitPane.getUI()).getDivider().addComponentListener(new ComponentAdapter(){
             public void componentMoved(ComponentEvent e){
-                Settings.setAMSplitLocation(splitPane.getDividerLocation());
+                Settings.setAmSplitLocation(splitPane.getDividerLocation());
             }
         });
         
@@ -155,68 +97,77 @@ public class AccessManagerComponent extends TabbedPanel {
         
     }
     
+    private JToolBar toolBar;
+    private JCheckBox checkSync;
+    
+    public JToolBar getToolBar() {
+        
+        if(toolBar != null)
+            return toolBar;
+        
+        checkSync = new JCheckBox("Sync Selection", Settings.isAmCmpSyncSelection());
+        checkSync.setOpaque(false);
+        checkSync.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e){
+                ruleSelectionListener.setSync(checkSync.isSelected());
+                treeSelectionListener.setSync(checkSync.isSelected());
+                Settings.setAmSyncSelection(checkSync.isSelected());
+            }
+        });
+        
+        
+        toolBar = new JToolBar();
+        toolBar.add(checkSync);
+        
+        return toolBar;
+    }
+    
     private JPanel statusBar;
     
     public JComponent getStatusBar() {
-        if(statusBar == null) {
-            JLabel textAuthor = new JLabel(" Author: "+am.getMetaData().getUserDetails()+" ");
-            textAuthor.setBorder(new BevelBorder(BevelBorder.LOWERED));
-            JLabel textDate = new JLabel(" Date: "+am.getMetaData().getTimeDetails()+" ");
-            textDate.setBorder(new BevelBorder(BevelBorder.LOWERED));
-            JLabel textFile = new JLabel(" Path: "+am.getFile().getParent()+" ");
-            textFile.setBorder(new BevelBorder(BevelBorder.LOWERED));
-            statusBar = new JPanel();
-            statusBar.setLayout(new BorderLayout(1,1));
-            statusBar.add("Center", textAuthor);
-            statusBar.add("West", textFile);
-            statusBar.add("East", textDate);
-        }
+        if(statusBar != null)
+            return statusBar;
+        
+        JLabel textFile = new JLabel(" "+am.getFile().getParent()+" ");
+        textFile.setBorder(new BevelBorder(BevelBorder.LOWERED));
+        JPanel panelFile = new JPanel();
+        panelFile.setLayout(new BorderLayout());
+        panelFile.add(new JLabel(" Path:"), BorderLayout.WEST);
+        panelFile.add(textFile, BorderLayout.CENTER);
+        
+        JLabel textAuthor = new JLabel(" "+am.getMetaData().getUserDetails()+" ");
+        textAuthor.setBorder(new BevelBorder(BevelBorder.LOWERED));
+        JPanel panelAuthor = new JPanel();
+        panelAuthor.setLayout(new BorderLayout());
+        panelAuthor.add(new JLabel("  Author:"), BorderLayout.WEST);
+        panelAuthor.add(textAuthor, BorderLayout.CENTER);
+        
+        JLabel textDate = new JLabel(" "+am.getMetaData().getDate()+" ");
+        textDate.setBorder(new BevelBorder(BevelBorder.LOWERED));
+        JPanel panelDate = new JPanel();
+        panelDate.setLayout(new BorderLayout());
+        panelDate.add(new JLabel("  Date:"), BorderLayout.WEST);
+        panelDate.add(textDate, BorderLayout.CENTER);
+        
+        JLabel textTime = new JLabel(" "+am.getMetaData().getTime()+" ");
+        textTime.setBorder(new BevelBorder(BevelBorder.LOWERED));
+        JPanel panelTime = new JPanel();
+        panelTime.setLayout(new BorderLayout());
+        panelTime.add(new JLabel("  Time:"), BorderLayout.WEST);
+        panelTime.add(textTime, BorderLayout.CENTER);
+        
+        JPanel panelDateTime = new JPanel();
+        panelDateTime.setLayout(new BorderLayout());
+        panelDateTime.add(panelDate, BorderLayout.WEST);
+        panelDateTime.add(panelTime, BorderLayout.EAST);
+        
+        statusBar = new JPanel();
+        statusBar.setLayout(new BorderLayout());
+        statusBar.add(panelFile, BorderLayout.WEST);
+        statusBar.add(panelAuthor, BorderLayout.CENTER);
+        statusBar.add(panelDateTime, BorderLayout.EAST);
+        
         return statusBar;
     }
-    
-    public AccessManager getAccessManager() {
-        return am;
-    }
-    
-    public int indexOfTreePath(TreePath path, TreePath[] paths) {
-        if((path == null) || (paths == null))
-            return -1;
-        
-        for(int i=0; i<paths.length; i++)
-            if(path.equals(paths[i]))
-                return i;
-        
-        return -1;
-    }
-    
-    public boolean isTreePathAvailable(TreePath[] src, TreePath[] dst) {
-        for(int i=0; i<src.length; i++)
-            if(indexOfTreePath(src[i], dst) > -1)
-                return true;
-        
-        return false;
-    }
-    
-    private TreePath[] getTreePaths(JTreeAdvanced tree, ArrayList<RuleTreeNode> components) {
-        ArrayList<TreePath> paths = new ArrayList<TreePath>();
-        
-        searchTree(tree, tree.getPathForRow(0), paths, components);
-        
-        return paths.toArray(new TreePath[components.size()]);
-    }
-    
-    private void searchTree(JTreeAdvanced tree, TreePath currentPath, ArrayList<TreePath> paths, ArrayList<RuleTreeNode> components) {
-        if(components.indexOf((RuleTreeNode)currentPath.getLastPathComponent()) > -1)
-            paths.add(currentPath);
-        
-        int childCount = tree.getModel().getChildCount(currentPath.getLastPathComponent());
-        if(childCount > 0) {
-            for (int e=0; e<childCount; e++ ) {
-                TreePath newPath = currentPath.pathByAddingChild(tree.getModel().getChild(currentPath.getLastPathComponent(), e));
-                searchTree(tree, newPath, paths, components);
-            }
-        }
-    }
-    
     
 }

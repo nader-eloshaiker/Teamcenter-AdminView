@@ -34,6 +34,17 @@ public class AccessRuleTableCellRenderer implements TableCellRenderer{
             System.out.println("Couldn't load images: " + e);
         }
     }
+    
+    private boolean compareMode;
+    
+    public AccessRuleTableCellRenderer() {
+        this(false);
+    }
+    
+    public AccessRuleTableCellRenderer(boolean compareMode) {
+        this.compareMode = compareMode;
+    }
+     
     /** Creates a new instance of AccessRuleTableHearderRenderer */
     public Component getTableCellRendererComponent(JTable table,
             Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -58,6 +69,10 @@ public class AccessRuleTableCellRenderer implements TableCellRenderer{
             cell.setIcon(null);
             cell.setText(s);
         }
+        
+        if(!compareMode)
+            return cell;
+        
         
         int result = ((AccessRuleTableModel)table.getModel()).getAccessRule().get(row).getComparison();
         switch(result) {

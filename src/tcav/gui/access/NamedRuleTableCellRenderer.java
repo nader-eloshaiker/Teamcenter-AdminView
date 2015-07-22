@@ -34,6 +34,16 @@ public class NamedRuleTableCellRenderer implements TableCellRenderer {
         }
     }
     
+    private boolean compareMode;
+    
+    public NamedRuleTableCellRenderer() {
+        this(false);
+    }
+    
+    public NamedRuleTableCellRenderer(boolean compareMode) {
+        this.compareMode = compareMode;
+    }
+
     /* Creates a new instance of AccessRuleTableHearderRenderer */
     public Component getTableCellRendererComponent(JTable table,
             Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -66,6 +76,10 @@ public class NamedRuleTableCellRenderer implements TableCellRenderer {
                 cell.setToolTipText(s);
                 break;
         }
+        
+        if(!compareMode)
+            return cell;
+        
         
         int result = ((NamedRuleDataFilterAbstract)table.getModel()).getAccessRule(row).getComparison();
         switch(result) {

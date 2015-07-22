@@ -16,6 +16,8 @@ import java.io.File;
 import java.util.Properties;
 import tcav.resources.ResourceStrings;
 import tcav.manager.AbstractManager;
+import tcav.gui.access.NamedRuleComponent;
+import tcav.gui.compare.CompareAccessManagerComponent;
 
 /**
  *
@@ -41,9 +43,6 @@ public class Settings {
     private static String userInterface;
     private static final String PROPERTY_USERINTERFACE = "tcav.userInterface";
     private static final String PROPERTY_USERINTERFACE_DEFAULT = "";
-    private static String compareMode;
-    private static final String PROPERTY_COMPAREMODE = "tcav.comparemode";
-    private static final String PROPERTY_COMPAREMODE_DEFAULT = AbstractManager.ACCESS_MANAGER_TYPE;
     
     /* properties access manager*/
     private static String amLoadPath;
@@ -61,6 +60,9 @@ public class Settings {
     private static int amACLTab;
     private static final String PROPERTY_AM_ACLTAB = "tcav.am.aclTab";
     private static final int PROPERTY_AM_ACLTAB_DEFAULT = 0;
+    private static boolean amSyncSelection;
+    private static final String PROPERTY_AM_SYNCSELECTION = "tcav.am.syncSelection";
+    private static final boolean PROPERTY_AM_SYNCSELECTION_DEFAULT = true;
     
     /* properties process manager */
     private static String pmLoadPath;
@@ -78,6 +80,33 @@ public class Settings {
     private static boolean pmActionExpandedView;
     private static final String PROPERTY_PM_ACTIONEXPANDEDVIEW = "tcav.pm.actionExpandedView";
     private static final boolean PROPERTY_PM_ACTIONEXPANDEDVIEW_DEFAULT = true;
+    
+    
+    private static String compareMode;
+    private static final String PROPERTY_COMPAREMODE = "tcav.compareMode";
+    private static final String PROPERTY_COMPAREMODE_DEFAULT = AbstractManager.ACCESS_MANAGER_TYPE;
+    
+    
+    /* properties access manager comparison */
+    private static boolean amCmpSyncSelection;
+    private static final String PROPERTY_AM_CMP_SYNCSELECTION = "tcav.am.cmp.syncSelection";
+    private static final boolean PROPERTY_AM_CMP_SYNCSELECTION_DEFAULT = true;
+    private static int amCmpACLTab;
+    private static final String PROPERTY_AM_CMP_ACLTAB = "tcav.am.cmp.aclTab";
+    private static final int PROPERTY_AM_CMP_ACLTAB_DEFAULT = 6;
+    private static String amCmpDisplayMode;
+    private static final String PROPERTY_AM_CMP_DISPLAYMODE = "tcav.am.cmp.displayMode";
+    private static final String PROPERTY_AM_CMP_DISPLAYMODE_DEFAULT = CompareAccessManagerComponent.MODE_TREE;
+    private static int amCmpFilterEqual;
+    private static final String PROPERTY_AM_CMP_FILTEREQUAL = "tcav.am.cmp.filterEqual";
+    private static final int PROPERTY_AM_CMP_FILTEREQUAL_DEFAULT = NamedRuleComponent.COMPARE_HIDE_INDEX;
+    private static int amCmpFilterNotEqual;
+    private static final String PROPERTY_AM_CMP_FILTERNOTEQUAL = "tcav.am.cmp.filterNotEqual";
+    private static final int PROPERTY_AM_CMP_FILTERNOTEQUAL_DEFAULT = NamedRuleComponent.COMPARE_SHOW_INDEX;
+    private static int amCmpFilterNotFound;
+    private static final String PROPERTY_AM_CMP_FILTERNOTFOUND = "tcav.am.cmp.filterNotFound";
+    private static final int PROPERTY_AM_CMP_FILTERNOTFOUND_DEFAULT = NamedRuleComponent.COMPARE_SHOW_INDEX;
+    
     
     private static Properties property = new Properties();
     
@@ -97,14 +126,6 @@ public class Settings {
             fis.close();
         }
         
-        setCompareMode(
-                getPropertyAsString(
-                PROPERTY_COMPAREMODE,
-                PROPERTY_COMPAREMODE_DEFAULT));
-        setAMLoadPath(
-                getPropertyAsString(
-                PROPERTY_AMLOADPATH,
-                PROPERTY_AMLOADPATH_DEFAULT));
         setUserInterface(
                 getPropertyAsString(
                 PROPERTY_USERINTERFACE,
@@ -131,41 +152,81 @@ public class Settings {
                 PROPERTY_FRAMELOCATIONY_DEFAULT));
         
         
-        setAMSplitLocation(
+        setCompareMode(
+                getPropertyAsString(
+                PROPERTY_COMPAREMODE,
+                PROPERTY_COMPAREMODE_DEFAULT));
+        
+        
+        setAmCmpSyncSelection(
+                getPropertyAsBoolean(
+                PROPERTY_AM_CMP_SYNCSELECTION,
+                PROPERTY_AM_CMP_SYNCSELECTION_DEFAULT));
+        setAmCmpRuleTab(
+                getPropertyAsInt(
+                PROPERTY_AM_CMP_ACLTAB,
+                PROPERTY_AM_CMP_ACLTAB_DEFAULT));
+        setAmCmpFilterEqual(
+                getPropertyAsInt(
+                PROPERTY_AM_CMP_FILTEREQUAL,
+                PROPERTY_AM_CMP_FILTEREQUAL_DEFAULT));
+        setAmCmpFilterNotEqual(
+                getPropertyAsInt(
+                PROPERTY_AM_CMP_FILTERNOTEQUAL,
+                PROPERTY_AM_CMP_FILTERNOTEQUAL_DEFAULT));
+        setAmCmpFilterNotFound(
+                getPropertyAsInt(
+                PROPERTY_AM_CMP_FILTERNOTFOUND,
+                PROPERTY_AM_CMP_FILTERNOTFOUND_DEFAULT));
+        setAmCmpDisplayMode(
+                getPropertyAsString(
+                PROPERTY_AM_CMP_DISPLAYMODE,
+                PROPERTY_AM_CMP_DISPLAYMODE_DEFAULT));
+        
+        
+        setAmLoadPath(
+                getPropertyAsString(
+                PROPERTY_AMLOADPATH,
+                PROPERTY_AMLOADPATH_DEFAULT));
+        setAmSplitLocation(
                 getPropertyAsInt(
                 PROPERTY_AM_SPLITLOCATION,
                 PROPERTY_AM_SPLITLOCATION_DEFAULT));
-        setAMACLSortAscending(
+        setAmRuleSortAscending(
                 getPropertyAsBoolean(
                 PROPERTY_AM_ACLSORTASCENDING,
                 PROPERTY_AM_ACLSORTASCENDING_DEFAULT));
-        setAMACLTab(
+        setAmRuleTab(
                 getPropertyAsInt(
                 PROPERTY_AM_ACLTAB,
                 PROPERTY_AM_ACLTAB_DEFAULT));
-        setAMACLSort(
+        setAmRuleSort(
                 getPropertyAsIntArray(
                 PROPERTY_AM_ACLSORT,
                 PROPERTY_AM_ACLSORT_DEFAULT));
+         setAmSyncSelection(
+                getPropertyAsBoolean(
+                PROPERTY_AM_SYNCSELECTION,
+                PROPERTY_AM_SYNCSELECTION_DEFAULT));
+       
         
-        
-        setPMLoadPath(
+        setPmLoadPath(
                 getPropertyAsString(
                 PROPERTY_PMLOADPATH,
                 PROPERTY_PMLOADPATH_DEFAULT));
-        setPMProcedureMode(
+        setPmProcedureMode(
                 getPropertyAsInt(
                 PROPERTY_PM_PROCEDUREMODE,
                 PROPERTY_PM_PROCEDUREMODE_DEFAULT));
-        setPMSplitLocation(
+        setPmSplitLocation(
                 getPropertyAsInt(
                 PROPERTY_PM_SPLITLOCATION,
                 PROPERTY_PM_SPLITLOCATION_DEFAULT));
-        setPMWorkflowExpandedView(
+        setPmWorkflowExpandedView(
                 getPropertyAsBoolean(
                 PROPERTY_PM_WORKFLOWEXPANDEDVIEW,
                 PROPERTY_PM_WORKFLOWEXPANDEDVIEW_DEFAULT));
-        setPMActionExpandedView(
+        setPmActionExpandedView(
                 getPropertyAsBoolean(
                 PROPERTY_PM_ACTIONEXPANDEDVIEW,
                 PROPERTY_PM_ACTIONEXPANDEDVIEW_DEFAULT));
@@ -178,7 +239,7 @@ public class Settings {
                 getUserInterface());
         property.setProperty(
                 PROPERTY_SAVESETTINGSONEXIT,
-                Boolean.toString(getSaveSettingsOnExit()));
+                Boolean.toString(isSaveSettingsOnExit()));
         property.setProperty(
                 PROPERTY_FRAMESIZEX,
                 Integer.toString(getFrameSizeX()));
@@ -194,40 +255,63 @@ public class Settings {
         
         
         property.setProperty(
+                PROPERTY_AM_CMP_SYNCSELECTION,
+                Boolean.toString(isAmCmpSyncSelection()));
+        property.setProperty(
+                PROPERTY_AM_CMP_ACLTAB,
+                Integer.toString(getAmCmpRuleTab()));
+        property.setProperty(
                 PROPERTY_COMPAREMODE,
                 getCompareMode());
         property.setProperty(
+                PROPERTY_AM_CMP_FILTEREQUAL,
+                Integer.toString(getAmCmpFilterEqual()));
+        property.setProperty(
+                PROPERTY_AM_CMP_FILTERNOTEQUAL,
+                Integer.toString(getAmCmpFilterNotEqual()));
+        property.setProperty(
+                PROPERTY_AM_CMP_FILTERNOTFOUND,
+                Integer.toString(getAmCmpFilterNotFound()));
+        property.setProperty(
+                PROPERTY_AM_CMP_DISPLAYMODE,
+                getAmCmpDisplayMode());
+        
+        
+        property.setProperty(
                 PROPERTY_AMLOADPATH,
-                getAMLoadPath());
+                getAmLoadPath());
         property.setProperty(
                 PROPERTY_AM_SPLITLOCATION,
-                Integer.toString(getAMSplitLocation()));
+                Integer.toString(getAmSplitLocation()));
         property.setProperty(
                 PROPERTY_AM_ACLSORTASCENDING,
-                Boolean.toString(getAMACLSortAscending()));
+                Boolean.toString(isAmRuleAscending()));
         property.setProperty(
                 PROPERTY_AM_ACLTAB,
-                Integer.toString(getAMACLTab()));
+                Integer.toString(getAmRuleTab()));
         property.setProperty(
                 PROPERTY_AM_ACLSORT,
-                convertIntArrayToString(getAMACLSort()));
+                convertIntArrayToString(getAmRuleSort()));
+        property.setProperty(
+                PROPERTY_AM_SYNCSELECTION,
+                Boolean.toString(isAmSyncSelection()));
         
         
         property.setProperty(
                 PROPERTY_PMLOADPATH,
-                getPMLoadPath());
+                getPmLoadPath());
         property.setProperty(
                 PROPERTY_PM_PROCEDUREMODE,
-                Integer.toString(getPMProcedureMode()));
+                Integer.toString(getPmProcedureMode()));
         property.setProperty(
                 PROPERTY_PM_SPLITLOCATION,
-                Integer.toString(getPMSplitLocation()));
+                Integer.toString(getPmSplitLocation()));
         property.setProperty(
                 PROPERTY_PM_WORKFLOWEXPANDEDVIEW,
-                Boolean.toString(getPMWorkflowExpandedView()));
+                Boolean.toString(isPmWorkflowExpandedView()));
         property.setProperty(
                 PROPERTY_PM_ACTIONEXPANDEDVIEW,
-                Boolean.toString(getPMActionExpandedView()));
+                Boolean.toString(isPmActionExpandedView()));
         
         File path = new File(System.getenv("USERPROFILE"),".TcAV");
         if(!path.exists())
@@ -253,19 +337,67 @@ public class Settings {
         Settings.compareMode = compareMode;
     }
     
-    public static String getAMLoadPath() {
+    public static int getAmCmpRuleTab() {
+        return amCmpACLTab;
+    }
+    
+    public static void setAmCmpRuleTab(int amCmpACLTab) {
+        Settings.amCmpACLTab = amCmpACLTab;
+    }
+
+    public static void setAmCmpSyncSelection(boolean amCmpSyncSelection) {
+        Settings.amCmpSyncSelection = amCmpSyncSelection;
+    }
+
+    public static boolean isAmCmpSyncSelection() {
+        return amCmpSyncSelection;
+    }
+    
+    public static String getAmCmpDisplayMode() {
+        return amCmpDisplayMode;
+    }
+    
+    public static void setAmCmpDisplayMode(String amCmpDisplayMode) {
+        Settings.amCmpDisplayMode = amCmpDisplayMode;
+    }
+
+    public static int getAmCmpFilterEqual() {
+        return  amCmpFilterEqual;
+    }
+    
+    public static void setAmCmpFilterEqual(int amCmpFilterEqual) {
+        Settings.amCmpFilterEqual = amCmpFilterEqual;
+    }
+    
+    public static int getAmCmpFilterNotEqual() {
+        return  amCmpFilterNotEqual;
+    }
+    
+    public static void setAmCmpFilterNotEqual(int amCmpFilterNotEqual) {
+        Settings.amCmpFilterNotEqual = amCmpFilterNotEqual;
+    }
+    
+    public static int getAmCmpFilterNotFound() {
+        return  amCmpFilterNotFound;
+    }
+    
+    public static void setAmCmpFilterNotFound(int amCmpFilterNotFound) {
+        Settings.amCmpFilterNotFound = amCmpFilterNotFound;
+    }
+    
+    public static String getAmLoadPath() {
         return amLoadPath;
     }
     
-    public static void setAMLoadPath(String amLoadPath) {
+    public static void setAmLoadPath(String amLoadPath) {
         Settings.amLoadPath = amLoadPath;
     }
     
-    public static String getPMLoadPath() {
+    public static String getPmLoadPath() {
         return pmLoadPath;
     }
     
-    public static void setPMLoadPath(String pmLoadPath) {
+    public static void setPmLoadPath(String pmLoadPath) {
         Settings.pmLoadPath = pmLoadPath;
     }
     
@@ -277,7 +409,7 @@ public class Settings {
         Settings.userInterface = userInterface;
     }
     
-    public static boolean getSaveSettingsOnExit() {
+    public static boolean isSaveSettingsOnExit() {
         return saveSettingsOnExit;
     }
     
@@ -325,76 +457,84 @@ public class Settings {
         Settings.frameLocationY = frameLocationY;
     }
     
-    public static int getAMSplitLocation(){
+    public static int getAmSplitLocation(){
         return amSplitLocation;
     }
     
-    public static void setAMSplitLocation(int amSplitLocation) {
+    public static void setAmSplitLocation(int amSplitLocation) {
         if(amSplitLocation == -1)
             Settings.amSplitLocation = (int)(frameSizeY*0.58);
         else
             Settings.amSplitLocation = amSplitLocation;
     }
     
-    public static int[] getAMACLSort() {
+    public static int[] getAmRuleSort() {
         return amACLSort;
     }
     
-    public static void setAMACLSort(int[] amACLSort) {
+    public static void setAmRuleSort(int[] amACLSort) {
         Settings.amACLSort = amACLSort;
     }
     
-    public static boolean getAMACLSortAscending() {
+    public static boolean isAmRuleAscending() {
         return amACLSortAscending;
     }
     
-    public static void setAMACLSortAscending(boolean amACLSortAscending) {
+    public static void setAmRuleSortAscending(boolean amACLSortAscending) {
         Settings.amACLSortAscending = amACLSortAscending;
     }
     
-    public static int getAMACLTab() {
+    public static int getAmRuleTab() {
         return amACLTab;
     }
     
-    public static void setAMACLTab(int amACLTab) {
+    public static void setAmRuleTab(int amACLTab) {
         Settings.amACLTab = amACLTab;
     }
     
-    public static int getPMProcedureMode() {
+    public static void setAmSyncSelection(boolean amSyncSelection) {
+        Settings.amSyncSelection = amSyncSelection;
+    }
+
+    public static boolean isAmSyncSelection() {
+        return amSyncSelection;
+    }
+    
+    public static int getPmProcedureMode() {
         return pmProcedureMode;
     }
     
-    public static void setPMProcedureMode(int pmProcedureMode) {
+    public static void setPmProcedureMode(int pmProcedureMode) {
         if(pmProcedureMode == -1)
             Settings.pmProcedureMode = 0;
         else
             Settings.pmProcedureMode = pmProcedureMode;
     }
     
-    public static int getPMSplitLocation(){
+    public static int getPmSplitLocation(){
         return pmSplitLocation;
     }
     
-    public static void setPMSplitLocation(int pmSplitLocation) {
+    public static void setPmSplitLocation(int pmSplitLocation) {
         if(pmSplitLocation == -1)
             Settings.pmSplitLocation = (int)(frameSizeX*0.5);
         else
             Settings.pmSplitLocation = pmSplitLocation;
     }
     
-    public static boolean getPMWorkflowExpandedView() {
+    public static boolean isPmWorkflowExpandedView() {
         return pmWokflowExpandedView;
     }
     
-    public static void setPMWorkflowExpandedView(boolean pmWokflowExpandedView) {
+    public static void setPmWorkflowExpandedView(boolean pmWokflowExpandedView) {
         Settings.pmWokflowExpandedView = pmWokflowExpandedView;
     }
     
-    public static boolean getPMActionExpandedView() {
+    public static boolean isPmActionExpandedView() {
         return pmActionExpandedView;
     }
     
-    public static void setPMActionExpandedView(boolean pmActionExpandedView) {
+    public static void setPmActionExpandedView(boolean pmActionExpandedView) {
         Settings.pmActionExpandedView = pmActionExpandedView;
     }
     

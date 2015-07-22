@@ -53,21 +53,21 @@ public class AttributeComponent extends JComponent {
         radioExpandAttributes.setOpaque(false);
         radioExpandAttributes.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                Settings.setPMWorkflowExpandedView(radioExpandAttributes.isSelected());
+                Settings.setPmWorkflowExpandedView(radioExpandAttributes.isSelected());
             }
         });
         radioCollapseAttributes = new JRadioButton("Collapsed");
         radioCollapseAttributes.setOpaque(false);
         radioCollapseAttributes.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                Settings.setPMWorkflowExpandedView(!radioCollapseAttributes.isSelected());
+                Settings.setPmWorkflowExpandedView(!radioCollapseAttributes.isSelected());
             }
         });
         ButtonGroup buttonGroup = new ButtonGroup();
         buttonGroup.add(radioExpandAttributes);
         buttonGroup.add(radioCollapseAttributes);
-        buttonGroup.setSelected(radioExpandAttributes.getModel(),Settings.getPMWorkflowExpandedView());
-        buttonGroup.setSelected(radioCollapseAttributes.getModel(),!Settings.getPMWorkflowExpandedView());
+        buttonGroup.setSelected(radioExpandAttributes.getModel(),Settings.isPmWorkflowExpandedView());
+        buttonGroup.setSelected(radioCollapseAttributes.getModel(),!Settings.isPmWorkflowExpandedView());
         
         JToolBar toolBarAttributeView = new GUIutilities().createTreeExpandToolbar(tree, parentFrame);
         toolBarAttributeView.addSeparator();
@@ -97,7 +97,7 @@ public class AttributeComponent extends JComponent {
     
     public void updateTree(IdBase procedure) {
         tree.setModel(new AttributeTreeModel(procedure));
-        if(Settings.getPMWorkflowExpandedView())
+        if(Settings.isPmWorkflowExpandedView())
             GUIutilities.expandTree(tree, parentFrame);
     }
     /*

@@ -24,6 +24,8 @@ public abstract class TabbedPanel extends JPanel {
     
     abstract public JComponent getStatusBar();
     
+    abstract public JComponent getToolBar();
+    
     abstract public AbstractManager getManager();
     
     abstract public ImageIcon getIcon();

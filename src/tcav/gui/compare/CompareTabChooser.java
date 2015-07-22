@@ -168,12 +168,12 @@ public class CompareTabChooser extends JPanel {
         JFileChooser fc = new JFileChooser();
         
         if(ruletreeButton.isSelected()) {
-            path = Settings.getAMLoadPath();
+            path = Settings.getAmLoadPath();
             fc.setCurrentDirectory(new File(path));
             fc.addChoosableFileFilter(new CustomFileFilter(
                     new String[]{"txt",""},"Text File (*.txt; *.)"));
         } else if(procedureButton.isSelected()) {
-            path = Settings.getPMLoadPath();
+            path = Settings.getPmLoadPath();
             fc.setCurrentDirectory(new File(path));
             fc.addChoosableFileFilter(new CustomFileFilter(
                         new String[]{"xml","plmxml"},"XML File (*.xml; *.plmxml)"));
