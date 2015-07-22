@@ -16,16 +16,18 @@ import javax.swing.*;
 import javax.swing.tree.*;
 import java.awt.*;
 import tcav.ruletree.RuleTreeNode;
-import tcav.ResourceLocator;
+import tcav.resources.*;
 
 public class RuleTreeNodeRenderer implements TreeCellRenderer {
     
     static protected ImageIcon ruleIcon;
+    static protected ImageIcon ruleBranchIcon;
     
     static
     {
         try {
-            ruleIcon = new ImageIcon(ResourceLocator.getRultreeImage("Rule.gif"));
+            ruleIcon = ResourceLoader.getImage(ImageEnum.amRule);
+            ruleBranchIcon = ResourceLoader.getImage(ImageEnum.amRuleBranch);
         } catch (Exception e) {
             System.out.println("Couldn't load images: " + e);
         }
@@ -58,9 +60,10 @@ public class RuleTreeNodeRenderer implements TreeCellRenderer {
                     cell.setBackgroundNonSelectionColor(new Color(255,0,0));
                     cell.setBorderSelectionColor(new Color(255,0,0));
                 }
-        if (leaf) {
+        if (leaf)
             cell.setIcon(ruleIcon);
-        }
+        else
+            cell.setIcon(ruleBranchIcon);
         return cell;
     }
 }

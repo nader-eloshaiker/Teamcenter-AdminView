@@ -20,8 +20,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JTable;
 import javax.swing.JLabel;
 import java.awt.Component;
-import tcav.ResourceLocator;
-import tcav.ruletree.AccessControlHeaderEntry;
+import tcav.resources.*;
+import tcav.ruletree.AccessControlHeaderItem;
 
 /**
  *
@@ -39,13 +39,13 @@ public class AccessRuleTableHearderRenderer implements TableCellRenderer{
     public Component getTableCellRendererComponent(JTable table,
             Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         
-        AccessControlHeaderEntry accEntry = (AccessControlHeaderEntry)value;
+        AccessControlHeaderItem accEntry = (AccessControlHeaderItem)value;
         JTableHeader header = table.getTableHeader();
         TableCellRenderer temp = header.getDefaultRenderer();
         DefaultTableCellRenderer cell = (DefaultTableCellRenderer)temp.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         
       	try {
-            icon = new ImageIcon(ResourceLocator.getRultreeColumnImage(accEntry.getIconName()));
+            icon = ResourceLoader.getImage(accEntry.image());
 	} catch (Exception e) {
 	    System.out.println("Couldn't load images: " + e);
 	}
@@ -56,7 +56,7 @@ public class AccessRuleTableHearderRenderer implements TableCellRenderer{
         cell.setIcon(icon);
         cell.setText(null);
         
-        cell.setToolTipText(accEntry.getDescription());
+        cell.setToolTipText(accEntry.description());
         cell.setHorizontalAlignment(SwingConstants.CENTER);
 
         return cell;

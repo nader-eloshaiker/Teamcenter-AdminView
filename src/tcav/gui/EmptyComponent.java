@@ -15,7 +15,7 @@ import javax.swing.border.BevelBorder;
 import javax.swing.ImageIcon;
 import java.awt.Color;
 import java.awt.BorderLayout;
-import tcav.ResourceLocator;
+import tcav.resources.*;
 
 /**
  *
@@ -27,7 +27,7 @@ public class EmptyComponent extends JPanel implements TabbedPanel  {
     public EmptyComponent() {
         ImageIcon iconBanner = new ImageIcon();
         try {
-            iconBanner = new ImageIcon(ResourceLocator.getAppImage("logoBanner.gif"));
+            iconBanner = ResourceLoader.getImage(ImageEnum.appLogoBanner);
         } catch (Exception e) {
             System.out.println("Couldn't load images: " + e);
         }

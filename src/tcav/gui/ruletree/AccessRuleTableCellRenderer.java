@@ -9,7 +9,7 @@
 
 package tcav.gui.ruletree;
 
-import tcav.ResourceLocator;
+import tcav.resources.*;
 import javax.swing.table.*;
 import javax.swing.*;
 import java.awt.Component;
@@ -27,8 +27,8 @@ public class AccessRuleTableCellRenderer implements TableCellRenderer{
     static
     {
         try {
-            yesIcon = new ImageIcon(ResourceLocator.getRultreeImage("Yes.gif"));
-            noIcon = new ImageIcon(ResourceLocator.getRultreeImage("No.gif"));
+            yesIcon = ResourceLoader.getImage(ImageEnum.amYes);
+            noIcon = ResourceLoader.getImage(ImageEnum.amNo);
         } catch (Exception e) {
             System.out.println("Couldn't load images: " + e);
         }
@@ -44,6 +44,7 @@ public class AccessRuleTableCellRenderer implements TableCellRenderer{
         
         if(column > 1) {
             cell.setHorizontalAlignment(SwingConstants.CENTER);
+            cell.setVerticalAlignment(SwingConstants.CENTER);
             if(s.equals("Y"))
                 cell.setIcon(yesIcon);
             else if(s.equals("N"))

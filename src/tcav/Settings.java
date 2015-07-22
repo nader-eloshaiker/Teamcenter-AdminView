@@ -14,6 +14,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.File;
 import java.util.Properties;
+import tcav.resources.ResourceStrings;
 
 /**
  *
@@ -228,7 +229,7 @@ public class Settings {
         
         if(path.canWrite()) {
             FileOutputStream fos = new FileOutputStream(file);
-            property.store(fos, ResourceLocator.getVersion());
+            property.store(fos, ResourceStrings.getVersion());
             fos.close();
         }
     }

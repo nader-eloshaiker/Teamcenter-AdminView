@@ -12,7 +12,7 @@ package tcav.gui.ruletree;
 import javax.swing.table.*;
 import javax.swing.*;
 import java.awt.*;
-import tcav.ResourceLocator;
+import tcav.resources.*;
 
 /**
  *
@@ -26,8 +26,8 @@ public class NamedRuleTableCellRenderer implements TableCellRenderer{
     static
     {
         try {
-            typeRuletreeIcon = new ImageIcon(ResourceLocator.getRultreeImage("NamedAclRuletree.gif"));
-            typeWorkflowIcon = new ImageIcon(ResourceLocator.getRultreeImage("NamedAclWorkflow.gif"));
+            typeRuletreeIcon = ResourceLoader.getImage(ImageEnum.amNamedAclType);
+            typeWorkflowIcon = ResourceLoader.getImage(ImageEnum.amWorkflowType);
         } catch (Exception e) {
             System.out.println("Couldn't load images: " + e);
         }

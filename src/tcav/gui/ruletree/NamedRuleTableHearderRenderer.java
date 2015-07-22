@@ -20,7 +20,7 @@ import javax.swing.JLabel;
 import javax.swing.ImageIcon;
 import javax.swing.JTable;
 import java.awt.Component;
-import tcav.ResourceLocator;
+import tcav.resources.*;
 
 /**
  *
@@ -34,8 +34,8 @@ public class NamedRuleTableHearderRenderer implements TableCellRenderer {
     static
     {
         try {
-            iconType = new ImageIcon(ResourceLocator.getRultreeImage("NamedAclType.gif"));
-            iconCount = new ImageIcon(ResourceLocator.getRultreeImage("NamedAclCount.gif"));
+            iconType = ResourceLoader.getImage(ImageEnum.aclAccessorType);
+            iconCount = ResourceLoader.getImage(ImageEnum.aclCopy);
         } catch (Exception e) {
             System.out.println("Couldn't load images: " + e);
         }

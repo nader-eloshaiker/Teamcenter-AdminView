@@ -27,9 +27,7 @@ public class AccessManager {
     
     /** Creates a new instance of ruleTreeReader */
     public AccessManager() {
-        metaData = new MetaData();
         arList = new AccessRuleList();
-        acHeader = new AccessControlHeader();
         unusedRules = new ArrayList<AccessRule>();
         rootTreeNode = new RuleTreeNode();
     }
@@ -114,12 +112,12 @@ public class AccessManager {
                         //All meta data has been imported,
                         //This line contains acHeader, don't break.
                         readMode = MODE_ACCESS_CONTROL_acHeader;
-                        metaData.setMetaData(ruleMetaData);
+                        metaData = new MetaData(ruleMetaData);
                     }
                     
                 case MODE_ACCESS_CONTROL_acHeader:
                     if (thisLine.length() != 0){
-                        acHeader.setAccessControlColumns(thisLine);
+                        acHeader = new AccessControlHeader(thisLine);
                         readMode = MODE_ACCESS_CONTROL;
                     }
                     break;

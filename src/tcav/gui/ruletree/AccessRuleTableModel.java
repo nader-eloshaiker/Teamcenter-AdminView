@@ -9,7 +9,7 @@ package tcav.gui.ruletree;
  */
 
 import tcav.ruletree.AccessControlHeader;
-import tcav.ruletree.AccessControlHeaderEntry;
+import tcav.ruletree.AccessControlHeaderItem;
 import tcav.ruletree.AccessRule;
 import javax.swing.table.*;
 
@@ -68,16 +68,16 @@ public class AccessRuleTableModel extends AbstractTableModel implements TableMod
             return null;
     }
     
-    public AccessControlHeaderEntry[] getColumns() {
+    public AccessControlHeaderItem[] getColumns() {
         return acHeader.getColumns();
     }
     
-    public AccessControlHeaderEntry getColumn(int index) {
+    public AccessControlHeaderItem getColumn(int index) {
         return acHeader.getColumn(index);
     }
 
     public String getColumnName(int col) {
-        return acHeader.getName(col);
+        return acHeader.getColumn(col).value();
     }
     
     public Class getColumnClass(int c) {
