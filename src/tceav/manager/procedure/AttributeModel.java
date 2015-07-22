@@ -41,11 +41,7 @@ public class AttributeModel {
     public AttributeModel(HashMap<String,IdBase> tagCache) {
         this.tagCache = tagCache;
     }
-    
-    public void processWorkflowTemplateAttributes(WorkflowTemplateType wf) {
         
-    }
-    
     public void processNodeAttributes(IdBase node) {
         /*
          * Workaround BUG for infinite looping
@@ -62,8 +58,13 @@ public class AttributeModel {
         attachAttribute(node);
         
         if(!isLeaf(node)) {
-            for(int i=0; i<getChildCount(node); i++)
-                processNodeAttributes(getChild(node, i));
+            IdBase child = null;
+            int count = getChildCount(node);
+            
+            for(int i=0; i<count; i++) {
+                child = getChild(node, i);
+                processNodeAttributes(child);
+            }
         }
         
     }
@@ -270,6 +271,7 @@ public class AttributeModel {
             
         } else if(node instanceof UserDataElementType) {
             UserDataElementType uv = (UserDataElementType)node;
+            
             return (uv.getDataRef() != null);
             
         } else if(node instanceof AssociatedDataSetType || node instanceof AssociatedFolderType || node instanceof AssociatedFormType) {

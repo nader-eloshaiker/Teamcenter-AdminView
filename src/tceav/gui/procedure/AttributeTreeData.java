@@ -13,6 +13,7 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 import tceav.manager.procedure.plmxmlpdm.base.IdBase;
 import tceav.manager.procedure.plmxmlpdm.base.AttribOwnerBase;
+import tceav.manager.procedure.plmxmlpdm.base.AttributeBase;
 import tceav.manager.procedure.plmxmlpdm.type.AssociatedDataSetType;
 import tceav.manager.procedure.plmxmlpdm.type.AssociatedFolderType;
 import tceav.manager.procedure.plmxmlpdm.type.AssociatedFormType;
@@ -62,14 +63,20 @@ public class AttributeTreeData implements TreeModel {
             
             for (int i = 0; i < aob.getAttribute().size(); i++) {
                 attribute = aob.getAttribute().get(i);
+                
                 if(attribute instanceof UserDataType) {
                     ud = (UserDataType) aob.getAttribute().get(i);
-                    for (int k = 0; k < ud.getUserValue().size(); k++) {
+                    
+                    for (UserDataElementType dataElement : ud.getUserValue()) {
+                        
+                        if(dataElement.getValue().equals(UserDataElementType.parentDependencyTaskRef))
+                            continue;
+                        
                         if (counter == index) {
-                            if(ud.getUserValue().get(k).getData() != null) {
-                                return ud.getUserValue().get(k).getData();
+                            if(dataElement.getData() != null) {
+                                return dataElement.getData();
                             } else {
-                                return ud.getUserValue().get(k);
+                                return dataElement;
                             }
                         } else {
                             counter++;
@@ -77,29 +84,33 @@ public class AttributeTreeData implements TreeModel {
                     }
                     
                 } else if(attribute instanceof AssociatedDataSetType) {
+                    
                     if (counter == index) {
-                        return ((AssociatedDataSetType) aob.getAttribute().get(i)).getDataSet();
+                        return ((AssociatedDataSetType) attribute).getDataSet();
                     } else {
                         counter++;
                     }
                     
                 } else if(attribute instanceof AssociatedFolderType) {
+                    
                     if (counter == index) {
-                        return ((AssociatedFolderType) aob.getAttribute().get(i)).getFolder();
+                        return ((AssociatedFolderType) attribute).getFolder();
                     } else {
                         counter++;
                     }
                     
                 } else if(attribute instanceof AssociatedFormType) {
+                    
                     if (counter == index) {
-                        return ((AssociatedFormType) aob.getAttribute().get(i)).getForm();
+                        return ((AssociatedFormType) attribute).getForm();
                     } else {
                         counter++;
                     }
                     
                 } else {
+                    
                     if (counter == index) {
-                        return aob.getAttribute().get(i);
+                        return attribute;
                     } else {
                         counter++;
                     }
@@ -179,18 +190,27 @@ public class AttributeTreeData implements TreeModel {
             AttribOwnerBase aob = (AttribOwnerBase) parent;
             
             int len = 0;
-            for (int i = 0; i < aob.getAttribute().size(); i++) {
-                if (aob.getAttribute().get(i) instanceof UserDataType) {
-                    len += ((UserDataType) aob.getAttribute().get(i)).getUserValue().size();
+            for (AttributeBase attrib : aob.getAttribute()) {
+
+                if (attrib instanceof UserDataType) {
+                    UserDataType ud = (UserDataType) attrib;
+                
+                    for (UserDataElementType ude : ud.getUserValue()) {
+                        if(!ude.getValue().equals(UserDataElementType.parentDependencyTaskRef)) {
+                            len++;
+                        }
+                    }
+
                 } else {
                     len++;
                 }
+                
             }
             return len;
             
         } else if(parent instanceof UserDataElementType) {
-            UserDataElementType uv = (UserDataElementType) parent;
-            if (uv.getDataRef() == null) {
+            UserDataElementType ude = (UserDataElementType) parent;
+            if (ude.getDataRef() == null) {
                 return 0;
             } else {
                 return 1;
@@ -260,17 +280,26 @@ public class AttributeTreeData implements TreeModel {
             
             for (int i = 0; i < aob.getAttribute().size(); i++) {
                 attribute = aob.getAttribute().get(i);
+                
                 if(attribute instanceof UserDataType) {
                     UserDataType ud = (UserDataType) aob.getAttribute().get(i);
-                    for (int j = 0; j < ud.getUserValue().size(); j++) {
-                        if(ud.getUserValue().get(j).getDataRef() != null) {
-                            if (ud.getUserValue().get(j).getDataRef().equals(childBase.getId())) {
+                    
+                    for (UserDataElementType ude : ud.getUserValue()) {
+                        
+                        if(ude.getValue().equals(UserDataElementType.parentDependencyTaskRef))
+                            continue;
+                        
+                        if(ude.getDataRef() != null) {
+                            
+                            if (ude.getDataRef().equals(childBase.getId())) {
                                 return index;
                             } else {
                                 index++;
                             }
+                            
                         } else { 
-                            if (ud.getUserValue().get(j).equals(childBase)) {
+                            
+                            if (ude.equals(childBase)) {
                                 return index;
                             } else {
                                 index++;
@@ -279,28 +308,28 @@ public class AttributeTreeData implements TreeModel {
                     }
                     
                 } else if(attribute instanceof AssociatedDataSetType) {
-                    if (((AssociatedDataSetType) aob.getAttribute().get(i)).getDataSet().getId().equals(childBase.getId())) {
+                    if (((AssociatedDataSetType) attribute).getDataSet().getId().equals(childBase.getId())) {
                         return index;
                     } else {
                         index++;
                     }
                     
                 } else if(attribute instanceof AssociatedFolderType) {
-                    if (((AssociatedFolderType) aob.getAttribute().get(i)).getFolder().getId().equals(childBase.getId())) {
+                    if (((AssociatedFolderType) attribute).getFolder().getId().equals(childBase.getId())) {
                         return index;
                     } else {
                         index++;
                     }
                     
                 } else if(attribute instanceof AssociatedFormType) {
-                    if (((AssociatedFormType) aob.getAttribute().get(i)).getForm().getId().equals(childBase.getId())) {
+                    if (((AssociatedFormType) attribute).getForm().getId().equals(childBase.getId())) {
                         return index;
                     } else {
                         index++;
                     }
                     
                 } else {
-                    if (aob.getAttributeRefs().get(i).equals(childBase.getId())) {
+                    if (attribute.equals(childBase.getId())) {
                         return index;
                     } else {
                         index++;

@@ -265,11 +265,14 @@ public class ProcedureManager extends ManagerAdapter {
                 }
             }
             
+            AttributeModel model = new AttributeModel(tagCache);
+            
             for (WorkflowTemplateType w : workflowProcesses) {
                 processSubWorkflows(w, tagCache);
                 //sortSubWorkflows(workflowProcesses.get(k));
-                processAttributes(w, tagCache);
+                processAttributes(w, model);
             }
+            
             
             
         } catch (Exception ex) {
@@ -307,8 +310,7 @@ public class ProcedureManager extends ManagerAdapter {
         }
     }
     
-    private void processAttributes(WorkflowTemplateType node, HashMap<String, IdBase> tagCache) {
-        AttributeModel model = new AttributeModel(tagCache);
+    private void processAttributes(WorkflowTemplateType node, AttributeModel model) {
         model.processNodeAttributes(node);
         
         for (WorkflowActionType action : node.getActions()) {
@@ -317,7 +319,7 @@ public class ProcedureManager extends ManagerAdapter {
 
         
         for (WorkflowTemplateType subTemplate : node.getSubTemplates()) {
-            model.processNodeAttributes(subTemplate);
+            processAttributes(subTemplate, model);
         }
     }
     
