@@ -36,15 +36,15 @@ public class ResourceStrings {
     }
     
     public static String getVersion() {
-        return "4.00";
+        return "4.01";
     }
     
     public static String getBuild() {
-        return "176";
+        return "177";
     }
     
     public static String getReleaseDate() {
-        return "05-Dec-08";
+        return "12-Jan-09";
     }
     
     public static String getApplicationName() {
@@ -52,7 +52,7 @@ public class ResourceStrings {
     }
     
     public static String getApplicationNameShort() {
-        return "TcE AdminView";
+        return "TcEAV";
     }
     
     public static String getDeveloperName() {
@@ -69,9 +69,9 @@ public class ResourceStrings {
     
     public static String getProjectSupporters() {
         return "Chris Gielens\n"+ 
-                "Doug Schilling\n"+
-                "Kevin Coykendal\n"+
-                "Vincent Mastrolorito";
+               "Doug Schilling\n"+
+               "Kevin Coykendal\n"+
+               "Vincent Mastrolorito";
     }
     
 }
