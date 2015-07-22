@@ -13,8 +13,8 @@ import java.util.List;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.NamedNodeMap;
-import tceav.manager.procedure.plmxmlpdm.TagTools;
-import tceav.manager.procedure.plmxmlpdm.TagTypeEnum;
+import tceav.xml.TagTools;
+import tceav.manager.procedure.plmxmlpdm.ProcedureTagTypeEnum;
 import tceav.manager.procedure.plmxmlpdm.base.AttribOwnerBase;
 
 import tceav.manager.procedure.plmxmlpdm.classtype.WorkflowActionTypeEnum;

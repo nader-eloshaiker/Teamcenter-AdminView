@@ -14,8 +14,8 @@ import java.util.List;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.NamedNodeMap;
-import tceav.manager.procedure.plmxmlpdm.TagTools;
-import tceav.manager.procedure.plmxmlpdm.TagTypeEnum;
+import tceav.xml.TagTools;
+import tceav.manager.procedure.plmxmlpdm.ProcedureTagTypeEnum;
 import tceav.manager.procedure.plmxmlpdm.base.AttributeBase;
 import tceav.manager.procedure.plmxmlpdm.type.element.UserDataElementType;
 /*
@@ -87,10 +87,10 @@ public class UserDataType extends AttributeBase {
         
         setType(TagTools.getStringValue(attrib, typeAttribute));
         
-        TagTypeEnum tagType;
+        ProcedureTagTypeEnum tagType;
         for (int i=0; i<nodeList.getLength(); i++) {
             currentNode = nodeList.item(i);
-            tagType = TagTypeEnum.fromValue(currentNode.getNodeName());
+            tagType = ProcedureTagTypeEnum.fromValue(currentNode.getNodeName());
             
             switch(tagType) {
                 case UserValue:
@@ -122,15 +122,15 @@ public class UserDataType extends AttributeBase {
     /***************
      * Customisation
      ***************/
-     private TagTypeEnum userDataType;
+     private ProcedureTagTypeEnum userDataType;
      
-     public void setUserDataType(TagTypeEnum userDataType) {
+     public void setUserDataType(ProcedureTagTypeEnum userDataType) {
          this.userDataType = userDataType;
      }
      
-     public TagTypeEnum getUserDataType() {
+     public ProcedureTagTypeEnum getUserDataType() {
          if(userDataType == null)
-             return TagTypeEnum.UserData;
+             return ProcedureTagTypeEnum.UserData;
          else
              return userDataType;
      }

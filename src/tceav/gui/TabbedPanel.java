@@ -12,9 +12,7 @@ package tceav.gui;
 import javax.swing.JComponent;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
-import java.io.File;
 
-import tceav.manager.ManagerAdapter;
 
 /**
  *

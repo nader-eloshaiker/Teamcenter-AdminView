@@ -17,33 +17,32 @@ import tceav.resources.ImageEnum;
  */
 public class AccessControlHeaderItem {
     
-    private String value;
-    private String desc;
-    private ImageEnum image;
+    private AccessControlHeaderEnum entry;
     
     /** Creates a new instance of AccessControlHeaderItem */
     public AccessControlHeaderItem(AccessControlHeaderEnum item) {
-        value = item.value();
-        desc = item.description();
-        image = item.image();
+        entry = item;
     }
     
     public String value() {
-        return value;
+        return entry.value();
     }
     
     public String description() {
-        if(desc != null)
-            return desc;
+        if(entry.description() != null)
+            return entry.description();
         else
-            return value+": No Description";
+            return entry.value()+": No Description";
     }
     
     public ImageEnum image() {
-        return image;
+        return entry.image();
     }
 
+    public AccessControlHeaderEnum getEnum() {
+        return entry;
+    }
     public boolean equals(AccessControlHeaderItem a) {
-        return value.equals(a.value());
+        return entry.equals(a.getEnum());
     }
 }

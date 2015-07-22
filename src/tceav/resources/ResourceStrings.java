@@ -36,15 +36,15 @@ public class ResourceStrings {
     }
     
     public static String getVersion() {
-        return "5.01";
+        return "6.0";
     }
     
     public static String getBuild() {
-        return "180";
+        return "193";
     }
     
     public static String getReleaseDate() {
-        return "25-Sep-09";
+        return "23-May-11";
     }
     
     public static String getApplicationName() {
@@ -60,7 +60,7 @@ public class ResourceStrings {
     }
     
     public static String getDeveloperEmail() {
-        return "whoisnader@gmail.com";
+        return "nader.eloshaiker@gmail.com";
     }
 
     public static String getWebsite() {
@@ -68,7 +68,7 @@ public class ResourceStrings {
     }
     
     public static String getProjectSupporters() {
-        return "Chris Gielens\n"+ 
+        return "Anja Bartsch\n"+ 
                "Doug Schilling\n"+
                "Kevin Coykendal\n"+
                "Annemie Witters";

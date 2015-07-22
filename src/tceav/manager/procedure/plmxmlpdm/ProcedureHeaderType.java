@@ -9,6 +9,7 @@
 
 package tceav.manager.procedure.plmxmlpdm;
 
+import tceav.xml.TagTools;
 import java.util.*;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -19,7 +20,7 @@ import tceav.manager.procedure.plmxmlpdm.base.AttribOwnerBase;
  *
  * @author nzr4dl
  */
-public class HeaderType extends AttribOwnerBase{
+public class ProcedureHeaderType extends AttribOwnerBase{
 
     //@XmlAttribute
     protected final String traverseRootRefsAttribute = "traverseRootRefs";
@@ -32,18 +33,19 @@ public class HeaderType extends AttribOwnerBase{
     /**
      * Creates a new instance of HeaderType
      */
-    public HeaderType(Node node) {
+    public ProcedureHeaderType(Node node) {
         super(node);
         Node currentNode = node;
         NamedNodeMap attrib = currentNode.getAttributes();
         NodeList nodeList = currentNode.getChildNodes();
         
-        setTransferContext(TagTools.getStringValue(attrib, transferContextAttribute));
+        //setTransferContext(TagTools.getStringValue(attrib, transferContextAttribute));
+        transferContext = TagTools.getStringValue(attrib, transferContextAttribute);
         
         TagTools.addToList(attrib, traverseRootRefsAttribute, getTraverseRootRefs());
     }
     
-    public List<String> getTraverseRootRefs() {
+    private List<String> getTraverseRootRefs() {
         if (traverseRootRefs == null) {
             traverseRootRefs = new ArrayList<String>();
         }
@@ -53,9 +55,9 @@ public class HeaderType extends AttribOwnerBase{
     public String getTransferContext() {
         return transferContext;
     }
-    
+    /*
     public void setTransferContext(String transferContext) {
         this.transferContext = transferContext;
     }
-    
+    */
 }

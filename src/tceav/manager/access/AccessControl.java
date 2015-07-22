@@ -8,6 +8,9 @@
  */
 package tceav.manager.access;
 
+import java.util.HashMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import tceav.manager.compare.CompareInterface;
 
 /**
@@ -16,61 +19,139 @@ import tceav.manager.compare.CompareInterface;
  */
 public class AccessControl implements CompareInterface {
 
-    private String[] accessControl;
-    AccessControlHeaderItem[] columns;
+    private HashMap<String, String> access;
+    AccessControlHeader columns;
 
-    /** Creates a new instance of AclRuleElement */
-    public AccessControl(String ruleEntry) {
-        accessControl = ruleEntry.split("!");
+    /***************************************************************************
+     * Handling xml format
+     **************************************************************************/
+    public AccessControl(Node accessControlNode, AccessControlHeader c) {
+        Node currentNode;
+        String s;
+        columns = c;
+        AccessControlHeaderEnum acTag;
+        access = new HashMap<String, String>();
+        NodeList nodeList = accessControlNode.getChildNodes();
+        NodeList subNodeList;
+
+        for (int index = 0; index < nodeList.getLength(); index++) {
+            currentNode = nodeList.item(index);
+
+            switch (AccessTagTypeEnum.fromValue(currentNode.getNodeName())) {
+                case AccessorType:
+                    s = currentNode.getTextContent();
+                    access.put(AccessControlHeaderEnum.AccessorType.value(), s);
+                    if (columns.indexOfAccessControl(AccessControlHeaderEnum.AccessorType) == -1) {
+                        columns.add(new AccessControlHeaderItem(AccessControlHeaderEnum.AccessorType));
+                    }
+                    break;
+
+                case Accessor:
+                    s = currentNode.getTextContent();
+                    access.put(AccessControlHeaderEnum.Accessor.value(), s);
+                    if (columns.indexOfAccessControl(AccessControlHeaderEnum.Accessor) == -1) {
+                        columns.add(new AccessControlHeaderItem(AccessControlHeaderEnum.Accessor));
+                    }
+                    break;
+
+                case Grant:
+                    subNodeList = currentNode.getChildNodes();
+
+                    for (int subIndex = 0; subIndex < subNodeList.getLength(); subIndex++) {
+                        currentNode = subNodeList.item(subIndex);
+
+                        if (AccessTagTypeEnum.fromValue(currentNode.getNodeName()) == AccessTagTypeEnum.ACEEntryColumn) {
+                            s = currentNode.getTextContent();
+                            access.put(s, "Y");
+                            acTag = AccessControlHeaderEnum.fromValue(s);
+                            if (columns.indexOfAccessControl(acTag) == -1) {
+                                columns.add(new AccessControlHeaderItem(acTag));
+                            }
+                        }
+                    }
+
+                    break;
+
+                case Revoke:
+                    subNodeList = currentNode.getChildNodes();
+
+                    for (int subIndex = 0; subIndex < subNodeList.getLength(); subIndex++) {
+                        currentNode = subNodeList.item(subIndex);
+
+                        if (AccessTagTypeEnum.fromValue(currentNode.getNodeName()) == AccessTagTypeEnum.ACEEntryColumn) {
+                            s = currentNode.getTextContent();
+                            access.put(s, "N");
+                            acTag = AccessControlHeaderEnum.fromValue(s);
+                            if (columns.indexOfAccessControl(acTag) == -1) {
+                                columns.add(new AccessControlHeaderItem(acTag));
+                            }
+                        }
+                    }
+
+                    break;
+
+                default:
+                    break;
+            }
+        }
+    }
+
+    /***************************************************************************
+     * Handling text format
+     **************************************************************************/
+
+    /* Creates a new instance of AclRuleElement */
+    public AccessControl(String ruleEntry, AccessControlHeader c) {
+        columns = c;
+        AccessControlHeaderItem item;
+        String[] strArray = ruleEntry.split("!");
+        access = new HashMap<String, String>();
+
+        for (int i = 0; i < c.size(); i++) {
+            item = c.get(i);
+            access.put(item.value(), strArray[i]);
+        }
     }
 
     private int indexOfColumn(AccessControlHeaderItem a) {
-        for (int i = 0; i < columns.length; i++) {
-            if (a.equals(columns[i])) {
+        for (int i = 0; i < columns.size(); i++) {
+            if (a.equals(columns.get(i))) {
                 return i;
             }
         }
         return -1;
     }
 
-    public void setColumns(AccessControlHeaderItem[] c) {
-        columns = c;
-    }
-
     /* Gets the control access
      * @param index location of the control
      * @return state "Y" = True, "N" = False, " " = Not set
      */
-    public String getAccess(int index) {
-        return accessControl[index];
-    }
-
     public String getAccessForColumn(AccessControlHeaderItem a) {
-        int index = indexOfColumn(a);
-
-        if(index == -1)
-            return null;
+        String s = access.get(a.value());
+        
+        if (s == null)
+            return " ";
         else
-            return accessControl[index];
+            return access.get(a.value());
     }
 
     public String getTypeOfAccessor() {
-        return accessControl[0];
+        return access.get(AccessControlHeaderEnum.AccessorType.value());
     }
 
     public String getIdOfAccessor() {
-        return accessControl[1];
+        return access.get(AccessControlHeaderEnum.Accessor.value());
     }
 
-    public String[] getAccessControl() {
-        return accessControl;
+    public String getAccessControlAtIndex(int index) {
+        return getAccessForColumn(columns.get(index));
     }
 
     @Override
     public String toString() {
         String s = "";
-        for (int i = 0; i < accessControl.length; i++) {
-            s += accessControl[i] + "!";
+        for (int i = 0; i < access.size(); i++) {
+            s += getAccessControlAtIndex(i) + "!";
         }
         return s;
     }
@@ -78,9 +159,9 @@ public class AccessControl implements CompareInterface {
     public String generateExportString() {
         return toString();
     }
-    /**********************
-     * Comapare interface *
-     **********************/
+    /***************************************************************************
+     * Comapare interface
+     **************************************************************************/
     private int compare_result = CompareInterface.EQUAL;
 
     public int getComparison() {
@@ -94,14 +175,14 @@ public class AccessControl implements CompareInterface {
     public int compare(Object o) {
         AccessControl c = (AccessControl) o;
         String value;
-        
+
         if (getTypeOfAccessor().equals(c.getTypeOfAccessor()) && getIdOfAccessor().equals(c.getIdOfAccessor())) {
 
-            for (int i = 2; i < accessControl.length; i++) {
-                value = c.getAccessForColumn(columns[i]);
-                if(value == null)
+            for (int i = 2; i < access.size(); i++) {
+                value = c.getAccessControlAtIndex(i);
+                if (value == null) {
                     continue;
-                else if (!accessControl[i].equals(value)) {
+                } else if (!getAccessControlAtIndex(i).equals(value)) {
                     return CompareInterface.NOT_EQUAL;
                 }
             }
@@ -112,5 +193,4 @@ public class AccessControl implements CompareInterface {
             return CompareInterface.NOT_FOUND;
         }
     }
-
 }

@@ -10,8 +10,8 @@ package tceav.manager.procedure.plmxmlpdm.type;
 
 import java.util.ArrayList;
 import java.util.List;
-import tceav.manager.procedure.plmxmlpdm.TagTools;
-import tceav.manager.procedure.plmxmlpdm.TagTypeEnum;
+import tceav.xml.TagTools;
+import tceav.manager.procedure.plmxmlpdm.ProcedureTagTypeEnum;
 import tceav.manager.procedure.plmxmlpdm.base.AttributeBase;
 import tceav.manager.procedure.plmxmlpdm.type.element.ValidationCheckerType;
 import org.w3c.dom.Node;
@@ -84,10 +84,10 @@ public class ValidationResultsType extends AttributeBase {
         
         setApplication(TagTools.getStringValue(attrib, applicationAttribute));
         
-        TagTypeEnum tagType;
+        ProcedureTagTypeEnum tagType;
         for (int i=0; i<nodeList.getLength(); i++) {
             currentNode = nodeList.item(i);
-            tagType = TagTypeEnum.fromValue(currentNode.getNodeName());
+            tagType = ProcedureTagTypeEnum.fromValue(currentNode.getNodeName());
             
             switch(tagType) {
                 case Checker:

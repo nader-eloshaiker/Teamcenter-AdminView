@@ -10,7 +10,7 @@ package tceav.gui.access;
 
 import tceav.manager.access.AccessControlHeader;
 import tceav.manager.access.AccessControlHeaderItem;
-import tceav.manager.access.AccessRule;
+import tceav.manager.access.NamedAcl;
 import javax.swing.table.*;
 
 /**
@@ -20,31 +20,31 @@ import javax.swing.table.*;
 public class AccessRuleTableModel extends AbstractTableModel implements TableModel {
     
     private AccessControlHeader acHeader;
-    private AccessRule accessRule;
+    private NamedAcl accessRule;
     
     /** Creates a new instance of AccessRuleTableModel */
-    public AccessRuleTableModel(AccessControlHeader acHeader, AccessRule ar) {
+    public AccessRuleTableModel(AccessControlHeader acHeader, NamedAcl ar) {
         this.acHeader = acHeader;
         this.accessRule = ar;
     }
     
     public AccessRuleTableModel(AccessControlHeader acHeader) {
-        this(acHeader, new AccessRule());
+        this(acHeader, new NamedAcl());
     }
 
     
-    public AccessRule getAccessRule() {
+    public NamedAcl getAccessRule() {
         return accessRule;
     }
 
     /* This method does not work correctly due to a Java Table update issue
      * Therefore need to build a new model for very new rule selection.
      */
-    public void setAccessRule(AccessRule ar) {
+    public void setAccessRule(NamedAcl ar) {
         if(ar != null)
             accessRule = ar;
         else
-            accessRule = new AccessRule();
+            accessRule = new NamedAcl();
     }
     
     public int getColumnCount() { 
@@ -63,31 +63,35 @@ public class AccessRuleTableModel extends AbstractTableModel implements TableMod
     
     public Object getValueAt(int row, int col) {
         if((col < getColumnCount()) && (row < getRowCount())){
-            return accessRule.get(row).getAccessControl()[col];
+            return accessRule.get(row).getAccessControlAtIndex(col);
         } else
             return null;
     }
     
-    public AccessControlHeaderItem[] getColumns() {
-        return acHeader.getColumns();
+    public AccessControlHeader getColumns() {
+        return acHeader;
     }
     
     public AccessControlHeaderItem getColumn(int index) {
-        return acHeader.getColumn(index);
+        return acHeader.get(index);
     }
 
+    @Override
     public String getColumnName(int col) {
-        return acHeader.getColumn(col).value();
+        return acHeader.get(col).value();
     }
     
+    @Override
     public Class getColumnClass(int c) {
         return getValueAt(0, c).getClass();
     }
     
+    @Override
     public boolean isCellEditable(int row, int col) {
         return false;
     }
     
+    @Override
     public void setValueAt(Object aValue, int row, int col) { 
 
     }

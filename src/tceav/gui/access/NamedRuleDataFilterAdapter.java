@@ -10,7 +10,7 @@
 package tceav.gui.access;
 
 import javax.swing.table.*;
-import tceav.manager.access.AccessRule;
+import tceav.manager.access.NamedAcl;
 
 /**
  *
@@ -34,7 +34,7 @@ public abstract class NamedRuleDataFilterAdapter extends NamedRuleDataAdapterMod
         return indexes.length;
     }
     
-    public final AccessRule getAccessRule(int row) {
+    public final NamedAcl getAccessRule(int row) {
         return model.getAccessRule(indexes[row]);
     }
     
