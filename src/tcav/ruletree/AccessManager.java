@@ -23,6 +23,7 @@ public class AccessManager {
     private AccessRuleList arList;
     private ArrayList<AccessRule> unusedRules;
     private RuleTreeNode rootTreeNode;
+    private File file;
     
     
     /** Creates a new instance of ruleTreeReader */
@@ -30,6 +31,10 @@ public class AccessManager {
         arList = new AccessRuleList();
         unusedRules = new ArrayList<AccessRule>();
         rootTreeNode = new RuleTreeNode();
+    }
+    
+    public File getFile() {
+        return file;
     }
     
     public boolean isValid() {
@@ -72,6 +77,8 @@ public class AccessManager {
         final int MODE_ACCESS_CONTROL_acHeader = 1;
         final int MODE_ACCESS_CONTROL = 2;
         final int MODE_RULE_TREE = 3;
+        
+        this.file = file;
         
         String thisLine;
         String ruleMetaData = "";
@@ -152,7 +159,7 @@ public class AccessManager {
                 case MODE_RULE_TREE:
                     if (thisLine.length() != 0) {
                         newNode = new RuleTreeNode(thisLine);
-
+                        
                         // Build Conditions List
                         if(conditionsList.indexOf(newNode.getCondition()) == -1) {
                             conditionsList.add(newNode.getCondition());
@@ -179,7 +186,7 @@ public class AccessManager {
                             
                             currentNode.getParent().addChild(newNode);
                         }
-
+                        
                         currentNode = newNode;
                         ruleTreeIndex++;
                     }
@@ -197,7 +204,7 @@ public class AccessManager {
     public Vector<String> getConditions() {
         return conditionsList;
     }
-
+    
     public String toString() {
         String s;
         AccessRule ar;

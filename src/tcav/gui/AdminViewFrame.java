@@ -32,13 +32,18 @@ import org.xml.sax.InputSource;
 public class AdminViewFrame extends JFrame{
     
     /** Window for showing Tree. */
-    protected JFrame parentFrame;
-    protected JTabbedPane tabbedpane;
-    protected ImageIcon iconRuleTree;
-    protected ImageIcon iconProcedure;
-    protected ImageIcon iconClose;
-    protected ImageIcon iconExit;
-    protected ImageIcon iconApp;
+    private JFrame parentFrame;
+    private JTabbedPane tabbedpane;
+    private EmptyComponent emptyPane;
+    private ImageIcon iconProcedure;
+    private ImageIcon iconClose;
+    private ImageIcon iconExit;
+    private ImageIcon iconApp;
+    private ImageIcon iconRuleTree;
+    private JPanel mainPanel;
+    
+    private final String TABPANE = "TABPANE";
+    private final String EMPTYPANE = "EMPTYPANE";
     
     /**
      * Creates a new instance of AdminViewFrame
@@ -78,12 +83,29 @@ public class AdminViewFrame extends JFrame{
         
         JMenuBar menuBar = constructMenuBar();
         JToolBar toolbar = constructToolBar();
+        JPanel statusBar = constructStatusBar();
         
         tabbedpane = new JTabbedPane();
-        tabbedpane.addTab("TcAV", iconApp, new EmptyComponent());
+        tabbedpane.addChangeListener(new ChangeListener(){
+            public void stateChanged(ChangeEvent e) {
+                if(tabbedpane.getTabCount() > 1) 
+                    showStatusBarComponent((TabbedPanel)tabbedpane.getSelectedComponent());
+            }
+        });
+        emptyPane = new EmptyComponent();
+
+        mainPanel = new JPanel();
+        mainPanel.setLayout(new CardLayout());
+        mainPanel.add(tabbedpane, TABPANE);
+        mainPanel.add(emptyPane, EMPTYPANE);
+        ((CardLayout)mainPanel.getLayout()).show(mainPanel,EMPTYPANE);
+        addStatusBarComponent(emptyPane);
+        showStatusBarComponent(emptyPane);
+
         
-        this.getContentPane().add("Center", tabbedpane);
+        this.getContentPane().add("Center", mainPanel);
         this.getContentPane().add("North", toolbar);
+        this.getContentPane().add("South", statusBar);
         this.setJMenuBar(menuBar);
         this.setIconImage(iconApp.getImage());
         this.addWindowListener( new WindowAdapter() {
@@ -98,7 +120,7 @@ public class AdminViewFrame extends JFrame{
                 Settings.getFrameLocationX(),
                 Settings.getFrameLocationY());
         this.setVisible(true);
-        this.setTitle(ResourceStrings.getApplicationName()+" v"+ResourceStrings.getVersion());
+        this.setTitle(ResourceStrings.getApplicationNameShort());
     }
     
     public JFileChooser createFileChooser(String path) {
@@ -111,6 +133,49 @@ public class AdminViewFrame extends JFrame{
         return this;
     }
     
+    private JPanel statusBarPanel;
+    
+    private JPanel constructStatusBar() {
+        CardLayout statusBarLayout = new CardLayout();
+        
+        statusBarPanel = new JPanel();
+        statusBarPanel.setBorder(new EmptyBorder(1,1,1,1));
+        statusBarPanel.setLayout(statusBarLayout);
+        return statusBarPanel;
+    }
+    
+    private void addStatusBarComponent(TabbedPanel tab) {
+        statusBarPanel.add(tab.getStatusBar(), tab.getFile().toString());
+    }
+    
+    private void removeStatusBarComponent(TabbedPanel tab) {
+        ((CardLayout)statusBarPanel.getLayout()).removeLayoutComponent(tab.getStatusBar());
+    }
+    
+    private void showStatusBarComponent(TabbedPanel tab) {
+        ((CardLayout)statusBarPanel.getLayout()).show(statusBarPanel, tab.getFile().toString());
+    }
+    
+    private void addTabbedPane(TabbedPanel tab) {
+        ((CardLayout)mainPanel.getLayout()).show(mainPanel, TABPANE);
+        tabbedpane.addTab(tab.getFile().getName(), tab.getIcon(), tab.getComponent());
+        tabbedpane.setSelectedComponent(tab.getComponent());
+        addStatusBarComponent(tab);
+        showStatusBarComponent(tab);
+    }
+    
+    private void removeTabbedPane(TabbedPanel tab) {
+        if(tabbedpane.getTabCount() <= 0)
+            return;
+        
+        tabbedpane.remove(tabbedpane.getSelectedIndex());
+        removeStatusBarComponent(tab);
+        if(tabbedpane.getTabCount() == 0) {
+            ((CardLayout)mainPanel.getLayout()).show(mainPanel, EMPTYPANE);
+            showStatusBarComponent(emptyPane);
+        }
+    }
+
     private JToolBar constructToolBar() {
         JToolBar toolbar = new JToolBar("Main ToolBar");
         
@@ -367,9 +432,7 @@ public class AdminViewFrame extends JFrame{
     }
     
     private void actionCloseTab() {
-        tabbedpane.remove(tabbedpane.getSelectedIndex());
-        if (tabbedpane.getTabCount() == 0)
-            tabbedpane.addTab("TcAV", iconApp, new EmptyComponent());
+        removeTabbedPane((TabbedPanel)tabbedpane.getSelectedComponent());
         System.gc();
     }
     
@@ -400,19 +463,12 @@ public class AdminViewFrame extends JFrame{
                             throw new Exception("Corrupted File: "+fc.getSelectedFile().getName());
                         }
                         
-                        if(!am.getAccessManagerTree().isValid()) {
+                        if(!am.isValid()) {
                             throw new Exception("No rule tree found in file "+fc.getSelectedFile().getName());
                         }
                         
-                        for(int index=0; index<tabbedpane.getTabCount(); index++) {
-                            if(((TabbedPanel)tabbedpane.getComponentAt(index)).isEmptyPanel()) {
-                                tabbedpane.remove(index);
-                            }
-                        }
-                        
                         AccessManagerComponent amComponent = new AccessManagerComponent(parentFrame, am);
-                        tabbedpane.addTab(fc.getSelectedFile().getName(), iconRuleTree, amComponent);
-                        tabbedpane.setSelectedComponent(amComponent);
+                        addTabbedPane(amComponent);
                         
                     } catch (Exception ex) {
                         JOptionPane.showMessageDialog(parentFrame, ex.getMessage(), "Ruletree File Error", JOptionPane.ERROR_MESSAGE);
@@ -441,19 +497,12 @@ public class AdminViewFrame extends JFrame{
                             throw new Exception("Corrupted File: "+fc.getSelectedFile().getName());
                         }
                         
-                        if(pm.getWorkflowProcesses().size() == 0) {
+                        if(!pm.isValid()) {
                             throw new Exception("No workflow processes found in file"+fc.getSelectedFile().getName());
                         }
                         
-                        for(int index=0; index<tabbedpane.getTabCount(); index++) {
-                            if(((TabbedPanel)tabbedpane.getComponentAt(index)).isEmptyPanel()) {
-                                tabbedpane.remove(index);
-                            }
-                        }
-                        
                         ProcedureManagerComponent wfComponent = new ProcedureManagerComponent(parentFrame, pm);
-                        tabbedpane.addTab(fc.getSelectedFile().getName(), iconProcedure, wfComponent);
-                        tabbedpane.setSelectedComponent(wfComponent);
+                        addTabbedPane(wfComponent);
                         
                     } catch (Exception ex) {
                         JOptionPane.showMessageDialog(parentFrame, ex.getMessage(), "Procedure File Error", JOptionPane.ERROR_MESSAGE);

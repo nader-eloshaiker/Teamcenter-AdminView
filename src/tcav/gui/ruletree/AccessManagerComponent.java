@@ -15,6 +15,7 @@ import javax.swing.border.*;
 import javax.swing.table.*;
 import javax.swing.tree.*;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
+import java.io.File;
 
 /**
  *
@@ -62,7 +63,7 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
                     accessControl.updateTable();
             }
         });
-
+        
         ruletree = new RuleTreeComponent(parentFrame, am);
         ruletree.getTree().addTreeSelectionListener(new TreeSelectionListener() {
             private TreePath oldPath;
@@ -95,9 +96,10 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
                                 );
                     } else
                         accessControl.updateTable(treeNode.getAccessRule());
-                } else
+                } else {
+                    namedACL.getTable().clearSelection();
                     accessControl.updateTable();
-                
+                }
             }
         });
         
@@ -128,8 +130,45 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         
     }
     
-    public boolean isEmptyPanel() {
-        return (!am.getAccessManagerTree().isValid());
+    public File getFile() {
+        return am.getFile();
+    }
+    
+    public JComponent getComponent() {
+        return this;
+    }
+    
+    private ImageIcon iconRuleTree;
+    
+    public ImageIcon getIcon() {
+        if(iconRuleTree == null){
+            try {
+                iconRuleTree = ResourceLoader.getImage(ImageEnum.amRuletree);
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, ex.getMessage(), "Error Load Images", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        return iconRuleTree;
+        
+    }
+    
+    private JPanel statusBar;
+    
+    public JComponent getStatusBar() {
+        if(statusBar == null) {
+            JLabel textAuthor = new JLabel(" Author: "+am.getMetaData().getUserDetails()+" ");
+            textAuthor.setBorder(new BevelBorder(BevelBorder.LOWERED));
+            JLabel textDate = new JLabel(" Date: "+am.getMetaData().getTimeDetails()+" ");
+            textDate.setBorder(new BevelBorder(BevelBorder.LOWERED));
+            JLabel textFile = new JLabel(" "+getFile()+" ");
+            textFile.setBorder(new BevelBorder(BevelBorder.LOWERED));
+            statusBar = new JPanel();
+            statusBar.setLayout(new BorderLayout(1,1));
+            statusBar.add("Center", textAuthor);
+            statusBar.add("West", textFile);
+            statusBar.add("East", textDate);
+        }
+        return statusBar;
     }
     
     public AccessManager getAccessManager() {
