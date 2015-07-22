@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package tcav.gui.procedure.analysis;
+package tcav.gui.procedure.tabulate;
 
 import java.util.Vector;
 import tcav.manager.procedure.plmxmlpdm.type.WorkflowHandlerType;

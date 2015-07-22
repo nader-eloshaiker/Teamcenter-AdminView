@@ -68,14 +68,6 @@ public class ProcedureManager extends AbstractManager {
         return file;
     }
     
-    public String getId() {
-        return file.toString();
-    }
-    
-    public String getName() {
-        return file.getName();
-    }
-    
     public String getManagerType() {
         return PROCEDURE_MANAGER_TYPE;
     }

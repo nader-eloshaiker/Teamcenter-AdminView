@@ -79,8 +79,8 @@ public class AccessManagerComponent extends TabbedPanel {
         
     }
     
-    public AbstractManager getManager() {
-        return am;
+    public String getTitle() {
+        return am.getFile().getName();
     }
     
     private ImageIcon iconRuleTree;

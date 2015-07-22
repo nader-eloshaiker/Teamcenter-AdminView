@@ -28,8 +28,6 @@ public abstract class AbstractManager {
     
     abstract public String getManagerType();
     
-    abstract public String getName();
-    
-    abstract public String getId();
+    abstract public File getFile();
     
 }

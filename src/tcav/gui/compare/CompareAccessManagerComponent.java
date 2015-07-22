@@ -149,7 +149,7 @@ public class CompareAccessManagerComponent extends TabbedPanel {
         panel.setLayout(new GridLayout(1,compareCount,GUIutilities.GAP_MARGIN,GUIutilities.GAP_MARGIN));
         
         for(int index=0; index<compareCount; index++) {
-            namedRule[index] = new NamedRuleComponent(parentFrame, cam.getAccessManagers()[index], cam.getAccessManagers()[index].getName(), true);
+            namedRule[index] = new NamedRuleComponent(parentFrame, cam.getAccessManagers()[index], cam.getAccessManagers()[index].getFile().getName(), true);
             panel.add(namedRule[index]);
         }
         
@@ -161,7 +161,7 @@ public class CompareAccessManagerComponent extends TabbedPanel {
         panel.setLayout(new GridLayout(1,compareCount,GUIutilities.GAP_MARGIN,GUIutilities.GAP_MARGIN));
         
         for(int index=0; index<compareCount; index++) {
-            ruleTree[index] = new RuleTreeComponent(parentFrame, cam.getAccessManagers()[index], cam.getAccessManagers()[index].getName(), true);
+            ruleTree[index] = new RuleTreeComponent(parentFrame, cam.getAccessManagers()[index], cam.getAccessManagers()[index].getFile().getName(), true);
             panel.add(ruleTree[index]);
         }
         
@@ -294,10 +294,10 @@ public class CompareAccessManagerComponent extends TabbedPanel {
         panelKey.add(labelNotEqual);
 
 
-        JLabel labelFile1 = new JLabel("    "+cam.getAccessManagers()[0].getName()+" ");
+        JLabel labelFile1 = new JLabel("    "+cam.getAccessManagers()[0].getFile().getName()+" ");
         labelFile1.setFont(labelFile1.getFont().deriveFont(Font.BOLD));
         
-        JLabel labelFile2 = new JLabel("    "+cam.getAccessManagers()[1].getName()+" ");
+        JLabel labelFile2 = new JLabel("    "+cam.getAccessManagers()[1].getFile().getName()+" ");
         labelFile2.setFont(labelFile2.getFont().deriveFont(Font.BOLD));
 
         JPanel panel1 = new JPanel();
@@ -334,8 +334,8 @@ public class CompareAccessManagerComponent extends TabbedPanel {
         return statusBar;
     }
     
-    public AbstractManager getManager() {
-        return cam;
+    public String getTitle() {
+        return cam.getAccessManagers()[0].getFile().getName()+"::"+cam.getAccessManagers()[1].getFile().getName();
     }
     
     private ImageIcon iconRuleTree;

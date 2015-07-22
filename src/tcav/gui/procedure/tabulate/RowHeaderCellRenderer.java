@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package tcav.gui.procedure.analysis;
+package tcav.gui.procedure.tabulate;
 
 import tcav.resources.*;
 import tcav.gui.TableShadedRenderer;

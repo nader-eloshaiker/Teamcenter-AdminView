@@ -35,7 +35,7 @@ import org.xml.sax.InputSource;
 public class AdminViewFrame extends JFrame{
     
     /** Window for showing Tree. */
-    private JFrame parentFrame;
+    private AdminViewFrame parentFrame;
     private JTabbedPane tabbedpane;
     private EmptyComponent emptyPane;
     private ImageIcon iconProcedure;
@@ -163,8 +163,8 @@ public class AdminViewFrame extends JFrame{
     }
     
     private void addBarComponent(TabbedPanel tab) {
-        statusBarPanel.add(tab.getStatusBar(), tab.getManager().getId());
-        toolBarPanel.add(tab.getToolBar(), tab.getManager().getId());
+        statusBarPanel.add(tab.getStatusBar(), Integer.toString(tab.hashCode()));
+        toolBarPanel.add(tab.getToolBar(), Integer.toString(tab.hashCode()));
     }
     
     private void removeBarComponent(TabbedPanel tab) {
@@ -173,13 +173,13 @@ public class AdminViewFrame extends JFrame{
     }
     
     private void showBarComponent(TabbedPanel tab) {
-        ((CardLayout)statusBarPanel.getLayout()).show(statusBarPanel, tab.getManager().getId());
-        ((CardLayout)toolBarPanel.getLayout()).show(toolBarPanel, tab.getManager().getId());
+        ((CardLayout)statusBarPanel.getLayout()).show(statusBarPanel, Integer.toString(tab.hashCode()));
+        ((CardLayout)toolBarPanel.getLayout()).show(toolBarPanel, Integer.toString(tab.hashCode()));
     }
     
-    private void addTabbedPane(TabbedPanel tab) {
+    public void addTabbedPane(TabbedPanel tab) {
         ((CardLayout)mainPanel.getLayout()).show(mainPanel, TABPANE);
-        tabbedpane.addTab(tab.getManager().getName(), tab.getIcon(), tab);
+        tabbedpane.addTab(tab.getTitle(), tab.getIcon(), tab);
         tabbedpane.setSelectedComponent(tab);
         addBarComponent(tab);
         showBarComponent(tab);
@@ -566,8 +566,8 @@ public class AdminViewFrame extends JFrame{
                             throw new Exception("No workflow processes found in file"+fc.getSelectedFile().getName());
                         }
                         
-                        ProcedureManagerComponent wfComponent = new ProcedureManagerComponent(parentFrame, pm);
-                        addTabbedPane(wfComponent);
+                        ProcedureManagerComponent proComponent = new ProcedureManagerComponent(parentFrame, pm);
+                        addTabbedPane(proComponent);
                         
                     } catch (Exception ex) {
                         JOptionPane.showMessageDialog(parentFrame, ex.getMessage(), "Procedure File Error", JOptionPane.ERROR_MESSAGE);
@@ -619,7 +619,7 @@ public class AdminViewFrame extends JFrame{
                         CompareAccessManager cam = new CompareAccessManager(am);
                         
                         if(!cam.isValid()) {
-                            throw new Exception("Incompatible Comparison"+cam.getName());
+                            throw new Exception("Incompatible Comparison"+cam.getAccessManagers()[0].getFile().getName()+"::"+cam.getAccessManagers()[1].getFile().getName());
                         }
                         CompareAccessManagerComponent camComponent = new CompareAccessManagerComponent(parentFrame, cam);
                         addTabbedPane(camComponent);

@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package tcav.gui.procedure.analysis;
+package tcav.gui.procedure.tabulate;
 
 import java.util.ArrayList;
 import javax.swing.table.TableModel;
@@ -88,6 +88,10 @@ public class DataModel implements TableModel {
         return workflowList.size();
     }
     
+    public String getExportValueAt(int rowIndex, int columnIndex) { 
+        return "\"" + ((String)getValueAt(rowIndex, columnIndex)).replace("\"", "\"\"") + "\""; 
+    }
+    
     public Object getValueAt(int rowIndex, int columnIndex) {
         
         WorkflowTemplateType wt = workflowList.get(rowIndex);
@@ -125,49 +129,6 @@ public class DataModel implements TableModel {
         return new RowHeaderModel(workflowList);
     }
     
-    private class RowHeaderModel implements TableModel {
-        private String[] rowHeader;
-        
-        public RowHeaderModel(ArrayList<WorkflowTemplateType> rowList) {
-            rowHeader = new String[rowList.size()];
-            for(int i=0; i<rowList.size(); i++)
-                rowHeader[i] = getIndent(rowList.get(i)) + rowList.get(i).getName();
-        }
-        
-        public Class getColumnClass(int columnIndex) { return String.class; }
-        
-        public int getColumnCount() { return 1; }
-        
-        public String getColumnName(int columnIndex) { return "Procedure Name"; }
-        
-        public int getRowCount() { return rowHeader.length; }
-        
-        public Object getValueAt(int rowIndex, int columnIndex) { return rowHeader[rowIndex]; }
-        
-        public boolean isCellEditable(int rowIndex, int columnIndex) { return false; }
-        
-        public void setValueAt(Object aValue, int rowIndex, int columnIndex) { }
-        
-        public void removeTableModelListener(TableModelListener l) { }
-        
-        public void addTableModelListener(TableModelListener l) { }
-        
-        private String getIndent(WorkflowTemplateType wt) {
-            WorkflowTemplateType tmp = wt.getParentSubTaskTemplate();
-            int indent = 0;
-            
-            while(tmp != null) {
-                tmp = tmp.getParentSubTaskTemplate();
-                indent++;
-            }
-            
-            String s = "";
-            for (int i=0; i<indent; i++)
-                s = s + "    ";
-            
-            return s;
-        }
-    }
     
     public boolean isCellEditable(int rowIndex, int columnIndex) { return false; }
     

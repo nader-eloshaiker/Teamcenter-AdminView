@@ -55,12 +55,8 @@ public class CompareAccessManager extends AbstractManager {
         return null;
     }
     
-    public String getId(){
-        return amList[0].getId()+" <> "+amList[1].getId();
-    }
-    
-    public String getName() {
-        return amList[0].getName()+" <> "+amList[1].getName();
+    public File getFile() {
+        return amList[0].getFile();//+" <> "+amList[1].getFile();
     }
     
     public void readFile(File file) throws Exception {

@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package tcav.gui.procedure.analysis;
+package tcav.gui.procedure.tabulate;
 
 import java.awt.ComponentOrientation;
 import java.awt.Component;

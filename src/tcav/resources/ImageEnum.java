@@ -56,6 +56,8 @@ public enum ImageEnum {
     amcmpNotFound("images/compare/not_found_16.png"),
     
     
+    pmTabulate("images/proceduremanager/calendar.png"),
+    
     pmAssociatedDataSet("images/proceduremanager/dataset_16.png"),
     pmAssociatedFolder("images/proceduremanager/foldertype_16.png"),
     pmAssociatedForm("images/proceduremanager/formtype_16.png"),

@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package tcav.gui.procedure.analysis;
+package tcav.gui.procedure.tabulate;
 
 import java.awt.ComponentOrientation;
 import java.awt.Component;
@@ -50,6 +50,7 @@ public class RowHeaderRenderer implements TableCellRenderer {
         
         cell.setText(entry);
         cell.setVerticalAlignment(SwingConstants.BOTTOM);
+        cell.setHorizontalAlignment(SwingConstants.LEFT);
         cell.setToolTipText(entry);
         
         return cell;
