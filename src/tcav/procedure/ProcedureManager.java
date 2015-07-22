@@ -30,7 +30,10 @@ import tcav.plmxmlpdm.type.WorkflowSignoffProfileType;
 import tcav.plmxmlpdm.type.RoleType;
 import tcav.plmxmlpdm.type.AccessIntentType;
 import tcav.plmxmlpdm.type.OrganisationType;
+import tcav.plmxmlpdm.classtype.WorkflowTemplateClassificationEnum;
 import tcav.xml.DOMUtil;
+
+import tcav.plmxmlpdm.base.AttributeBase;
 
 /**
  *
@@ -41,7 +44,7 @@ public class ProcedureManager {
     //private ArrayList<WorkflowTemplateType> worklowTemplateList;
     private HeaderType header;
     private WorkflowTemplateList workflowTemplateList;
-    private ArrayList<WorkflowHandlerType> workflowHanderList;
+    private ArrayList<WorkflowHandlerType> workflowHandlerList;
     private ArrayList<SiteType> siteList;
     private ArrayList<WorkflowActionType> workflowActionList;
     private ArrayList<WorkflowBusinessRuleHandlerType> workflowBusinessRuleHandlerList;
@@ -57,11 +60,11 @@ public class ProcedureManager {
     private JFrame frame;
     
     public final static String[] WORKFLOW_TYPES_NAMES = {
-            "Action",
-            "Business Rule",
-            "Business Handler",
-            "Handler",
-            "Template"
+        "Action",
+        "Business Rule",
+        "Business Handler",
+        "Handler",
+        "Template"
     };
     
     public final static TagTypeEnum[] WORKFLOW_TYPES = {
@@ -84,7 +87,7 @@ public class ProcedureManager {
         
         //worklowTemplateList = new ArrayList<WorkflowTemplateType>();
         workflowTemplateList = new WorkflowTemplateList();
-        workflowHanderList = new ArrayList<WorkflowHandlerType>();
+        workflowHandlerList = new ArrayList<WorkflowHandlerType>();
         siteList = new ArrayList<SiteType>();
         workflowActionList = new ArrayList<WorkflowActionType>();
         workflowBusinessRuleHandlerList = new ArrayList<WorkflowBusinessRuleHandlerType>();
@@ -142,7 +145,7 @@ public class ProcedureManager {
                 return workflowTemplateList.get(getIdIndex(id));
                 
             case WorkflowHandler:
-                return workflowHanderList.get(getIdIndex(id));
+                return workflowHandlerList.get(getIdIndex(id));
                 
             case Site:
                 return siteList.get(getIdIndex(id));
@@ -195,7 +198,7 @@ public class ProcedureManager {
     }
     
     public ArrayList<WorkflowHandlerType> getWorkflowHandlers() {
-        return workflowHanderList;
+        return workflowHandlerList;
     }
     
     public ArrayList<WorkflowSignoffProfileType> getWorkflowSignoffProfiles() {
@@ -232,14 +235,15 @@ public class ProcedureManager {
         idClassLookup.put(id, tagType);
     }
     
-    private void decodeXML(Node node) {
-        Node currentNode = node;
-        Node parentNode = node;
-        NodeList list;
+    /* This entire method needs to be uncommented and backported */
+    private void decodeXML(Node parentNode) {
+        Node currentNode;
+        NodeList list = parentNode.getChildNodes();
+        TagTypeEnum tagType;
+        int nodeCount = list.getLength();
+        int nodeIndex = 0;
         
         try {
-            list = currentNode.getChildNodes();
-            
             ProgressMonitor progressMonitor = new ProgressMonitor(
                     frame,
                     "Decoding XML Tags",
@@ -247,16 +251,12 @@ public class ProcedureManager {
                     0,
                     list.getLength()-1);
             
-            if (progressMonitor.isCanceled()) {
-                progressMonitor.close();
-                return;
-            }
-            
-            TagTypeEnum tagType;
-            int nodeCount = list.getLength();
-            int nodeIndex = 0;
-            
             for(int i=0; i<nodeCount; i++) {
+                
+                if (progressMonitor.isCanceled()) {
+                    progressMonitor.close();
+                    return;
+                }
                 currentNode = list.item(nodeIndex);
                 tagType = TagTypeEnum.fromValue(currentNode.getNodeName());
                 
@@ -283,8 +283,8 @@ public class ProcedureManager {
                         
                     case WorkflowHandler:
                         WorkflowHandlerType wh = new WorkflowHandlerType(currentNode);
-                        workflowHanderList.add(wh);
-                        setIdLookup(wh.getId(), TagTypeEnum.WorkflowHandler, workflowHanderList.size()-1);
+                        workflowHandlerList.add(wh);
+                        setIdLookup(wh.getId(), TagTypeEnum.WorkflowHandler, workflowHandlerList.size()-1);
                         parentNode.removeChild(currentNode);
                         break;
                         
@@ -345,6 +345,7 @@ public class ProcedureManager {
                         break;
                         
                     default:
+                        nodeCount++;
                         System.out.println("ProcedureManager: "+currentNode.getNodeName());
                         break;
                 }
@@ -355,4 +356,6 @@ public class ProcedureManager {
         }
         
     }
+    
+    
 }
