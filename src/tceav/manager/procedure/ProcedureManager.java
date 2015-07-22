@@ -24,7 +24,7 @@ import tceav.manager.procedure.plmxmlpdm.base.*;
 import tceav.manager.procedure.plmxmlpdm.classtype.WorkflowTemplateClassificationEnum;
 import tceav.manager.procedure.plmxmlpdm.type.*;
 import tceav.manager.procedure.plmxmlpdm.type.element.*;
-import tceav.xml.DOMUtil;
+import tceav.xml.DOMReader;
 
 import tceav.manager.procedure.plmxmlpdm.base.AttributeBase;
 
@@ -61,11 +61,11 @@ public class ProcedureManager extends AbstractManager {
     public void readFile(File file) throws Exception {
         this.file = file;
         FileInputStream fis = new FileInputStream(file);
-        DOMUtil domUtil;
+        DOMReader domUtil;
         try {
             ProgressMonitorInputStream pmi = new ProgressMonitorInputStream(
                     frame,"Reading "+file.getName(),fis);
-            domUtil = new DOMUtil(pmi);
+            domUtil = new DOMReader(pmi);
             
         } catch (Exception exc) {
             throw new Exception("Error reading XML: " + exc);

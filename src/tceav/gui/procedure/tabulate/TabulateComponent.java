@@ -9,19 +9,30 @@
 
 package tceav.gui.procedure.tabulate;
 
-import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
 import javax.swing.border.*;
 import java.awt.*;
+import java.awt.event.*;
+import java.text.DecimalFormat;
+import java.io.*;
 import tceav.Settings;
 import tceav.utils.CustomFileFilter;
 import tceav.manager.procedure.ProcedureManager;
-import java.io.*;
 import tceav.gui.*;
 import tceav.resources.*;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.DocumentBuilder;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Text;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 /**
  *
  * @author nzr4dl
@@ -203,6 +214,7 @@ public class TabulateComponent extends TabbedPanel {
     
     private JToolBar toolBar;
     private JCheckBox buttonExactMatch;
+    private JCheckBox buttonShowActions;
     
     public JComponent getToolBar() {
         if(toolBar != null)
@@ -216,61 +228,12 @@ public class TabulateComponent extends TabbedPanel {
                 JFileChooser fc = createFileChooser();
                 int result = fc.showSaveDialog(parentFrame);
                 if(result == JFileChooser.APPROVE_OPTION) {
-                    File file = fc.getSelectedFile();
-                    File sheetFile;
-<<<<<<< HEAD
-                    int colLimit = 255;
-                    int sheetCount = (int)Math.ceil((float)table.getColumnCount() / (float)colLimit);
-=======
-                    int sheetCount;
->>>>>>> release/3.5
-                    String s = file.getName();
-
-                    int colLimit = 256 - rowOneModel.getColumnCount();
-                    if(Settings.isPmTblIncludeIds())
-                        colLimit = colLimit - 2;
                     
-                    if(sheetCount > 1)
-                        if(s.toLowerCase().contains(".sheet"))
-                            s = s.substring(0, s.toLowerCase().indexOf(".sheet"));
+                    if(!Settings.isPmTblDatabaseMode())
+                        exportToSpreadSheet(fc.getSelectedFile());
+                    else
+                        exportToDataBaseTables(fc.getSelectedFile());
                     
-                    for(int i=0; i<sheetCount; i++) {
-                        
-                        if(s.toLowerCase().endsWith(".csv")) {
-                            if(sheetCount > 1)
-                                sheetFile = new File(file.getParent(), s.substring(0, s.length()-4)+".sheet"+(i+1)+".csv");
-                            else
-                                sheetFile = new File(file.getParent(), s.substring(0, s.length()-4)+".csv");
-                        } else {
-                            if(sheetCount > 1)
-                                sheetFile = new File(file.getParent(), s + ".sheet" + (i+1) + ".csv");
-                            else
-                                sheetFile = new File(file.getParent(), s + ".csv");
-                        }
-                        
-                        if(sheetFile.isDirectory()) {
-                            JOptionPane.showMessageDialog(parentFrame, sheetFile.getName()+" is a directory!", "Error", JOptionPane.ERROR_MESSAGE);
-                            return;
-                        }
-                        
-                        if (sheetFile.exists()) {
-                            if(!sheetFile.canWrite()) {
-                                JOptionPane.showMessageDialog(parentFrame, "You do not have write access to "+sheetFile.getName(), "Error", JOptionPane.ERROR_MESSAGE);
-                                return;
-                            }
-                            
-                            int option = JOptionPane.showConfirmDialog(parentFrame, sheetFile.getName()+" already exists, overwrite?", "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-                            if(option == JOptionPane.YES_OPTION)
-                                sheetFile.delete();
-                            else
-                                return;
-                        }
-                        
-                        if(i == sheetCount - 1)
-                            export(sheetFile, i*colLimit, table.getColumnCount());
-                        else
-                            export(sheetFile, i*colLimit, (i*colLimit)+colLimit);
-                    }
                 }
             }
         });
@@ -283,7 +246,7 @@ public class TabulateComponent extends TabbedPanel {
         
         
         buttonExactMatch = new JCheckBox("Exact Argument Match", Settings.isPmTblStrictArgument());
-        buttonExactMatch.setToolTipText("Matches exact order of delimited [;,] handler arguments");
+        buttonExactMatch.setToolTipText("Matches exact order of delimited [;,] handler arguments and case");
         buttonExactMatch.setOpaque(false);
         buttonExactMatch.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -291,9 +254,22 @@ public class TabulateComponent extends TabbedPanel {
             }
         });
         
+        buttonShowActions = new JCheckBox("Show Action Type", Settings.isPmTblShowActions());
+        buttonShowActions.setToolTipText("Show action type or just a tick for each Workflow");
+        buttonShowActions.setOpaque(false);
+        buttonShowActions.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Settings.setPmTblShowActions(buttonShowActions.isSelected());
+                updateTable();
+            }
+        });
+        
         toolBar = new JToolBar();
         toolBar.add(buttonExport);
+        toolBar.addSeparator();
         toolBar.add(buttonExactMatch);
+        toolBar.addSeparator();
+        toolBar.add(buttonShowActions);
         
         return toolBar;
     }
@@ -315,7 +291,224 @@ public class TabulateComponent extends TabbedPanel {
         return iconTabulate;
     }
     
-    private void export(File file, int startIndex, int endIndex) {
+    private boolean accessToFile(File file) {
+        if(file.isDirectory()) {
+            JOptionPane.showMessageDialog(parentFrame, file.getName()+" is a directory!", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        
+        if (file.exists()) {
+            if(!file.canWrite()) {
+                JOptionPane.showMessageDialog(parentFrame, "You do not have write access to "+file.getName(), "Error", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+            
+            int option = JOptionPane.showConfirmDialog(parentFrame, file.getName()+" already exists, overwrite?", "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+            if(option == JOptionPane.YES_OPTION)
+                file.delete();
+            else
+                return false;
+        }
+        return true;
+    }
+    
+    private final int TaskTable = 0;
+    private final int HandlerTable = 1;
+    private final int TaskHandlerMapTable = 2;
+    
+    private void exportToDataBaseTables(File file) {
+        String s = file.getName();
+        String tableName = "";
+        File tableFile;
+        int tableCount = 3;
+        
+        for(int i=0; i<tableCount; i++) {
+            switch(i) {
+                case TaskTable:
+                    if(s.toLowerCase().endsWith(".xml"))
+                        tableName = s.substring(0, s.length()-4)+".TaskTable.xml";
+                    else
+                        tableName = s + ".TaskTable.xml";
+                    break;
+                    
+                case HandlerTable:
+                    if(s.toLowerCase().endsWith(".xml"))
+                        tableName = s.substring(0, s.length()-4)+".HandlerTable.xml";
+                    else
+                        tableName = s + ".HandlerTable.xml";
+                    break;
+                    
+                case TaskHandlerMapTable:
+                    if(s.toLowerCase().endsWith(".xml"))
+                        tableName = s.substring(0, s.length()-4)+".TaskHandlerMapTable.xml";
+                    else
+                        tableName = s + ".TaskHandlerMapTable.xml";
+                    break;
+            }
+            
+            tableFile = new File(file.getParent(), tableName);
+            if(!accessToFile(tableFile))
+                return;
+            
+            exportToDataBaseTables(tableFile, i);
+            
+        }
+        
+    }
+    
+    private String padding = "000000000";
+    
+    private String StrFormat(String num) {
+        return padding.substring(0,padding.length()-num.length()) + num;
+    }
+    
+    private void attachXMLRow(Document dom, Element table, String name, String value) {
+        Element rowName = dom.createElement(name);
+        table.appendChild(rowName);
+        
+        Text rowValue = dom.createTextNode(value);
+        rowName.appendChild(rowValue);
+    }
+    
+    private void exportToDataBaseTables(File file, int tableMode) {
+        RowOneModel rowHeader = (RowOneModel) tableRowOne.getModel();
+        DataModel dataModel = (DataModel) table.getModel();
+        
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            Document dom =  builder.newDocument();
+            Element rootElement = dom.createElement("dataroot");
+            rootElement.setAttribute("xmlns:od", "urn:schemas-microsoft-com:officedata");
+            dom.appendChild(rootElement);
+            Element table;
+            
+            DecimalFormat df = new DecimalFormat(padding);
+            
+            switch(tableMode) {
+                case TaskTable:
+                    
+                    for(int row=0; row<dataModel.getRowCount(); row++) {
+                        
+                        table = dom.createElement("TaskTable");
+                        rootElement.appendChild(table);
+                        
+                        attachXMLRow(dom, table, "TaskId", StrFormat(rowOneModel.getId(row)) + "_" + rowOneModel.getSiteId());
+                        
+                        if(!rowOneModel.getParentId(row).equals(""))
+                            attachXMLRow(dom, table, "ParentId", StrFormat(rowOneModel.getParentId(row)) + "_" + rowOneModel.getSiteId());
+                        
+                        if(!rowOneModel.getRootId(row).equals(""))
+                            attachXMLRow(dom, table, "RootId", StrFormat(rowOneModel.getRootId(row)) + "_" + rowOneModel.getSiteId());
+                        
+                        attachXMLRow(dom, table, "SiteId", rowOneModel.getSiteId());
+                        
+                        for(int col=0; col<rowOneModel.getColumnCount(); col++)
+                            attachXMLRow(dom, table, rowHeader.getColumnName(col), rowHeader.getRawValueAt(row, col));
+                    }
+                    
+                    break;
+                    
+                case HandlerTable:
+                    
+                    for(int col=0; col<dataModel.getColumnCount(); col++) {
+                        table = dom.createElement("HandlerTable");
+                        rootElement.appendChild(table);
+                        
+                        attachXMLRow(dom, table, "HandlerId", df.format(col) + "_" + rowOneModel.getSiteId());
+                        attachXMLRow(dom, table, "SiteId", rowOneModel.getSiteId());
+                        attachXMLRow(dom, table, "HandlerType", dataModel.getColumn(col).getClassification());
+                        
+                        if(dataModel.getColumn(col).isRuleClassicifaction())
+                            attachXMLRow(dom, table, "RuleValue", dataModel.getColumn(col).getRule());
+                        
+                        attachXMLRow(dom, table, "HandlerName", dataModel.getColumn(col).getHandler());
+                        
+                        if(!dataModel.getColumn(col).getArgument().equals(""))
+                            attachXMLRow(dom, table, "Argument", dataModel.getColumn(col).getArgument());
+                        
+                    }
+                    
+                    break;
+                    
+                case TaskHandlerMapTable:
+                    int idCount = 0;
+                    
+                    for(int row=0; row<dataModel.getRowCount(); row++) {
+                        for(int col=0; col<dataModel.getColumnCount(); col++) {
+                            
+                            if(dataModel.getValueAt(row, col).equals(""))
+                                continue;
+                            
+                            idCount++;
+                            table = dom.createElement("MapTable");
+                            rootElement.appendChild(table);
+                            
+                            attachXMLRow(dom, table, "MapId", df.format(idCount) + "_" + rowOneModel.getSiteId());
+                            attachXMLRow(dom, table, "SiteId", dataModel.getSiteId());
+                            attachXMLRow(dom, table, "TaskId", StrFormat(rowOneModel.getId(row)) + "_"+rowOneModel.getSiteId());
+                            attachXMLRow(dom, table, "HandlerId", df.format(col) + "_" + rowOneModel.getSiteId());
+                            attachXMLRow(dom, table, "MapValue", (String)dataModel.getValueAt(row, col));
+                        }
+                    }
+                    
+                    break;
+            }
+            
+            //FileOutputStream fos = new FileOutputStream(file);
+            
+            Transformer tr = TransformerFactory.newInstance().newTransformer();
+            tr.setOutputProperty(OutputKeys.METHOD,"xml");
+            tr.setOutputProperty(OutputKeys.INDENT, "yes");
+            tr.setOutputProperty(OutputKeys.ENCODING,"UTF-8");
+            tr.transform( new DOMSource(dom),new StreamResult(new FileOutputStream(file)));
+            
+        } catch(Exception e) {
+            JOptionPane.showMessageDialog(parentFrame, e.getMessage(), "Save Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    private void exportToSpreadSheet(File file) {
+        File sheetFile;
+        int sheetCount;
+        String s = file.getName();
+        
+        int colLimit = 256 - rowOneModel.getColumnCount();
+        
+        if(Settings.isPmTblMultiSheet())
+            sheetCount = (int)Math.ceil((float)table.getColumnCount() / (float)colLimit);
+        else
+            sheetCount = 1;
+        
+        if(sheetCount > 1)
+            if(s.toLowerCase().contains(".sheet"))
+                s = s.substring(0, s.toLowerCase().indexOf(".sheet"));
+        
+        for(int i=0; i<sheetCount; i++) {
+            
+            if(s.toLowerCase().endsWith(".csv")) {
+                if(sheetCount > 1)
+                    sheetFile = new File(file.getParent(), s.substring(0, s.length()-4)+".sheet"+(i+1)+".csv");
+                else
+                    sheetFile = new File(file.getParent(), s.substring(0, s.length()-4)+".csv");
+            } else {
+                if(sheetCount > 1)
+                    sheetFile = new File(file.getParent(), s + ".sheet" + (i+1) + ".csv");
+                else
+                    sheetFile = new File(file.getParent(), s + ".csv");
+            }
+            
+            if(!accessToFile(sheetFile))
+                return;
+            
+            if(i == sheetCount - 1)
+                exportToSpreadSheet(sheetFile, i*colLimit, table.getColumnCount());
+            else
+                exportToSpreadSheet(sheetFile, i*colLimit, (i*colLimit)+colLimit);
+        }
+    }
+    
+    private void exportToSpreadSheet(File file, int startIndex, int endIndex) {
         RowOneModel rowHeader = (RowOneModel) tableRowOne.getModel();
         DataModel dataModel = (DataModel) table.getModel();
         
@@ -324,16 +517,11 @@ public class TabulateComponent extends TabbedPanel {
             OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
             BufferedWriter bw = new BufferedWriter(osw);
             
-            String s = "";
             
             // Header
-            if(Settings.isPmTblIncludeIds())
-                s = "\"Id\",\"Parent Id\",";
-            s = s + rowHeader.getColumnExportName(0);
-
-            // Header
+            String s = rowHeader.getCSVColumnName(0);
             for(int i=1; i<rowOneModel.getColumnCount(); i++)
-                s = s + "," + rowHeader.getColumnExportName(i);
+                s = s + "," + rowHeader.getCSVColumnName(i);
             
             // Header
             for(int i=startIndex; i<endIndex; i++)
@@ -341,19 +529,15 @@ public class TabulateComponent extends TabbedPanel {
             
             bw.write(s+"\n");
             
-            // Data
+            // Write Data
             for(int row=0; row<dataModel.getRowCount(); row++) {
-                s = "";
                 
-                if(Settings.isPmTblIncludeIds())
-                    s = "\""+rowOneModel.getId(row)+"\",\""+rowOneModel.getParentId(row)+"\",";
-                s = s + rowHeader.getExportValueAt(row, 0);
-                
+                s = rowHeader.getCSVValueAt(row, 0);
                 for(int col=1; col<rowOneModel.getColumnCount(); col++)
-                    s = s + "," + rowHeader.getExportValueAt(row, col);
+                    s = s + "," + rowHeader.getCSVValueAt(row, col);
                 
                 for(int col=startIndex; col<endIndex; col++)
-                    s = s+","+dataModel.getValueAt(row, col);
+                    s = s+","+dataModel.getCSVValueAt(row, col);
                 
                 bw.write(s+"\n");
             }
@@ -364,21 +548,16 @@ public class TabulateComponent extends TabbedPanel {
         }
     }
     
-<<<<<<< HEAD
-    JFileChooser fileChooser;
-=======
     private JFileChooser fileChooser;
     private JCheckBox checkMultiSheet;
     private JCheckBox checkIncludeIndents;
-    private JCheckBox checkIncludeIds;
->>>>>>> release/3.5
+    private CustomFileFilter filterCSV;
+    private CustomFileFilter filterXML;
     
     private JFileChooser createFileChooser() {
         if(fileChooser != null)
             return fileChooser;
         
-<<<<<<< HEAD
-=======
         checkMultiSheet = new JCheckBox("Use Multiple Sheets", Settings.isPmTblMultiSheet());
         checkMultiSheet.setToolTipText("Split file into multiple sheets of 256 columns");
         checkMultiSheet.addActionListener(new ActionListener() {
@@ -393,41 +572,73 @@ public class TabulateComponent extends TabbedPanel {
                 Settings.setPmTblIncludeIndents(checkIncludeIndents.isSelected());
             }
         });
-        checkIncludeIds = new JCheckBox("Include Id", Settings.isPmTblIncludeIds());
-        checkIncludeIds.setToolTipText("Include the id of the procedure and it's parent");
-        checkIncludeIds.addActionListener(new ActionListener() {
+        JRadioButton radioDatabaseMode = new JRadioButton("Database", Settings.isPmTblDatabaseMode());
+        radioDatabaseMode.setToolTipText("Export to XML table files");
+        radioDatabaseMode.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                Settings.setPmTblIncludeIds(checkIncludeIds.isSelected());
+                Settings.setPmTblDatabaseMode(true);
+                if(fileChooser.getFileFilter().equals(filterCSV))
+                    fileChooser.setFileFilter(filterXML);
+            }
+        });
+        JRadioButton radioSpreadSheetMode = new JRadioButton("Spreadsheet", Settings.isPmTblDatabaseMode());
+        radioSpreadSheetMode.setToolTipText("Export to CSV spreadsheet file(s)");
+        radioSpreadSheetMode.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Settings.setPmTblDatabaseMode(false);
+                if(fileChooser.getFileFilter().equals(filterXML))
+                    fileChooser.setFileFilter(filterCSV);
             }
         });
         
-        JPanel panelFile = new JPanel();
-        panelFile.setBorder(new TitledBorder(new EtchedBorder(), "File Options"));
-        panelFile.setLayout(new GridLayout(2,1));
-        panelFile.add(checkMultiSheet);
-        JPanel panelFormat = new JPanel();
-        panelFormat.setBorder(new TitledBorder(new EtchedBorder(), "Format Options"));
-        panelFormat.setLayout(new GridLayout(2,1));
-        panelFormat.add(checkIncludeIndents);
-        JPanel panelData = new JPanel();
-        panelData.setBorder(new TitledBorder(new EtchedBorder(), "Data Options"));
-        panelData.setLayout(new GridLayout(2,1));
-        panelData.add(checkIncludeIds);
+        ButtonGroup group = new ButtonGroup();
+        group.add(radioDatabaseMode);
+        group.add(radioSpreadSheetMode);
+        radioSpreadSheetMode.setSelected(!Settings.isPmTblDatabaseMode());
+        radioDatabaseMode.setSelected(Settings.isPmTblDatabaseMode());
+        
+        JPanel panelSpreadsheetOptions = new JPanel();
+        panelSpreadsheetOptions.setBorder(new TitledBorder(new EtchedBorder(), "Spreadsheet Options"));
+        panelSpreadsheetOptions.setLayout(new GridLayout(2,1));
+        panelSpreadsheetOptions.add(checkMultiSheet);
+        panelSpreadsheetOptions.add(checkIncludeIndents);
+        JPanel panelExportMode = new JPanel();
+        panelExportMode.setBorder(new TitledBorder(new EtchedBorder(), "Export Mode"));
+        panelExportMode.setLayout(new GridLayout(2,1));
+        panelExportMode.add(radioDatabaseMode);
+        panelExportMode.add(radioSpreadSheetMode);
+        
+        JPanel panelOptions = new JPanel();
+        panelOptions.setLayout(new GridLayout(2,1));
+        panelOptions.add(panelSpreadsheetOptions);
+        panelOptions.add(panelExportMode);
         
         JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(3,1));
-        panel.add(panelFile);
-        panel.add(panelFormat);
-        panel.add(panelData);
+        panel.setLayout(new BorderLayout());
+        panel.add(panelOptions, BorderLayout.NORTH);
         
->>>>>>> release/3.5
-        JFileChooser fileChooser = new JFileChooser();
+        filterCSV = new CustomFileFilter(
+                new String[]{"csv"},
+                "Comma Delimited Text File (*.csv)");
+        filterXML = new CustomFileFilter(
+                new String[]{"xml"},
+                "Database Text File (*.xml)");
+        
+        fileChooser = new JFileChooser();
+        fileChooser.setAccessory(panel);
         fileChooser.setDialogType(JFileChooser.SAVE_DIALOG);
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         fileChooser.setCurrentDirectory(pm.getFile());
         fileChooser.addChoosableFileFilter(new CustomFileFilter(
-                new String[]{"csv"},
-                "Comma Delimited Text File (*.csv)"));
+                new String[]{"csv","xml"},
+                "All supported Text Files (*.csv, *.xml)"));
+        fileChooser.addChoosableFileFilter(filterCSV);
+        fileChooser.addChoosableFileFilter(filterXML);
+        
+        if(Settings.isPmTblDatabaseMode())
+            fileChooser.setFileFilter(filterXML);
+        else
+            fileChooser.setFileFilter(filterCSV);
         
         return fileChooser;
     }
@@ -472,8 +683,6 @@ public class TabulateComponent extends TabbedPanel {
         JLabel label = new JLabel();
         DataModel model = (DataModel)table.getModel();
         s = model.getColumn(columnIndex).toString();
-        //if(!s.startsWith(ColumnHeaderEntry.ARGUMENT_PREFIX))
-        //    label.setFont(label.getFont().deriveFont(Font.BOLD));
         label.setIcon(new RotatedTextIcon(RotatedTextIcon.LEFT, label.getFont(), s));
         width = Math.max(label.getPreferredSize().width, width);
         

@@ -9,10 +9,13 @@
 
 package tceav.gui.procedure.tabulate;
 
-import tceav.gui.TableShadedRenderer;
 import javax.swing.table.*;
 import javax.swing.*;
 import java.awt.*;
+import java.util.HashMap;
+import tceav.Settings;
+import tceav.gui.TableShadedRenderer;
+import tceav.manager.procedure.plmxmlpdm.classtype.WorkflowActionTypeEnum;
 import tceav.resources.*;
 
 /**
@@ -21,8 +24,8 @@ import tceav.resources.*;
  */
 public class CellRenderer extends SyncedRenderer implements TableCellRenderer {
     
-    static protected ImageIcon yesIcon;
-    
+    private static ImageIcon yesIcon;
+    private static HashMap<String, SquareIcon> actionMap;
     
     static
     {
@@ -30,6 +33,12 @@ public class CellRenderer extends SyncedRenderer implements TableCellRenderer {
             yesIcon = ResourceLoader.getImage(ImageEnum.amYes);
         } catch (Exception e) {
             System.out.println("Couldn't load images: " + e);
+        }
+        
+        WorkflowActionTypeEnum[] actionTypes = WorkflowActionTypeEnum.values();
+        actionMap = new HashMap<String, SquareIcon>();
+        for(WorkflowActionTypeEnum wa : actionTypes) {
+            actionMap.put(wa.getName(), new SquareIcon(wa.getColor()));
         }
     }
     
@@ -49,12 +58,20 @@ public class CellRenderer extends SyncedRenderer implements TableCellRenderer {
         setHorizontalAlignment(SwingConstants.CENTER);
         setVerticalAlignment(SwingConstants.CENTER);
         
-        if(s.equals("y")) {
-            setValue(null);
-            setIcon(yesIcon);
-        } else {
+        if(s == null || s.equals("")) {
             setIcon(null);
+            setToolTipText(null);
             setValue(null);
+        } else {
+            if(Settings.isPmTblShowActions()) {
+                setValue(null);
+                setToolTipText(s);
+                setIcon(actionMap.get(s));
+            } else /*if(s.equals("y"))*/ {
+                setValue(null);
+                setToolTipText(null);
+                setIcon(yesIcon);
+            }
         }
         
         return this;

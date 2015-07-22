@@ -1,5 +1,5 @@
 /*
- * DOMUtil.java
+ * DOMReader.java
  *
  * Created on 20 July 2007, 11:10
  *
@@ -25,11 +25,11 @@ import org.w3c.dom.Node;
  *
  * @author nzr4dl
  */
-public class DOMUtil {
+public class DOMReader {
     
     private Node rootNode;
     
-    public DOMUtil(InputStream is) throws Exception {
+    public DOMReader(InputStream is) throws Exception {
         // Validation
         //SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
         //Schema schema = schemaFactory.newSchema(ResourceStrings.getPLMXMLPDMSchema());

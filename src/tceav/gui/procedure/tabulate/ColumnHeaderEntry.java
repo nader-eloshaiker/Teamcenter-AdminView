@@ -108,6 +108,13 @@ public class ColumnHeaderEntry {
         return (classification == ACTION_CLASSIFICATION);
     }
     
+    public String getClassification() {
+        if(isRuleClassicifaction())
+            return "Rule";
+        else
+            return "Action";
+    }
+    
     public boolean isRule() {
         return (type == RULE_TYPE);
     }
@@ -316,8 +323,16 @@ public class ColumnHeaderEntry {
         return s;
     }
     
+    public String getRule() {
+        return Integer.toString(quorum);
+    }
+    
     private String toStringRule(boolean export)  {
         return "Rule "+quorum;
+    }
+    
+    public String getHandler() {
+        return handler;
     }
     
     private String toStringHandler(boolean export) {
@@ -329,6 +344,13 @@ public class ColumnHeaderEntry {
             indent = "";
         
         return indent + handler;
+    }
+    
+    public String getArgument() {
+        String s = "";
+        for(int i=0; i<arguments.size(); i++)
+            s += arguments.get(i)+"|";
+        return s;
     }
     
     private String toStringArgument(boolean export) {

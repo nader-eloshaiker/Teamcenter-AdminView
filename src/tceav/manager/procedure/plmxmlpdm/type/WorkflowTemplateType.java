@@ -321,6 +321,19 @@ public class WorkflowTemplateType extends AttribOwnerBase {
     public WorkflowTemplateType getParentTaskTemplate() {
         return parentTaskTemplate;
     }
+    
+    public WorkflowTemplateType getRootTaskTemplate() {
+        WorkflowTemplateType root = this;
+        
+        while(root.getParentTaskTemplate() != null)
+            root = root.getParentTaskTemplate();
+        
+        return root;
+    }
+    
+    public boolean isRootTaskTemplate() {
+        return (getParentTaskTemplate() == null);
+    }
 
     public void setParentTaskTemplate(WorkflowTemplateType parentTaskTemplate) {
         this.parentTaskTemplate = parentTaskTemplate;
