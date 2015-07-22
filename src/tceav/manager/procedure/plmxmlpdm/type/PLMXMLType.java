@@ -9,7 +9,6 @@
 package tceav.manager.procedure.plmxmlpdm.type;
 
 import tceav.xml.TagTools;
-import tceav.manager.procedure.plmxmlpdm.ProcedureTagTypeEnum;
 import tceav.manager.procedure.plmxmlpdm.base.IdBase;
 import org.w3c.dom.Node;
 import org.w3c.dom.NamedNodeMap;
@@ -54,7 +53,7 @@ import javax.xml.bind.annotation.XmlType;
  * })
  * 
  */
-public class PLMXMLType extends IdBase
+public final class PLMXMLType extends IdBase
 {
 
     //@XmlAttribute

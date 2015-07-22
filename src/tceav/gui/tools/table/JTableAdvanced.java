@@ -28,6 +28,7 @@ public class JTableAdvanced extends JTable {
     }
     
     // overriden to make the height of scroll match viewpost height if smaller 
+    @Override
     public boolean getScrollableTracksViewportHeight() { 
         return getPreferredSize().height < getParent().getHeight(); 
     } 

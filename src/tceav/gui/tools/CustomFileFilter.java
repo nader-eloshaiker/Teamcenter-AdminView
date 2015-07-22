@@ -12,14 +12,15 @@ import java.io.File;
 
 public class CustomFileFilter extends javax.swing.filechooser.FileFilter {
     
-    private String[] extension;
-    private String description;
+    private final String[] extension;
+    private final String description;
     
     public CustomFileFilter(String[] extension, String description) {
         this.extension = extension;
         this.description = description;
     }
     
+    @Override
     public boolean accept(File f) {
         //if it is a directory -- we want to show it so return true.
         if (f.isDirectory())
@@ -28,14 +29,16 @@ public class CustomFileFilter extends javax.swing.filechooser.FileFilter {
         //get the extension of the file
         String testExtension = getExtension(f);
         
-        for(int i=0; i<extension.length; i++) {
-            if (extension[i].equals(testExtension))
+        for (String extension1 : extension) {
+            if (extension1.equals(testExtension)) {
                 return true;
+            }
         }
         
         return false;
     }
     
+    @Override
     public String getDescription() {
         return description;
     }

@@ -32,6 +32,7 @@ public class ColumnHeaderRenderer implements TableCellRenderer {
         return cell;
     }
 
+    @Override
     public Component getTableCellRendererComponent(JTable table,
             Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 
@@ -50,8 +51,8 @@ public class ColumnHeaderRenderer implements TableCellRenderer {
         Font font = cell.getFont();
         RotatedTextIcon icon;
 
-        ArrayList<Font> fonts = new ArrayList<Font>();
-        ArrayList<String> str = new ArrayList<String>();
+        ArrayList<Font> fonts = new ArrayList<>();
+        ArrayList<String> str = new ArrayList<>();
 
         if (che.isRuleHandler()) {
             fonts.add(font.deriveFont(Font.ITALIC));

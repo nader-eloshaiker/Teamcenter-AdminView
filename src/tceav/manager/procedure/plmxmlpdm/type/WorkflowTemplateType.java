@@ -69,7 +69,7 @@ import tceav.manager.procedure.plmxmlpdm.classtype.WorkflowTemplateStageEnum;
 "dependencyTaskTemplates"
 })
  */
-public class WorkflowTemplateType extends AttribOwnerBase {
+public final class WorkflowTemplateType extends AttribOwnerBase {
 
     //@XmlElement(name = "TaskDescription", required = true)
     protected UserListDataType taskDescription;
@@ -195,7 +195,7 @@ public class WorkflowTemplateType extends AttribOwnerBase {
 
     public List<String> getDependencyTaskTemplateRefs() {
         if (dependencyTaskTemplateRefs == null) {
-            dependencyTaskTemplateRefs = new ArrayList<String>();
+            dependencyTaskTemplateRefs = new ArrayList<>();
         }
         return this.dependencyTaskTemplateRefs;
     }
@@ -262,7 +262,7 @@ public class WorkflowTemplateType extends AttribOwnerBase {
 
     public List<String> getSubTemplateRefs() {
         if (subTemplateRefs == null) {
-            subTemplateRefs = new ArrayList<String>();
+            subTemplateRefs = new ArrayList<>();
         }
         return this.subTemplateRefs;
     }
@@ -286,7 +286,7 @@ public class WorkflowTemplateType extends AttribOwnerBase {
      ***************/
     public List<String> getActionRefs() {
         if (actionRefs == null) {
-            actionRefs = new ArrayList<String>();
+            actionRefs = new ArrayList<>();
         }
         return this.actionRefs;
     }

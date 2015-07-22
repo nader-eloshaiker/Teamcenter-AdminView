@@ -9,10 +9,8 @@
 package tceav.manager.procedure.plmxmlpdm.type;
 
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.w3c.dom.NamedNodeMap;
 import tceav.xml.TagTools;
-import tceav.manager.procedure.plmxmlpdm.ProcedureTagTypeEnum;
 
 /*
 import javax.xml.bind.annotation.XmlAccessType;
@@ -41,7 +39,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 //@XmlAccessorType(XmlAccessType.FIELD)
 //@XmlType(name = "WorkflowBusinessRuleHandlerType")
-public class WorkflowBusinessRuleHandlerType extends WorkflowHandlerType {
+public final class WorkflowBusinessRuleHandlerType extends WorkflowHandlerType {
 
     //@XmlAttribute
     protected final String negatedAttribute = "negated";

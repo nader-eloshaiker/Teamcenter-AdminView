@@ -27,6 +27,7 @@ public class WorkflowRenderer  implements TreeCellRenderer {
     public WorkflowRenderer() {
     }
     
+    @Override
     public Component getTreeCellRendererComponent(JTree tree, Object value, boolean isSelected, boolean expanded, boolean leaf, int row, boolean hasFocus){
         
         DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer();

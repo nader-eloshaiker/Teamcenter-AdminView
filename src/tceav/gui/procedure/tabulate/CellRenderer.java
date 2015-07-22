@@ -26,7 +26,7 @@ import tceav.resources.ResourceLoader;
 public class CellRenderer extends SyncedRenderer implements TableCellRenderer {
 
     private static ImageIcon yesIcon;
-    private static HashMap<String, SquareIcon> actionMap;
+    private static final HashMap<String, SquareIcon> actionMap;
     
 
     static {
@@ -37,7 +37,7 @@ public class CellRenderer extends SyncedRenderer implements TableCellRenderer {
         }
 
         WorkflowActionTypeEnum[] actionTypes = WorkflowActionTypeEnum.values();
-        actionMap = new HashMap<String, SquareIcon>();
+        actionMap = new HashMap<>();
         for (WorkflowActionTypeEnum wa : actionTypes) {
             actionMap.put(wa.getName(), new SquareIcon(wa.getColor()));
         }

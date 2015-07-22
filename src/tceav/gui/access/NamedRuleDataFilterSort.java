@@ -9,8 +9,6 @@
 
 package tceav.gui.access;
 
-import tceav.manager.access.NamedAcl;
-import tceav.manager.compare.CompareInterface;
 import java.util.*;
 
 /**
@@ -18,7 +16,7 @@ import java.util.*;
  * @author NZR4DL
  */
 public class NamedRuleDataFilterSort extends NamedRuleDataFilterAdapter implements NamedRuleDataFilterInterface {
-    private ArrayList<Integer> sortingColumns = new ArrayList<Integer>();
+    private final ArrayList<Integer> sortingColumns = new ArrayList<>();
     private boolean ascending = true;
     
     private static final String[] SORT_COLUMN_SELECTION = new String[]{"Type","Instance Count","ACL Name","None"};
@@ -56,7 +54,7 @@ public class NamedRuleDataFilterSort extends NamedRuleDataFilterAdapter implemen
     public void setSort(int column, boolean ascending) {
         this.ascending = ascending;
         sortingColumns.clear();
-        sortingColumns.add(new Integer(column));
+        sortingColumns.add(column);
     }
     
     public void setSort(int[] columns, boolean ascending) {
@@ -71,14 +69,14 @@ public class NamedRuleDataFilterSort extends NamedRuleDataFilterAdapter implemen
         
         for(int i=0; i<length; i++)
             if(columns[i] != getSortNoneValue())
-                sortingColumns.add(new Integer(columns[i]));
+                sortingColumns.add(columns[i]);
     }
     
     public int getSort(int column) {
         if ((column >= sortingColumns.size()) || (column >= getColumnCount()))
             return getSortNoneValue();
         
-        return sortingColumns.get(column).intValue();
+        return sortingColumns.get(column);
     }
     
     public int[] getSort() {
@@ -88,14 +86,14 @@ public class NamedRuleDataFilterSort extends NamedRuleDataFilterAdapter implemen
         return columns;
     }
     
+    @Override
     protected void filter() {
         if(sortingColumns.size() > 0)
             shuttlesort((int[])indexes.clone(), indexes, 0, indexes.length);
     }
     
     private int compare(int row1, int row2) {
-        for (int level = 0; level < sortingColumns.size(); level++) {
-            Integer column = sortingColumns.get(level);
+        for (Integer column : sortingColumns) {
             int result = compareRowsByColumn(row1, row2, column.intValue());
             if (result != 0) {
                 return ascending ? result : -result;
@@ -249,9 +247,7 @@ public class NamedRuleDataFilterSort extends NamedRuleDataFilterAdapter implemen
     order diminishes - it may drop very quickly. */
         
         if (high - low >= 4 && compare(from[middle-1], from[middle]) <= 0) {
-            for (int i = low; i < high; i++) {
-                to[i] = from[i];
-            }
+            System.arraycopy(from, low, to, low, high - low);
             return;
         }
         

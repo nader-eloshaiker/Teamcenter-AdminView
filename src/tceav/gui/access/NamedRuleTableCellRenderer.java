@@ -54,6 +54,7 @@ public class NamedRuleTableCellRenderer extends TableShadedRenderer implements T
     }
 
     /* Creates a new instance of AccessRuleTableHearderRenderer */
+    @Override
     public Component getTableCellRendererComponent(JTable table,
             Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         
@@ -63,34 +64,49 @@ public class NamedRuleTableCellRenderer extends TableShadedRenderer implements T
         
         switch (column) {
             case NamedRuleDataFilterInterface.TYPE_COLUMN:
-                if(s.equals("WORKFLOW"))
-                    setIcon(typeWorkflowIcon);
-                else if(s.equals("RULETREE"))
-                    setIcon(typeRuletreeIcon);
+                
+                switch (s) {
+                    case "WORKFLOW":
+                        setIcon(typeWorkflowIcon);
+                        break;
+                    case "RULETREE":
+                        setIcon(typeRuletreeIcon);
+                        break;
+                }
+                
                 setToolTipText("Rule Type: "+s);
                 setValue(null);
                 setHorizontalAlignment(SwingConstants.CENTER);
                 break;
+                
             case NamedRuleDataFilterInterface.INSTANCES_COLUMN:
                 setIcon(null);
                 setHorizontalAlignment(SwingConstants.CENTER);
                 //setValue(s);
                 setToolTipText("Instances in RuleTree: "+s);
                 break;
+                
             case NamedRuleDataFilterInterface.COMPARE_COLUMN:
-                if(s.equals(CompareInterface.NOT_EQUAL_STRING)) {
-                    setIcon(iconNotEqual);
-                    setToolTipText(CompareInterface.NOT_EQUAL_LABEL);
-                } else if(s.equals(CompareInterface.NOT_FOUND_STRING)) {
-                    setIcon(iconNotFound);
-                    setToolTipText(CompareInterface.NOT_FOUND_LABEL);
-                } else if(s.equals(CompareInterface.EQUAL_STRING)) {
-                    setIcon(null);
-                    setToolTipText(CompareInterface.EQUAL_LABEL);
+
+                switch (s) {
+                    case CompareInterface.NOT_EQUAL_STRING:
+                        setIcon(iconNotEqual);
+                        setToolTipText(CompareInterface.NOT_EQUAL_LABEL);
+                        break;
+                    case CompareInterface.NOT_FOUND_STRING:
+                        setIcon(iconNotFound);
+                        setToolTipText(CompareInterface.NOT_FOUND_LABEL);
+                        break;
+                    case CompareInterface.EQUAL_STRING:
+                        setIcon(null);
+                        setToolTipText(CompareInterface.EQUAL_LABEL);
+                        break;
                 }
+
                 setValue(null);
                 setHorizontalAlignment(SwingConstants.CENTER);
                 break;
+                
             default:
                 setHorizontalAlignment(SwingConstants.LEFT);
                 setIcon(null);

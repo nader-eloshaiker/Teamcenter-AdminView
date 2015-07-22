@@ -8,11 +8,9 @@
 
 package tceav.manager.procedure.plmxmlpdm.type;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import tceav.xml.TagTools;
-import tceav.manager.procedure.plmxmlpdm.ProcedureTagTypeEnum;
 import tceav.manager.procedure.plmxmlpdm.base.AttribOwnerBase;
 
 import org.w3c.dom.Node;
@@ -54,7 +52,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 //@XmlAccessorType(XmlAccessType.FIELD)
 //@XmlType(name = "WorkflowBusinessRuleType")
-public class WorkflowBusinessRuleType extends AttribOwnerBase {
+public final class WorkflowBusinessRuleType extends AttribOwnerBase {
 
     //@XmlAttribute
     protected final String parentRefAttribute = "parentRef";
@@ -91,7 +89,7 @@ public class WorkflowBusinessRuleType extends AttribOwnerBase {
 
     public List<String> getRuleHandlerRefs() {
         if (ruleHandlerRefs == null) {
-            ruleHandlerRefs = new ArrayList<String>();
+            ruleHandlerRefs = new ArrayList<>();
         }
         return this.ruleHandlerRefs;
     }

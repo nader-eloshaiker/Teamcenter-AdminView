@@ -31,13 +31,14 @@ public class ClipboardManager implements ClipboardOwner {
         if (sm != null) {
             try {
                 sm.checkSystemClipboardAccess();
-            } catch (Exception ex) {ex.printStackTrace();}
+            } catch (Exception ex) {}
         }
         StringSelection st = new StringSelection(s);
         Clipboard cp = Toolkit.getDefaultToolkit().getSystemClipboard();
         cp.setContents(st, this);
     }
     
+    @Override
     public void lostOwnership(Clipboard clip, Transferable tr) { 
        System.out.println("Lost Clipboard Ownership?!?");
     }

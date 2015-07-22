@@ -44,10 +44,12 @@ public class AttributeTreeData implements TreeModel {
         this(null);
     }
     
+    @Override
     public Object getRoot() {
         return root;
     }
     
+    @Override
     public Object getChild(Object parent, int index) {
         
         int counter;
@@ -170,6 +172,7 @@ public class AttributeTreeData implements TreeModel {
         
     }
     
+    @Override
     public int getChildCount(Object parent) {
         
         if(parent instanceof WorkflowTemplateType || parent instanceof OrganisationType) {
@@ -238,11 +241,13 @@ public class AttributeTreeData implements TreeModel {
         return 0;
     }
     
+    @Override
     public boolean isLeaf(Object node) {
         
         return (getChildCount(node) == 0);
     }
     
+    @Override
     public int getIndexOfChild(Object parent, Object child) {
         int index;
         IdBase childBase;
@@ -388,14 +393,17 @@ public class AttributeTreeData implements TreeModel {
         
     }
     
+    @Override
     public void addTreeModelListener(TreeModelListener listener) {
         // not editable
     }
     
+    @Override
     public void removeTreeModelListener(TreeModelListener listener) {
         // not editable
     }
     
+    @Override
     public void valueForPathChanged(TreePath path, Object newValue) {
         // not editable
     }

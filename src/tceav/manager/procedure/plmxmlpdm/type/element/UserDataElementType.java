@@ -84,7 +84,7 @@ import tceav.manager.procedure.plmxmlpdm.type.UserListDataType;
     "userList"
 })
  **/
-public class UserDataElementType extends IdBase {
+public final class UserDataElementType extends IdBase {
 
     //@XmlElement(name = "UserList")
     //NOTE:This needs to be checked for implementation

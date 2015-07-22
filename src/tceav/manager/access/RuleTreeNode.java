@@ -18,7 +18,7 @@ import tceav.utils.ArrayListSorter;
  *
  * @author NZR4DL
  */
-public class RuleTreeNode implements CompareInterface {
+public final class RuleTreeNode implements CompareInterface {
 
     private static final String INDENT = "    ";
     private static final String MARKER = "->";
@@ -36,7 +36,7 @@ public class RuleTreeNode implements CompareInterface {
      * Creates a new instance of RuleTreeNode
      */
     public RuleTreeNode() {
-        children = new ArrayList<RuleTreeNode>();
+        children = new ArrayList<>();
     }
 
     /***************************************************************************
@@ -130,11 +130,7 @@ public class RuleTreeNode implements CompareInterface {
     }
 
     public boolean isValid() {
-        if (getCondition() == null) {
-            return false;
-        } else {
-            return true;
-        }
+        return getCondition() != null;
     }
 
     public String[] getParamters() {
@@ -187,8 +183,8 @@ public class RuleTreeNode implements CompareInterface {
         s += toString();
 
         if (parameters != null) {
-            for (int k = 0; k < parameters.length; k++) {
-                s += " , " + parameters[k];
+            for (String parameter : parameters) {
+                s += " , " + parameter;
             }
         }
 
@@ -247,7 +243,7 @@ public class RuleTreeNode implements CompareInterface {
     }
 
     public ArrayList<RuleTreeNode> getPath(boolean reverseOrder) {
-        ArrayList<RuleTreeNode> path = new ArrayList<RuleTreeNode>();
+        ArrayList<RuleTreeNode> path = new ArrayList<>();
         RuleTreeNode root = parent;
 
         while (root != null) {
@@ -256,7 +252,7 @@ public class RuleTreeNode implements CompareInterface {
         }
 
         if (!reverseOrder) {
-            ArrayList<RuleTreeNode> pathReversed = new ArrayList<RuleTreeNode>();
+            ArrayList<RuleTreeNode> pathReversed = new ArrayList<>();
 
             for (int i = path.size() - 1; i >= 0; i--) {
                 pathReversed.add(path.get(i));
@@ -280,14 +276,17 @@ public class RuleTreeNode implements CompareInterface {
      ********************/
     private int compare_result = CompareInterface.EQUAL;
 
+    @Override
     public int getComparison() {
         return compare_result;
     }
 
+    @Override
     public void setComparison(int compare_result) {
         this.compare_result = compare_result;
     }
 
+    @Override
     public int compare(Object o) {
         RuleTreeNode node = (RuleTreeNode) o;
 

@@ -30,7 +30,7 @@ public class AccessControl implements CompareInterface {
         String s;
         columns = c;
         AccessControlHeaderEnum acTag;
-        access = new HashMap<String, String>();
+        access = new HashMap<>();
         NodeList nodeList = accessControlNode.getChildNodes();
         NodeList subNodeList;
 
@@ -105,7 +105,7 @@ public class AccessControl implements CompareInterface {
         columns = c;
         AccessControlHeaderItem item;
         String[] strArray = ruleEntry.split("!");
-        access = new HashMap<String, String>();
+        access = new HashMap<>();
 
         for (int i = 0; i < c.size(); i++) {
             item = c.get(i);
@@ -164,14 +164,17 @@ public class AccessControl implements CompareInterface {
      **************************************************************************/
     private int compare_result = CompareInterface.EQUAL;
 
+    @Override
     public int getComparison() {
         return compare_result;
     }
 
+    @Override
     public void setComparison(int compare_result) {
         this.compare_result = compare_result;
     }
 
+    @Override
     public int compare(Object o) {
         AccessControl c = (AccessControl) o;
         String value;
@@ -180,10 +183,10 @@ public class AccessControl implements CompareInterface {
 
             for (int i = 2; i < access.size(); i++) {
                 value = c.getAccessControlAtIndex(i);
-                if (value == null) {
-                    continue;
-                } else if (!getAccessControlAtIndex(i).equals(value)) {
-                    return CompareInterface.NOT_EQUAL;
+                if (value != null) {
+                    if (!getAccessControlAtIndex(i).equals(value)) {
+                        return CompareInterface.NOT_EQUAL;
+                    }
                 }
             }
 

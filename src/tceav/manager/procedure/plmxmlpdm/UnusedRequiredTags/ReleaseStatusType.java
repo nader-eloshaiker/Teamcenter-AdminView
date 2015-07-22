@@ -109,7 +109,7 @@ public class ReleaseStatusType extends AttribOwnerBase {
      */
     public List<String> getEffectivityRefs() {
         if (effectivityRefs == null) {
-            effectivityRefs = new ArrayList<String>();
+            effectivityRefs = new ArrayList<>();
         }
         return this.effectivityRefs;
     }

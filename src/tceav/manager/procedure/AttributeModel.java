@@ -9,7 +9,7 @@
 
 package tceav.manager.procedure;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 import tceav.manager.procedure.plmxmlpdm.base.AttribOwnerBase;
 import tceav.manager.procedure.plmxmlpdm.base.IdBase;
 import tceav.manager.procedure.plmxmlpdm.type.AssociatedDataSetType;
@@ -32,12 +32,13 @@ import tceav.manager.procedure.plmxmlpdm.type.element.UserDataElementType;
  * @author NZR4DL
  */
 public class AttributeModel {
-    Hashtable<String,IdBase> tagCache;
+    HashMap<String,IdBase> tagCache;
     
     /**
      * Creates a new instance of AttributeModel
+     * @param tagCache
      */
-    public AttributeModel(Hashtable<String,IdBase> tagCache) {
+    public AttributeModel(HashMap<String,IdBase> tagCache) {
         this.tagCache = tagCache;
     }
     
@@ -269,10 +270,7 @@ public class AttributeModel {
             
         } else if(node instanceof UserDataElementType) {
             UserDataElementType uv = (UserDataElementType)node;
-            if(uv.getDataRef() != null)
-                return false;
-            else
-                return true;
+            return (uv.getDataRef() != null);
             
         } else if(node instanceof AssociatedDataSetType || node instanceof AssociatedFolderType || node instanceof AssociatedFormType) {
             return false;

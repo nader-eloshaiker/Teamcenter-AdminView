@@ -33,9 +33,9 @@ import tceav.manager.procedure.ProcedureManager;
  */
 public class ActionComponent extends JComponent {
     
-    private JTreeAdvanced tree;
-    private AdminViewFrame parentFrame;
-    private TreeToolBar toolbar;
+    private final JTreeAdvanced tree;
+    private final AdminViewFrame parentFrame;
+    private final TreeToolBar toolbar;
     
     
     public ActionComponent(AdminViewFrame parentFrame, ProcedureManager pm) {

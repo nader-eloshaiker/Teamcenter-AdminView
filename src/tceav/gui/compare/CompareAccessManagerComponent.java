@@ -25,18 +25,18 @@ import javax.swing.plaf.basic.BasicSplitPaneUI;
  *
  * @author NZR4DL
  */
-public class CompareAccessManagerComponent extends TabbedPanel {
+public final class CompareAccessManagerComponent extends TabbedPanel {
 
-    private AdminViewFrame parentFrame;
-    private RuleTreeComponent[] ruleTree;
-    private NamedRuleComponent[] namedRule;
-    private AccessRuleComponent accessControl;
+    private final AdminViewFrame parentFrame;
+    private final RuleTreeComponent[] ruleTree;
+    private final NamedRuleComponent[] namedRule;
+    private final AccessRuleComponent accessControl;
     private JSplitPane splitPane;
-    private JPanel panelTab;
+    private final JPanel panelTab;
     private final int compareCount = 2;
     public static final String MODE_ACL = "Named ACL";
     public static final String MODE_TREE = "Rule Tree";
-    private CompareAccessManager cam;
+    private final CompareAccessManager cam;
 
     /** Creates a new instance of CompareAccessManagerComponent */
     public CompareAccessManagerComponent(AdminViewFrame parent, CompareAccessManager cam) {
@@ -81,6 +81,7 @@ public class CompareAccessManagerComponent extends TabbedPanel {
     private JToolBar toolBar;
     private JCheckBox checkSync;
 
+    @Override
     public JToolBar getToolBar() {
 
         if (toolBar != null) {
@@ -92,6 +93,7 @@ public class CompareAccessManagerComponent extends TabbedPanel {
         ruletreeButton.setVerticalTextPosition(JRadioButton.CENTER);
         ruletreeButton.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 ((CardLayout) panelTab.getLayout()).show(panelTab, MODE_TREE);
                 Settings.setAmCmpDisplayMode(MODE_TREE);
@@ -102,6 +104,7 @@ public class CompareAccessManagerComponent extends TabbedPanel {
         namedAclButton.setVerticalTextPosition(JRadioButton.CENTER);
         namedAclButton.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 ((CardLayout) panelTab.getLayout()).show(panelTab, MODE_ACL);
                 Settings.setAmCmpDisplayMode(MODE_ACL);
@@ -112,6 +115,7 @@ public class CompareAccessManagerComponent extends TabbedPanel {
         checkSync.setOpaque(false);
         checkSync.addChangeListener(new ChangeListener() {
 
+            @Override
             public void stateChanged(ChangeEvent e) {
                 for (int i = 0; i < compareCount; i++) {
                     ruleSelectionListener[i].setSync(checkSync.isSelected());
@@ -186,6 +190,7 @@ public class CompareAccessManagerComponent extends TabbedPanel {
     }
     private JPanel statusBar;
 
+    @Override
     public JComponent getStatusBar() {
         if (statusBar != null) {
             return statusBar;
@@ -329,11 +334,13 @@ public class CompareAccessManagerComponent extends TabbedPanel {
         return statusBar;
     }
 
+    @Override
     public String getTitle() {
         return cam.getAccessManagers()[0].getFile().getName() + "::" + cam.getAccessManagers()[1].getFile().getName();
     }
     private ImageIcon iconRuleTree;
 
+    @Override
     public ImageIcon getIcon() {
         if (iconRuleTree == null) {
             try {

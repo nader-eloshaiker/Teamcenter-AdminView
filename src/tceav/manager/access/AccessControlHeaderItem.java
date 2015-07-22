@@ -17,7 +17,7 @@ import tceav.resources.ImageEnum;
  */
 public class AccessControlHeaderItem {
     
-    private AccessControlHeaderEnum entry;
+    private final AccessControlHeaderEnum entry;
     
     /** Creates a new instance of AccessControlHeaderItem */
     public AccessControlHeaderItem(AccessControlHeaderEnum item) {

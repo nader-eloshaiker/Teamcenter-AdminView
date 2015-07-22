@@ -66,7 +66,7 @@ import javax.xml.bind.annotation.XmlType;
     "checker"
 })
  */
-public class ValidationResultsType extends AttributeBase {
+public final class ValidationResultsType extends AttributeBase {
 
     //@XmlElement(name = "Checker", required = true)
     protected List<ValidationCheckerType> checker;
@@ -102,7 +102,7 @@ public class ValidationResultsType extends AttributeBase {
 
     public List<ValidationCheckerType> getChecker() {
         if (checker == null) {
-            checker = new ArrayList<ValidationCheckerType>();
+            checker = new ArrayList<>();
         }
         return this.checker;
     }

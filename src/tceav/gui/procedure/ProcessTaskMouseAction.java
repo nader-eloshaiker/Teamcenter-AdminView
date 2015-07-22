@@ -34,6 +34,7 @@ public class ProcessTaskMouseAction implements MouseListener {
         this(tree, path, null);
     }
     
+    @Override
     public void mouseClicked(MouseEvent e) {
         if (e.getClickCount() == 2) {
             if (task == null) {
@@ -44,6 +45,7 @@ public class ProcessTaskMouseAction implements MouseListener {
         }
     }
     
+    @Override
     public void mouseEntered(MouseEvent e) {
         JLabel label = (JLabel)e.getComponent();
         foreground = label.getForeground();
@@ -53,6 +55,7 @@ public class ProcessTaskMouseAction implements MouseListener {
             label.setForeground(Color.BLUE);
     }
     
+    @Override
     public void mouseExited(MouseEvent e) {
         JLabel label = (JLabel)e.getComponent();
         if(foreground == null) {
@@ -64,6 +67,7 @@ public class ProcessTaskMouseAction implements MouseListener {
         }
     }
     
+    @Override
     public void mousePressed(MouseEvent e) {
         JLabel label = (JLabel)e.getComponent();
         background = label.getBackground();
@@ -73,6 +77,7 @@ public class ProcessTaskMouseAction implements MouseListener {
             label.setBackground(label.getBackground().brighter());
     }
     
+    @Override
     public void mouseReleased(MouseEvent e) {
         JLabel label = (JLabel)e.getComponent();
         if(background == null) {

@@ -24,23 +24,26 @@ import javax.swing.Icon;
 public class SquareIcon implements Icon {
 
     private final int length = 10;
-    private Color color;
+    private final Color color;
     
     
     public SquareIcon(int[] color) {
         this.color = new Color(color[0], color[1], color[2]);
     }
     
+    @Override
     public int getIconWidth() {
         return length;
     }
     
     
+    @Override
     public int getIconHeight() {
         return length;
     }
     
     
+    @Override
     public void paintIcon(Component c, Graphics g, int x, int y) {
         Graphics2D g2d = (Graphics2D)g;
         Rectangle square = new Rectangle(x, y, length, length);

@@ -44,24 +44,41 @@ public class ProcedureManager extends ManagerAdapter {
     private ArrayList<SiteType> sites;
     private PLMXMLType plmxml;
     private File file;
-    private AdminViewFrame parentFrame;
+    private final AdminViewFrame parentFrame;
     private SiteType site;
     
     /**
      * Creates a new instance of ProcedureManager
+     * @param parentFrame
      */
     public ProcedureManager(AdminViewFrame parentFrame) {
         this.parentFrame = parentFrame;
     }
     
+    /**
+     *
+     * @return
+     */
+    @Override
     public File getFile() {
         return file;
     }
     
+    /**
+     *
+     * @return
+     */
+    @Override
     public String getManagerType() {
         return PROCEDURE_MANAGER_TYPE;
     }
     
+    /**
+     *
+     * @param file
+     * @throws Exception
+     */
+    @Override
     public void readFile(File file) throws Exception {
         this.file = file;
         FileInputStream fis = new FileInputStream(file);
@@ -77,6 +94,11 @@ public class ProcedureManager extends ManagerAdapter {
         mapXML(domUtil.getRootNode());
     }
     
+    /**
+     *
+     * @return
+     */
+    @Override
     public boolean isValid() {
         return (!getWorkflowProcesses().isEmpty());
     }
@@ -136,10 +158,10 @@ public class ProcedureManager extends ManagerAdapter {
             plmxml = new PLMXMLType(parentNode);
         }
         ProcedureTagTypeEnum tagType;
-        workflowProcesses = new ArrayList<WorkflowTemplateType>();
-        sites = new ArrayList<SiteType>();
+        workflowProcesses = new ArrayList<>();
+        sites = new ArrayList<>();
         
-        Hashtable<String, IdBase> tagCache = new Hashtable<String, IdBase>();
+        HashMap<String, IdBase> tagCache = new HashMap<>();
         
         try {
             ProgressMonitor progressMonitor = new ProgressMonitor(
@@ -243,20 +265,19 @@ public class ProcedureManager extends ManagerAdapter {
                 }
             }
             
-            for (int k = 0; k < workflowProcesses.size(); k++) {
-                processSubWorkflows(workflowProcesses.get(k), tagCache);
+            for (WorkflowTemplateType w : workflowProcesses) {
+                processSubWorkflows(w, tagCache);
                 //sortSubWorkflows(workflowProcesses.get(k));
-                processAttributes(workflowProcesses.get(k), tagCache);
+                processAttributes(w, tagCache);
             }
             
             
         } catch (Exception ex) {
             System.err.println("Map XML Error: " + ex.getMessage());
-            ex.printStackTrace();
         }
     }
     
-    private void processSubWorkflows(WorkflowTemplateType node, Hashtable<String, IdBase> tagCache) {
+    private void processSubWorkflows(WorkflowTemplateType node, HashMap<String, IdBase> tagCache) {
         processActions(node, tagCache);
         
         for (int i = 0; i < node.getSubTemplateRefs().size(); i++) {
@@ -266,7 +287,7 @@ public class ProcedureManager extends ManagerAdapter {
         }
     }
     
-    private void processActions(WorkflowTemplateType node, Hashtable<String, IdBase> tagCache) {
+    private void processActions(WorkflowTemplateType node, HashMap<String, IdBase> tagCache) {
         for (int iA = 0; iA < node.getActionRefs().size(); iA++) {
             node.getActions()[iA] = (WorkflowActionType) tagCache.get(node.getActionRefs().get(iA));
             attachActionHandlers(node.getActions()[iA], tagCache);
@@ -286,34 +307,34 @@ public class ProcedureManager extends ManagerAdapter {
         }
     }
     
-    private void processAttributes(WorkflowTemplateType node, Hashtable<String, IdBase> tagCache) {
+    private void processAttributes(WorkflowTemplateType node, HashMap<String, IdBase> tagCache) {
         AttributeModel model = new AttributeModel(tagCache);
         model.processNodeAttributes(node);
         
-        for (int k = 0; k < node.getActions().length; k++) {
-            model.processNodeAttributes(node.getActions()[k]);
+        for (WorkflowActionType action : node.getActions()) {
+            model.processNodeAttributes(action);
         }
 
         
-        for (int j = 0; j < node.getSubTemplates().length; j++) {
-            model.processNodeAttributes(node.getSubTemplates()[j]);
+        for (WorkflowTemplateType subTemplate : node.getSubTemplates()) {
+            model.processNodeAttributes(subTemplate);
         }
     }
     
-    private void attachActionHandlers(WorkflowActionType node, Hashtable<String, IdBase> tagCache) {
+    private void attachActionHandlers(WorkflowActionType node, HashMap<String, IdBase> tagCache) {
         for (int iH = 0; iH < node.getActionHandlerRefs().size(); iH++) {
             node.getActionHandlers()[iH] = (WorkflowHandlerType) tagCache.get(node.getActionHandlerRefs().get(iH));
         }
     }
     
-    private void attachBusinessRules(WorkflowActionType node, Hashtable<String, IdBase> tagCache) {
+    private void attachBusinessRules(WorkflowActionType node, HashMap<String, IdBase> tagCache) {
         for (int iR = 0; iR < node.getRuleRefs().size(); iR++) {
             node.getRules()[iR] = (WorkflowBusinessRuleType) tagCache.get(node.getRuleRefs().get(iR));
             attachBusinessRuleHandlers(node.getRules()[iR], tagCache);
         }
     }
     
-    private void attachBusinessRuleHandlers(WorkflowBusinessRuleType node, Hashtable<String, IdBase> tagCache) {
+    private void attachBusinessRuleHandlers(WorkflowBusinessRuleType node, HashMap<String, IdBase> tagCache) {
         for (int irh = 0; irh < node.getRuleHandlerRefs().size(); irh++) {
             node.getRuleHandlers()[irh] = (WorkflowBusinessRuleHandlerType) tagCache.get(node.getRuleHandlerRefs().get(irh));
         }
@@ -417,8 +438,8 @@ public class ProcedureManager extends ManagerAdapter {
     */
     
     private void print(ArrayList<WorkflowTemplateType> array) {
-        for (int i = 0; i < array.size(); i++) {
-            System.out.print(array.get(i).getName() + " ; ");
+        for (WorkflowTemplateType w : array) {
+            System.out.print(w.getName() + " ; ");
         }
         System.out.println();
     }

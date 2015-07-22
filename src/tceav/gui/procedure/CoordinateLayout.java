@@ -178,6 +178,7 @@ public class CoordinateLayout implements LayoutManager, java.io.Serializable {
      * @param name the name of the component
      * @param comp the component to be added
      */
+    @Override
     public void addLayoutComponent(String name, Component comp) {
     }
 
@@ -187,6 +188,7 @@ public class CoordinateLayout implements LayoutManager, java.io.Serializable {
      * @param comp the component to remove
      * @see       java.awt.Container#removeAll
      */
+    @Override
     public void removeLayoutComponent(Component comp) {
     }
 
@@ -201,6 +203,7 @@ public class CoordinateLayout implements LayoutManager, java.io.Serializable {
      * @see #minimumLayoutSize
      * @see       java.awt.Container#getPreferredSize
      */
+    @Override
     public Dimension preferredLayoutSize(Container target) {
         synchronized (target.getTreeLock()) {
             Dimension dim = new Dimension(0, 0);
@@ -231,6 +234,7 @@ public class CoordinateLayout implements LayoutManager, java.io.Serializable {
      * @see       java.awt.Container
      * @see       java.awt.Container#doLayout
      */
+    @Override
     public Dimension minimumLayoutSize(Container target) {
         synchronized (target.getTreeLock()) {
             Dimension dim = new Dimension(0, 0);
@@ -262,11 +266,12 @@ public class CoordinateLayout implements LayoutManager, java.io.Serializable {
      * @see Container
      * @see       java.awt.Container#doLayout
      */
+    @Override
     public void layoutContainer(Container target) {
         synchronized (target.getTreeLock()) {
             Insets insets = target.getInsets();
             int nmembers = target.getComponentCount();
-            int x = 0, y;
+            int x, y;
 
             for (int i = 0; i < nmembers; i++) {
                 Component m = target.getComponent(i);

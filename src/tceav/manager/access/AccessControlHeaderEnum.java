@@ -49,8 +49,8 @@ public enum AccessControlHeaderEnum {
     Undefined("UNDEFINED", null, ImageEnum.aclUndefined);
     
     private String value;
-    private String desc;
-    private ImageEnum image;
+    private final String desc;
+    private final ImageEnum image;
     
     /**
      * Creates a new instance of AccessControlHeaderEnum

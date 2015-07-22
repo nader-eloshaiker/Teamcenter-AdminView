@@ -2,7 +2,6 @@
 package tceav.manager.procedure.plmxmlpdm.base;
 
 import tceav.xml.TagTools;
-import tceav.manager.procedure.plmxmlpdm.ProcedureTagTypeEnum;
 import org.w3c.dom.Node;
 import org.w3c.dom.NamedNodeMap;
 
@@ -54,7 +53,7 @@ public abstract class IdBase {
         return id;
     }
 
-    public void setId(String value) {
+    public final void setId(String value) {
         this.id = value;
     }
     

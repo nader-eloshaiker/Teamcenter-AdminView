@@ -28,30 +28,32 @@ import org.w3c.dom.NodeList;
  */
 public class AccessManager extends ManagerAdapter {
 
-    private MetaData metaData;
-    private ArrayList<NamedAcl> unusedRules;
+    private final MetaData metaData;
+    private final ArrayList<NamedAcl> unusedRules;
     private RuleTreeNode rootTreeNode;
-    private ArrayList<RuleTreeNode> treeNodeList;
+    private final ArrayList<RuleTreeNode> treeNodeList;
     private File file;
-    private AdminViewFrame parentFrame;
-    private NamedAclList namedAclList;
-    private ArrayList<String> conditionsList;
+    private final AdminViewFrame parentFrame;
+    private final NamedAclList namedAclList;
+    private final ArrayList<String> conditionsList;
 
     /** Creates a new instance of ruleTreeReader */
     public AccessManager(AdminViewFrame parentFrame) {
         this.parentFrame = parentFrame;
         namedAclList = new NamedAclList();
-        unusedRules = new ArrayList<NamedAcl>();
-        treeNodeList = new ArrayList<RuleTreeNode>();
+        unusedRules = new ArrayList<>();
+        treeNodeList = new ArrayList<>();
         rootTreeNode = new RuleTreeNode();
-        conditionsList = new ArrayList<String>();
+        conditionsList = new ArrayList<>();
         metaData = new MetaData();
     }
 
+    @Override
     public String getManagerType() {
         return ACCESS_MANAGER_TYPE;
     }
 
+    @Override
     public File getFile() {
         return file;
     }
@@ -60,12 +62,13 @@ public class AccessManager extends ManagerAdapter {
         return conditionsList;
     }
 
+    @Override
     public boolean isValid() {
         if (rootTreeNode == null) {
             return false;
         } else if (!rootTreeNode.isValid()) {
             return false;
-        } else if (namedAclList.size() == 0) {
+        } else if (namedAclList.isEmpty()) {
             return false;
         } else {
             return true;

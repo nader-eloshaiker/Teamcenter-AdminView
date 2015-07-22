@@ -92,7 +92,7 @@ public class NamedAcl extends ArrayList<AccessControl> implements CompareInterfa
 
     public ArrayList<RuleTreeNode> getRuleTreeReferences() {
         if (ruleTreeReference == null) {
-            ruleTreeReference = new ArrayList<RuleTreeNode>();
+            ruleTreeReference = new ArrayList<>();
         }
 
         return ruleTreeReference;
@@ -102,52 +102,50 @@ public class NamedAcl extends ArrayList<AccessControl> implements CompareInterfa
      **************************************************************************/
     private int compare_result = CompareInterface.EQUAL;
 
+    @Override
     public int getComparison() {
         return compare_result;
     }
 
+    @Override
     public void setComparison(int compare_result) {
         this.compare_result = compare_result;
     }
 
+    @Override
     public int compare(Object o) {
-        NamedAcl a = (NamedAcl) o;
+        NamedAcl acl = (NamedAcl) o;
 
-        if (!getRuleName().equals(a.getRuleName())) {
+        if (!getRuleName().equals(acl.getRuleName())) {
             return CompareInterface.NOT_FOUND;
         }
 
-        if (!getRuleType().equals(a.getRuleType())) {
+        if (!getRuleType().equals(acl.getRuleType())) {
             return CompareInterface.NOT_FOUND;
         }
 
-        if ((this.size() == 0) && (a.size() == 0)) {
+        if ((this.size() == 0) && (acl.size() == 0)) {
             return CompareInterface.EQUAL;
         }
 
         int compare;
         int compareOverall = CompareInterface.EQUAL;
-        AccessControl c;
 
-        for (int i = 0; i < this.size(); i++) {
-            c = this.get(i);
+        for (AccessControl c : this) {
             compare = CompareInterface.NOT_FOUND;
-
-            for (int k = 0; k < a.size(); k++) {
-                compare = c.compare(a.get(k));
+            for (AccessControl ac : acl) {
+                compare = c.compare(ac);
                 if (compare != CompareInterface.NOT_FOUND) {
                     break;
                 }
             }
-
             c.setComparison(compare);
             if (compare != CompareInterface.EQUAL) {
                 compareOverall = CompareInterface.NOT_EQUAL;
             }
-
         }
 
-        if ((compareOverall == CompareInterface.EQUAL) && (this.size() < a.size())) {
+        if ((compareOverall == CompareInterface.EQUAL) && (this.size() < acl.size())) {
             compareOverall = CompareInterface.NOT_EQUAL;
         }
 

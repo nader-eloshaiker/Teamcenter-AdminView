@@ -64,7 +64,7 @@ import javax.xml.bind.annotation.XmlType;
     "item"
 })
  */
-public class UserListDataType extends AttributeBase {
+public final class UserListDataType extends AttributeBase {
 
     //@XmlElement(name = "Item")
     protected List<UserListElementType> item;
@@ -102,7 +102,7 @@ public class UserListDataType extends AttributeBase {
 
     public List<UserListElementType> getItem() {
         if (item == null)
-            item = new ArrayList<UserListElementType>();
+            item = new ArrayList<>();
         
         return this.item;
     }

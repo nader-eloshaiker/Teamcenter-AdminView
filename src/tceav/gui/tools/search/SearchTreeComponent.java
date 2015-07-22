@@ -19,11 +19,11 @@ import javax.swing.tree.TreePath;
  */
 public abstract class SearchTreeComponent extends SearchAdapter implements SearchTreeComparator{
     
-    private ArrayList<TreePath> resultsTreeLocations;
+    private final ArrayList<TreePath> resultsTreeLocations;
     
     /** Creates a new instance of SearchTreeComponent */
     public SearchTreeComponent() {
-        resultsTreeLocations = new ArrayList<TreePath>();
+        resultsTreeLocations = new ArrayList<>();
     }
     
     public void addResult(TreePath path) {

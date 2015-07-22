@@ -61,8 +61,8 @@ public class AccessControlHeader extends ArrayList<AccessControlHeaderItem> {
         add(new AccessControlHeaderItem(AccessControlHeaderEnum.Accessor));
 
         String[] s = str.split("!");
-        for (int i = 0; i < s.length; i++) {
-            add(new AccessControlHeaderItem(AccessControlHeaderEnum.fromValue(s[i])));
+        for (String item : s) {
+            add(new AccessControlHeaderItem(AccessControlHeaderEnum.fromValue(item)));
         }
     }
 

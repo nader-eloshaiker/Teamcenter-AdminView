@@ -9,7 +9,6 @@
 
 package tceav.gui.tools.search;
 
-import tceav.gui.tools.tree.JTreeAdvanced;
 import javax.swing.tree.TreePath;
 /**
  *

@@ -14,7 +14,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.NamedNodeMap;
 import tceav.xml.TagTools;
-import tceav.manager.procedure.plmxmlpdm.ProcedureTagTypeEnum;
 import tceav.manager.procedure.plmxmlpdm.base.AttribOwnerBase;
 
 import tceav.manager.procedure.plmxmlpdm.classtype.WorkflowActionTypeEnum;
@@ -54,7 +53,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 //@XmlAccessorType(XmlAccessType.FIELD)
 //@XmlType(name = "WorkflowActionType")
-public class WorkflowActionType extends AttribOwnerBase {
+public final class WorkflowActionType extends AttribOwnerBase {
 
     //@XmlAttribute
     protected final String actionHandlerRefsAttribute = "actionHandlerRefs";
@@ -87,7 +86,7 @@ public class WorkflowActionType extends AttribOwnerBase {
     
     public List<String> getActionHandlerRefs() {
         if (actionHandlerRefs == null) {
-            actionHandlerRefs = new ArrayList<String>();
+            actionHandlerRefs = new ArrayList<>();
         }
         return this.actionHandlerRefs;
     }
@@ -106,7 +105,7 @@ public class WorkflowActionType extends AttribOwnerBase {
 
     public List<String> getRuleRefs() {
         if (ruleRefs == null) {
-            ruleRefs = new ArrayList<String>();
+            ruleRefs = new ArrayList<>();
         }
         return this.ruleRefs;
     }

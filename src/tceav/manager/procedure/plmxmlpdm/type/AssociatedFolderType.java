@@ -9,7 +9,6 @@
 package tceav.manager.procedure.plmxmlpdm.type;
 
 import tceav.xml.TagTools;
-import tceav.manager.procedure.plmxmlpdm.ProcedureTagTypeEnum;
 import tceav.manager.procedure.plmxmlpdm.base.AttributeBase;
 import tceav.manager.procedure.plmxmlpdm.base.IdBase;
 import org.w3c.dom.Node;
@@ -50,7 +49,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 //@XmlAccessorType(XmlAccessType.FIELD)
 //@XmlType(name = "AssociatedFolderType")
-public class AssociatedFolderType extends AttributeBase {
+public final class AssociatedFolderType extends AttributeBase {
 
     //@XmlAttribute(required = true)
     protected final String folderRefAttribute = "folderRef";

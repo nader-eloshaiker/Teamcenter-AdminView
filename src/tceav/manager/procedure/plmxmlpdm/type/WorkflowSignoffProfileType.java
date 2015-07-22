@@ -9,7 +9,6 @@
 package tceav.manager.procedure.plmxmlpdm.type;
 
 import tceav.xml.TagTools;
-import tceav.manager.procedure.plmxmlpdm.ProcedureTagTypeEnum;
 import tceav.manager.procedure.plmxmlpdm.base.AttribOwnerBase;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -54,7 +53,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 //@XmlAccessorType(XmlAccessType.FIELD)
 //@XmlType(name = "WorkflowSignoffProfileType")
-public class WorkflowSignoffProfileType extends AttribOwnerBase {
+public final class WorkflowSignoffProfileType extends AttribOwnerBase {
 
     //@XmlAttribute(required = true)
     protected final String allowSubgroupsAttribute = "allowSubgroups";

@@ -9,7 +9,7 @@
 package tceav.manager.access;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import org.w3c.dom.Node;
 import tceav.utils.ArrayListSorter;
 
@@ -19,17 +19,17 @@ import tceav.utils.ArrayListSorter;
  */
 public class NamedAclList extends ArrayList<NamedAcl> {
 
-    private ArrayList<String> aclTypes;
-    private Hashtable<String, Integer> aclTypeSize;
-    private ArrayList<String> accessorTypes;
+    private final ArrayList<String> aclTypes;
+    private final HashMap<String, Integer> aclTypeSize;
+    private final ArrayList<String> accessorTypes;
     private AccessControlHeader acHeader;
 
     /* Creates a new instance of AccessRuleList */
     public NamedAclList() {
         super();
-        aclTypes = new ArrayList<String>();
-        aclTypeSize = new Hashtable<String, Integer>();
-        accessorTypes = new ArrayList<String>();
+        aclTypes = new ArrayList<>();
+        aclTypeSize = new HashMap<>();
+        accessorTypes = new ArrayList<>();
     }
 
     public AccessControlHeader getAccessControlColumns() {
@@ -126,10 +126,8 @@ public class NamedAclList extends ArrayList<NamedAcl> {
         }
 
         NamedAcl namedACL = new NamedAcl(namedAclNode, acHeader);
-        AccessControl ac;
 
-        for (int i = 0; i < namedACL.size(); i++) {
-            ac = namedACL.get(i);
+        for (AccessControl ac : namedACL) {
             if (accessorTypes.indexOf(ac.getTypeOfAccessor()) == -1) {
                 accessorTypes.add(ac.getTypeOfAccessor());
                 ArrayListSorter.sortStringArray(accessorTypes);

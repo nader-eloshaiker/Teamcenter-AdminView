@@ -42,8 +42,8 @@ import tceav.resources.ResourceLoader;
  */
 public class ProcedureManagerComponent extends TabbedPanel {
 
-    private AdminViewFrame parentFrame;
-    private ProcedureManager pm;
+    private final AdminViewFrame parentFrame;
+    private final ProcedureManager pm;
     private JSplitPane splitPane1;
     private ActionComponent actionComponent;
     private AttributeComponent attributeComponent;
@@ -65,6 +65,7 @@ public class ProcedureManagerComponent extends TabbedPanel {
         workflowComponent = new WorkflowComponent(parentFrame, pm);
         workflowComponent.getTree().addTreeSelectionListener(new TreeSelectionListener() {
 
+            @Override
             public void valueChanged(TreeSelectionEvent tse) {
                 if (tse.isAddedPath(tse.getPath())) {
                     IdBase procedure = (IdBase) tse.getPath().getLastPathComponent();
@@ -90,6 +91,7 @@ public class ProcedureManagerComponent extends TabbedPanel {
         actionComponent = new ActionComponent(parentFrame, pm);
         actionComponent.getTree().addTreeSelectionListener(new TreeSelectionListener() {
 
+            @Override
             public void valueChanged(TreeSelectionEvent e) {
                 if (e.isAddedPath(e.getPath())) {
                     IdBase procedure = (IdBase) e.getPath().getLastPathComponent();
@@ -101,6 +103,7 @@ public class ProcedureManagerComponent extends TabbedPanel {
         attributeComponent = new AttributeComponent(parentFrame, pm);
         attributeComponent.getTree().addTreeSelectionListener(new TreeSelectionListener() {
 
+            @Override
             public void valueChanged(TreeSelectionEvent e) {
                 if (e.isAddedPath(e.getPath())) {
                     IdBase procedure = (IdBase) e.getPath().getLastPathComponent();
@@ -151,11 +154,13 @@ public class ProcedureManagerComponent extends TabbedPanel {
         }
     }
 
+    @Override
     public String getTitle() {
         return pm.getFile().getName();
     }
     private ImageIcon iconProcedure;
 
+    @Override
     public ImageIcon getIcon() {
         if (iconProcedure == null) {
             try {
@@ -168,6 +173,7 @@ public class ProcedureManagerComponent extends TabbedPanel {
     }
     private JToolBar toolBar;
 
+    @Override
     public JToolBar getToolBar() {
 
         if (toolBar != null) {
@@ -178,6 +184,7 @@ public class ProcedureManagerComponent extends TabbedPanel {
         buttonXML.setOpaque(false);
         buttonXML.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 xmlComponent.show(parentFrame);
             }
@@ -188,6 +195,7 @@ public class ProcedureManagerComponent extends TabbedPanel {
         buttonTabulate.setOpaque(false);
         buttonTabulate.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 TabulateComponent component = new TabulateComponent(pm, parentFrame);
                 parentFrame.addTabbedPane(component);
@@ -209,6 +217,7 @@ public class ProcedureManagerComponent extends TabbedPanel {
     }
     private JPanel statusBar;
 
+    @Override
     public JComponent getStatusBar() {
         if (statusBar != null) {
             return statusBar;
