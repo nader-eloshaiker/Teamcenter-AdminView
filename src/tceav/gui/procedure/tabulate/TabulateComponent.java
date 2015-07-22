@@ -34,6 +34,7 @@ public class TabulateComponent extends TabbedPanel {
     private String title;
     private ProcedureManager pm;
     private JFrame parentFrame;
+    private RowOneModel rowOneModel;
     
     /**
      * Creates a new instance of TabulateComponent
@@ -55,7 +56,8 @@ public class TabulateComponent extends TabbedPanel {
             }
         });
         
-        tableRowOne = new JTableAdvanced(data.createRowHeaderModel());
+        rowOneModel = data.createRowHeaderModel();
+        tableRowOne = new JTableAdvanced(rowOneModel);
         tableRowOne.getTableHeader().setReorderingAllowed(false);
         tableRowOne.getTableHeader().setResizingAllowed(false);
         tableRowOne.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -115,10 +117,12 @@ public class TabulateComponent extends TabbedPanel {
             column.setCellRenderer(renderer);
             packColumn(i);
         }
-        column = tableRowOne.getColumnModel().getColumn(0);
-        column.setHeaderRenderer(rendererRowCol);
-        column.setCellRenderer(rendererRow);
-        packRowHeader();
+        for (int i=0; i<tableRowOne.getColumnCount(); i++) {
+            column = tableRowOne.getColumnModel().getColumn(i);
+            column.setHeaderRenderer(rendererRowCol);
+            column.setCellRenderer(rendererRow);
+            packRowHeader(i);
+        }
     }
     
     private JPanel statusBar;
@@ -214,9 +218,17 @@ public class TabulateComponent extends TabbedPanel {
                 if(result == JFileChooser.APPROVE_OPTION) {
                     File file = fc.getSelectedFile();
                     File sheetFile;
+<<<<<<< HEAD
                     int colLimit = 255;
                     int sheetCount = (int)Math.ceil((float)table.getColumnCount() / (float)colLimit);
+=======
+                    int sheetCount;
+>>>>>>> release/3.5
                     String s = file.getName();
+
+                    int colLimit = 256 - rowOneModel.getColumnCount();
+                    if(Settings.isPmTblIncludeIds())
+                        colLimit = colLimit - 2;
                     
                     if(sheetCount > 1)
                         if(s.toLowerCase().contains(".sheet"))
@@ -231,9 +243,9 @@ public class TabulateComponent extends TabbedPanel {
                                 sheetFile = new File(file.getParent(), s.substring(0, s.length()-4)+".csv");
                         } else {
                             if(sheetCount > 1)
-                            sheetFile = new File(file.getParent(), s + ".sheet" + (i+1) + ".csv");
+                                sheetFile = new File(file.getParent(), s + ".sheet" + (i+1) + ".csv");
                             else
-                            sheetFile = new File(file.getParent(), s + ".csv");
+                                sheetFile = new File(file.getParent(), s + ".csv");
                         }
                         
                         if(sheetFile.isDirectory()) {
@@ -312,20 +324,37 @@ public class TabulateComponent extends TabbedPanel {
             OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
             BufferedWriter bw = new BufferedWriter(osw);
             
-            String s;
+            String s = "";
             
-            //Header
-            s = rowHeader.getColumnExportName(0);
+            // Header
+            if(Settings.isPmTblIncludeIds())
+                s = "\"Id\",\"Parent Id\",";
+            s = s + rowHeader.getColumnExportName(0);
+
+            // Header
+            for(int i=1; i<rowOneModel.getColumnCount(); i++)
+                s = s + "," + rowHeader.getColumnExportName(i);
+            
+            // Header
             for(int i=startIndex; i<endIndex; i++)
-                s = s+","+dataModel.getColumn(i).toExportString();
+                s = s + "," + dataModel.getColumn(i).toExportString();
             
             bw.write(s+"\n");
             
+            // Data
             for(int row=0; row<dataModel.getRowCount(); row++) {
-                s = rowHeader.getExportValueAt(row, 0);
-                for(int col=startIndex; col<endIndex; col++) {
+                s = "";
+                
+                if(Settings.isPmTblIncludeIds())
+                    s = "\""+rowOneModel.getId(row)+"\",\""+rowOneModel.getParentId(row)+"\",";
+                s = s + rowHeader.getExportValueAt(row, 0);
+                
+                for(int col=1; col<rowOneModel.getColumnCount(); col++)
+                    s = s + "," + rowHeader.getExportValueAt(row, col);
+                
+                for(int col=startIndex; col<endIndex; col++)
                     s = s+","+dataModel.getValueAt(row, col);
-                }
+                
                 bw.write(s+"\n");
             }
             
@@ -335,12 +364,63 @@ public class TabulateComponent extends TabbedPanel {
         }
     }
     
+<<<<<<< HEAD
     JFileChooser fileChooser;
+=======
+    private JFileChooser fileChooser;
+    private JCheckBox checkMultiSheet;
+    private JCheckBox checkIncludeIndents;
+    private JCheckBox checkIncludeIds;
+>>>>>>> release/3.5
     
     private JFileChooser createFileChooser() {
         if(fileChooser != null)
             return fileChooser;
         
+<<<<<<< HEAD
+=======
+        checkMultiSheet = new JCheckBox("Use Multiple Sheets", Settings.isPmTblMultiSheet());
+        checkMultiSheet.setToolTipText("Split file into multiple sheets of 256 columns");
+        checkMultiSheet.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Settings.setPmTblMultiSheet(checkMultiSheet.isSelected());
+            }
+        });
+        checkIncludeIndents = new JCheckBox("Include Indentation", Settings.isPmTblIncludeIndents());
+        checkIncludeIndents.setToolTipText("Include the indentation to indicate hirarchy");
+        checkIncludeIndents.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Settings.setPmTblIncludeIndents(checkIncludeIndents.isSelected());
+            }
+        });
+        checkIncludeIds = new JCheckBox("Include Id", Settings.isPmTblIncludeIds());
+        checkIncludeIds.setToolTipText("Include the id of the procedure and it's parent");
+        checkIncludeIds.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Settings.setPmTblIncludeIds(checkIncludeIds.isSelected());
+            }
+        });
+        
+        JPanel panelFile = new JPanel();
+        panelFile.setBorder(new TitledBorder(new EtchedBorder(), "File Options"));
+        panelFile.setLayout(new GridLayout(2,1));
+        panelFile.add(checkMultiSheet);
+        JPanel panelFormat = new JPanel();
+        panelFormat.setBorder(new TitledBorder(new EtchedBorder(), "Format Options"));
+        panelFormat.setLayout(new GridLayout(2,1));
+        panelFormat.add(checkIncludeIndents);
+        JPanel panelData = new JPanel();
+        panelData.setBorder(new TitledBorder(new EtchedBorder(), "Data Options"));
+        panelData.setLayout(new GridLayout(2,1));
+        panelData.add(checkIncludeIds);
+        
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(3,1));
+        panel.add(panelFile);
+        panel.add(panelFormat);
+        panel.add(panelData);
+        
+>>>>>>> release/3.5
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogType(JFileChooser.SAVE_DIALOG);
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -353,8 +433,8 @@ public class TabulateComponent extends TabbedPanel {
     }
     
     
-    private void packRowHeader() {
-        TableColumn column = tableRowOne.getColumnModel().getColumn(0);
+    private void packRowHeader(int colIndex) {
+        TableColumn column = tableRowOne.getColumnModel().getColumn(colIndex);
         int width = 0;
         String s;
         int insetVal = 2;
@@ -362,10 +442,10 @@ public class TabulateComponent extends TabbedPanel {
         //DefaultTableCellRenderer label = RowOneRenderer.getRenderer();
         JLabel label = new JLabel();
         
-        for (int r=0; r<table.getRowCount(); r++) {
-            s = (String)tableRowOne.getValueAt(r, 0);
+        for (int r=0; r<tableRowOne.getRowCount(); r++) {
+            s = (String)tableRowOne.getValueAt(r, colIndex);
             label.setText(s);
-            if(!s.startsWith(ColumnHeaderEntry.ARGUMENT_PREFIX))
+            if(rowOneModel.isRootNode(r))
                 label.setFont(label.getFont().deriveFont(Font.BOLD));
             else
                 label.setFont(label.getFont().deriveFont(Font.PLAIN));

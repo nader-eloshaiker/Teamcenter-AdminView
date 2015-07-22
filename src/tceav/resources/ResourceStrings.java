@@ -32,6 +32,7 @@ public class ResourceStrings {
     }
     
     public static String getVersion() {
+<<<<<<< HEAD
         return "3.03";
     }
     
@@ -41,6 +42,17 @@ public class ResourceStrings {
     
     public static String getReleaseDate() {
         return "02-June-08";
+=======
+        return "3.05";
+    }
+    
+    public static String getBuild() {
+        return "134";
+    }
+    
+    public static String getReleaseDate() {
+        return "10-June-08";
+>>>>>>> release/3.5
     }
     
     public static String getApplicationName() {

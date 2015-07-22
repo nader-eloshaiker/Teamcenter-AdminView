@@ -24,6 +24,8 @@ public class ColumnHeaderEntry {
     private int quorum;
     private String handler;
     private ArrayList<String> arguments;
+    private String[] delimeters = new String[] {";", ","};
+    
     
     private int type;
     private static final int ACTION_HANDLER_TYPE = 0;
@@ -344,14 +346,18 @@ public class ColumnHeaderEntry {
             tmp = arguments.get(i);
             pad = createPadString(tmp.indexOf("=")+1);
             tmp = converDelimiters(tmp, indent, pad);
-            if(!export)
+            if(export) {
+                if(i == arguments.size() - 1) {
+                    if(tmp.endsWith("\n"))
+                        tmp = tmp.substring(0, tmp.length()-1);
+                } else {
+                    if(!tmp.endsWith("\n"))
+                        tmp += "\n";
+                }
+            } else
                 tmp = hyphenateString(tmp, indent, pad);
             
             argument += indent + tmp;
-            
-            if(export)
-                if(!argument.endsWith("\n"))
-                    argument += "\n";
         }
         
         return argument;
@@ -366,8 +372,12 @@ public class ColumnHeaderEntry {
     
     private String converDelimiters(String s, String indent, String pad) {
         String tmp = s;
-        tmp = tmp.replaceAll(";","\n" + indent + pad);
-        tmp = tmp.replaceAll(",","\n" + indent + pad);
+        
+        for(int i=0; i<delimeters.length; i++) {
+            if(tmp.endsWith(delimeters[i]))
+                tmp = tmp.substring(0, tmp.length() - 1);
+            tmp = tmp.replaceAll(delimeters[i],"\n" + indent + pad);
+        }
         
         return tmp;
     }
@@ -407,10 +417,10 @@ public class ColumnHeaderEntry {
     }
     
     private String[] splitDelimiter(String s) {
-        if(s.indexOf(';') > -1)
-            return s.split(";");
-        else if(s.indexOf(',') > -1)
-            return s.split(",");
+        for(int i=0; i<delimeters.length; i++) {
+            if(s.indexOf(delimeters[i]) > -1)
+                return s.split(delimeters[i]);
+        }
         
         return null;
     }
