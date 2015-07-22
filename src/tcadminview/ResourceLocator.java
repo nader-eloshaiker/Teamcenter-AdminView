@@ -52,7 +52,7 @@ public class ResourceLocator {
     }
     
     public static String getVersion() {
-        return "1.1.13 Alpha";
+        return "0.1.14 Beta 1 Build 14";
     }
     
     public static String getReleaseDate() {
@@ -65,9 +65,16 @@ public class ResourceLocator {
     
     public static String getAboutInfo() {
         return "<html><p>TcAE Admin View</p><p></p>" +
-                        "<p>"+getVersion()+"</p>" +
-                        "<p>Release Date: "+getReleaseDate()+"</p><p></p>" +
-                        "<p>Developed by:<br> Nader Eloshaiker<br>Math Based Systems<br>General Motors - Holden</p>" +
+                        "<p>Version: "+getVersion()+"</p>" +
+                        "<p>Release Date: "+getReleaseDate()+"</p>"+
+                        "<p></p>" +
+                        "<p>Developed by"+
+                        "<br>Nader Eloshaiker"+
+                        "<br>Senior Engineer: Product Data Management"+
+                        "<br>email: nader.eloshaiker@gm.com"+
+                        "<br>phone: +61 3 9647 5271</p>"+
+                        "<p></p>" +
+                        "<p>Math Based Systems<br>Engineering<br>General Motors Holden Pty. Ltd.</p>" +
                         "</html>";
     }
     

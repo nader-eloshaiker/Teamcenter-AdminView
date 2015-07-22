@@ -93,7 +93,7 @@ public class NodeTableModel extends AbstractTableModel implements TableModel {
                         return 4;
                         
                     case UserValue:
-                        return 16;
+                        return 15;
                         
                     case AssociatedDataSet:
                     case AssociatedFolder:
@@ -266,50 +266,45 @@ public class NodeTableModel extends AbstractTableModel implements TableModel {
                     return uv.isEditable();
             case 6:
                 if(columnIndex == 0)
-                    return "Editable";
-                else 
-                    return uv.isEditable();
-            case 7:
-                if(columnIndex == 0)
                     return "Format";
                 else 
                     return uv.getFormat();
-            case 8:
+            case 7:
                 if(columnIndex == 0)
                     return "Max Exclusive";
                 else 
                     return uv.getMaxExclusive();
-            case 9:
+            case 8:
                 if(columnIndex == 0)
                     return "Max Inclusive";
                 else 
                     return uv.getMaxInclusive();
-            case 10:
+            case 9:
                 if(columnIndex == 0)
                     return "Max Length";
                 else 
                     return uv.getMaxLength();
-            case 11:
+            case 10:
                 if(columnIndex == 0)
                     return "Min Exclusive";
                 else 
                     return uv.getMinExclusive();
-            case 12:
+            case 11:
                 if(columnIndex == 0)
                     return "Min Inclusive";
                 else 
                     return uv.getMinInclusive();
-            case 13:
+            case 12:
                 if(columnIndex == 0)
                     return "Min Length";
                 else 
                     return uv.getMinLength();
-            case 14:
+            case 13:
                 if(columnIndex == 0)
                     return "Step Value";
                 else 
                     return uv.getStepValue();
-            case 15:
+            case 14:
                 if(columnIndex == 0)
                     return "User List";
                 else {

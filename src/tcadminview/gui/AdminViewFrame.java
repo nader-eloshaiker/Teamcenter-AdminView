@@ -12,6 +12,7 @@ package tcadminview.gui;
 import tcadminview.gui.ruletree.AccessManagerComponent;
 import tcadminview.gui.procedure.ProcedureComponent;
 import tcadminview.ruletree.AccessManager;
+import tcadminview.procedure.ProcedureManager;
 import tcadminview.ResourceLocator;
 import javax.swing.*;
 import javax.swing.event.*;
@@ -118,10 +119,10 @@ public class AdminViewFrame extends JFrame{
         buttonOpenProcedure.setToolTipText("Import TcAE ruletree");
         buttonOpenProcedure.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                actionLoadWorkflow();
+                actionLoadProcedure();
             }
         });
-
+        
         JButton buttonClose = new JButton("Close Tab");
         buttonClose.setIcon(iconClose);
         buttonClose.setHorizontalTextPosition(SwingConstants.RIGHT);
@@ -174,7 +175,7 @@ public class AdminViewFrame extends JFrame{
         menuItem.setIcon(iconProcedure);
         menuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                actionLoadWorkflow();
+                actionLoadProcedure();
             }
         });
         
@@ -250,42 +251,63 @@ public class AdminViewFrame extends JFrame{
         int result = fc.showOpenDialog(getFrame());
         if(result == JFileChooser.APPROVE_OPTION) {
             path = fc.getCurrentDirectory();
-            AccessManager am = new AccessManager();
             try {
-                am.importRuleTree(fc.getSelectedFile());
-            }catch (IOException ex) {System.err.println(ex);}
-            
-            for(int index=0; index<tabbedpane.getTabCount(); index++) {
-                if(!((AccessManagerComponent)tabbedpane.getComponentAt(index)).isAccessManagerLoaded()) {
-                    tabbedpane.remove(index);
+                AccessManager am = new AccessManager();
+                
+                try {
+                    am.importRuleTree(fc.getSelectedFile());
+                } catch (Exception ex) {
+                    throw new Exception("Corrupted rule tree: "+fc.getSelectedFile().getName());
                 }
+                
+                if(am.getAccessManagerTreeSize() == 0) {
+                    throw new Exception("No rule tree found in file "+fc.getSelectedFile().getName());
+                }
+                
+                for(int index=0; index<tabbedpane.getTabCount(); index++) {
+                    if(((TabbedPanel)tabbedpane.getComponentAt(index)).isEmptyPanel()) {
+                        tabbedpane.remove(index);
+                    }
+                }
+                
+                AccessManagerComponent amComponent = new AccessManagerComponent(this, am);
+                tabbedpane.addTab(fc.getSelectedFile().getName(), iconRuleTree, amComponent);
+                tabbedpane.setSelectedComponent(amComponent);
+                
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, ex.getMessage(), "Ruletree File Error", JOptionPane.ERROR_MESSAGE);
             }
-            
-            AccessManagerComponent amComponent = new AccessManagerComponent(this, am);
-            tabbedpane.addTab(fc.getSelectedFile().getName(), iconRuleTree, amComponent);
-            tabbedpane.setSelectedComponent(amComponent);
+                
         }
     }
-
-    private void actionLoadWorkflow() {
+    
+    private void actionLoadProcedure() {
         JFileChooser fc = createFileChooser();
         int result = fc.showOpenDialog(getFrame());
         if(result == JFileChooser.APPROVE_OPTION) {
             path = fc.getCurrentDirectory();
-            InputSource xmlDoc = new InputSource();
+            
             try {
-                xmlDoc = new InputSource(new FileInputStream(fc.getSelectedFile()));
-            }catch (IOException ex) {System.err.println(ex);}
-            
-            for(int index=0; index<tabbedpane.getTabCount(); index++) {
-                if(tabbedpane.getTitleAt(index).equals("Blank"))
-                    tabbedpane.remove(index);
+                ProcedureManager pm = new ProcedureManager(this);
+                pm.importXML(fc.getSelectedFile());
                 
+                if(pm.getWorkflowTemplates().size() == 0) {
+                    throw new Exception("No workflow templates found in file"+fc.getSelectedFile().getName());
+                }
+                
+                for(int index=0; index<tabbedpane.getTabCount(); index++) {
+                    if(((TabbedPanel)tabbedpane.getComponentAt(index)).isEmptyPanel()) {
+                        tabbedpane.remove(index);
+                    }
+                }
+
+                ProcedureComponent wfComponent = new ProcedureComponent(this, pm);
+                tabbedpane.addTab(fc.getSelectedFile().getName(), iconProcedure, wfComponent);
+                tabbedpane.setSelectedComponent(wfComponent);
+                
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, ex.getMessage(), "Procedure File Error", JOptionPane.ERROR_MESSAGE);
             }
-            ProcedureComponent wfComponent = new ProcedureComponent(xmlDoc);
-            
-            tabbedpane.addTab(fc.getSelectedFile().getName(), iconProcedure, wfComponent);
-            tabbedpane.setSelectedComponent(wfComponent);
         }
     }
 }

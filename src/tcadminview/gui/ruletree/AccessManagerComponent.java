@@ -28,7 +28,7 @@ import javax.swing.tree.*;
  *
  * @author NZR4DL
  */
-public class AccessManagerComponent extends JPanel {
+public class AccessManagerComponent extends JPanel implements TabbedPanel {
     
     protected JFrame parentFrame;
     protected JTree treeRuleTree;
@@ -54,7 +54,7 @@ public class AccessManagerComponent extends JPanel {
     protected JComboBox boxSearchCondition;
     protected JButton buttonRuleTreeFindNext;
     protected JButton buttonRuleTreeFind;
-    JButton buttonRuleTreeFindClear;
+    protected JButton buttonRuleTreeFindClear;
     
     
     private AccessManager accessManager;
@@ -104,9 +104,8 @@ public class AccessManagerComponent extends JPanel {
         this(parentFrame, new AccessManager());
     }
     
-    
-    public boolean isAccessManagerLoaded() {
-        return (accessManager.getAccessManagerTreeSize() > 0);
+    public boolean isEmptyPanel() {
+        return (accessManager.getAccessManagerTreeSize() == 0);
     }
     
     public AccessManager getAccessManager() {
@@ -398,10 +397,10 @@ public class AccessManagerComponent extends JPanel {
                 valueString = textSearchValue.getText();
                 
                 if( (conditionString.equals(""))
-                     &&
-                    ((valueString == null) || (valueString.equals("")))
-                  )
-                    JOptionPane.showMessageDialog(parentFrame, "Search requires either a condition, value, ACL or any combination.", "No Search Criteria", JOptionPane.ERROR_MESSAGE);
+                &&
+                        ((valueString == null) || (valueString.equals("")))
+                        )
+                    JOptionPane.showMessageDialog(parentFrame, "Search requires either a condition, value/ACL or any combination.", "No Search Criteria", JOptionPane.ERROR_MESSAGE);
                 else {
                     ruleTreeSearchResults = new ArrayList<TreePath>();
                     ruleTreeSearchIndex = 0;
@@ -459,7 +458,7 @@ public class AccessManagerComponent extends JPanel {
         textSearchValue = new JTextField();
         textSearchValue.setToolTipText("Ruletree Value: * ? [ - ] accepted");
         textSearchValue.setColumns(6);
-
+        
         
         JToolBar toolBarRuletree = new JToolBar();
         toolBarRuletree.setFloatable(false);
@@ -581,17 +580,22 @@ public class AccessManagerComponent extends JPanel {
             }
         });
         
+        JPanel panelNamedACLSortTop = new JPanel();
+        panelNamedACLSortTop.setLayout(new GridLayout(2,3,Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
+        panelNamedACLSortTop.add(new JLabel("Sort By"));
+        panelNamedACLSortTop.add(new JLabel("Then By"));
+        panelNamedACLSortTop.add(new JLabel("Finally By"));
+        panelNamedACLSortTop.add(boxFirstSort);
+        panelNamedACLSortTop.add(boxSecondSort);
+        panelNamedACLSortTop.add(boxThirdSort);
+        JPanel panelNamedACLSortBottom = new JPanel();
+        panelNamedACLSortBottom.setLayout(new FlowLayout(FlowLayout.RIGHT,Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
+        panelNamedACLSortBottom.add(checkAscending);
+        panelNamedACLSortBottom.add(buttonSortNamedACL);
         JPanel panelNamedACLSort = new JPanel();
-        panelNamedACLSort.setLayout(new GridLayout(3,3,Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
-        panelNamedACLSort.add(new JLabel("Sort By"));
-        panelNamedACLSort.add(new JLabel("Then By"));
-        panelNamedACLSort.add(new JLabel("Finally By"));
-        panelNamedACLSort.add(boxFirstSort);
-        panelNamedACLSort.add(boxSecondSort);
-        panelNamedACLSort.add(boxThirdSort);
-        panelNamedACLSort.add(new JPanel());
-        panelNamedACLSort.add(checkAscending);
-        panelNamedACLSort.add(buttonSortNamedACL);
+        panelNamedACLSort.setLayout(new BorderLayout(Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
+        panelNamedACLSort.add("North",panelNamedACLSortTop);
+        panelNamedACLSort.add("Center",panelNamedACLSortBottom);
         
         
         boxfilterType = new JComboBox();
@@ -609,16 +613,27 @@ public class AccessManagerComponent extends JPanel {
         buttonFilter.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
                 int[] filterColumns = new int[]{0,1,2};
-                String[] filterPatterns = new String[]{
-                    (String)boxfilterType.getSelectedItem(),
-                    textFilterInstanceCount.getText(),
-                    textFilterName.getText()
-                };
-                tableNamedACL.clearSelection();
-                updateTableAccessControl();
-                tableDataFilterSortNamedACL.setFilter(filterColumns,filterPatterns);
-                tableDataFilterSortNamedACL.fireTableDataChanged();
-                tableNamedACL.repaint();
+                    String[] filterPatterns = new String[]{
+                        (String)boxfilterType.getSelectedItem(),
+                        textFilterInstanceCount.getText(),
+                        textFilterName.getText()
+                    };
+                    
+                if( ((filterPatterns[0] == null) || (filterPatterns[0].equals("")))
+                    &&
+                    ((filterPatterns[1] == null) || (filterPatterns[1].equals("")))
+                    &&
+                    ((filterPatterns[2] == null) || (filterPatterns[2].equals("")))
+                  )
+                    JOptionPane.showMessageDialog(parentFrame, "Filtering requires either a Type, Instance Count, Name or any combination.", "No Filter Criteria", JOptionPane.ERROR_MESSAGE);
+                else {
+                    
+                    tableNamedACL.clearSelection();
+                    updateTableAccessControl();
+                    tableDataFilterSortNamedACL.setFilter(filterColumns,filterPatterns);
+                    tableDataFilterSortNamedACL.fireTableDataChanged();
+                    tableNamedACL.repaint();
+                }
             }
         });
         JButton buttonReset = new JButton("Reset");
@@ -633,17 +648,22 @@ public class AccessManagerComponent extends JPanel {
             }
         });
         
+        JPanel panelNamedACLFilterTop = new JPanel();
+        panelNamedACLFilterTop.setLayout(new GridLayout(2,3,Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
+        panelNamedACLFilterTop.add(new JLabel("Match Type"));
+        panelNamedACLFilterTop.add(new JLabel("Match Count"));
+        panelNamedACLFilterTop.add(new JLabel("Match Name"));
+        panelNamedACLFilterTop.add(boxfilterType);
+        panelNamedACLFilterTop.add(textFilterInstanceCount);
+        panelNamedACLFilterTop.add(textFilterName);
+        JPanel panelNamedACLFilterBottom = new JPanel();
+        panelNamedACLFilterBottom.setLayout(new FlowLayout(FlowLayout.RIGHT,Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
+        panelNamedACLFilterBottom.add(buttonReset);
+        panelNamedACLFilterBottom.add(buttonFilter);
         JPanel panelNamedACLFilter = new JPanel();
-        panelNamedACLFilter.setLayout(new GridLayout(3,3,Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
-        panelNamedACLFilter.add(new JLabel("Match Type"));
-        panelNamedACLFilter.add(new JLabel("Match Count"));
-        panelNamedACLFilter.add(new JLabel("Match Name"));
-        panelNamedACLFilter.add(boxfilterType);
-        panelNamedACLFilter.add(textFilterInstanceCount);
-        panelNamedACLFilter.add(textFilterName);
-        panelNamedACLFilter.add(new JPanel());
-        panelNamedACLFilter.add(buttonReset);
-        panelNamedACLFilter.add(buttonFilter);
+        panelNamedACLFilter.setLayout(new BorderLayout(Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
+        panelNamedACLFilter.add("North",panelNamedACLFilterTop);
+        panelNamedACLFilter.add("Center",panelNamedACLFilterBottom);
         
         
         treeReferences = new JTree(new String[]{"Ruletree Reference","Nader Eloshaiker"});

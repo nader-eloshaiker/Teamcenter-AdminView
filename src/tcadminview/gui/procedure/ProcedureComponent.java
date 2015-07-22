@@ -11,16 +11,15 @@ package tcadminview.gui.procedure;
 
 import tcadminview.gui.*;
 import tcadminview.xml.DOMUtil;
-import tcadminview.gui.Utilities;
 import tcadminview.procedure.*;
-import tcadminview.plmxmlpdm.classtype.*;
 import tcadminview.plmxmlpdm.type.*;
-import tcadminview.plmxmlpdm.base.AttribOwnerBase;
 import tcadminview.plmxmlpdm.type.element.*;
+import tcadminview.plmxmlpdm.classtype.*;
+import tcadminview.plmxmlpdm.base.AttribOwnerBase;
 import tcadminview.plmxmlpdm.TagTypeEnum;
 import org.xml.sax.InputSource;
-import javax.swing.border.*;
 import javax.swing.*;
+import javax.swing.border.*;
 import javax.swing.table.*;
 import javax.swing.tree.*;
 import javax.swing.event.*;
@@ -28,11 +27,12 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.BorderLayout;
 import java.util.*;
+import java.io.*;
 /**
  *
  * @author nzr4dl
  */
-public class ProcedureComponent extends JPanel{
+public class ProcedureComponent extends JPanel implements TabbedPanel {
     
     protected JTable tableDepTaskTemplateRef;
     protected JTable tableWorkflowTemplatesProcess;
@@ -43,36 +43,13 @@ public class ProcedureComponent extends JPanel{
     
     protected ProcedureManager pm;
     
-    protected JTree treeXML;
-    protected XMLTreeModel treeModelXML;
     
-    private DOMUtil domUtil;
     
     /**
      * Creates a new instance of ProcedureComponent
      */
-    public ProcedureComponent(InputSource is) {
-        try {
-            domUtil = new DOMUtil(is);
-            
-        } catch (Exception exc) {
-            System.err.println("Error reading XML: " + exc);
-        }
-        
-        pm = new ProcedureManager(domUtil.getRootNode());
-        /*
-        treeModelXML = new XMLTreeModel(domUtil.getRootNode());
-        treeXML = new JTree(treeModelXML);
-        treeXML.setCellRenderer(new XMLTreeCellRenderer());
-        JScrollPane scrollTreeXML = new JScrollPane();
-        scrollTreeXML.setPreferredSize(new Dimension(550,340));
-        scrollTreeXML.setBorder(new BevelBorder(BevelBorder.LOWERED));
-        scrollTreeXML.getViewport().add(treeXML);
-        JPanel panelDebug = new JPanel();
-        panelDebug.setLayout(new GridLayout(1,1,Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
-        panelDebug.setBorder(new TitledBorder(new EtchedBorder(),"PLMXML Debug Window"));
-        panelDebug.add(Utilities.createPanelMargined(scrollTreeXML));
-         */
+    public ProcedureComponent(JFrame frame, ProcedureManager pm){
+        this.pm = pm;
         
         // Workflow Process Tree
         treeWorkflowProcess = new JTree(new ProcedureTreeModel(pm));
@@ -102,6 +79,10 @@ public class ProcedureComponent extends JPanel{
         this.setLayout(new BorderLayout(Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
         this.add("Center",Utilities.createPanelMargined(panel));
         
+    }
+    
+    public boolean isEmptyPanel(){
+        return (pm.getWorkflowTemplates().size() == 0);
     }
     
     protected JTree treeAttributes;

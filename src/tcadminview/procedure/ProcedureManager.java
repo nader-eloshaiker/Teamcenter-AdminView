@@ -10,11 +10,13 @@
 package tcadminview.procedure;
 
 import java.util.*;
-import javax.xml.transform.dom.DOMResult;
+import java.io.*;
+import javax.swing.*;
+
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.NamedNodeMap;
-import org.xml.sax.InputSource;
+
 import tcadminview.plmxmlpdm.HeaderType;
 import tcadminview.plmxmlpdm.TagTypeEnum;
 import tcadminview.plmxmlpdm.base.AttribOwnerBase;
@@ -52,11 +54,16 @@ public class ProcedureManager {
     private Hashtable<String, Integer>idIndexLookup;
     private Hashtable<String, TagTypeEnum>idClassLookup;
     
+    private JFrame frame;
+    private DOMUtil domUtil;
+    
     
     /**
      * Creates a new instance of ProcedureManager
      */
-    public ProcedureManager(Node rootXMLNode) {
+    public ProcedureManager(JFrame frame) {
+        this.frame = frame;
+        
         idIndexLookup = new Hashtable<String, Integer>();
         idClassLookup = new Hashtable<String, TagTypeEnum>();
         
@@ -72,10 +79,22 @@ public class ProcedureManager {
         accessIntentList = new ArrayList<AccessIntentType>();
         organisationList = new ArrayList<OrganisationType>();
         
-        decodeXML(rootXMLNode);
     }
     
-
+    public void importXML(File file) throws Exception {
+        FileInputStream fis = new FileInputStream(file);
+        try {
+            ProgressMonitorInputStream pmi = new ProgressMonitorInputStream(
+                    frame,"Reading "+file.getName(),fis);
+            domUtil = new DOMUtil(pmi);
+            
+        } catch (Exception exc) {
+            throw new Exception("Error reading XML: " + exc);
+        }
+        decodeXML(domUtil.getRootNode());
+    }
+    
+    
     private String toStringId(String id){
         if(id.charAt(0)== '#')
             return id.substring(1);
@@ -204,12 +223,26 @@ public class ProcedureManager {
         try {
             list = currentNode.getChildNodes();
             
+            ProgressMonitor progressMonitor = new ProgressMonitor(
+                    frame,
+                    "Decoding XML Tags",
+                    "",
+                    0,
+                    list.getLength()-1);
+            
+            if (progressMonitor.isCanceled()) {
+                progressMonitor.close();
+                return;
+            }
+            
             TagTypeEnum tagType;
             
             for(int i=0; i<list.getLength(); i++) {
                 currentNode = list.item(i);
-                //System.out.println("Node name: "+currentNode.getNodeName());
                 tagType = TagTypeEnum.fromValue(currentNode.getNodeName());
+                
+                progressMonitor.setProgress(i);
+                progressMonitor.setNote(tagType.value());
                 
                 switch(tagType) {
                     case Header:
@@ -219,7 +252,7 @@ public class ProcedureManager {
                         
                     case Text:
                         break;
-
+                        
                     case WorkflowTemplate:
                         WorkflowTemplateType wt = new WorkflowTemplateType(currentNode);
                         workflowTemplateList.add(wt);
