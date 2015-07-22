@@ -67,7 +67,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="UserList" type="{http://www.plmxml.org/Schemas/PLMXMLSchema}UserListDataType" minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;attribute name="dataRef" type="{http://www.plmxml.org/Schemas/PLMXMLSchema}anyURIType" />
- *       &lt;attribute name="editable" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
+ *       &lt;attribute name="editable" type="{http://www.w3.org/2001/XMLSchema}Boolean" default="false" />
  *       &lt;attribute name="format" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="maxExclusive" type="{http://www.w3.org/2001/XMLSchema}double" />
  *       &lt;attribute name="maxInclusive" type="{http://www.w3.org/2001/XMLSchema}double" />
@@ -253,7 +253,7 @@ public class UserDataElementType {
      *     {@link Boolean }
      *     
      */
-    public boolean isEditable() {
+    public Boolean isEditable() {
         if (editable == null) {
             return false;
         } else {

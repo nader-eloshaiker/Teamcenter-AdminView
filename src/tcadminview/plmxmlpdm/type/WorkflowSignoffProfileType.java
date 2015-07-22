@@ -38,7 +38,7 @@ import javax.xml.bind.annotation.XmlType;
  * &lt;complexType name="WorkflowSignoffProfileType">
  *   &lt;complexContent>
  *     &lt;extension base="{http://www.plmxml.org/Schemas/PLMXMLSchema}AttribOwnerBase">
- *       &lt;attribute name="allowSubgroups" use="required" type="{http://www.w3.org/2001/XMLSchema}boolean" />
+ *       &lt;attribute name="allowSubgroups" use="required" type="{http://www.w3.org/2001/XMLSchema}Boolean" />
  *       &lt;attribute name="groupRef" type="{http://www.plmxml.org/Schemas/PLMXMLSchema}anyURIType" />
  *       &lt;attribute name="numberOfSignoffs" use="required" type="{http://www.w3.org/2001/XMLSchema}integer" />
  *       &lt;attribute name="roleRef" type="{http://www.plmxml.org/Schemas/PLMXMLSchema}anyURIType" />
@@ -57,7 +57,7 @@ public class WorkflowSignoffProfileType extends AttribOwnerBase {
 
     //@XmlAttribute(required = true)
     protected final String allowSubgroupsAttribute = "allowSubgroups";
-    protected boolean allowSubgroups;
+    protected Boolean allowSubgroups;
     
     //@XmlAttribute
     protected final String groupRefAttribute = "groupRef";
@@ -98,7 +98,7 @@ public class WorkflowSignoffProfileType extends AttribOwnerBase {
      * Gets the value of the allowSubgroups property.
      * 
      */
-    public boolean isAllowSubgroups() {
+    public Boolean isAllowSubgroups() {
         return allowSubgroups;
     }
 
@@ -106,7 +106,7 @@ public class WorkflowSignoffProfileType extends AttribOwnerBase {
      * Sets the value of the allowSubgroups property.
      * 
      */
-    public void setAllowSubgroups(boolean value) {
+    public void setAllowSubgroups(Boolean value) {
         this.allowSubgroups = value;
     }
 

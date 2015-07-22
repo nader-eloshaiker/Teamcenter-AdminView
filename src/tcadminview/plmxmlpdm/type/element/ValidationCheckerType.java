@@ -43,11 +43,11 @@ import javax.xml.bind.annotation.XmlType;
  * &lt;complexType name="ValidationCheckerType">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;attribute name="adHoc" type="{http://www.w3.org/2001/XMLSchema}boolean" />
+ *       &lt;attribute name="adHoc" type="{http://www.w3.org/2001/XMLSchema}Boolean" />
  *       &lt;attribute name="comments" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="reportRef" type="{http://www.plmxml.org/Schemas/PLMXMLSchema}anyURIType" />
- *       &lt;attribute name="result" type="{http://www.w3.org/2001/XMLSchema}boolean" />
+ *       &lt;attribute name="result" type="{http://www.w3.org/2001/XMLSchema}Boolean" />
  *       &lt;attribute name="status" type="{http://www.w3.org/2001/XMLSchema}integer" />
  *     &lt;/restriction>
  *   &lt;/complexContent>

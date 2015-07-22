@@ -51,7 +51,7 @@ import tcadminview.plmxmlpdm.classtype.WorkflowTemplateStageEnum;
  *       &lt;attribute name="location" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="objectType" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="parentTaskTemplateRef" type="{http://www.plmxml.org/Schemas/PLMXMLSchema}anyURIType" />
- *       &lt;attribute name="showInProcessStage" use="required" type="{http://www.w3.org/2001/XMLSchema}boolean" />
+ *       &lt;attribute name="showInProcessStage" use="required" type="{http://www.w3.org/2001/XMLSchema}Boolean" />
  *       &lt;attribute name="signoffQuorum" type="{http://www.w3.org/2001/XMLSchema}integer" />
  *       &lt;attribute name="stage" type="{http://www.plmxml.org/Schemas/PLMXMLSchema}WorkflowTemplateStageEnum" default="available" />
  *       &lt;attribute name="subTemplateRefs" type="{http://www.plmxml.org/Schemas/PLMXMLSchema}uriReferenceListType" />
@@ -106,7 +106,7 @@ public class WorkflowTemplateType extends AttribOwnerBase {
     
     //@XmlAttribute(required = true)
     protected final String showInProcessStageAttribute = "showInProcessStage";
-    protected boolean showInProcessStage;
+    protected Boolean showInProcessStage;
     
     //@XmlAttribute
     protected final String signoffQuorumAttribute = "signoffQuorum";
@@ -417,7 +417,7 @@ public class WorkflowTemplateType extends AttribOwnerBase {
      * Gets the value of the showInProcessStage property.
      * 
      */
-    public boolean isShowInProcessStage() {
+    public Boolean isShowInProcessStage() {
         return showInProcessStage;
     }
 
@@ -425,7 +425,7 @@ public class WorkflowTemplateType extends AttribOwnerBase {
      * Sets the value of the showInProcessStage property.
      * 
      */
-    public void setShowInProcessStage(boolean value) {
+    public void setShowInProcessStage(Boolean value) {
         this.showInProcessStage = value;
     }
 

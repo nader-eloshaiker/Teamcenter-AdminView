@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlEnumValue;
  *     &lt;enumeration value="ints"/>
  *     &lt;enumeration value="real"/>
  *     &lt;enumeration value="reals"/>
- *     &lt;enumeration value="boolean"/>
+ *     &lt;enumeration value="Boolean"/>
  *     &lt;enumeration value="booleans"/>
  *     &lt;enumeration value="string"/>
  *     &lt;enumeration value="reference"/>
@@ -46,7 +46,7 @@ public enum UserValueDataType {
     REAL("real"),
     //@XmlEnumValue("reals")
     REALS("reals"),
-    //@XmlEnumValue("boolean")
+    //@XmlEnumValue("Boolean")
     BOOLEAN("boolean"),
     //@XmlEnumValue("booleans")
     BOOLEANS("booleans"),

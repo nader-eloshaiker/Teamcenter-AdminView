@@ -23,16 +23,21 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.sax.SAXSource;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.DocumentBuilder;
+import org.w3c.dom.Document;
 /**
  *
  * @author nzr4dl
  */
 public class DOMUtil{
     
-    private static DOMResult result;
+    private Node rootNode;
     
-    public static Node createNodes(InputSource is) throws Exception{
+    public DOMUtil(InputSource is) throws Exception{
         
+        /*
         SAXParserFactory saxFactory = SAXParserFactory.newInstance(); 
         SAXParser parser = saxFactory.newSAXParser(); 
         XMLReader reader = new XMLTrimFilter(parser.getXMLReader()); 
@@ -40,14 +45,21 @@ public class DOMUtil{
         TransformerFactory factory = TransformerFactory.newInstance(); 
         Transformer transformer = factory.newTransformer(); 
         transformer.setOutputProperty(OutputKeys.INDENT, "no"); 
-        result = new DOMResult(); 
+        DOMResult result = new DOMResult(); 
         transformer.transform(new SAXSource(reader, is), result); 
-        return result.getNode(); 
-        
+        rootNode = result.getNode();
+        return rootNode; 
+        */
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance(); 
+        factory.setIgnoringElementContentWhitespace(true); 
+        factory.setCoalescing(true); 
+        DocumentBuilder builder = factory.newDocumentBuilder(); 
+        Document d =  builder.parse(is);
+        rootNode = d.getDocumentElement();
     }
     
-    public static Node getNode() {
-        return result.getNode();
+    public Node getRootNode() {
+        return rootNode;
     }
     
 }

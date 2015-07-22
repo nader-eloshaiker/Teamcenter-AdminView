@@ -10,7 +10,9 @@
 package tcadminview.gui.procedure;
 
 import javax.swing.table.*;
+import java.util.ArrayList;
 import tcadminview.procedure.WorkflowTemplateList;
+import tcadminview.procedure.ProcedureManager;
 import tcadminview.plmxmlpdm.classtype.WorkflowTemplateClassificationEnum;
 import tcadminview.plmxmlpdm.type.WorkflowTemplateType;
 /**
@@ -20,14 +22,19 @@ import tcadminview.plmxmlpdm.type.WorkflowTemplateType;
 public class WorkflowTemplateTableModel extends AbstractTableModel implements TableModel {
     
     WorkflowTemplateList list;
+    //ProcedureManager pm;
     WorkflowTemplateClassificationEnum filterType;
     
     /** Creates a new instance of WorkflowTemplateTableModel */
-    public WorkflowTemplateTableModel(WorkflowTemplateList list) {
+    public WorkflowTemplateTableModel(WorkflowTemplateList list, WorkflowTemplateClassificationEnum filterType) {
         this.list = list;
-        filterType = WorkflowTemplateClassificationEnum.PROCESS;
+        this.filterType = filterType;
     }
     
+    public WorkflowTemplateTableModel(WorkflowTemplateList list) {
+        this(list, WorkflowTemplateClassificationEnum.TASK);
+    }
+
     public WorkflowTemplateClassificationEnum getFilter() {
         return filterType;
     }
@@ -47,11 +54,11 @@ public class WorkflowTemplateTableModel extends AbstractTableModel implements Ta
     
     public String getColumnName(int columnIndex) {
         switch(columnIndex){
-            case 0: return "Name";
-            case 1: return "Dependant Tasks";
-            case 2: return "Sub Workflow";
-            case 3: return "key";
-            case 4: return "actions";
+            case 0: return "id";
+            case 1: return "iconKey";
+            case 2: return "Name";
+            case 3: return "Show in Process";
+            case 4: return "objectType";
             default: return "";
         }
     }
@@ -64,11 +71,11 @@ public class WorkflowTemplateTableModel extends AbstractTableModel implements Ta
         WorkflowTemplateType wt = list.get(list.getIndexesForClassification(filterType).get(rowIndex));
         
         switch(columnIndex){
-            case 0: return wt.getName();
-            case 1: return wt.getDependencyTaskTemplateRefs();
-            case 2: return wt.getSubTemplateRefs();
-            case 3: return wt.getIconKey();
-            case 4: return wt.getActions();
+            case 0: return wt.getId();
+            case 1: return wt.getIconKey();
+            case 2: return wt.getName();
+            case 3: return wt.isShowInProcessStage();
+            case 4: return wt.getObjectType();
             default: return "";
         }
     }

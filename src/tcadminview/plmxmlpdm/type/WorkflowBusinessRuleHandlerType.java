@@ -28,8 +28,8 @@ import javax.xml.bind.annotation.XmlType;
  * &lt;complexType name="WorkflowBusinessRuleHandlerType">
  *   &lt;complexContent>
  *     &lt;extension base="{http://www.plmxml.org/Schemas/PLMXMLSchema}WorkflowHandlerType">
- *       &lt;attribute name="negated" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
- *       &lt;attribute name="override" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
+ *       &lt;attribute name="negated" type="{http://www.w3.org/2001/XMLSchema}Boolean" default="false" />
+ *       &lt;attribute name="override" type="{http://www.w3.org/2001/XMLSchema}Boolean" default="false" />
  *     &lt;/extension>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -67,7 +67,7 @@ public class WorkflowBusinessRuleHandlerType extends WorkflowHandlerType {
      *     {@link Boolean }
      *     
      */
-    public boolean isNegated() {
+    public Boolean isNegated() {
         if (negated == null) {
             return false;
         } else {
@@ -95,7 +95,7 @@ public class WorkflowBusinessRuleHandlerType extends WorkflowHandlerType {
      *     {@link Boolean }
      *     
      */
-    public boolean isOverride() {
+    public Boolean isOverride() {
         if (override == null) {
             return false;
         } else {

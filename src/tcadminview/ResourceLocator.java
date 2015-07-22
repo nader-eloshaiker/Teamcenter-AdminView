@@ -39,16 +39,20 @@ public class ResourceLocator {
         return ResourceLocator.class.getResource("resources/images/buttons/"+image);
     }
     
+    public static URL getWorkflowImage(String image) throws IOException  {
+        return ResourceLocator.class.getResource("resources/images/workflowicons/"+image);
+    }
+    
     public static URL getPLMXMLPDMSchema() throws IOException {
         return ResourceLocator.class.getResource("resources/schema/PLMXMLPDMSchema.xsd");
     }
     
     public static String getVersion() {
-        return "1.1.8 Alpha";
+        return "1.1.10 Alpha";
     }
     
     public static String getReleaseDate() {
-        return "30-Jul-07";
+        return "1-Aug-07";
     }
     
     public static String getApplicationName() {

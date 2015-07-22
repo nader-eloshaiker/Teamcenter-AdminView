@@ -25,10 +25,6 @@ import tcadminview.xml.DOMUtil;
 public class XMLTreeModel implements TreeModel{ 
     private Node node; 
     
-    public XMLTreeModel(InputSource is) throws Exception{ 
-        this(DOMUtil.createNodes(is)); 
-    }
- 
     public XMLTreeModel(Node node){ 
         this.node = node; 
     } 
