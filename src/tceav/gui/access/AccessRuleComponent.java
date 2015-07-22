@@ -17,7 +17,7 @@ import tceav.gui.tools.GUIutilities;
 import tceav.gui.tools.table.JTableAdvanced;
 import tceav.manager.access.AccessControlHeader;
 import tceav.manager.access.AccessManager;
-import tceav.manager.access.AccessRule;
+import tceav.manager.access.NamedAcl;
 
 /**
  *
@@ -43,7 +43,7 @@ public class AccessRuleComponent extends JPanel {
         this.compareMode = compareMode;
 
         table = new JTableAdvanced();
-        tableModel = new AccessRuleTableModel(header,new AccessRule());
+        tableModel = new AccessRuleTableModel(header,new NamedAcl());
         table.setModel(tableModel);
         table.setRowSelectionAllowed(true);
         table.getTableHeader().setReorderingAllowed(false);
@@ -84,16 +84,16 @@ public class AccessRuleComponent extends JPanel {
         return table;
     }
     
-    private AccessRule emptyAccessRule;
+    private NamedAcl emptyAccessRule;
     
     public void updateTable() {
         if(emptyAccessRule == null)
-            emptyAccessRule = new AccessRule();
+            emptyAccessRule = new NamedAcl();
         
         updateTable(emptyAccessRule);
     }
     
-    public void updateTable(AccessRule ar) {
+    public void updateTable(NamedAcl ar) {
         tableModel = new AccessRuleTableModel(header,ar);
         table.setModel(tableModel);
         

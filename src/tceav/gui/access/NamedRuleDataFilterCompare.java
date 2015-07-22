@@ -9,7 +9,7 @@
 
 package tceav.gui.access;
 
-import tceav.manager.access.AccessRule;
+import tceav.manager.access.NamedAcl;
 import tceav.manager.compare.CompareInterface;
 import java.util.*;
 

@@ -9,14 +9,8 @@
 
 package tceav.xml;
 
-import tceav.manager.procedure.ProcedureManager;
-import tceav.resources.ResourceStrings;
-import java.util.List;
+import java.io.File;//InputStream;
 import java.io.InputStream;
-import javax.xml.XMLConstants;
-import javax.xml.validation.SchemaFactory;
-import javax.xml.validation.Schema;
-import javax.xml.validation.Validator;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
 import org.w3c.dom.Document;
@@ -29,13 +23,27 @@ public class DOMReader {
     
     private Node rootNode;
     
+    //public DOMReader(InputStream is) throws Exception {
+    public DOMReader(File file) throws Exception {
+
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setIgnoringElementContentWhitespace(true);
+        factory.setCoalescing(true);
+
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        Document d =  builder.parse(file);
+        rootNode = d.getDocumentElement();
+    }
+    
     public DOMReader(InputStream is) throws Exception {
         // Validation
         //SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
         //Schema schema = schemaFactory.newSchema(ResourceStrings.getPLMXMLPDMSchema());
+        
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setIgnoringElementContentWhitespace(true);
         factory.setCoalescing(true);
+        
         // Validation
         //factory.setNamespaceAware(true);
         //factory.setValidating(true);
@@ -48,7 +56,7 @@ public class DOMReader {
         Document d =  builder.parse(is);
         rootNode = d.getDocumentElement();
     }
-    
+
     public Node getRootNode() {
         return rootNode;
     }

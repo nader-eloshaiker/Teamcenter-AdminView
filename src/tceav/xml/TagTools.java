@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package tceav.manager.procedure.plmxmlpdm;
+package tceav.xml;
 
 import java.util.List;
 import org.w3c.dom.NamedNodeMap;

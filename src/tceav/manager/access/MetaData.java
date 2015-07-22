@@ -19,11 +19,16 @@ public class MetaData {
     private String dateDetails;
     private String timeDetails;
     private String stringID;
+    private boolean legacey;
     
     /**
      * Creates a new instance of MetaData
      */
-    public MetaData(String metaData) {
+    public MetaData() {
+        legacey = false;
+    }
+    
+    public void loadLegacey(String metaData) {
         String[] temp;
         
         stringID = metaData;
@@ -32,6 +37,12 @@ public class MetaData {
         temp = temp[1].split(" ");
         dateDetails = temp[0].substring(1);
         timeDetails = temp[1].substring(1);
+        
+        legacey = true;
+    }
+    
+    public boolean isLegacey() {
+        return legacey;
     }
     
     public String getUserDetails() {

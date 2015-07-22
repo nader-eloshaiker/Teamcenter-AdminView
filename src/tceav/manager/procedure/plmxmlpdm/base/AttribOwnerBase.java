@@ -10,8 +10,8 @@ package tceav.manager.procedure.plmxmlpdm.base;
 
 import java.util.*;
 
-import tceav.manager.procedure.plmxmlpdm.TagTools;
-import tceav.manager.procedure.plmxmlpdm.TagTypeEnum;
+import tceav.xml.TagTools;
+import tceav.manager.procedure.plmxmlpdm.ProcedureTagTypeEnum;
 import tceav.manager.procedure.plmxmlpdm.type.UserDataType;
 import tceav.manager.procedure.plmxmlpdm.type.AssociatedDataSetType;
 import tceav.manager.procedure.plmxmlpdm.type.AssociatedFormType;
@@ -89,22 +89,22 @@ public abstract class AttribOwnerBase extends DescriptionBase {
         NamedNodeMap attrib = currentNode.getAttributes();
         NodeList nodeList = currentNode.getChildNodes();
         
-        TagTypeEnum tagType;
+        ProcedureTagTypeEnum tagType;
         for (int i=0; i<nodeList.getLength(); i++) {
             currentNode = nodeList.item(i);
-            tagType = TagTypeEnum.fromValue(currentNode.getNodeName());
+            tagType = ProcedureTagTypeEnum.fromValue(currentNode.getNodeName());
             
             switch(tagType) {
                 case Arguments:
                     UserDataType arg = new UserDataType(currentNode);
-                    arg.setUserDataType(TagTypeEnum.Arguments);
+                    arg.setUserDataType(ProcedureTagTypeEnum.Arguments);
                     getAttribute().add(arg);
                     getAttributeRefs().add(arg.getId());
                     break;
 
                 case UserData:          
                     UserDataType ud = new UserDataType(currentNode);
-                    ud.setUserDataType(TagTypeEnum.UserData);
+                    ud.setUserDataType(ProcedureTagTypeEnum.UserData);
                     getAttribute().add(ud);
                     getAttributeRefs().add(ud.getId());
                     break;

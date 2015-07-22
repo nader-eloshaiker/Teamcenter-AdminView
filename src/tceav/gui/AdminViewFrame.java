@@ -100,7 +100,7 @@ public class AdminViewFrame extends JFrame {
         try {
             Settings.load();
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage(), "Load Settings Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(parentFrame, ex.getMessage(), "Load Settings Error", JOptionPane.ERROR_MESSAGE);
         }
 
         try {
@@ -114,7 +114,7 @@ public class AdminViewFrame extends JFrame {
             // UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             }
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage(), "GUI Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(parentFrame, ex.getMessage(), "GUI Error", JOptionPane.ERROR_MESSAGE);
         }
 
         try {
@@ -125,7 +125,7 @@ public class AdminViewFrame extends JFrame {
             iconApp = ResourceLoader.getImage(ImageEnum.appIcon);
             iconCompare = ResourceLoader.getImage(ImageEnum.utilCompare);
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error Load Images", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(parentFrame, ex.getMessage(), "Error Load Images", JOptionPane.ERROR_MESSAGE);
         }
 
         JMenuBar menuBar = constructMenuBar();
@@ -190,12 +190,16 @@ public class AdminViewFrame extends JFrame {
             path = Settings.getAmLoadPath();
             fc.setCurrentDirectory(new File(path));
             fc.addChoosableFileFilter(new CustomFileFilter(
-                    new String[]{"txt", ""}, "Text File (*.txt; *.)"));
+                    new String[]{"txt", ""}, "2007/v9/v8.. Access Manager File (*.txt; *.)"));
+            fc.addChoosableFileFilter(new CustomFileFilter(
+                    new String[]{"xml"}, "2008 and higher Access Manager File (*.xml; *.)"));
+            fc.addChoosableFileFilter(new CustomFileFilter(
+                    new String[]{"xml","txt", ""}, "Access Manager File (*.xml; *.txt; *.)"));
         } else if (type.equals(ManagerAdapter.PROCEDURE_MANAGER_TYPE)) {
             path = Settings.getPmLoadPath();
             fc.setCurrentDirectory(new File(path));
             fc.addChoosableFileFilter(new CustomFileFilter(
-                    new String[]{"xml", "plmxml"}, "XML File (*.xml; *.plmxml)"));
+                    new String[]{"xml"}, "XML File (*.xml)"));
         }
 
         return fc;
@@ -754,7 +758,7 @@ public class AdminViewFrame extends JFrame {
                 int result = fc.showOpenDialog(getFrame());
                 if (result == JFileChooser.APPROVE_OPTION) {
                     Settings.setAmLoadPath(fc.getCurrentDirectory().getPath());
-                    AccessManager am = new AccessManager();
+                    AccessManager am = new AccessManager(parentFrame);
                     try {
                         am.readFile(fc.getSelectedFile());
                     } catch (Exception ex) {
@@ -849,7 +853,7 @@ public class AdminViewFrame extends JFrame {
                     File files[] = chooser.getSelectedFiles();
                     AccessManager[] am = new AccessManager[files.length];
                     for (int k = 0; k < files.length; k++) {
-                        am[k] = new AccessManager();
+                        am[k] = new AccessManager(parentFrame);
 
                         try {
                             am[k].readFile(files[k]);

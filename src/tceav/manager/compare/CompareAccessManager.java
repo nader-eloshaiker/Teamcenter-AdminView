@@ -13,8 +13,8 @@ import tceav.manager.ManagerAdapter;
 import java.io.File;
 import java.util.ArrayList;
 import tceav.manager.access.AccessManager;
-import tceav.manager.access.AccessRule;
-import tceav.manager.access.AccessRuleList;
+import tceav.manager.access.NamedAcl;
+import tceav.manager.access.NamedAclList;
 import tceav.manager.access.RuleTreeNode;
 
 /**
@@ -105,13 +105,13 @@ public class CompareAccessManager extends ManagerAdapter {
         }
     }
 
-    private void compare(AccessRuleList am1, AccessRuleList am2) {
+    private void compare(NamedAclList am1, NamedAclList am2) {
         compare(am1, am2, null);
     }
     
-    private void compare(AccessRuleList am1, AccessRuleList am2, CompareResult results) {
+    private void compare(NamedAclList am1, NamedAclList am2, CompareResult results) {
         int result = CompareInterface.NOT_FOUND;
-        AccessRule node;
+        NamedAcl node;
         
         for(int j=0; j<am1.size(); j++){
             node = am1.get(j);

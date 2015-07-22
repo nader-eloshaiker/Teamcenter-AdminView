@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.tree.*;
 import javax.swing.event.*;
-import tceav.manager.access.AccessRule;
+import tceav.manager.access.NamedAcl;
 import tceav.manager.access.RuleTreeNode;
 
 
@@ -23,10 +23,10 @@ import tceav.manager.access.RuleTreeNode;
  */
 public class RuleTreeReferencesModel implements TreeModel{
     
-    private AccessRule root;
+    private NamedAcl root;
     
     /** Creates a new instance of RuleTreeModel */
-    public RuleTreeReferencesModel(AccessRule root) {
+    public RuleTreeReferencesModel(NamedAcl root) {
         this.root = root;
     }
     

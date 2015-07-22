@@ -12,8 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import tceav.manager.procedure.plmxmlpdm.type.element.ApplicationRefType;
-import tceav.manager.procedure.plmxmlpdm.TagTools;
-import tceav.manager.procedure.plmxmlpdm.TagTypeEnum;
+import tceav.xml.TagTools;
+import tceav.manager.procedure.plmxmlpdm.ProcedureTagTypeEnum;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.NamedNodeMap;
@@ -91,10 +91,10 @@ public abstract class DescriptionBase extends IdBase {
         
         setName(TagTools.getStringValue(attrib, nameAttribute));
         
-        TagTypeEnum tagType;
+        ProcedureTagTypeEnum tagType;
         for (int i=0; i<nodeList.getLength(); i++) {
             currentNode = nodeList.item(i);
-            tagType = TagTypeEnum.fromValue(currentNode.getNodeName());
+            tagType = ProcedureTagTypeEnum.fromValue(currentNode.getNodeName());
             
             switch(tagType) {
                 case ApplicationRef:    // Set DescriptionBase Node

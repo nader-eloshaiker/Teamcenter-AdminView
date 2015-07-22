@@ -12,8 +12,8 @@ package tceav.manager.procedure.plmxmlpdm.type.element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.NamedNodeMap;
-import tceav.manager.procedure.plmxmlpdm.TagTools;
-import tceav.manager.procedure.plmxmlpdm.TagTypeEnum;
+import tceav.xml.TagTools;
+import tceav.manager.procedure.plmxmlpdm.ProcedureTagTypeEnum;
 import tceav.manager.procedure.plmxmlpdm.base.IdBase;
 import tceav.manager.procedure.plmxmlpdm.classtype.UserValueDataType;
 import tceav.manager.procedure.plmxmlpdm.type.UserListDataType;
@@ -166,10 +166,10 @@ public class UserDataElementType extends IdBase {
             setType(UserValueDataType.fromValue(s));
         setValue(TagTools.getStringValue(attrib, valueAttribute));
         
-        TagTypeEnum tagType;
+        ProcedureTagTypeEnum tagType;
         for (int i=0; i<nodeList.getLength(); i++) {
             currentNode = nodeList.item(i);
-            tagType = TagTypeEnum.fromValue(currentNode.getNodeName());
+            tagType = ProcedureTagTypeEnum.fromValue(currentNode.getNodeName());
             
             switch(tagType) {
                 case UserList:

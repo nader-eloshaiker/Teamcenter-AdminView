@@ -5,7 +5,7 @@
 package tceav.gui.procedure;
 
 import tceav.manager.procedure.plmxmlpdm.base.IdBase;
-import tceav.manager.procedure.plmxmlpdm.TagTypeEnum;
+import tceav.manager.procedure.plmxmlpdm.ProcedureTagTypeEnum;
 import tceav.gui.tools.GUIutilities;
 import java.awt.BorderLayout;
 import javax.swing.JComponent;
