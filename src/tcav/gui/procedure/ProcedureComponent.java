@@ -9,6 +9,7 @@
 
 package tcav.gui.procedure;
 
+import javax.naming.ldap.StartTlsRequest;
 import tcav.*;
 import tcav.gui.*;
 import tcav.procedure.*;
@@ -202,36 +203,40 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
         buttonWorkflowFind = new JButton("Find");
         buttonWorkflowFind.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                String workflowString = "";
-                String valueString = "";
-                
-                if(boxSearchWorkflowType.getSelectedIndex() > 0)
-                    workflowString = ProcedureManager.WORKFLOW_TYPES[boxSearchWorkflowType.getSelectedIndex() - 1].value();
-                valueString = textSearchValue.getText();
-                
-                if( (workflowString.equals(""))  &&
-                        ((valueString == null) || (valueString.equals(""))))
-                    JOptionPane.showMessageDialog(parentFrame, "Search requires either a Workflow Type, value/name or any combination.", "No Search Criteria", JOptionPane.ERROR_MESSAGE);
-                else {
-                    findProcedure(treeWorkflowProcess, workflowString, valueString);
-                    
-                    if (workflowSearchResults.size() == 0) {
-                        JOptionPane.showMessageDialog(parentFrame, "No matches found", "No Matches Found", JOptionPane.WARNING_MESSAGE);
-                        buttonWorkflowFindNext.setEnabled(false);
-                        buttonWorkflowFindClear.setEnabled(false);
-                        buttonWorkflowFind.setEnabled(true);
-                        boxSearchWorkflowType.setEnabled(true);
-                        textSearchValue.setEnabled(true);
-                    } else {
-                        int k = workflowSearchIndex + 1;
-                        buttonWorkflowFind.setText(k+" / "+workflowSearchResults.size());
-                        buttonWorkflowFindNext.setEnabled(true);
-                        buttonWorkflowFindClear.setEnabled(true);
-                        buttonWorkflowFind.setEnabled(false);
-                        boxSearchWorkflowType.setEnabled(false);
-                        textSearchValue.setEnabled(false);
+                new Thread() {
+                    public void run() {
+                        String workflowString = "";
+                        String valueString = "";
+                        
+                        if(boxSearchWorkflowType.getSelectedIndex() > 0)
+                            workflowString = ProcedureManager.WORKFLOW_TYPES[boxSearchWorkflowType.getSelectedIndex() - 1].value();
+                        valueString = textSearchValue.getText();
+                        
+                        if( (workflowString.equals(""))  &&
+                                ((valueString == null) || (valueString.equals(""))))
+                            JOptionPane.showMessageDialog(parentFrame, "Search requires either a Workflow Type, value/name or any combination.", "No Search Criteria", JOptionPane.ERROR_MESSAGE);
+                        else {
+                            findProcedure(treeWorkflowProcess, workflowString, valueString);
+                            
+                            if (workflowSearchResults.size() == 0) {
+                                JOptionPane.showMessageDialog(parentFrame, "No matches found", "No Matches Found", JOptionPane.WARNING_MESSAGE);
+                                buttonWorkflowFindNext.setEnabled(false);
+                                buttonWorkflowFindClear.setEnabled(false);
+                                buttonWorkflowFind.setEnabled(true);
+                                boxSearchWorkflowType.setEnabled(true);
+                                textSearchValue.setEnabled(true);
+                            } else {
+                                int k = workflowSearchIndex + 1;
+                                buttonWorkflowFind.setText(k+" / "+workflowSearchResults.size());
+                                buttonWorkflowFindNext.setEnabled(true);
+                                buttonWorkflowFindClear.setEnabled(true);
+                                buttonWorkflowFind.setEnabled(false);
+                                boxSearchWorkflowType.setEnabled(false);
+                                textSearchValue.setEnabled(false);
+                            }
+                        }
                     }
-                }
+                }.start();
             }
         });
         
@@ -328,7 +333,7 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
     private JComponent createNodeDetailsPanel() {
         treeAttributes = new JTreeAdvanced(new AttributeTreeModel());
         treeAttributes.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-        treeAttributes.setLargeModel(false);
+        treeAttributes.setLargeModel(true);
         treeAttributes.setCellRenderer(new ProcedureTreeCellRenderer());
         treeAttributes.addTreeSelectionListener(new TreeSelectionListener() {
             public void valueChanged(TreeSelectionEvent e) {

@@ -177,12 +177,12 @@ public class Utilities {
                 TreePath path = parent.pathByAddingChild(tree.getModel().getChild(parent.getLastPathComponent(), e));
                 if(monitor.isCanceled())
                     break;
-                if(!tree.getModel().isLeaf(path.getLastPathComponent()))
+                if(!tree.getModel().isLeaf(path.getLastPathComponent())){
                     setCascadeTreeExpansion(tree, path, expand, monitor);
+                }
             }
         }
         
-        // Expansion or collapse must be done bottom-up
         if (expand) {
             tree.expandPath(parent);
         } else {
@@ -218,8 +218,8 @@ public class Utilities {
                 NodeReference nrChild = (NodeReference)path.getLastPathComponent();
                 if(monitor.isCanceled())
                     break;
-                if( (!tree.getModel().isLeaf(path.getLastPathComponent())) && 
-                       ( (nrChild.getProcedureType() == procedureType) || (nrChild.getProcedureType() == NodeReference.PROCEDURE_WORKFLOW_PROCESS)) )
+                if( (!tree.getModel().isLeaf(path.getLastPathComponent())) &&
+                        ( (nrChild.getProcedureType() == procedureType) || (nrChild.getProcedureType() == NodeReference.PROCEDURE_WORKFLOW_PROCESS)) )
                     setCascadeTreeExpansionWorkflow(tree, path, expand, monitor, procedureType);
             }
         }

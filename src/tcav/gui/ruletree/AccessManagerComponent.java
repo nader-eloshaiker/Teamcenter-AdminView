@@ -1,5 +1,6 @@
 package tcav.gui.ruletree;
 
+import javax.naming.ldap.StartTlsRequest;
 import tcav.gui.*;
 import tcav.utils.PatternMatch;
 import tcav.ruletree.AccessManager;
@@ -135,6 +136,7 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         JTreeAdvanced tree = new JTreeAdvanced(new RuleTreeModel(am.getAccessManagerTree()));
         tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         tree.setCellRenderer(new RuleTreeNodeRenderer());
+        tree.setLargeModel(true);
         tree.addTreeSelectionListener(new TreeSelectionListener() {
             public void valueChanged(TreeSelectionEvent e) {
                 TreePath path = e.getPath();
@@ -297,36 +299,40 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         buttonRuleTreeFind = new JButton("Find");
         buttonRuleTreeFind.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                String conditionString = "";
-                String valueString = "";
-                
-                if(boxSearchCondition.getSelectedIndex() > 0)
-                    conditionString = (String)boxSearchCondition.getSelectedItem();
-                valueString = textSearchValue.getText();
-                
-                if( (conditionString.equals("")) &&
-                        ((valueString == null) || (valueString.equals(""))) )
-                    JOptionPane.showMessageDialog(parentFrame, "Search requires either a condition, value/ACL or any combination.", "No Search Criteria", JOptionPane.ERROR_MESSAGE);
-                else {
-                    findRuleTree(treeRuleTree, conditionString, valueString);
-                    
-                    if (ruleTreeSearchResults.size() == 0) {
-                        JOptionPane.showMessageDialog(parentFrame, "No matches found", "No Matches Found", JOptionPane.WARNING_MESSAGE);
-                        buttonRuleTreeFindNext.setEnabled(false);
-                        buttonRuleTreeFindClear.setEnabled(false);
-                        buttonRuleTreeFind.setEnabled(true);
-                        boxSearchCondition.setEnabled(true);
-                        textSearchValue.setEnabled(true);
-                    } else {
-                        int k = ruleTreeSearchIndex + 1;
-                        buttonRuleTreeFind.setText(k+" / "+ruleTreeSearchResults.size());
-                        buttonRuleTreeFindNext.setEnabled(true);
-                        buttonRuleTreeFindClear.setEnabled(true);
-                        buttonRuleTreeFind.setEnabled(false);
-                        boxSearchCondition.setEnabled(false);
-                        textSearchValue.setEnabled(false);
+                new Thread() {
+                    public void run() {
+                        String conditionString = "";
+                        String valueString = "";
+                        
+                        if(boxSearchCondition.getSelectedIndex() > 0)
+                            conditionString = (String)boxSearchCondition.getSelectedItem();
+                        valueString = textSearchValue.getText();
+                        
+                        if( (conditionString.equals("")) &&
+                                ((valueString == null) || (valueString.equals(""))) )
+                            JOptionPane.showMessageDialog(parentFrame, "Search requires either a condition, value/ACL or any combination.", "No Search Criteria", JOptionPane.ERROR_MESSAGE);
+                        else {
+                            findRuleTree(treeRuleTree, conditionString, valueString);
+                            
+                            if (ruleTreeSearchResults.size() == 0) {
+                                JOptionPane.showMessageDialog(parentFrame, "No matches found", "No Matches Found", JOptionPane.WARNING_MESSAGE);
+                                buttonRuleTreeFindNext.setEnabled(false);
+                                buttonRuleTreeFindClear.setEnabled(false);
+                                buttonRuleTreeFind.setEnabled(true);
+                                boxSearchCondition.setEnabled(true);
+                                textSearchValue.setEnabled(true);
+                            } else {
+                                int k = ruleTreeSearchIndex + 1;
+                                buttonRuleTreeFind.setText(k+" / "+ruleTreeSearchResults.size());
+                                buttonRuleTreeFindNext.setEnabled(true);
+                                buttonRuleTreeFindClear.setEnabled(true);
+                                buttonRuleTreeFind.setEnabled(false);
+                                boxSearchCondition.setEnabled(false);
+                                textSearchValue.setEnabled(false);
+                            }
+                        }
                     }
-                }
+                }.start();
             }
         });
         
@@ -549,7 +555,7 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
                 tableNamedACL.repaint();
             }
         });
-
+        
         ImageIcon iconFind = new ImageIcon();
         try {
             iconFind = new ImageIcon(ResourceLocator.getButtonImage("Find.gif"));
@@ -636,7 +642,7 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         }
         buttonFilter.setIcon(iconFind);
         buttonReset.setIcon(iconReset);
-
+        
         JPanel panelNamedACLFilterTop = new JPanel();
         panelNamedACLFilterTop.setLayout(new GridLayout(2,3,Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
         panelNamedACLFilterTop.add(new JLabel("Match Type"));
@@ -668,36 +674,40 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         buttonNamedACLSearch = new JButton("Find");
         buttonNamedACLSearch.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                String acessorType = "";
-                String accessorId = "";
-                
-                if(boxTypeAccessor.getSelectedIndex() > 0)
-                    acessorType = (String)boxTypeAccessor.getSelectedItem();
-                accessorId = textAccessorID.getText();
-                
-                if( (acessorType.equals("")) &&
-                        ((accessorId == null) || (accessorId.equals(""))) )
-                    JOptionPane.showMessageDialog(parentFrame, "Search requires either a Accessor Type, Accessor ID or any combination.", "No Search Criteria", JOptionPane.ERROR_MESSAGE);
-                else {
-                    findNamedACL(tableNamedACL, acessorType, accessorId);
-                    
-                    if (aclSearchResults.size() == 0) {
-                        JOptionPane.showMessageDialog(parentFrame, "No matches found", "No Matches Found", JOptionPane.WARNING_MESSAGE);
-                        buttonNamedACLSearchNext.setEnabled(false);
-                        buttonNamedACLSearchReset.setEnabled(false);
-                        buttonNamedACLSearch.setEnabled(true);
-                        boxTypeAccessor.setEnabled(true);
-                        textAccessorID.setEnabled(true);
-                    } else {
-                        int k = aclSearchIndex + 1;
-                        labelACLSearchResult.setText("Result: "+k+" / "+aclSearchResults.size());
-                        buttonNamedACLSearchNext.setEnabled(true);
-                        buttonNamedACLSearchReset.setEnabled(true);
-                        buttonNamedACLSearch.setEnabled(false);
-                        boxTypeAccessor.setEnabled(false);
-                        textAccessorID.setEnabled(false);
+                new Thread() {
+                    public void run() {
+                        String acessorType = "";
+                        String accessorId = "";
+                        
+                        if(boxTypeAccessor.getSelectedIndex() > 0)
+                            acessorType = (String)boxTypeAccessor.getSelectedItem();
+                        accessorId = textAccessorID.getText();
+                        
+                        if( (acessorType.equals("")) &&
+                                ((accessorId == null) || (accessorId.equals(""))) )
+                            JOptionPane.showMessageDialog(parentFrame, "Search requires either a Accessor Type, Accessor ID or any combination.", "No Search Criteria", JOptionPane.ERROR_MESSAGE);
+                        else {
+                            findNamedACL(tableNamedACL, acessorType, accessorId);
+                            
+                            if (aclSearchResults.size() == 0) {
+                                JOptionPane.showMessageDialog(parentFrame, "No matches found", "No Matches Found", JOptionPane.WARNING_MESSAGE);
+                                buttonNamedACLSearchNext.setEnabled(false);
+                                buttonNamedACLSearchReset.setEnabled(false);
+                                buttonNamedACLSearch.setEnabled(true);
+                                boxTypeAccessor.setEnabled(true);
+                                textAccessorID.setEnabled(true);
+                            } else {
+                                int k = aclSearchIndex + 1;
+                                labelACLSearchResult.setText("Result: "+k+" / "+aclSearchResults.size());
+                                buttonNamedACLSearchNext.setEnabled(true);
+                                buttonNamedACLSearchReset.setEnabled(true);
+                                buttonNamedACLSearch.setEnabled(false);
+                                boxTypeAccessor.setEnabled(false);
+                                textAccessorID.setEnabled(false);
+                            }
+                        }
                     }
-                }
+                }.start();
             }
         });
         buttonNamedACLSearchNext = new JButton("Find Next");
@@ -741,7 +751,7 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         }
         buttonNamedACLSearch.setIcon(iconFind);
         buttonNamedACLSearchReset.setIcon(iconReset);
-
+        
         
         JPanel panelSearchTop = new JPanel();
         panelSearchTop.setLayout(new GridLayout(2,2,Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));

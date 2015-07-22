@@ -56,11 +56,11 @@ public class ResourceLocator {
     }
     
     public static String getVersion() {
-        return "1.0 (Build 27)";
+        return "1.0 (Build 28)";
     }
     
     public static String getReleaseDate() {
-        return "10-Sep-07";
+        return "11-Sep-07";
     }
     
     public static String getApplicationName() {
