@@ -100,5 +100,9 @@ public class AttributeComponent extends JComponent {
         if(Settings.getPMWorkflowExpandedView())
             GUIutilities.expandTree(tree, parentFrame);
     }
-    
+    /*
+    public boolean equals(idBase procedure) {
+        return ((IdBase)tree.getModel().getRoot()).getId().equals()
+    }
+    */
 }

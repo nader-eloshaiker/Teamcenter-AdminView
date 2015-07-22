@@ -114,45 +114,15 @@ public class RuleTreeComponent extends JPanel {
             }
         });
         
+        FindActionListener findActionListener = new FindActionListener();
         buttonRuleTreeFind = createButton("Find", "Search for all occurrences", true);
-        buttonRuleTreeFind.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-                new Thread() {
-                    public void run() {
-                        String conditionString = "";
-                        String valueString = "";
-                        
-                        if(boxSearchCondition.getSelectedIndex() > 0)
-                            conditionString = (String)boxSearchCondition.getSelectedItem();
-                        valueString = textSearchValue.getText();
-                        
-                        if( (conditionString.equals("")) &&
-                                ((valueString == null) || (valueString.equals(""))) )
-                            JOptionPane.showMessageDialog(parentFrame, "Search requires either a condition, value/ACL or any combination.", "No Search Criteria", JOptionPane.ERROR_MESSAGE);
-                        else {
-                            searchRuleTree.search(tree, conditionString, valueString);
-                            
-                            if (searchRuleTree.getResultSize() == 0) {
-                                JOptionPane.showMessageDialog(parentFrame, "No matches found", "No Matches Found", JOptionPane.WARNING_MESSAGE);
-                                buttonRuleTreeFindNext.setEnabled(false);
-                                buttonRuleTreeFindClear.setEnabled(false);
-                                buttonRuleTreeFind.setEnabled(true);
-                                boxSearchCondition.setEnabled(true);
-                                textSearchValue.setEnabled(true);
-                            } else {
-                                int k = searchRuleTree.getResultIndex() + 1;
-                                buttonRuleTreeFind.setText(k+" / "+searchRuleTree.getResultSize());
-                                buttonRuleTreeFindNext.setEnabled(true);
-                                buttonRuleTreeFindClear.setEnabled(true);
-                                buttonRuleTreeFind.setEnabled(false);
-                                boxSearchCondition.setEnabled(false);
-                                textSearchValue.setEnabled(false);
-                            }
-                        }
-                    }
-                }.start();
-            }
-        });
+        buttonRuleTreeFind.addActionListener(findActionListener);
+
+        textSearchValue = new JTextField();
+        //textSearchValue.setOpaque(false);
+        textSearchValue.setToolTipText("Ruletree Value: * ? [ - ] accepted");
+        textSearchValue.setColumns(6);
+        textSearchValue.addActionListener(findActionListener);
         
         buttonRuleTreeFindClear = createButton("Clear", "Clear search results", false);
         buttonRuleTreeFindClear.addActionListener(new ActionListener(){
@@ -180,11 +150,6 @@ public class RuleTreeComponent extends JPanel {
             for(int x=0; x<am.getConditions().size(); x++)
                 boxSearchCondition.addItem(am.getConditions().get(x));
         }
-        
-        textSearchValue = new JTextField();
-        //textSearchValue.setOpaque(false);
-        textSearchValue.setToolTipText("Ruletree Value: * ? [ - ] accepted");
-        textSearchValue.setColumns(6);
         
         
         JToolBar toolBarRuletree = new JToolBar();
@@ -252,6 +217,45 @@ public class RuleTreeComponent extends JPanel {
         button.setIcon(icon);
                 
         return button;
+    }
+    
+    class FindActionListener implements ActionListener {
+            public void actionPerformed(ActionEvent e) {
+                new Thread() {
+                    public void run() {
+                        String conditionString = "";
+                        String valueString = "";
+                        
+                        if(boxSearchCondition.getSelectedIndex() > 0)
+                            conditionString = (String)boxSearchCondition.getSelectedItem();
+                        valueString = textSearchValue.getText();
+                        
+                        if( (conditionString.equals("")) &&
+                                ((valueString == null) || (valueString.equals(""))) )
+                            JOptionPane.showMessageDialog(parentFrame, "Search requires either a condition, value/ACL or any combination.", "No Search Criteria", JOptionPane.ERROR_MESSAGE);
+                        else {
+                            searchRuleTree.search(tree, conditionString, valueString);
+                            
+                            if (searchRuleTree.getResultSize() == 0) {
+                                JOptionPane.showMessageDialog(parentFrame, "No matches found", "No Matches Found", JOptionPane.WARNING_MESSAGE);
+                                buttonRuleTreeFindNext.setEnabled(false);
+                                buttonRuleTreeFindClear.setEnabled(false);
+                                buttonRuleTreeFind.setEnabled(true);
+                                boxSearchCondition.setEnabled(true);
+                                textSearchValue.setEnabled(true);
+                            } else {
+                                int k = searchRuleTree.getResultIndex() + 1;
+                                buttonRuleTreeFind.setText(k+" / "+searchRuleTree.getResultSize());
+                                buttonRuleTreeFindNext.setEnabled(true);
+                                buttonRuleTreeFindClear.setEnabled(true);
+                                buttonRuleTreeFind.setEnabled(false);
+                                boxSearchCondition.setEnabled(false);
+                                textSearchValue.setEnabled(false);
+                            }
+                        }
+                    }
+                }.start();
+            }
     }
     
 }

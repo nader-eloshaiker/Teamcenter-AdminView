@@ -26,6 +26,7 @@ import tcav.procedure.plmxmlpdm.type.AssociatedDataSetType;
 import tcav.procedure.plmxmlpdm.type.AssociatedFolderType;
 import tcav.procedure.plmxmlpdm.type.AssociatedFormType;
 import tcav.procedure.plmxmlpdm.type.OrganisationType;
+import tcav.procedure.plmxmlpdm.type.PLMXMLType;
 import tcav.procedure.plmxmlpdm.type.RoleType;
 import tcav.procedure.plmxmlpdm.type.SiteType;
 import tcav.procedure.plmxmlpdm.type.UserDataType;
@@ -48,6 +49,8 @@ public class ProcedureManager {
     private ArrayList<WorkflowTemplateType> workflowProcesses;
     private HeaderType header;
     private SiteType site;
+    private File file;
+    private PLMXMLType plmxml;
     
     private JFrame frame;
     
@@ -58,7 +61,12 @@ public class ProcedureManager {
         this.frame = frame;
     }
     
+    public File getFile() {
+        return file;
+    }
+    
     public void readFile(File file) throws Exception {
+        this.file = file;
         FileInputStream fis = new FileInputStream(file);
         DOMUtil domUtil;
         try {
@@ -70,6 +78,10 @@ public class ProcedureManager {
             throw new Exception("Error reading XML: " + exc);
         }
         mapXML(domUtil.getRootNode());
+    }
+    
+    public boolean isValid() {
+        return (getWorkflowProcesses().size() != 0);
     }
     
     public ArrayList<WorkflowTemplateType> getWorkflowProcesses(){
@@ -84,11 +96,18 @@ public class ProcedureManager {
         return header;
     }
     
+    public PLMXMLType getPLMXML() {
+        return plmxml;
+    }
+    
     private void mapXML(Node parentNode) throws Exception {
         Node currentNode;
         NodeList list = parentNode.getChildNodes();
         int nodeCount = list.getLength();
         int nodeIndex = 0;
+        
+        if(TagTypeEnum.fromValue(parentNode.getNodeName()) == TagTypeEnum.PLMXML)
+            plmxml = new PLMXMLType(parentNode);
         
         TagTypeEnum tagType;
         workflowProcesses = new ArrayList<WorkflowTemplateType>();
