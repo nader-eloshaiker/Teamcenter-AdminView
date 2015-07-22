@@ -400,7 +400,7 @@ public class AdminViewFrame extends JFrame{
                             throw new Exception("Corrupted File: "+fc.getSelectedFile().getName());
                         }
                         
-                        if(am.getAccessManagerTree().size() == 0) {
+                        if(!am.getAccessManagerTree().isValid()) {
                             throw new Exception("No rule tree found in file "+fc.getSelectedFile().getName());
                         }
                         

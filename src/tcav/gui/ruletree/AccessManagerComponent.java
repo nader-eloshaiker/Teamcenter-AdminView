@@ -3,9 +3,7 @@ package tcav.gui.ruletree;
 import javax.naming.ldap.StartTlsRequest;
 import tcav.gui.*;
 import tcav.utils.PatternMatch;
-import tcav.ruletree.AccessManager;
-import tcav.ruletree.RuleTreeItem;
-import tcav.ruletree.AccessRule;
+import tcav.ruletree.*;
 import tcav.ResourceLocator;
 import tcav.Settings;
 import java.util.*;
@@ -44,7 +42,8 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         this.parentFrame = parentFrame;
         this.am = am;
         
-        createTableAccessControl();
+        tableAccessRule = new JTableAdvanced();
+        updateTableAccessControl();
         treeRuleTree = createTreeRuleTree();
         tableNamedACL = createTableNamedACL();
         
@@ -96,7 +95,7 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
     }
     
     public boolean isEmptyPanel() {
-        return (am.getAccessManagerTree().size() == 0);
+        return (!am.getAccessManagerTree().isValid());
     }
     
     public AccessManager getAccessManager() {
@@ -130,22 +129,22 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         }
     }
     
-    private void createTableAccessControl() {
-        tableAccessRule = new JTableAdvanced();
-        updateTableAccessControl();
-    }
-    
     private JTreeAdvanced createTreeRuleTree() {
         JTreeAdvanced tree = new JTreeAdvanced(new RuleTreeModel(am.getAccessManagerTree()));
-        tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        //tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         tree.setCellRenderer(new RuleTreeNodeRenderer());
-        //tree.setLargeModel(true);
         tree.addTreeSelectionListener(new TreeSelectionListener() {
+            private RuleTreeNode previousTreeNode = new RuleTreeNode();
+            
             public void valueChanged(TreeSelectionEvent e) {
-                TreePath path = e.getPath();
-                RuleTreeItem amItem = (RuleTreeItem)path.getLastPathComponent();//nodes.getUserObject();
-                if(e.isAddedPath(path) && amItem.getAccessRuleListIndex() != -1 ){
-                    int index = tableDataFilterSortNamedACL.getModelIndex(amItem.getAccessRuleListIndex());
+                RuleTreeNode treeNode = (RuleTreeNode)e.getPath().getLastPathComponent();
+                
+                if(e.isAddedPath(e.getPath()) && treeNode.equals(previousTreeNode))
+                    return;
+                
+                if(e.isAddedPath(e.getPath()) && treeNode.getAccessRule() != null ){
+                    previousTreeNode = treeNode;
+                    int index = tableDataFilterSortNamedACL.indexOfRuleName(treeNode.getAccessRuleName());//tableDataFilterSortNamedACL.getModelIndex(amItem.getAccessRuleListIndex());
                     if(index > -1) {
                         tableNamedACL.setRowSelectionInterval(index,index);
                         tableNamedACL.getSelectionModel().setAnchorSelectionIndex(index);
@@ -156,9 +155,11 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
                                 false)
                                 );
                     } else
-                        updateTableAccessControl(am.getAccessRuleList().elementAt(amItem.getAccessRuleListIndex()));
-                } else
+                        updateTableAccessControl(treeNode.getAccessRule());
+                } else {
                     updateTableAccessControl();
+                    previousTreeNode = new RuleTreeNode();
+                }
                 
             }
         });
@@ -195,22 +196,41 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         
         table.getSelectionModel().addListSelectionListener( new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent e) {
-                /* is something selected */
                 int i = tableNamedACL.getSelectedRow();
-                if (i > -1)
-                    i = tableDataFilterSortNamedACL.getDataIndex(tableNamedACL.getSelectedRow());
-                else
-                    updateTableAccessControl();
-                
-                /* can it be displayed if a filter has been applied */
                 if (i > -1) {
-                    updateTableAccessControl(am.getAccessRuleList().elementAt(i));
-                    updateReferences(am.getAccessRuleList().elementAt(i));
+                    if(tableDataFilterSortNamedACL.getAccessRule(i).getRuleTreeReferences().size() > 0) {
+                        TreePath[] paths = getTreePaths(treeRuleTree, tableDataFilterSortNamedACL.getAccessRule(i).getRuleTreeReferences());
+                        treeRuleTree.setSelectionPaths(paths);
+                        treeRuleTree.scrollPathToVisible(paths[0]);
+                    }
+                    updateTableAccessControl(tableDataFilterSortNamedACL.getAccessRule(i));
+                    updateReferences(tableDataFilterSortNamedACL.getAccessRule(i));
                 } else
                     updateTableAccessControl();
             }
         });
         return table;
+    }
+    
+    private TreePath[] getTreePaths(JTreeAdvanced tree, ArrayList<RuleTreeNode> components) {
+        ArrayList<TreePath> paths = new ArrayList<TreePath>();
+        
+        searchTree(tree, tree.getPathForRow(0), paths, components);
+        
+        return paths.toArray(new TreePath[components.size()]);
+    }
+    
+    private void searchTree(JTreeAdvanced tree, TreePath currentPath, ArrayList<TreePath> paths, ArrayList<RuleTreeNode> components) {
+        if(components.indexOf((RuleTreeNode)currentPath.getLastPathComponent()) > -1)
+            paths.add(currentPath);
+        
+        int childCount = tree.getModel().getChildCount(currentPath.getLastPathComponent());
+        if(childCount > 0) {
+            for (int e=0; e<childCount; e++ ) {
+                TreePath newPath = currentPath.pathByAddingChild(tree.getModel().getChild(currentPath.getLastPathComponent(), e));
+                searchTree(tree, newPath, paths, components);
+            }
+        }
     }
     
     protected JTextField textSearchValue;
@@ -295,7 +315,7 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         
         searchRuleTree = new SearchTreeComponent() {
             public boolean compare(TreePath path, String type, String value) {
-                RuleTreeItem amItem = (RuleTreeItem)path.getLastPathComponent();
+                RuleTreeNode amItem = (RuleTreeNode)path.getLastPathComponent();
                 Boolean matched = false;
                 
                 if((!type.equals("")) && (!value.equals("")) )
@@ -528,19 +548,19 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         panelNamedACLMissing.add("Center",GUIutilities.createProgressBar(
                 0,
                 am.getAccessRuleList().size(),
-                am.getUnusedRulesSize(),
+                am.getUnusedRules().size(),
                 "Access Rules"));
         listUnusedNamedACL = new JComboBox();
-        if (am.getUnusedRulesSize() == 0)
+        if (am.getUnusedRules().size() == 0)
             listUnusedNamedACL.setEnabled(false);
-        else
-            for(int z=0; z<am.getUnusedRulesSize(); z++)
-                listUnusedNamedACL.addItem(am.getAccessRuleList().elementAt(am.unusedElementAt(z)).getRuleName());
+        else {
+            for(int z=0; z<am.getUnusedRules().size(); z++)
+                listUnusedNamedACL.addItem(am.getUnusedRule(z));
+        }
         listUnusedNamedACL.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                int unusedIndex = listUnusedNamedACL.getSelectedIndex();
-                int unsortedIndex = am.unusedElementAt(unusedIndex);
-                int sortedIndex = tableDataFilterSortNamedACL.getModelIndex(unsortedIndex);
+                AccessRule ar = (AccessRule)listUnusedNamedACL.getSelectedItem();
+                int sortedIndex = tableDataFilterSortNamedACL.indexOfRuleName(ar.getRuleName());
                 tableNamedACL.setRowSelectionInterval(sortedIndex,sortedIndex);
                 tableNamedACL.getSelectionModel().setAnchorSelectionIndex(sortedIndex);
                 tableNamedACL.scrollRectToVisible(
@@ -695,15 +715,14 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         searchACL = new SearchTableComponent(){
             public boolean compare(int row, String type, String value) {
                 boolean matched = false;
-                int index = tableDataFilterSortNamedACL.getDataIndex(row);
-                AccessRule ar = am.getAccessRuleList().elementAt(index);
+                AccessRule ar = tableDataFilterSortNamedACL.getAccessRule(row);
                 for(int j=0; j<ar.size(); j++) {
                     if((!type.equals("")) && (!value.equals("")) )
-                        matched = isMatched(ar.elementAt(j).getTypeOfAccessor(), type) & isMatched(ar.elementAt(j).getIdOfAccessor(), value);
+                        matched = isMatched(ar.get(j).getTypeOfAccessor(), type) & isMatched(ar.get(j).getIdOfAccessor(), value);
                     else if(!type.equals(""))
-                        matched = isMatched(ar.elementAt(j).getTypeOfAccessor(), type);
+                        matched = isMatched(ar.get(j).getTypeOfAccessor(), type);
                     else if(!value.equals(""))
-                        matched = isMatched(ar.elementAt(j).getIdOfAccessor(), value);
+                        matched = isMatched(ar.get(j).getIdOfAccessor(), value);
                     
                     if (matched)
                         break;
@@ -824,7 +843,6 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         treeReferences = new JTreeAdvanced(new String[]{"Ruletree Reference","Nader Eloshaiker"});
         treeReferences.setRootVisible(false);
         treeReferences.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-        treeReferences.setCellRenderer(new RuleTreeReferencesNodeRenderer());
         JScrollPane scrollReferences = new JScrollPane();
         scrollReferences.setPreferredSize(new Dimension(20,20));
         scrollReferences.getViewport().add(treeReferences);
@@ -837,13 +855,7 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
     }
     
     private void updateReferences(AccessRule ar) {
-        DefaultMutableTreeNode root;
-        if(ar.getTreeIndexSize() > 0)
-            root = RuleTreeNodeBuilder.getRuleTreePathsForRule(am.getAccessManagerTree(),ar);
-        else
-            root = null;
-        
-        ((DefaultTreeModel)treeReferences.getModel()).setRoot(root);
+        treeReferences.setModel(new RuleTreeReferencesModel(ar));
         treeReferences.repaint();
     }
 }

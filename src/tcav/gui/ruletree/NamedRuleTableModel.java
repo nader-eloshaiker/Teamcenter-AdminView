@@ -9,7 +9,7 @@
 
 package tcav.gui.ruletree;
 
-import tcav.ruletree.AccessRuleList;
+import tcav.ruletree.*;
 import javax.swing.table.*;
 
 /**
@@ -32,37 +32,33 @@ public class NamedRuleTableModel extends AbstractTableModel implements TableMode
         this.accessRuleList = accessRuleList;
     }
     
-    public int getColumnCount() {
-        return 3;
-    }
-    
     public int getRowCount() {
         return accessRuleList.size();
     }
     
     public Object getValueAt(int row, int col) {
-            switch(col) {
-                case TYPE_COLUMN:
-                    return getRuleType(row);
-                case INSTANCES_COLUMN:
-                    return getInstanceCount(row);
-                case NAME_COLUMN:
-                    return getRuleName(row);
-                default:
-                    return null;
-            }
+        switch(col) {
+            case TYPE_COLUMN:
+                return accessRuleList.get(row).getRuleType();
+            case INSTANCES_COLUMN:
+                return accessRuleList.get(row).getRuleTreeReferences().size();
+            case NAME_COLUMN:
+                return accessRuleList.get(row).getRuleName();
+            default:
+                return null;
+        }
     }
     
-    public String getRuleType(int row) {
-        return accessRuleList.elementAt(row).getRuleType();
+    public AccessRule getAccessRule(int row) {
+        return accessRuleList.get(row);
     }
     
-    public int getInstanceCount(int row) {
-        return accessRuleList.elementAt(row).getTreeIndexSize();
+    protected AccessRule getData(int row) {
+        return accessRuleList.get(row);
     }
     
-    public String getRuleName(int row) {
-        return accessRuleList.elementAt(row).getRuleName();
+    public int getColumnCount() {
+        return 3;
     }
     
     public String[] getColumns() {
@@ -84,7 +80,7 @@ public class NamedRuleTableModel extends AbstractTableModel implements TableMode
         return false;
     }
     
-    public void setValueAt(Object aValue, int row, int col) { 
-
+    public void setValueAt(Object aValue, int row, int col) {
+        
     }
 }

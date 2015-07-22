@@ -15,7 +15,7 @@ package tcav.gui.ruletree;
 import javax.swing.*;
 import javax.swing.tree.*;
 import java.awt.*;
-import tcav.ruletree.RuleTreeItem;
+import tcav.ruletree.RuleTreeNode;
 import tcav.ResourceLocator;
 
 public class RuleTreeNodeRenderer implements TreeCellRenderer {
@@ -42,13 +42,13 @@ public class RuleTreeNodeRenderer implements TreeCellRenderer {
             boolean leaf, int row,
             boolean hasFocus) {
 
-        DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer();
-        DefaultTreeCellRenderer cell = (DefaultTreeCellRenderer)renderer.getTreeCellRendererComponent(tree, value, isSelected, expanded, leaf, row, hasFocus);
+        //DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer();
+        DefaultTreeCellRenderer cell = (DefaultTreeCellRenderer)new DefaultTreeCellRenderer().getTreeCellRendererComponent(tree, value, isSelected, expanded, leaf, row, hasFocus);
         
         if(value == null)
             return cell;
         
-        RuleTreeItem amItem = (RuleTreeItem)value;
+        RuleTreeNode amItem = (RuleTreeNode)value;
         
         cell.setText(amItem.toString());
         cell.setToolTipText(amItem.toString());
