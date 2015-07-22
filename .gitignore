@@ -1,0 +1,13 @@
+
+*.class
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# Project Folders #
+/nbproject/
+/build/
+/.TcEAV/
+/dist/
