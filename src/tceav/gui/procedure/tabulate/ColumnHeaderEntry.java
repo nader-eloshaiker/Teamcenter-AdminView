@@ -131,9 +131,6 @@ public class ColumnHeaderEntry {
         if(classification != RULE_CLASSIFICATION)
             return false;
         
-        if(!isRule())
-            return false;
-        
         return (quorum == wbr.getRuleQuorum());
     }
     
@@ -144,7 +141,7 @@ public class ColumnHeaderEntry {
         if(!isHandler())
             return false;
         
-        if(!matches(wbr))
+        if(quorum != wbr.getRuleQuorum())
             return false;
         
         if(Settings.isPmTblStrictArgument())
@@ -160,8 +157,18 @@ public class ColumnHeaderEntry {
         if(!isArgument())
             return false;
         
-        if(!matches(wbr, wbrh))
+        if(quorum != wbr.getRuleQuorum())
             return false;
+        else {
+            if(Settings.isPmTblStrictArgument()) {
+                if(handler.compareTo(wbrh.getName()) != 0)
+                    return false;
+            } else {
+                if(handler.compareToIgnoreCase(wbrh.getName()) != 0)
+                    return false;
+            }
+        }
+        
         
         return equals(ud);
     }
@@ -186,54 +193,33 @@ public class ColumnHeaderEntry {
         if(!isArgument())
             return false;
         
-        if(!matches(wh))
-            return false;
+        if(Settings.isPmTblStrictArgument()) {
+            if(handler.compareTo(wh.getName()) != 0)
+                return false;
+        } else {
+            if(handler.compareToIgnoreCase(wh.getName()) != 0)
+                return false;
+        }
         
         return equals(ud);
     }
     
-    public boolean matches(WorkflowBusinessRuleType wbr) {
-        if(classification != RULE_CLASSIFICATION)
+    private boolean equals(UserDataType ud) {
+        
+        if(arguments.size() != ud.getUserValue().size())
             return false;
         
-        return (quorum == wbr.getRuleQuorum());
-    }
-    
-    public boolean matches(WorkflowBusinessRuleType wbr, WorkflowBusinessRuleHandlerType wbrh) {
-        if(classification != RULE_CLASSIFICATION)
-            return false;
+        for(int i=0; i<arguments.size(); i++) {
+            if(!Settings.isPmTblStrictArgument()) {
+                if(!matchArgument(ud.getUserValue().get(i).getValue()))
+                    return false;
+            } else {
+                if(arguments.indexOf(ud.getUserValue().get(i).getValue()) == -1)
+                    return false;
+            }
+        }
         
-        if(!matches(wbr))
-            return false;
-        
-        return (handler.equals(wbrh.getName()));
-    }
-    
-    public boolean matches(WorkflowBusinessRuleType wbr, WorkflowBusinessRuleHandlerType wbrh, UserDataType ud) {
-        if(classification != RULE_CLASSIFICATION)
-            return false;
-        
-        if(!matches(wbr, wbrh))
-            return false;
-        
-        return equals(ud);
-    }
-    
-    public boolean matches(WorkflowHandlerType wh) {
-        if(classification != ACTION_CLASSIFICATION)
-            return false;
-        
-        return handler.equals(wh.getName());
-    }
-    
-    public boolean matches(WorkflowHandlerType wh, UserDataType ud) {
-        if(classification != ACTION_CLASSIFICATION)
-            return false;
-        
-        if(!matches(wh))
-            return false;
-        
-        return equals(ud);
+        return true;
     }
     
     private String toExportString;
@@ -360,7 +346,7 @@ public class ColumnHeaderEntry {
         else
             return arguments.get(index).hashCode();
     }
-
+    
     public ArrayList<String> getArguments() {
         return arguments;
     }
@@ -464,24 +450,6 @@ public class ColumnHeaderEntry {
         }
         
         return null;
-    }
-    
-    private boolean equals(UserDataType ud) {
-        
-        if(arguments.size() != ud.getUserValue().size())
-            return false;
-        
-        for(int i=0; i<arguments.size(); i++) {
-            if(!Settings.isPmTblStrictArgument()) {
-                if(!matchArgument(ud.getUserValue().get(i).getValue()))
-                    return false;
-            } else {
-                if(arguments.indexOf(ud.getUserValue().get(i).getValue()) == -1)
-                    return false;
-            }
-        }
-        
-        return true;
     }
     
     private boolean matchArgument(String str) {

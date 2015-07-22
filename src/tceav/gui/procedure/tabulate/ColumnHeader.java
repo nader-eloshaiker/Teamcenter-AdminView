@@ -152,51 +152,6 @@ public class ColumnHeader extends ArrayList<ColumnHeaderEntry> {
     }
     
     
-    /********************************
-     * Matches
-     ********************************/
-    
-    public int indexOfMatches(WorkflowBusinessRuleType wbr, int index) {
-        for (int i = index ; i < super.size() ; i++)
-            if (get(i).matches(wbr))
-                return i;
-        
-        return -1;
-    }
-    
-    public int indexOfMatches(WorkflowBusinessRuleType wbr, WorkflowBusinessRuleHandlerType wbrh, int index) {
-        for (int i = index ; i < super.size() ; i++)
-            if (get(i).matches(wbr, wbrh))
-                return i;
-        
-        return -1;
-    }
-    
-    public int indexOfMatches(WorkflowBusinessRuleType wbr, WorkflowBusinessRuleHandlerType wbrh, UserDataType ud, int index) {
-        for (int i = index ; i < super.size() ; i++)
-            if (get(i).matches(wbr, wbrh, ud))
-                return i;
-        
-        return -1;
-    }
-    
-    public int indexOfMatches(WorkflowHandlerType wh, int index) {
-        for (int i = index ; i < super.size() ; i++)
-            if (get(i).matches(wh))
-                return i;
-        
-        return -1;
-    }
-    
-    public int indexOfMatches(WorkflowHandlerType wh, UserDataType ud, int index) {
-        for (int i = index ; i < super.size() ; i++)
-            if (get(i).matches(wh, ud))
-                return i;
-        
-        return -1;
-    }
-    
-    
     /*************************
      * Last Index Of
      *************************/
@@ -271,86 +226,6 @@ public class ColumnHeader extends ArrayList<ColumnHeaderEntry> {
         
         for (int i = index; i >= 0; i--)
             if (get(i).equals(wbr, wbrh, ud))
-                return i;
-        
-        return -1;
-    }
-    
-    
-    /*************************
-     * Last Index Of Matches
-     *************************/
-    
-    public int lastIndexOfMatches(WorkflowHandlerType wh) {
-        return lastIndexOfMatches(wh, size()-1);
-    }
-    
-    public int lastIndexOfMatches(WorkflowHandlerType wh, UserDataType ud) {
-        return lastIndexOfMatches(wh, ud, size()-1);
-    }
-    
-    public int lastIndexOfMatches(WorkflowBusinessRuleType wbr) {
-        return lastIndexOfMatches(wbr, size()-1);
-    }
-    
-    public int lastIndexOfMatches(WorkflowBusinessRuleType wbr, WorkflowBusinessRuleHandlerType wbrh) {
-        return lastIndexOfMatches(wbr, wbrh, size()-1);
-    }
-    
-    public int lastIndexOfMatches(WorkflowBusinessRuleType wbr, WorkflowBusinessRuleHandlerType wbrh, UserDataType ud) {
-        return lastIndexOfMatches(wbr, wbrh, ud, size()-1);
-    }
-    
-    public int lastIndexOfMatches(WorkflowHandlerType wh, int index) {
-        if (index >= size())
-            throw new IndexOutOfBoundsException(index + " >= "+ size());
-        
-        for (int i = index; i >= 0; i--)
-            if (get(i).matches(wh))
-                return i;
-        
-        return -1;
-    }
-    
-    public int lastIndexOfMatches(WorkflowHandlerType wh, UserDataType ud, int index) {
-        if (index >= size())
-            throw new IndexOutOfBoundsException(index + " >= "+ size());
-        
-        for (int i = index; i >= 0; i--)
-            if (get(i).matches(wh, ud))
-                return i;
-        
-        return -1;
-    }
-    
-    public int lastIndexOfMatches(WorkflowBusinessRuleType wbr, int index) {
-        if (index >= size())
-            throw new IndexOutOfBoundsException(index + " >= "+ size());
-        
-        for (int i = index; i >= 0; i--)
-            if (get(i).matches(wbr))
-                return i;
-        
-        return -1;
-    }
-    
-    public int lastIndexOfMatches(WorkflowBusinessRuleType wbr, WorkflowBusinessRuleHandlerType wbrh, int index) {
-        if (index >= size())
-            throw new IndexOutOfBoundsException(index + " >= "+ size());
-        
-        for (int i = index; i >= 0; i--)
-            if (get(i).matches(wbr, wbrh))
-                return i;
-        
-        return -1;
-    }
-    
-    public int lastIndexOfMatches(WorkflowBusinessRuleType wbr, WorkflowBusinessRuleHandlerType wbrh, UserDataType ud, int index) {
-        if (index >= size())
-            throw new IndexOutOfBoundsException(index + " >= "+ size());
-        
-        for (int i = index; i >= 0; i--)
-            if (get(i).matches(wbr, wbrh, ud))
                 return i;
         
         return -1;

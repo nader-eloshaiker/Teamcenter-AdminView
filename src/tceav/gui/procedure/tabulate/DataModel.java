@@ -152,17 +152,16 @@ public class DataModel implements TableModel {
         
         ColumnHeaderEntry entry = getColumn(columnIndex);
         
-        
         for(int i=0; i<wt.getActions().length; i++) {
             if(entry.isActionClassification()) {
-                
                 wh = wt.getActions()[i].getActionHandlers();
                 for(int j=0; j<wh.length; j++) {
-                    if(entry.matches(wh[j])) {
+                    if(wh[j].getAttribute().size() == 0) {
                         
                         if(entry.equals(wh[j]))
                             return getValue(wt.getActions()[i]);
                         
+                    } else {
                         for(int k=0; k<wh[j].getAttribute().size(); k++) {
                             ud = (UserDataType)wh[j].getAttribute().get(k);
                             
@@ -171,28 +170,25 @@ public class DataModel implements TableModel {
                                     return getValue(wt.getActions()[i]);
                             
                         }
-                        
-                        
                     }
                 }
-                
             } else if(entry.isRuleClassicifaction()) {
-                
                 wbr = wt.getActions()[i].getRules();
                 for(int j=0; j<wbr.length; j++) {
-                    if(entry.matches(wbr[j])){
+                    if(wbr[j].getRuleHandlers().length == 0){
                         
                         if(entry.equals(wbr[j]))
                             return getValue(wt.getActions()[i]);
                         
+                    } else {
                         wbrh = wbr[j].getRuleHandlers();
-                        
                         for(int k=0; k<wbrh.length; k++) {
-                            if(entry.matches(wbr[j], wbrh[k])) {
-                                
+                            
+                            if(wbrh[k].getAttribute().size() == 0) {
                                 if(entry.equals(wbr[j], wbrh[k]))
                                     return getValue(wt.getActions()[i]);
                                 
+                            } else {
                                 for(int l=0; l<wbrh[k].getAttribute().size(); l++) {
                                     ud = (UserDataType)wbrh[k].getAttribute().get(l);
                                     
@@ -201,16 +197,13 @@ public class DataModel implements TableModel {
                                             return getValue(wt.getActions()[i]);
                                     
                                 }
-                                
                             }
                         }
-                        
                     }
                 }
-                
             }
-            
         }
+        
         
         return "";
         
