@@ -536,9 +536,9 @@ public class NamedRuleComponent extends JPanel {
     JCheckBox checkCompareNotFound;
     
     private JPanel createTabCompare(CompareResult result) {
-        checkCompareEqual = new JCheckBox(CompareInterface.EQUAL_LABEL);
-        checkCompareNotEqual = new JCheckBox(CompareInterface.NOT_EQUAL_LABEL);
-        checkCompareNotFound = new JCheckBox(CompareInterface.NOT_FOUND_LABEL);
+        checkCompareEqual = new JCheckBox(CompareInterface.EQUAL_LABEL, dataCompareFilter.isFilterEqual());
+        checkCompareNotEqual = new JCheckBox(CompareInterface.NOT_EQUAL_LABEL, dataCompareFilter.isFilterNotEqual());
+        checkCompareNotFound = new JCheckBox(CompareInterface.NOT_FOUND_LABEL, dataCompareFilter.isFilterNotFound());
         buttonFilterCompare = new JButton("Filter");
         buttonFilterCompare.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -548,29 +548,14 @@ public class NamedRuleComponent extends JPanel {
                 applyModelChanges();
             }
         });
-        JButton buttonReset = new JButton("Clear");
-        buttonReset.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-                checkCompareEqual.setSelected(false);
-                checkCompareNotEqual.setSelected(false);
-                checkCompareNotFound.setSelected(false);
-                dataCompareFilter.setFilterEqual(false);
-                dataCompareFilter.setFilterNotEqual(false);
-                dataCompareFilter.setFilterNotFound(false);
-                applyModelChanges();
-            }
-        });
         
         ImageIcon iconFind = new ImageIcon();
-        ImageIcon iconReset = new ImageIcon();
         try {
             iconFind = ResourceLoader.getImage(ImageEnum.utilFind);
-            iconReset = ResourceLoader.getImage(ImageEnum.utilClear);
         } catch (Exception e) {
             System.out.println("Couldn't load images: " + e);
         }
         buttonFilterCompare.setIcon(iconFind);
-        buttonReset.setIcon(iconReset);
         
         JPanel panel1Top = new JPanel();
         panel1Top.setLayout(new GridLayout(1,3));//,GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
@@ -579,7 +564,6 @@ public class NamedRuleComponent extends JPanel {
         panel1Top.add(checkCompareNotFound);
         JPanel panel1Bottom = new JPanel();
         panel1Bottom.setLayout(new FlowLayout(FlowLayout.RIGHT,GUIutilities.GAP_COMPONENT,0));
-        panel1Bottom.add(buttonReset);
         panel1Bottom.add(buttonFilterCompare);
         JPanel panel1 = new JPanel();
         panel1.setBorder(new TitledBorder(new EtchedBorder(), "Compare Filter:"));

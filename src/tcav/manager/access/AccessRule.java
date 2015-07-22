@@ -100,7 +100,11 @@ public class AccessRule extends ArrayList<AccessControl>  implements CompareInte
             c.setComparison(compare);
             if(compare != CompareInterface.EQUAL)
                 compareOverall = CompareInterface.NOT_EQUAL;
+            
         }
+        
+        if((compareOverall == CompareInterface.EQUAL) && (this.size()< a.size()))
+            compareOverall = CompareInterface.NOT_EQUAL;
         
         return compareOverall;
         

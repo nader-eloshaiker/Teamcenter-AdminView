@@ -55,9 +55,9 @@ public class AccessControl implements CompareInterface {
         return toString();
     }
     
-    /********************
-     * Comapare interface
-     ********************/
+    /**********************
+     * Comapare interface *
+     **********************/
     
     private int compare_result = CompareInterface.EQUAL;
     
@@ -75,17 +75,17 @@ public class AccessControl implements CompareInterface {
         if(accessControl.length != c.getAccessControl().length)
             return CompareInterface.NOT_FOUND;
         
-        if (getTypeOfAccessor().equals(c.getTypeOfAccessor()) && getIdOfAccessor().equals(c.getIdOfAccessor())){
+        if(getTypeOfAccessor().equals(c.getTypeOfAccessor()) && getIdOfAccessor().equals(c.getIdOfAccessor())) {
             
-            for(int i=2; i<accessControl.length; i++) {
+            for(int i=2; i<accessControl.length; i++)
                 if(!accessControl[i].equals(c.getAccess(i)))
                     return CompareInterface.NOT_EQUAL;
-            }
             
             return CompareInterface.EQUAL;
-        }
-        
-        return CompareInterface.NOT_FOUND;
+            
+        } else
+            
+            return CompareInterface.NOT_FOUND;
     }
     
 }

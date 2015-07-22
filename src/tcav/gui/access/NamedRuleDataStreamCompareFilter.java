@@ -28,9 +28,9 @@ public class NamedRuleDataStreamCompareFilter extends NamedRuleDataStreamAbstrac
         this.model = model;
         reallocateIndexes();
         
-        filterEqual = false;
-        filterNotEqual = false;
-        filterNotFound = false;
+        filterEqual = true;
+        filterNotEqual = true;
+        filterNotFound = true;
     }
     
     public void setFilterEqual(boolean b) {
@@ -59,7 +59,7 @@ public class NamedRuleDataStreamCompareFilter extends NamedRuleDataStreamAbstrac
     
     public void apply(){
         reallocateIndexes();
-        if(isFilterNotFound() || isFilterNotEqual() || isFilterEqual())
+        if(!isFilterNotFound() || !isFilterNotEqual() || !isFilterEqual())
             indexes = filter(indexes);
     }
     

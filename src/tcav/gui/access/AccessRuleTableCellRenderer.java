@@ -67,7 +67,7 @@ public class AccessRuleTableCellRenderer implements TableCellRenderer{
                     cell.setBackground(table.getSelectionBackground());
                 } else {
                     cell.setBackground(CompareInterface.NOT_EQUAL_COLOR);
-                    cell.setForeground(table.getSelectionForeground());
+                    cell.setForeground(table.getForeground());
                 }
                 break;
             case CompareInterface.NOT_FOUND:
@@ -76,7 +76,7 @@ public class AccessRuleTableCellRenderer implements TableCellRenderer{
                     cell.setBackground(table.getSelectionBackground());
                 } else {
                     cell.setBackground(CompareInterface.NOT_FOUND_COLOR);
-                    cell.setForeground(table.getSelectionForeground());
+                    cell.setForeground(table.getForeground());
                 }
                 break;
             case CompareInterface.EQUAL:
