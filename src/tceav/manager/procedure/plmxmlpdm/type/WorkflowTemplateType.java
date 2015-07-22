@@ -167,7 +167,6 @@ public class WorkflowTemplateType extends AttribOwnerBase {
                     break;
             }
         }
-
     }
 
     public UserListDataType getTaskDescription() {

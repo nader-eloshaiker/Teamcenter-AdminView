@@ -142,6 +142,8 @@ public class UserDataElementType extends IdBase {
     protected final String valueAttribute = "value";
     protected String value;
     
+    public static String completeDependencyTaskRef = "4";
+    public static String parentDependencyTaskRef = "202";
     
     public UserDataElementType(Node node) {
         Node currentNode = node;

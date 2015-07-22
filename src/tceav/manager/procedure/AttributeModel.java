@@ -41,17 +41,37 @@ public class AttributeModel {
         this.tagCache = tagCache;
     }
     
+    public void processWorkflowTemplateAttributes(WorkflowTemplateType wf) {
+        
+    }
+    
     public void processNodeAttributes(IdBase node) {
+        /*
+         * Workaround BUG for infinite looping
+         * 
+         */
+        
+        if(node instanceof UserDataElementType) { 
+            UserDataElementType ude = (UserDataElementType)node;
+            if (ude.getValue().equals(UserDataElementType.parentDependencyTaskRef)){
+                return;
+            }
+        }
+                 
         attachAttribute(node);
-        if(!isLeaf(node))
+        
+        if(!isLeaf(node)) {
             for(int i=0; i<getChildCount(node); i++)
                 processNodeAttributes(getChild(node, i));
+        }
         
     }
     
     private void attachAttribute(IdBase parent) {
+        
         if(parent instanceof UserDataElementType) {
             UserDataElementType uv = (UserDataElementType)parent;
+
             if(uv.getDataRef() != null && uv.getData() == null)
                 uv.setData(tagCache.get(uv.getDataRef()));
             
@@ -82,11 +102,16 @@ public class AttributeModel {
     private IdBase getChild(IdBase parent, int index){
         AttribOwnerBase aob;
         UserDataType ud;
-        WorkflowTemplateType wt;
+        //WorkflowTemplateType wt;
         
-        if(parent instanceof WorkflowHandlerType || parent instanceof WorkflowBusinessRuleHandlerType || parent instanceof WorkflowTemplateType) {
+        if(parent instanceof WorkflowHandlerType || 
+                parent instanceof WorkflowBusinessRuleHandlerType || 
+                parent instanceof WorkflowTemplateType) {
             aob = (AttribOwnerBase)parent;
-            return aob.getAttribute().get(index);
+            if(index >= aob.getAttribute().size())
+                return null;
+            else
+                return aob.getAttribute().get(index);
             
         } else if(parent instanceof WorkflowActionType) {
             WorkflowActionType wa = (WorkflowActionType)parent;
@@ -98,7 +123,10 @@ public class AttributeModel {
             
         } else if(parent instanceof UserDataType) {
             ud = (UserDataType)parent;
-            return ud.getUserValue().get(index);
+            if(index >= ud.getUserValue().size())
+                return null;
+            else
+                return ud.getUserValue().get(index);
             
         } else if(parent instanceof UserDataElementType) {
             UserDataElementType uv = (UserDataElementType)parent;
@@ -142,37 +170,54 @@ public class AttributeModel {
     
     private int getChildCount(IdBase parent){
         AttribOwnerBase aob;
-        WorkflowTemplateType wt;
+        //WorkflowTemplateType wt;
         
-        if(parent instanceof WorkflowHandlerType || parent instanceof WorkflowBusinessRuleHandlerType || parent instanceof WorkflowTemplateType) {
+        if(parent instanceof WorkflowHandlerType || 
+                parent instanceof WorkflowBusinessRuleHandlerType || 
+                parent instanceof WorkflowTemplateType) {
             aob = (AttribOwnerBase)parent;
-            return aob.getAttribute().size();
+            if(aob.getAttribute() != null)
+                return aob.getAttribute().size();
+            else
+                return 0;
             
         } else if(parent instanceof WorkflowActionType) {
             WorkflowActionType wa = (WorkflowActionType)parent;
-            return wa.getActionHandlers().length;
+            if(wa.getActionHandlers() != null)
+                return wa.getActionHandlers().length;
+            else 
+                return 0;
             
         } else if(parent instanceof OrganisationType) {
             aob = (AttribOwnerBase)parent;
-            return aob.getAttribute().size();
+            if(aob.getAttribute() != null)
+                return aob.getAttribute().size();
+            else
+                return 0;
             
         } else if(parent instanceof UserDataType) {
             UserDataType ud = (UserDataType)parent;
-            return ud.getUserValue().size();
+            if(ud.getUserValue() != null)
+                return ud.getUserValue().size();
+            else
+                return 0;
             
         } else if(parent instanceof UserDataElementType) {
             UserDataElementType uv = (UserDataElementType)parent;
-            if(uv.getDataRef() == null)
-                return 0;
-            else
+            if(uv.getDataRef() != null)
                 return 1;
+            else
+                return 0;
             
         } else if(parent instanceof AssociatedDataSetType || parent instanceof AssociatedFolderType || parent instanceof AssociatedFormType) {
             return 1;
             
         } else if(parent instanceof ValidationResultsType) {
             ValidationResultsType vr = (ValidationResultsType)parent;
-            return vr.getChecker().size();
+            if(vr.getChecker() != null)
+                return vr.getChecker().size();
+            else
+                return 0;
             
         } else if(parent instanceof WorkflowSignoffProfileType) {
             WorkflowSignoffProfileType wsp = (WorkflowSignoffProfileType)parent;
@@ -192,37 +237,52 @@ public class AttributeModel {
     
     private boolean isLeaf(IdBase node){
         AttribOwnerBase aob;
-        WorkflowTemplateType wt;
+        //WorkflowTemplateType wt;
         
         if(node instanceof WorkflowHandlerType || node instanceof WorkflowBusinessRuleHandlerType || node instanceof WorkflowTemplateType) {
             aob = (AttribOwnerBase)node;
-            return (aob.getAttribute().size() == 0);
+            if(aob.getAttribute() != null)
+                return (aob.getAttribute().isEmpty());
+            else
+                return true;
             
         } else if(node instanceof WorkflowActionType) {
             WorkflowActionType wa = (WorkflowActionType)node;
-            return (wa.getActionHandlers().length == 0);
+            if(wa.getActionHandlers() != null)
+                return (wa.getActionHandlers().length == 0);
+            else
+                return true;
             
         } else if(node instanceof OrganisationType) {
             aob = (AttribOwnerBase)node;
-            return (aob.getAttribute().size() == 0);
+            if(aob.getAttribute() != null)
+                return (aob.getAttribute().isEmpty());
+            else
+                return true;
             
         } else if(node instanceof UserDataType) {
             UserDataType ud = (UserDataType)node;
-            return (ud.getUserValue().size()==0);
+            if(ud.getUserValue() != null)
+                return (ud.getUserValue().isEmpty());
+            else
+                return true;
             
         } else if(node instanceof UserDataElementType) {
             UserDataElementType uv = (UserDataElementType)node;
-            if(uv.getDataRef() == null)
-                return true;
-            else
+            if(uv.getDataRef() != null)
                 return false;
+            else
+                return true;
             
         } else if(node instanceof AssociatedDataSetType || node instanceof AssociatedFolderType || node instanceof AssociatedFormType) {
             return false;
             
         } else if(node instanceof ValidationResultsType) {
             ValidationResultsType vr = (ValidationResultsType)node;
-            return (vr.getChecker().size()==0);
+            if(vr.getChecker() != null)
+                return (vr.getChecker().isEmpty());
+            else
+                return true;
             
         } else if(node instanceof WorkflowSignoffProfileType) {
             WorkflowSignoffProfileType wsp = (WorkflowSignoffProfileType)node;
