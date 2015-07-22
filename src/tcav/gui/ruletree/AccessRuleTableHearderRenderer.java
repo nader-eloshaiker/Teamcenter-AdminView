@@ -21,7 +21,7 @@ import javax.swing.JTable;
 import javax.swing.JLabel;
 import java.awt.Component;
 import tcav.ResourceLocator;
-import tcav.ruletree.AccessControlColumnsEntry;
+import tcav.ruletree.AccessControlHeaderEntry;
 
 /**
  *
@@ -39,7 +39,7 @@ public class AccessRuleTableHearderRenderer implements TableCellRenderer{
     public Component getTableCellRendererComponent(JTable table,
             Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         
-        AccessControlColumnsEntry accEntry = (AccessControlColumnsEntry)value;
+        AccessControlHeaderEntry accEntry = (AccessControlHeaderEntry)value;
         JTableHeader header = table.getTableHeader();
         TableCellRenderer temp = header.getDefaultRenderer();
         DefaultTableCellRenderer cell = (DefaultTableCellRenderer)temp.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);

@@ -4,7 +4,7 @@ import javax.naming.ldap.StartTlsRequest;
 import tcav.gui.*;
 import tcav.utils.PatternMatch;
 import tcav.ruletree.AccessManager;
-import tcav.ruletree.AccessManagerItem;
+import tcav.ruletree.RuleTreeItem;
 import tcav.ruletree.AccessRule;
 import tcav.ResourceLocator;
 import tcav.Settings;
@@ -143,7 +143,7 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         tree.addTreeSelectionListener(new TreeSelectionListener() {
             public void valueChanged(TreeSelectionEvent e) {
                 TreePath path = e.getPath();
-                AccessManagerItem amItem = (AccessManagerItem)path.getLastPathComponent();//nodes.getUserObject();
+                RuleTreeItem amItem = (RuleTreeItem)path.getLastPathComponent();//nodes.getUserObject();
                 if(e.isAddedPath(path) && amItem.getAccessRuleListIndex() != -1 ){
                     int index = tableDataFilterSortNamedACL.getModelIndex(amItem.getAccessRuleListIndex());
                     if(index > -1) {
@@ -295,7 +295,7 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         
         searchRuleTree = new SearchTreeComponent() {
             public boolean compare(TreePath path, String type, String value) {
-                AccessManagerItem amItem = (AccessManagerItem)path.getLastPathComponent();
+                RuleTreeItem amItem = (RuleTreeItem)path.getLastPathComponent();
                 Boolean matched = false;
                 
                 if((!type.equals("")) && (!value.equals("")) )
@@ -381,13 +381,13 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         boxSearchCondition = new JComboBox();
         boxSearchCondition.setOpaque(false);
         boxSearchCondition.setToolTipText("Ruletree Condition");
-        if (am.getAccessManagerTree().getConditions().size() == 0) {
+        if (am.getConditions().size() == 0) {
             boxSearchCondition.setEnabled(false);
             boxSearchCondition.addItem("Condition");
         } else {
             boxSearchCondition.addItem("");
-            for(int x=0; x<am.getAccessManagerTree().getConditions().size(); x++)
-                boxSearchCondition.addItem(am.getAccessManagerTree().getConditions().get(x));
+            for(int x=0; x<am.getConditions().size(); x++)
+                boxSearchCondition.addItem(am.getConditions().get(x));
         }
         
         textSearchValue = new JTextField();
