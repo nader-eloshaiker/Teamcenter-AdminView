@@ -52,7 +52,8 @@ public class AccessRuleList extends ArrayList<AccessRule>{
     }
     
     public AccessRule get(String s) {
-        return get(indexOf(s));
+        /* Used to support ruletree entry with trailing spaces */
+        return get(indexOf(s.trim()));
     }
     
     public boolean add(AccessRule ar){
