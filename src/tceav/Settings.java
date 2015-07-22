@@ -85,7 +85,14 @@ public class Settings {
     private static boolean pmTblStrictArgument;
     private static final String PROPERTY_PM_TBL_STRICTARUMENT = "tcav.pm.tbl.strictArgument";
     private static final boolean PROPERTY_PM_TBL_STRICTARUMENT_DEFAULT = false;
+    private static boolean pmTblMultiSheet;
+    private static final String PROPERTY_PM_TBL_MULTISHEET = "tcav.pm.tbl.multiSheet";
+    private static final boolean PROPERTY_PM_TBL_MULTISHEET_DEFAULT = true;
+    private static boolean pmTblShowActions;
+    private static final String PROPERTY_PM_TBL_SHOWACTIONS = "tcav.pm.tbl.showActions";
+    private static final boolean PROPERTY_PM_TBL_SHOWACTIONS_DEFAULT = true;
 
+    
     private static String compareMode;
     private static final String PROPERTY_COMPAREMODE = "tcav.compareMode";
     private static final String PROPERTY_COMPAREMODE_DEFAULT = AbstractManager.ACCESS_MANAGER_TYPE;
@@ -254,6 +261,14 @@ public class Settings {
                 getPropertyAsBoolean(
                 PROPERTY_PM_TBL_STRICTARUMENT,
                 PROPERTY_PM_TBL_STRICTARUMENT_DEFAULT));
+        setPmTblMultiSheet(
+                getPropertyAsBoolean(
+                PROPERTY_PM_TBL_MULTISHEET,
+                PROPERTY_PM_TBL_MULTISHEET_DEFAULT));
+        setPmTblShowActions(
+                getPropertyAsBoolean(
+                PROPERTY_PM_TBL_SHOWACTIONS,
+                PROPERTY_PM_TBL_SHOWACTIONS_DEFAULT));
         
     }
     
@@ -347,6 +362,12 @@ public class Settings {
         property.setProperty(
                 PROPERTY_PM_TBL_STRICTARUMENT,
                 Boolean.toString(isPmTblStrictArgument()));
+        property.setProperty(
+                PROPERTY_PM_TBL_MULTISHEET,
+                Boolean.toString(isPmTblMultiSheet()));
+        property.setProperty(
+                PROPERTY_PM_TBL_SHOWACTIONS,
+                Boolean.toString(isPmTblShowActions()));
 
         
         File path = new File(System.getenv("USERPROFILE"),".TcAV");
@@ -591,7 +612,25 @@ public class Settings {
     public static void setPmActionExpandedView(boolean pmActionExpandedView) {
         Settings.pmActionExpandedView = pmActionExpandedView;
     }
+    
+    
 
+    public static boolean isPmTblMultiSheet() {
+        return pmTblMultiSheet;
+    }
+
+    public static void setPmTblMultiSheet(boolean pmTblMultiSheet) {
+        Settings.pmTblMultiSheet = pmTblMultiSheet;
+    }
+
+    public static boolean isPmTblShowActions() {
+        return pmTblShowActions;
+    }
+
+    public static void setPmTblShowActions(boolean pmTblShowActions) {
+        Settings.pmTblShowActions = pmTblShowActions;
+    }
+    
     public static boolean isPmTblStrictArgument() {
         return pmTblStrictArgument;
     }
@@ -599,6 +638,8 @@ public class Settings {
     public static void setPmTblStrictArgument(boolean pmTblStrictArgument) {
         Settings.pmTblStrictArgument = pmTblStrictArgument;
     }
+    
+    
     
     private static int getPropertyAsInt(String name, int defaultValue) throws NumberFormatException {
         int intValue = defaultValue;

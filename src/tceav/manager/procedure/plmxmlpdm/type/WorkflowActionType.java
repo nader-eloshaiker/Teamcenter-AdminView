@@ -72,8 +72,6 @@ public class WorkflowActionType extends AttribOwnerBase {
     protected final String ruleRefsAttribute = "ruleRefs";
     protected List<String> ruleRefs;
     
-    protected WorkflowActionTypeEnum type;
-    
     public WorkflowActionType(Node node) {
         super(node);
         Node currentNode = node;
@@ -100,15 +98,6 @@ public class WorkflowActionType extends AttribOwnerBase {
         return actionType;
     }
 
-    public void setActionType(String value) {
-        this.actionType = value;
-        type = WorkflowActionTypeEnum.fromValue(value);
-    }
-    
-    public WorkflowActionTypeEnum getType() {
-        return type;
-    }
-
     public String getParentRef() {
         return parentRef;
     }
@@ -130,6 +119,17 @@ public class WorkflowActionType extends AttribOwnerBase {
 
     private WorkflowHandlerType[] handlers;
     private WorkflowBusinessRuleType[] businessRules;
+    protected WorkflowActionTypeEnum type;
+    
+    
+    public WorkflowActionTypeEnum getType() {
+        return type;
+    }
+
+    public void setActionType(String value) {
+        this.actionType = value;
+        type = WorkflowActionTypeEnum.fromValue(value);
+    }
     
     public WorkflowHandlerType[] getActionHandlers() {
         if(handlers == null)
