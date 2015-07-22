@@ -91,6 +91,7 @@ public class RuleTreeNodeRenderer extends DefaultTreeCellRenderer implements Tre
 		setIcon(getClosedIcon());
 	    }
 	}
+        
         setComponentOrientation(tree.getComponentOrientation());
         
         return this;

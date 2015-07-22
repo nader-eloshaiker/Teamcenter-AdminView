@@ -177,9 +177,8 @@ public class Utilities {
                 TreePath path = parent.pathByAddingChild(tree.getModel().getChild(parent.getLastPathComponent(), e));
                 if(monitor.isCanceled())
                     break;
-                if(!tree.getModel().isLeaf(path.getLastPathComponent())){
-                    setCascadeTreeExpansion(tree, path, expand, monitor);
-                }
+
+                setCascadeTreeExpansion(tree, path, expand, monitor);
             }
         }
         

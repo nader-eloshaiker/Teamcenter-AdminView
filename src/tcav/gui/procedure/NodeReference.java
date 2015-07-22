@@ -70,6 +70,13 @@ public class NodeReference {
         return parentId;
     }
     
+    public void setParentId(String parentId){
+        if(parentId.charAt(0)== '#')
+            this.parentId = parentId.substring(1);
+        else
+            this.parentId = parentId;
+    }
+    
     public TagTypeEnum getParentClassType() {
         return parentClassType;
     }
@@ -83,13 +90,6 @@ public class NodeReference {
      */
     public void setIndex(int index) {
         this.index = index;
-    }
-    
-    public void setParentId(String parentId){
-        if(parentId.charAt(0)== '#')
-            this.parentId = parentId.substring(1);
-        else
-            this.parentId = parentId;
     }
     
     public void setParentClassType(TagTypeEnum parentClassType) {

@@ -467,7 +467,7 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
         
         JPanel panelAttributeDetails = new JPanel();
         panelAttributeDetails.setLayout(new BorderLayout(Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
-        panelAttributeDetails.setBorder(new TitledBorder(new EtchedBorder(),"Attribute Details"));
+        panelAttributeDetails.setBorder(new TitledBorder(new EtchedBorder(),"Details"));
         panelAttributeDetails.add("Center",Utilities.createPanelMargined(scrollTableAttribute));
         
         

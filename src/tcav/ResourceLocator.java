@@ -56,11 +56,15 @@ public class ResourceLocator {
     }
     
     public static String getVersion() {
-        return "1.0 (Build 29)";
+        return "1.0";
+    }
+    
+    public static String getBuild() {
+        return "31";
     }
     
     public static String getReleaseDate() {
-        return "12-Sep-07";
+        return "13-Sep-07";
     }
     
     public static String getApplicationName() {
@@ -70,6 +74,7 @@ public class ResourceLocator {
     public static String getAboutInfo() {
         return "<html><p>TcAE Admin View</p><p></p>" +
                         "<p>Version: "+getVersion()+"</p>" +
+                        "<p>Build: "+getBuild()+"</p>" +
                         "<p>Release Date: "+getReleaseDate()+"</p>"+
                         "<p></p>" +
                         "<p>Developed by"+
