@@ -72,8 +72,13 @@ public class AccessRuleComponent extends JPanel {
         return table;
     }
     
+    private AccessRule emptyAccessRule;
+    
     public void updateTable() {
-        updateTable(new AccessRule());
+        if(emptyAccessRule == null)
+            emptyAccessRule = new AccessRule();
+        
+        updateTable(emptyAccessRule);
     }
     
     public void updateTable(AccessRule ar) {

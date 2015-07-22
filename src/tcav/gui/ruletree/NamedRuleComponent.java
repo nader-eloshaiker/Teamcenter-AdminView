@@ -65,37 +65,37 @@ public class NamedRuleComponent extends JPanel {
             }
         }
         
-        JScrollPane namedAclComponentScroll = new JScrollPane();
-        namedAclComponentScroll.setPreferredSize(new Dimension(400,250));
-        namedAclComponentScroll.getViewport().add(table);
-        namedAclComponentScroll.setBorder(new BevelBorder(BevelBorder.LOWERED));
+        JScrollPane namedComponentScroll = new JScrollPane();
+        namedComponentScroll.setPreferredSize(new Dimension(400,250));
+        namedComponentScroll.getViewport().add(table);
+        namedComponentScroll.setBorder(new BevelBorder(BevelBorder.LOWERED));
         JPanel panelRuleList =  new JPanel();
         panelRuleList.setLayout(new GridLayout(1,1));
-        panelRuleList.add(namedAclComponentScroll);
+        panelRuleList.add(namedComponentScroll);
         
-        tabNamedAcl = new JTabbedPane();
-        tabNamedAcl.add("Details",GUIutilities.createPanelMargined(createACLTabDetails()));
-        tabNamedAcl.add("Unused",GUIutilities.createPanelMargined(createACLTabMissing()));
-        tabNamedAcl.add("Sort",GUIutilities.createPanelMargined(createACLTabSort()));
-        tabNamedAcl.add("Filter",GUIutilities.createPanelMargined(createACLTabFilter()));
-        tabNamedAcl.add("Search",GUIutilities.createPanelMargined(createACLTabSearch()));
-        tabNamedAcl.add("Tree",createACLTabReferences());
-        tabNamedAcl.setSelectedIndex(Settings.getAMACLTab());
-        tabNamedAcl.addChangeListener(new ChangeListener(){
+        tabNamed = new JTabbedPane();
+        tabNamed.add("Details",GUIutilities.createPanelMargined(createTabDetails()));
+        tabNamed.add("Unused",GUIutilities.createPanelMargined(createTabMissing()));
+        tabNamed.add("Sort",GUIutilities.createPanelMargined(createTabSort()));
+        tabNamed.add("Filter",GUIutilities.createPanelMargined(createTabFilter()));
+        tabNamed.add("Search",GUIutilities.createPanelMargined(createTabSearch()));
+        tabNamed.add("Tree",createTabReferences());
+        tabNamed.setSelectedIndex(Settings.getAMACLTab());
+        tabNamed.addChangeListener(new ChangeListener(){
             public void stateChanged(ChangeEvent e) {
-                Settings.setAMACLTab(tabNamedAcl.getSelectedIndex());
+                Settings.setAMACLTab(tabNamed.getSelectedIndex());
             }
         });
         
         
-        JPanel panelACL = new JPanel();
-        panelACL.setLayout(new BorderLayout(GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
-        panelACL.add("Center",panelRuleList);
-        panelACL.add("South",tabNamedAcl);
+        JPanel panel = new JPanel();
+        panel.setLayout(new BorderLayout(GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
+        panel.add("Center",panelRuleList);
+        panel.add("South",tabNamed);
         
         this.setLayout(new GridLayout(1,1,GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
-        this.setBorder(new TitledBorder(new EtchedBorder(), "Named ACL"));
-        this.add(GUIutilities.createPanelMargined(panelACL));
+        this.setBorder(new TitledBorder(new EtchedBorder(), "Named "));
+        this.add(GUIutilities.createPanelMargined(panel));
     }
     
     public NamedRuleFilterSortTableModel getModel() {
@@ -106,7 +106,7 @@ public class NamedRuleComponent extends JPanel {
         return table;
     }
     
-    protected JComboBox listUnusedNamedACL;
+    protected JComboBox listUnusedNamed;
     protected JComboBox boxFirstSort;
     protected JComboBox boxSecondSort;
     protected JComboBox boxThirdSort;
@@ -115,67 +115,67 @@ public class NamedRuleComponent extends JPanel {
     protected JTextField textFilterInstanceCount;
     protected JComboBox boxfilterType;
     protected JTreeAdvanced treeReferences;
-    protected JTabbedPane tabNamedAcl;
+    protected JTabbedPane tabNamed;
     protected JComboBox boxTypeAccessor;
     protected JTextField textAccessorID;
-    protected JLabel labelACLSearchResult;
-    protected JButton buttonNamedACLSearchNext;
-    protected JButton buttonNamedACLSearchReset;
-    protected JButton buttonNamedACLSearch;
-    protected SearchTableComponent searchACL;
+    protected JLabel labelSearchResult;
+    protected JButton buttonNamedSearchNext;
+    protected JButton buttonNamedSearchReset;
+    protected JButton buttonNamedSearch;
+    protected SearchTableComponent search;
     
-    private JPanel createACLTabDetails() {
-        JPanel panelNamedACLDetailsLeft = new JPanel();
-        panelNamedACLDetailsLeft.setLayout(new GridLayout(
+    private JPanel createTabDetails() {
+        JPanel panelNamedDetailsLeft = new JPanel();
+        panelNamedDetailsLeft.setLayout(new GridLayout(
                 am.getAccessRuleList().getACLTypes().size()+1,
                 1,
                 GUIutilities.GAP_COMPONENT,
                 GUIutilities.GAP_COMPONENT));
         for(int i=0; i<am.getAccessRuleList().getACLTypes().size(); i++){
-            panelNamedACLDetailsLeft.add(new JLabel(am.getAccessRuleList().getACLTypes().get(i)+" ACLs"));
+            panelNamedDetailsLeft.add(new JLabel(am.getAccessRuleList().getACLTypes().get(i)+" ACLs"));
         }
-        panelNamedACLDetailsLeft.add(new JPanel());
-        JPanel panelNamedACLDetailsRight = new JPanel();
-        panelNamedACLDetailsRight.setLayout(new GridLayout(
+        panelNamedDetailsLeft.add(new JPanel());
+        JPanel panelNamedDetailsRight = new JPanel();
+        panelNamedDetailsRight.setLayout(new GridLayout(
                 am.getAccessRuleList().getACLTypes().size()+1,
                 1,
                 GUIutilities.GAP_COMPONENT,
                 GUIutilities.GAP_COMPONENT));
         for(int i=0; i<am.getAccessRuleList().getACLTypes().size(); i++){
-            panelNamedACLDetailsRight.add(GUIutilities.createProgressBar(
+            panelNamedDetailsRight.add(GUIutilities.createProgressBar(
                     0,
                     am.getAccessRuleList().size(),
                     am.getAccessRuleList().getACLTypeSize(am.getAccessRuleList().getACLTypes().get(i)),
                     "Access Rules"));
         }
-        panelNamedACLDetailsRight.add(new JPanel());
-        JPanel panelNamedACLDetails = new JPanel();
-        panelNamedACLDetails.setLayout(new BorderLayout(GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
-        panelNamedACLDetails.add("West",panelNamedACLDetailsLeft);
-        panelNamedACLDetails.add("Center",panelNamedACLDetailsRight);
+        panelNamedDetailsRight.add(new JPanel());
+        JPanel panelNamedDetails = new JPanel();
+        panelNamedDetails.setLayout(new BorderLayout(GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
+        panelNamedDetails.add("West",panelNamedDetailsLeft);
+        panelNamedDetails.add("Center",panelNamedDetailsRight);
         
-        return panelNamedACLDetails;
+        return panelNamedDetails;
     }
     
-    private JPanel createACLTabMissing() {
-        JPanel panelNamedACLMissing = new JPanel();
-        panelNamedACLMissing.setLayout(new BorderLayout(GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
-        panelNamedACLMissing.add("West",new JLabel("Total Unused Named ACLs"));
-        panelNamedACLMissing.add("Center",GUIutilities.createProgressBar(
+    private JPanel createTabMissing() {
+        JPanel panelNamedMissing = new JPanel();
+        panelNamedMissing.setLayout(new BorderLayout(GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
+        panelNamedMissing.add("West",new JLabel("Total Unused Named ACLs"));
+        panelNamedMissing.add("Center",GUIutilities.createProgressBar(
                 0,
                 am.getAccessRuleList().size(),
                 am.getUnusedRules().size(),
                 "Access Rules"));
-        listUnusedNamedACL = new JComboBox();
+        listUnusedNamed = new JComboBox();
         if (am.getUnusedRules().size() == 0)
-            listUnusedNamedACL.setEnabled(false);
+            listUnusedNamed.setEnabled(false);
         else {
             for(int z=0; z<am.getUnusedRules().size(); z++)
-                listUnusedNamedACL.addItem(am.getUnusedRule(z));
+                listUnusedNamed.addItem(am.getUnusedRule(z));
         }
-        listUnusedNamedACL.addActionListener(new ActionListener() {
+        listUnusedNamed.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                AccessRule ar = (AccessRule)listUnusedNamedACL.getSelectedItem();
+                AccessRule ar = (AccessRule)listUnusedNamed.getSelectedItem();
                 int sortedIndex = getModel().indexOfRuleName(ar.getRuleName());
                 table.setRowSelectionInterval(sortedIndex,sortedIndex);
                 table.getSelectionModel().setAnchorSelectionIndex(sortedIndex);
@@ -188,16 +188,16 @@ public class NamedRuleComponent extends JPanel {
         });
         
         
-        JPanel panelNamedACLMissingFull = new JPanel();
-        panelNamedACLMissingFull.setLayout(new GridLayout(3,1,GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
-        panelNamedACLMissingFull.add(panelNamedACLMissing);
-        panelNamedACLMissingFull.add(listUnusedNamedACL);
-        panelNamedACLMissingFull.add(new JPanel());
+        JPanel panelNamedMissingFull = new JPanel();
+        panelNamedMissingFull.setLayout(new GridLayout(3,1,GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
+        panelNamedMissingFull.add(panelNamedMissing);
+        panelNamedMissingFull.add(listUnusedNamed);
+        panelNamedMissingFull.add(new JPanel());
         
-        return panelNamedACLMissingFull;
+        return panelNamedMissingFull;
     }
     
-    private JPanel createACLTabSort() {
+    private JPanel createTabSort() {
         boxFirstSort = new JComboBox(NamedRuleFilterSortTableModel.SORT_COLUMN_SELECTION);
         boxFirstSort.setSelectedIndex(getModel().getSort(0));
         boxSecondSort = new JComboBox(NamedRuleFilterSortTableModel.SORT_COLUMN_SELECTION);
@@ -205,8 +205,8 @@ public class NamedRuleComponent extends JPanel {
         boxThirdSort = new JComboBox(NamedRuleFilterSortTableModel.SORT_COLUMN_SELECTION);
         boxThirdSort.setSelectedIndex(getModel().getSort(2));
         checkAscending = new JCheckBox("Ascending",getModel().isAscending());
-        JButton buttonSortNamedACL = new JButton("Sort");
-        buttonSortNamedACL.addActionListener(new ActionListener() {
+        JButton buttonSortNamed = new JButton("Sort");
+        buttonSortNamed.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 int[] sort = new int[3];
                 sort[0] = boxFirstSort.getSelectedIndex();
@@ -226,67 +226,51 @@ public class NamedRuleComponent extends JPanel {
         } catch (Exception e) {
             System.out.println("Couldn't load images: " + e);
         }
-        buttonSortNamedACL.setIcon(iconFind);
+        buttonSortNamed.setIcon(iconFind);
         
-        JPanel panelNamedACLSortTop = new JPanel();
-        panelNamedACLSortTop.setLayout(new GridLayout(2,3,GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
-        panelNamedACLSortTop.add(new JLabel("Sort By"));
-        panelNamedACLSortTop.add(new JLabel("Then By"));
-        panelNamedACLSortTop.add(new JLabel("Finally By"));
-        panelNamedACLSortTop.add(boxFirstSort);
-        panelNamedACLSortTop.add(boxSecondSort);
-        panelNamedACLSortTop.add(boxThirdSort);
-        JPanel panelNamedACLSortBottom = new JPanel();
-        panelNamedACLSortBottom.setLayout(new FlowLayout(FlowLayout.RIGHT,GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
-        panelNamedACLSortBottom.add(checkAscending);
-        panelNamedACLSortBottom.add(buttonSortNamedACL);
-        JPanel panelNamedACLSort = new JPanel();
-        panelNamedACLSort.setLayout(new BorderLayout());
-        panelNamedACLSort.add("North",panelNamedACLSortTop);
-        panelNamedACLSort.add("Center",panelNamedACLSortBottom);
+        JPanel panelNamedSortTop = new JPanel();
+        panelNamedSortTop.setLayout(new GridLayout(2,3,GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
+        panelNamedSortTop.add(new JLabel("Sort By"));
+        panelNamedSortTop.add(new JLabel("Then By"));
+        panelNamedSortTop.add(new JLabel("Finally By"));
+        panelNamedSortTop.add(boxFirstSort);
+        panelNamedSortTop.add(boxSecondSort);
+        panelNamedSortTop.add(boxThirdSort);
+        JPanel panelNamedSortBottom = new JPanel();
+        panelNamedSortBottom.setLayout(new FlowLayout(FlowLayout.RIGHT,GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
+        panelNamedSortBottom.add(checkAscending);
+        panelNamedSortBottom.add(buttonSortNamed);
+        JPanel panelNamedSort = new JPanel();
+        panelNamedSort.setLayout(new BorderLayout());
+        panelNamedSort.add("North",panelNamedSortTop);
+        panelNamedSort.add("Center",panelNamedSortBottom);
         
-        return panelNamedACLSort;
+        return panelNamedSort;
     }
     
-    private JPanel createACLTabFilter() {
+    private JPanel createTabFilter() {
         boxfilterType = new JComboBox();
         boxfilterType.addItem(null);
         for(int i=0; i<am.getAccessRuleList().getACLTypes().size(); i++)
             boxfilterType.addItem(am.getAccessRuleList().getACLTypes().get(i));
         boxfilterType.setSelectedItem(getModel().getFilterPattern(getModel().TYPE_COLUMN));
+        FilterActionListener filterActionListener = new FilterActionListener();
         textFilterInstanceCount = new JTextField();
         textFilterInstanceCount.setToolTipText("Must be a number");
         textFilterInstanceCount.setText(getModel().getFilterPattern(getModel().INSTANCES_COLUMN));
+        textFilterInstanceCount.addActionListener(filterActionListener);
         textFilterName = new JTextField();
         textFilterName.setToolTipText("* ? [ - ] accepted");
         textFilterName.setText(getModel().getFilterPattern(getModel().NAME_COLUMN));
+        textFilterName.addActionListener(filterActionListener);
         JButton buttonFilter = new JButton("Filter");
-        buttonFilter.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-                int[] filterColumns = new int[]{0,1,2};
-                String[] filterPatterns = new String[]{
-                    (String)boxfilterType.getSelectedItem(),
-                    textFilterInstanceCount.getText(),
-                    textFilterName.getText()
-                };
-                
-                if( ((filterPatterns[0] == null) || (filterPatterns[0].equals(""))) &&
-                        ((filterPatterns[1] == null) || (filterPatterns[1].equals(""))) &&
-                        ((filterPatterns[2] == null) || (filterPatterns[2].equals(""))))
-                    JOptionPane.showMessageDialog(parentFrame, "Filtering requires either a Type, Instance Count, Name or any combination.", "No Filter Criteria", JOptionPane.ERROR_MESSAGE);
-                else {
-                    
-                    table.clearSelection();
-                    //tableAccessRule.updateTable();
-                    getModel().setFilter(filterColumns,filterPatterns);
-                    getModel().fireTableDataChanged();
-                    table.repaint();
-                }
-            }
-        });
+        buttonFilter.addActionListener(filterActionListener);
         JButton buttonReset = new JButton("Clear");
         buttonReset.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
+                boxfilterType.setEnabled(true);
+                textFilterInstanceCount.setEnabled(true);
+                textFilterName.setEnabled(true);
                 boxfilterType.setSelectedItem(null);
                 textFilterInstanceCount.setText(null);
                 textFilterName.setText(null);
@@ -307,28 +291,54 @@ public class NamedRuleComponent extends JPanel {
         buttonFilter.setIcon(iconFind);
         buttonReset.setIcon(iconReset);
         
-        JPanel panelNamedACLFilterTop = new JPanel();
-        panelNamedACLFilterTop.setLayout(new GridLayout(2,3,GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
-        panelNamedACLFilterTop.add(new JLabel("Match Type"));
-        panelNamedACLFilterTop.add(new JLabel("Match Count"));
-        panelNamedACLFilterTop.add(new JLabel("Match Name"));
-        panelNamedACLFilterTop.add(boxfilterType);
-        panelNamedACLFilterTop.add(textFilterInstanceCount);
-        panelNamedACLFilterTop.add(textFilterName);
-        JPanel panelNamedACLFilterBottom = new JPanel();
-        panelNamedACLFilterBottom.setLayout(new FlowLayout(FlowLayout.RIGHT,GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
-        panelNamedACLFilterBottom.add(buttonReset);
-        panelNamedACLFilterBottom.add(buttonFilter);
-        JPanel panelNamedACLFilter = new JPanel();
-        panelNamedACLFilter.setLayout(new BorderLayout());
-        panelNamedACLFilter.add("North",panelNamedACLFilterTop);
-        panelNamedACLFilter.add("Center",panelNamedACLFilterBottom);
+        JPanel panelNamedFilterTop = new JPanel();
+        panelNamedFilterTop.setLayout(new GridLayout(2,3,GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
+        panelNamedFilterTop.add(new JLabel("Match Type"));
+        panelNamedFilterTop.add(new JLabel("Match Count"));
+        panelNamedFilterTop.add(new JLabel("Match Name"));
+        panelNamedFilterTop.add(boxfilterType);
+        panelNamedFilterTop.add(textFilterInstanceCount);
+        panelNamedFilterTop.add(textFilterName);
+        JPanel panelNamedFilterBottom = new JPanel();
+        panelNamedFilterBottom.setLayout(new FlowLayout(FlowLayout.RIGHT,GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
+        panelNamedFilterBottom.add(buttonReset);
+        panelNamedFilterBottom.add(buttonFilter);
+        JPanel panelNamedFilter = new JPanel();
+        panelNamedFilter.setLayout(new BorderLayout());
+        panelNamedFilter.add("North",panelNamedFilterTop);
+        panelNamedFilter.add("Center",panelNamedFilterBottom);
         
-        return panelNamedACLFilter;
+        return panelNamedFilter;
     }
     
-    private JPanel createACLTabSearch() {
-        searchACL = new SearchTableComponent(){
+    class FilterActionListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            int[] filterColumns = new int[]{0,1,2};
+            String[] filterPatterns = new String[]{
+                (String)boxfilterType.getSelectedItem(),
+                textFilterInstanceCount.getText(),
+                textFilterName.getText()
+            };
+            
+            if( ((filterPatterns[0] == null) || (filterPatterns[0].equals(""))) &&
+                    ((filterPatterns[1] == null) || (filterPatterns[1].equals(""))) &&
+                    ((filterPatterns[2] == null) || (filterPatterns[2].equals(""))))
+                JOptionPane.showMessageDialog(parentFrame, "Filtering requires either a Type, Instance Count, Name or any combination.", "No Filter Criteria", JOptionPane.ERROR_MESSAGE);
+            else {
+                
+                table.clearSelection();
+                boxfilterType.setEnabled(false);
+                textFilterInstanceCount.setEnabled(false);
+                textFilterName.setEnabled(false);
+                getModel().setFilter(filterColumns,filterPatterns);
+                getModel().fireTableDataChanged();
+                table.repaint();
+            }
+        }
+    }
+    
+    private JPanel createTabSearch() {
+        search = new SearchTableComponent(){
             public boolean compare(int row, String type, String value) {
                 boolean matched = false;
                 AccessRule ar = getModel().getAccessRule(row);
@@ -352,70 +362,36 @@ public class NamedRuleComponent extends JPanel {
         boxTypeAccessor.addItem(null);
         for(int i=0; i<am.getAccessRuleList().getAccessorTypes().size(); i++)
             boxTypeAccessor.addItem(am.getAccessRuleList().getAccessorTypes().get(i));
+        
+        SearchActionListener searchActionListener = new SearchActionListener();
         textAccessorID = new JTextField();
         textAccessorID.setToolTipText("* ? [ - ] accepted");
-        labelACLSearchResult = new JLabel("Result: -- / --");
-        buttonNamedACLSearch = new JButton("Find");
-        buttonNamedACLSearch.addActionListener(new ActionListener(){
+        textAccessorID.addActionListener(searchActionListener);
+        labelSearchResult = new JLabel("Result: -- / --");
+        buttonNamedSearch = new JButton("Find");
+        buttonNamedSearch.addActionListener(searchActionListener);
+        buttonNamedSearchNext = new JButton("Find Next");
+        buttonNamedSearchNext.setEnabled(false);
+        buttonNamedSearchNext.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                new Thread() {
-                    public void run() {
-                        String acessorType = "";
-                        String accessorId = "";
-                        
-                        if(boxTypeAccessor.getSelectedIndex() > 0)
-                            acessorType = (String)boxTypeAccessor.getSelectedItem();
-                        accessorId = textAccessorID.getText();
-                        
-                        if( (acessorType.equals("")) &&
-                                ((accessorId == null) || (accessorId.equals(""))) )
-                            JOptionPane.showMessageDialog(parentFrame, "Search requires either a Accessor Type, Accessor ID or any combination.", "No Search Criteria", JOptionPane.ERROR_MESSAGE);
-                        else {
-                            searchACL.search(table, acessorType, accessorId);
-                            
-                            if (searchACL.getResultSize() == 0) {
-                                JOptionPane.showMessageDialog(parentFrame, "No matches found", "No Matches Found", JOptionPane.WARNING_MESSAGE);
-                                buttonNamedACLSearchNext.setEnabled(false);
-                                buttonNamedACLSearchReset.setEnabled(false);
-                                buttonNamedACLSearch.setEnabled(true);
-                                boxTypeAccessor.setEnabled(true);
-                                textAccessorID.setEnabled(true);
-                            } else {
-                                int k = searchACL.getResultIndex() + 1;
-                                labelACLSearchResult.setText("Result: "+k+" / "+searchACL.getResultSize());
-                                buttonNamedACLSearchNext.setEnabled(true);
-                                buttonNamedACLSearchReset.setEnabled(true);
-                                buttonNamedACLSearch.setEnabled(false);
-                                boxTypeAccessor.setEnabled(false);
-                                textAccessorID.setEnabled(false);
-                            }
-                        }
-                    }
-                }.start();
+                search.searchNext(table);
+                int k = search.getResultIndex() + 1;
+                labelSearchResult.setText("Result: "+k+" / "+search.getResultSize());
             }
         });
-        buttonNamedACLSearchNext = new JButton("Find Next");
-        buttonNamedACLSearchNext.setEnabled(false);
-        buttonNamedACLSearchNext.addActionListener(new ActionListener(){
+        buttonNamedSearchReset = new JButton("Clear");
+        buttonNamedSearchReset.setEnabled(false);
+        buttonNamedSearchReset.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                searchACL.searchNext(table);
-                int k = searchACL.getResultIndex() + 1;
-                labelACLSearchResult.setText("Result: "+k+" / "+searchACL.getResultSize());
-            }
-        });
-        buttonNamedACLSearchReset = new JButton("Clear");
-        buttonNamedACLSearchReset.setEnabled(false);
-        buttonNamedACLSearchReset.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-                labelACLSearchResult.setText("Result: -- / --");
-                buttonNamedACLSearchNext.setEnabled(false);
-                buttonNamedACLSearchReset.setEnabled(false);
-                buttonNamedACLSearch.setEnabled(true);
+                labelSearchResult.setText("Result: -- / --");
+                buttonNamedSearchNext.setEnabled(false);
+                buttonNamedSearchReset.setEnabled(false);
+                buttonNamedSearch.setEnabled(true);
                 boxTypeAccessor.setEnabled(true);
                 textAccessorID.setEnabled(true);
                 boxTypeAccessor.setSelectedIndex(0);
                 textAccessorID.setText("");
-                searchACL.resetResults();
+                search.resetResults();
             }
         });
         
@@ -431,8 +407,8 @@ public class NamedRuleComponent extends JPanel {
         } catch (Exception e) {
             System.out.println("Couldn't load images: " + e);
         }
-        buttonNamedACLSearch.setIcon(iconFind);
-        buttonNamedACLSearchReset.setIcon(iconReset);
+        buttonNamedSearch.setIcon(iconFind);
+        buttonNamedSearchReset.setIcon(iconReset);
         
         
         JPanel panelSearchTop = new JPanel();
@@ -443,10 +419,10 @@ public class NamedRuleComponent extends JPanel {
         panelSearchTop.add(textAccessorID);
         JPanel panelSearchBottom = new JPanel();
         panelSearchBottom.setLayout(new FlowLayout(FlowLayout.RIGHT,GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
-        panelSearchBottom.add(labelACLSearchResult);
-        panelSearchBottom.add(buttonNamedACLSearchReset);
-        panelSearchBottom.add(buttonNamedACLSearchNext);
-        panelSearchBottom.add(buttonNamedACLSearch);
+        panelSearchBottom.add(labelSearchResult);
+        panelSearchBottom.add(buttonNamedSearchReset);
+        panelSearchBottom.add(buttonNamedSearchNext);
+        panelSearchBottom.add(buttonNamedSearch);
         JPanel panelSearch = new JPanel();
         panelSearch.setLayout(new BorderLayout());
         panelSearch.add("North",panelSearchTop);
@@ -455,7 +431,46 @@ public class NamedRuleComponent extends JPanel {
         return panelSearch;
     }
     
-    private JPanel createACLTabReferences() {
+    class SearchActionListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            new Thread() {
+                public void run() {
+                    String acessorType = "";
+                    String accessorId = "";
+                    
+                    if(boxTypeAccessor.getSelectedIndex() > 0)
+                        acessorType = (String)boxTypeAccessor.getSelectedItem();
+                    accessorId = textAccessorID.getText();
+                    
+                    if( (acessorType.equals("")) &&
+                            ((accessorId == null) || (accessorId.equals(""))) )
+                        JOptionPane.showMessageDialog(parentFrame, "Search requires either a Accessor Type, Accessor ID or any combination.", "No Search Criteria", JOptionPane.ERROR_MESSAGE);
+                    else {
+                        search.search(table, acessorType, accessorId);
+                        
+                        if (search.getResultSize() == 0) {
+                            JOptionPane.showMessageDialog(parentFrame, "No matches found", "No Matches Found", JOptionPane.WARNING_MESSAGE);
+                            buttonNamedSearchNext.setEnabled(false);
+                            buttonNamedSearchReset.setEnabled(false);
+                            buttonNamedSearch.setEnabled(true);
+                            boxTypeAccessor.setEnabled(true);
+                            textAccessorID.setEnabled(true);
+                        } else {
+                            int k = search.getResultIndex() + 1;
+                            labelSearchResult.setText("Result: "+k+" / "+search.getResultSize());
+                            buttonNamedSearchNext.setEnabled(true);
+                            buttonNamedSearchReset.setEnabled(true);
+                            buttonNamedSearch.setEnabled(false);
+                            boxTypeAccessor.setEnabled(false);
+                            textAccessorID.setEnabled(false);
+                        }
+                    }
+                }
+            }.start();
+        }
+    }
+    
+    private JPanel createTabReferences() {
         treeReferences = new JTreeAdvanced(new RuleTreeReferencesModel(new AccessRule()));
         treeReferences.setRootVisible(false);
         treeReferences.setShowsRootHandles(true);
@@ -464,13 +479,13 @@ public class NamedRuleComponent extends JPanel {
         scrollReferences.setPreferredSize(new Dimension(20,20));
         scrollReferences.getViewport().add(treeReferences);
         scrollReferences.setBorder(new BevelBorder(BevelBorder.LOWERED));
-        JPanel panelNamedACLReferences = new JPanel();
-        panelNamedACLReferences.setLayout(new GridLayout(1,1,GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
-        panelNamedACLReferences.add(scrollReferences);
+        JPanel panelNamedReferences = new JPanel();
+        panelNamedReferences.setLayout(new GridLayout(1,1,GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
+        panelNamedReferences.add(scrollReferences);
         
         ToolTipManager.sharedInstance().registerComponent(treeReferences);
         
-        return panelNamedACLReferences;
+        return panelNamedReferences;
     }
     
     public void updateReferences(int index) {

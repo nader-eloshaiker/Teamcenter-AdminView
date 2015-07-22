@@ -32,19 +32,23 @@ public class ResourceStrings {
     }
     
     public static String getVersion() {
-        return "1.8";
+        return "1.9";
     }
     
     public static String getBuild() {
-        return "71";
+        return "74";
     }
     
     public static String getReleaseDate() {
-        return "08-Feb-08";
+        return "11-Feb-08";
     }
     
     public static String getApplicationName() {
         return "Teamcenter Admin View";
+    }
+    
+    public static String getApplicationNameShort() {
+        return "TcAV";
     }
     
     public static String getAboutInfo() {

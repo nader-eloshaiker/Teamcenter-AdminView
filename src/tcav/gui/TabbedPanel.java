@@ -9,12 +9,22 @@
 
 package tcav.gui;
 
+import javax.swing.JComponent;
+import javax.swing.ImageIcon;
+import java.io.File;
+
 /**
  *
  * @author nzr4dl
  */
 public interface TabbedPanel {
     
-    public boolean isEmptyPanel();
+    public JComponent getStatusBar();
+    
+    public JComponent getComponent();
+    
+    public File getFile();
+    
+    public ImageIcon getIcon();
     
 }
