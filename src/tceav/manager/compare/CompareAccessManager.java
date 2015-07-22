@@ -88,22 +88,18 @@ public class CompareAccessManager extends ManagerAdapter {
     }
     
     private void compare(ArrayList<RuleTreeNode> am1, ArrayList<RuleTreeNode> am2, CompareResult results) {
-        int compResult;
-        int finalResult = CompareInterface.NOT_FOUND;
+        int result = CompareInterface.NOT_FOUND;
      
         for (RuleTreeNode node1 : am1) {
             for (RuleTreeNode node2 : am2) {
-                compResult = node1.compare(node2);
-                if(compResult == CompareInterface.EQUAL) {
-                    finalResult = compResult;
+                result = node1.compare(node2);
+                if(result != CompareInterface.NOT_FOUND) {
                     break;
-                } else if(compResult == CompareInterface.NOT_EQUAL) {
-                    finalResult = compResult;
                 }
             }
-            node1.setComparison(finalResult);
+            node1.setComparison(result);
             if(results != null)
-                results.increment(finalResult);
+                results.increment(result);
         }
     }
 
