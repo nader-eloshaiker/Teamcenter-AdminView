@@ -24,6 +24,7 @@ public class GUIutilities {
     public final static int GAP_COMPONENT = 4;
     public final static int GAP_INSET = 1;
     public final static int GAP_MARGIN = 4;
+    public final static int GAP_OUTER_BORDER = 8;
     public static int progressCounter = 0;
     public static int progressLimit = 0;
     

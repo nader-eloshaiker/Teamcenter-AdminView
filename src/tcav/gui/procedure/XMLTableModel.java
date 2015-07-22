@@ -11,23 +11,23 @@ package tcav.gui.procedure;
 
 import javax.swing.table.*;
 import java.util.List;
-import tcav.procedure.ProcedureManager;
-import tcav.procedure.plmxmlpdm.base.IdBase;
-import tcav.procedure.plmxmlpdm.type.AssociatedDataSetType;
-import tcav.procedure.plmxmlpdm.type.AssociatedFolderType;
-import tcav.procedure.plmxmlpdm.type.AssociatedFormType;
-import tcav.procedure.plmxmlpdm.type.OrganisationType;
-import tcav.procedure.plmxmlpdm.type.RoleType;
-import tcav.procedure.plmxmlpdm.type.UserDataType;
-import tcav.procedure.plmxmlpdm.type.UserListDataType;
-import tcav.procedure.plmxmlpdm.type.ValidationResultsType;
-import tcav.procedure.plmxmlpdm.type.WorkflowActionType;
-import tcav.procedure.plmxmlpdm.type.WorkflowBusinessRuleHandlerType;
-import tcav.procedure.plmxmlpdm.type.WorkflowBusinessRuleType;
-import tcav.procedure.plmxmlpdm.type.WorkflowHandlerType;
-import tcav.procedure.plmxmlpdm.type.WorkflowSignoffProfileType;
-import tcav.procedure.plmxmlpdm.type.WorkflowTemplateType;
-import tcav.procedure.plmxmlpdm.type.element.UserDataElementType;
+import tcav.manager.procedure.ProcedureManager;
+import tcav.manager.procedure.plmxmlpdm.base.IdBase;
+import tcav.manager.procedure.plmxmlpdm.type.AssociatedDataSetType;
+import tcav.manager.procedure.plmxmlpdm.type.AssociatedFolderType;
+import tcav.manager.procedure.plmxmlpdm.type.AssociatedFormType;
+import tcav.manager.procedure.plmxmlpdm.type.OrganisationType;
+import tcav.manager.procedure.plmxmlpdm.type.RoleType;
+import tcav.manager.procedure.plmxmlpdm.type.UserDataType;
+import tcav.manager.procedure.plmxmlpdm.type.UserListDataType;
+import tcav.manager.procedure.plmxmlpdm.type.ValidationResultsType;
+import tcav.manager.procedure.plmxmlpdm.type.WorkflowActionType;
+import tcav.manager.procedure.plmxmlpdm.type.WorkflowBusinessRuleHandlerType;
+import tcav.manager.procedure.plmxmlpdm.type.WorkflowBusinessRuleType;
+import tcav.manager.procedure.plmxmlpdm.type.WorkflowHandlerType;
+import tcav.manager.procedure.plmxmlpdm.type.WorkflowSignoffProfileType;
+import tcav.manager.procedure.plmxmlpdm.type.WorkflowTemplateType;
+import tcav.manager.procedure.plmxmlpdm.type.element.UserDataElementType;
 
 /**
  *

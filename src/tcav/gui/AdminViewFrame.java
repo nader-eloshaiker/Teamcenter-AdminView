@@ -9,10 +9,13 @@
 
 package tcav.gui;
 
-import tcav.gui.ruletree.AccessManagerComponent;
+import tcav.gui.compare.*;
+import tcav.gui.access.AccessManagerComponent;
 import tcav.gui.procedure.ProcedureManagerComponent;
-import tcav.ruletree.AccessManager;
-import tcav.procedure.ProcedureManager;
+import tcav.manager.AbstractManager;
+import tcav.manager.access.AccessManager;
+import tcav.manager.procedure.ProcedureManager;
+import tcav.manager.compare.CompareAccessManager;
 import tcav.utils.CustomFileFilter;
 import tcav.resources.*;
 import tcav.Settings;
@@ -40,6 +43,7 @@ public class AdminViewFrame extends JFrame{
     private ImageIcon iconExit;
     private ImageIcon iconApp;
     private ImageIcon iconRuleTree;
+    private ImageIcon iconCompare;
     private JPanel mainPanel;
     
     private final String TABPANE = "TABPANE";
@@ -77,32 +81,35 @@ public class AdminViewFrame extends JFrame{
             iconClose = ResourceLoader.getImage(ImageEnum.utilClose);
             iconExit  = ResourceLoader.getImage(ImageEnum.utilExit);
             iconApp = ResourceLoader.getImage(ImageEnum.appLogo);
+            iconCompare = ResourceLoader.getImage(ImageEnum.utilCompare);
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Error Load Images", JOptionPane.ERROR_MESSAGE);
         }
         
         JMenuBar menuBar = constructMenuBar();
-        JToolBar toolbar = constructToolBar();
+        JPanel toolbar = constructToolBar();
         JPanel statusBar = constructStatusBar();
         
         tabbedpane = new JTabbedPane();
+        tabbedpane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
         tabbedpane.addChangeListener(new ChangeListener(){
             public void stateChanged(ChangeEvent e) {
-                if(tabbedpane.getTabCount() > 1) 
-                    showStatusBarComponent((TabbedPanel)tabbedpane.getSelectedComponent());
+                if(tabbedpane.getTabCount() > 1)
+                    showBarComponent((TabbedPanel)tabbedpane.getSelectedComponent());
             }
         });
         emptyPane = new EmptyComponent();
-
+        
         mainPanel = new JPanel();
         mainPanel.setLayout(new CardLayout());
         mainPanel.add(tabbedpane, TABPANE);
         mainPanel.add(emptyPane, EMPTYPANE);
         ((CardLayout)mainPanel.getLayout()).show(mainPanel,EMPTYPANE);
-        addStatusBarComponent(emptyPane);
-        showStatusBarComponent(emptyPane);
-
+        addBarComponent(emptyPane);
+        showBarComponent(emptyPane);
         
+        
+        //this.getContentPane().setLayout(new BorderLayout(1,1));
         this.getContentPane().add("Center", mainPanel);
         this.getContentPane().add("North", toolbar);
         this.getContentPane().add("South", statusBar);
@@ -123,9 +130,22 @@ public class AdminViewFrame extends JFrame{
         this.setTitle(ResourceStrings.getApplicationNameShort());
     }
     
-    public JFileChooser createFileChooser(String path) {
+    public JFileChooser createFileChooser(String type) {
+        String path = "";
         JFileChooser fc = new JFileChooser();
-        fc.setCurrentDirectory(new File(path));
+        
+        if(type.equals(AbstractManager.ACCESS_MANAGER_TYPE)) {
+            path = Settings.getAmLoadPath();
+            fc.setCurrentDirectory(new File(path));
+            fc.addChoosableFileFilter(new CustomFileFilter(
+                    new String[]{"txt",""},"Text File (*.txt; *.)"));
+        } else if(type.equals(AbstractManager.PROCEDURE_MANAGER_TYPE)) {
+            path = Settings.getPmLoadPath();
+            fc.setCurrentDirectory(new File(path));
+            fc.addChoosableFileFilter(new CustomFileFilter(
+                    new String[]{"xml","plmxml"},"XML File (*.xml; *.plmxml)"));
+        }
+        
         return fc;
     }
     
@@ -136,32 +156,37 @@ public class AdminViewFrame extends JFrame{
     private JPanel statusBarPanel;
     
     private JPanel constructStatusBar() {
-        CardLayout statusBarLayout = new CardLayout();
-        
         statusBarPanel = new JPanel();
         statusBarPanel.setBorder(new EmptyBorder(1,1,1,1));
-        statusBarPanel.setLayout(statusBarLayout);
+        statusBarPanel.setLayout(new CardLayout());
         return statusBarPanel;
     }
     
-    private void addStatusBarComponent(TabbedPanel tab) {
-        statusBarPanel.add(tab.getStatusBar(), tab.getFile().toString());
+    private void addBarComponent(TabbedPanel tab) {
+        statusBarPanel.add(tab.getStatusBar(), tab.getManager().getId());
+        toolBarPanel.add(tab.getToolBar(), tab.getManager().getId());
     }
     
-    private void removeStatusBarComponent(TabbedPanel tab) {
+    private void removeBarComponent(TabbedPanel tab) {
         ((CardLayout)statusBarPanel.getLayout()).removeLayoutComponent(tab.getStatusBar());
+        ((CardLayout)toolBarPanel.getLayout()).removeLayoutComponent(tab.getToolBar());
     }
     
-    private void showStatusBarComponent(TabbedPanel tab) {
-        ((CardLayout)statusBarPanel.getLayout()).show(statusBarPanel, tab.getFile().toString());
+    private void showBarComponent(TabbedPanel tab) {
+        ((CardLayout)statusBarPanel.getLayout()).show(statusBarPanel, tab.getManager().getId());
+        ((CardLayout)toolBarPanel.getLayout()).show(toolBarPanel, tab.getManager().getId());
     }
     
     private void addTabbedPane(TabbedPanel tab) {
         ((CardLayout)mainPanel.getLayout()).show(mainPanel, TABPANE);
-        tabbedpane.addTab(tab.getFile().getName(), tab.getIcon(), tab.getComponent());
-        tabbedpane.setSelectedComponent(tab.getComponent());
-        addStatusBarComponent(tab);
-        showStatusBarComponent(tab);
+        tabbedpane.addTab(tab.getManager().getName(), tab.getIcon(), tab);
+        tabbedpane.setSelectedComponent(tab);
+        addBarComponent(tab);
+        showBarComponent(tab);
+        
+        buttonClose.setEnabled(true);
+        menuClose.setEnabled(true);
+        
     }
     
     private void removeTabbedPane(TabbedPanel tab) {
@@ -169,14 +194,20 @@ public class AdminViewFrame extends JFrame{
             return;
         
         tabbedpane.remove(tabbedpane.getSelectedIndex());
-        removeStatusBarComponent(tab);
+        removeBarComponent(tab);
         if(tabbedpane.getTabCount() == 0) {
             ((CardLayout)mainPanel.getLayout()).show(mainPanel, EMPTYPANE);
-            showStatusBarComponent(emptyPane);
+            showBarComponent(emptyPane);
+            buttonClose.setEnabled(false);
+            menuClose.setEnabled(false);
         }
     }
-
-    private JToolBar constructToolBar() {
+    
+    private JButton buttonClose;
+    private JButton buttonCompare;
+    private JPanel toolBarPanel;
+    
+    private JPanel constructToolBar() {
         JToolBar toolbar = new JToolBar("Main ToolBar");
         
         JButton buttonOpenRuleTree = new JButton("Load Tree");
@@ -201,9 +232,21 @@ public class AdminViewFrame extends JFrame{
             }
         });
         
-        JButton buttonClose = new JButton("Close Tab");
+        buttonCompare = new JButton("Compare");
+        buttonCompare.setOpaque(false);
+        buttonCompare.setIcon(iconCompare );
+        buttonCompare.setHorizontalTextPosition(SwingConstants.RIGHT);
+        buttonCompare.setToolTipText("Compare tabbs");
+        buttonCompare.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                actionCompare();
+            }
+        });
+        
+        buttonClose = new JButton("Close Tab");
         buttonClose.setOpaque(false);
         buttonClose.setIcon(iconClose);
+        buttonClose.setEnabled(false);
         buttonClose.setHorizontalTextPosition(SwingConstants.RIGHT);
         buttonClose.setToolTipText("Close the current tabb");
         buttonClose.addActionListener(new ActionListener() {
@@ -231,13 +274,24 @@ public class AdminViewFrame extends JFrame{
         toolbar.add(buttonOpenRuleTree);
         toolbar.add(buttonOpenProcedure);
         toolbar.addSeparator();
+        toolbar.add(buttonCompare);
+        toolbar.addSeparator();
         toolbar.add(buttonClose);
         toolbar.add(buttonExit);
         
-        return toolbar;
+        toolBarPanel = new JPanel();
+        toolBarPanel.setLayout(new CardLayout());
+        JPanel panel = new JPanel();
+        panel.setLayout(new FlowLayout(FlowLayout.LEFT,0,0));
+        panel.add(toolbar);//, BorderLayout.WEST);
+        panel.add(toolBarPanel);//, BorderLayout.CENTER);
+        
+        return panel;
     }
     
-    protected JCheckBoxMenuItem menuItemSaveSettingsOnExit;
+    private JCheckBoxMenuItem menuItemSaveSettingsOnExit;
+    private JMenuItem menuClose;
+    private JMenuItem menuCompare;
     
     /** Construct a menu. */
     private JMenuBar constructMenuBar() {
@@ -272,10 +326,11 @@ public class AdminViewFrame extends JFrame{
         
         menu.addSeparator();
         
-        menuItem = menu.add(new JMenuItem("Close Tab", 'C'));
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, Event.CTRL_MASK));
-        menuItem.setIcon(iconClose);
-        menuItem.addActionListener(new ActionListener() {
+        menuClose = menu.add(new JMenuItem("Close Tab", 'C'));
+        menuClose.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, Event.CTRL_MASK));
+        menuClose.setIcon(iconClose);
+        menuClose.setEnabled(false);
+        menuClose.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 actionCloseTab();
             }
@@ -289,6 +344,21 @@ public class AdminViewFrame extends JFrame{
                 actionExit();
             }
         });
+        
+        /* Tools */
+        menu = new JMenu("Tools");
+        menu.setMnemonic('T');
+        menuBar.add(menu);
+        
+        menuCompare = menu.add(new JMenuItem("Compare", 'o'));
+        menuCompare.setIcon(iconCompare );
+        menuCompare.setAccelerator(KeyStroke.getKeyStroke('O', Event.CTRL_MASK));
+        menuCompare.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                actionCompare();
+            }
+        });
+        
         
         /* Edit. */
         menu = new JMenu("Edit");
@@ -304,7 +374,7 @@ public class AdminViewFrame extends JFrame{
         });
         menu.addSeparator();
         menuItemSaveSettingsOnExit = new JCheckBoxMenuItem("Save Settings on Exit");
-        menuItemSaveSettingsOnExit.setSelected(Settings.getSaveSettingsOnExit());
+        menuItemSaveSettingsOnExit.setSelected(Settings.isSaveSettingsOnExit());
         menuItem = menu.add(menuItemSaveSettingsOnExit);
         menuItem.setMnemonic('X');
         menuItem.addActionListener(new ActionListener() {
@@ -356,8 +426,7 @@ public class AdminViewFrame extends JFrame{
                     JPanel panel = new JPanel(true);
                     panel.setLayout(new GridLayout(1,1));
                     panel.setBorder(new TitledBorder("Change Log"));
-                    JOptionPane.showMessageDialog(
-                            getFrame(),scroll);
+                    JOptionPane.showMessageDialog(getFrame(),scroll,"Change Log",JOptionPane.PLAIN_MESSAGE,null);
                 }
             }
         });
@@ -448,13 +517,11 @@ public class AdminViewFrame extends JFrame{
     private void actionLoadRuleTree() {
         new Thread() {
             public void run() {
-                JFileChooser fc = createFileChooser(Settings.getAMLoadPath());
-                fc.addChoosableFileFilter(new CustomFileFilter(
-                        new String[]{"txt",""},"Text File (*.txt; *.)"));
+                JFileChooser fc = createFileChooser(AbstractManager.ACCESS_MANAGER_TYPE);
                 int result = fc.showOpenDialog(getFrame());
                 if(result == JFileChooser.APPROVE_OPTION) {
                     try {
-                        Settings.setAMLoadPath(fc.getCurrentDirectory().getPath());
+                        Settings.setAmLoadPath(fc.getCurrentDirectory().getPath());
                         AccessManager am = new AccessManager();
                         
                         try {
@@ -482,15 +549,13 @@ public class AdminViewFrame extends JFrame{
     private void actionLoadProcedure() {
         new Thread() {
             public void run() {
-                JFileChooser fc = createFileChooser(Settings.getPMLoadPath());
-                fc.addChoosableFileFilter(new CustomFileFilter(
-                        new String[]{"xml","plmxml"},"XML File (*.xml; *.plmxml)"));
+                JFileChooser fc = createFileChooser(AbstractManager.PROCEDURE_MANAGER_TYPE);
                 int result = fc.showOpenDialog(getFrame());
                 if(result == JFileChooser.APPROVE_OPTION) {
                     try {
-                        ProcedureManager pm;
-                        Settings.setPMLoadPath(fc.getCurrentDirectory().getPath());
-                        pm = new ProcedureManager(parentFrame);
+                        
+                        Settings.setPmLoadPath(fc.getCurrentDirectory().getPath());
+                        ProcedureManager pm = new ProcedureManager(parentFrame);
                         try {
                             pm.readFile(fc.getSelectedFile());
                         } catch (Exception ex) {
@@ -512,4 +577,59 @@ public class AdminViewFrame extends JFrame{
             }
         }.start();
     }
+    
+    private void actionCompare(){
+        new Thread() {
+            public void run() {
+                CompareTabChooser chooser = new CompareTabChooser(parentFrame);
+                
+                int result = JOptionPane.showConfirmDialog(getFrame(),chooser,"Compare Managers",JOptionPane.OK_CANCEL_OPTION,JOptionPane.PLAIN_MESSAGE,null);
+                
+                if(result == JOptionPane.CANCEL_OPTION)
+                    return;
+                
+                if(chooser.getSelectionMode().equals(AbstractManager.PROCEDURE_MANAGER_TYPE)) {
+                    JOptionPane.showMessageDialog(parentFrame, "The ability to compare procedures has not yet been implemented.", "Unsupport Feature", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                
+                if((chooser.getSelectedFiles()[0] == null) || (chooser.getSelectedFiles()[1] == null)){
+                    JOptionPane.showMessageDialog(parentFrame, "You need to select 1st and 2nd file.", "Selection Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                
+                if(chooser.getSelectionMode().equals(AbstractManager.ACCESS_MANAGER_TYPE)) {
+                    File files[] = chooser.getSelectedFiles();
+                    AccessManager[] am = new AccessManager[files.length];
+                    try {
+                        for(int k=0; k<files.length; k++) {
+                            am[k] = new AccessManager();
+                            
+                            try {
+                                am[k].readFile(files[k]);
+                            } catch (Exception ex) {
+                                throw new Exception("Corrupted File: "+files[k].getName());
+                            }
+                            
+                            if(!am[k].isValid()) {
+                                throw new Exception("No rule tree found in file "+files[k].getName());
+                            }
+                        }
+                        
+                        CompareAccessManager cam = new CompareAccessManager(am);
+                        
+                        if(!cam.isValid()) {
+                            throw new Exception("Incompatible Comparison"+cam.getName());
+                        }
+                        CompareAccessManagerComponent camComponent = new CompareAccessManagerComponent(parentFrame, cam);
+                        addTabbedPane(camComponent);
+                        
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(parentFrame, ex.getMessage(), "Ruletree File Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }
+        }.start();
+    }
+    
 }

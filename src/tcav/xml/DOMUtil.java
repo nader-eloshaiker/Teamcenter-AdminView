@@ -9,7 +9,7 @@
 
 package tcav.xml;
 
-import tcav.procedure.ProcedureManager;
+import tcav.manager.procedure.ProcedureManager;
 import tcav.resources.ResourceStrings;
 import java.util.List;
 import java.io.InputStream;

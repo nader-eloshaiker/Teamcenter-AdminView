@@ -16,8 +16,8 @@ import java.awt.event.*;
 import java.awt.*;
 import tcav.gui.*;
 import tcav.Settings;
-import tcav.procedure.plmxmlpdm.base.IdBase;
-import tcav.procedure.ProcedureManager;
+import tcav.manager.procedure.plmxmlpdm.base.IdBase;
+import tcav.manager.procedure.ProcedureManager;
 /**
  *
  * @author nzr4dl
@@ -49,7 +49,7 @@ public class ActionComponent extends JComponent {
         radioExpandActions.setOpaque(false);
         radioExpandActions.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                Settings.setPMActionExpandedView(radioExpandActions.isSelected());
+                Settings.setPmActionExpandedView(radioExpandActions.isSelected());
             }
         });
         
@@ -58,14 +58,14 @@ public class ActionComponent extends JComponent {
         radioCollapseActions.setOpaque(false);
         radioCollapseActions.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                Settings.setPMActionExpandedView(!radioCollapseActions.isSelected());
+                Settings.setPmActionExpandedView(!radioCollapseActions.isSelected());
             }
         });
         ButtonGroup buttonGroup = new ButtonGroup();
         buttonGroup.add(radioExpandActions);
         buttonGroup.add(radioCollapseActions);
-        buttonGroup.setSelected(radioExpandActions.getModel(),Settings.getPMActionExpandedView());
-        buttonGroup.setSelected(radioCollapseActions.getModel(),!Settings.getPMActionExpandedView());
+        buttonGroup.setSelected(radioExpandActions.getModel(),Settings.isPmActionExpandedView());
+        buttonGroup.setSelected(radioCollapseActions.getModel(),!Settings.isPmActionExpandedView());
         
         JToolBar toolbar = new GUIutilities().createTreeExpandToolbar(tree, parentFrame);
         toolbar.addSeparator();
@@ -87,7 +87,7 @@ public class ActionComponent extends JComponent {
     
     public void updateTree(IdBase procedure) {
         tree.setModel(new ActionTreeModel(procedure));
-        if(Settings.getPMActionExpandedView())
+        if(Settings.isPmActionExpandedView())
             GUIutilities.expandTree(tree, parentFrame);
     }
 }

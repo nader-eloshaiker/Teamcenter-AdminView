@@ -9,15 +9,26 @@
 
 package tcav.gui.procedure;
 
+import tcav.manager.procedure.plmxmlpdm.type.AssociatedDataSetType;
+import tcav.manager.procedure.plmxmlpdm.type.AssociatedFolderType;
+import tcav.manager.procedure.plmxmlpdm.type.AssociatedFormType;
+import tcav.manager.procedure.plmxmlpdm.type.OrganisationType;
+import tcav.manager.procedure.plmxmlpdm.type.RoleType;
+import tcav.manager.procedure.plmxmlpdm.type.SiteType;
+import tcav.manager.procedure.plmxmlpdm.type.UserDataType;
+import tcav.manager.procedure.plmxmlpdm.type.ValidationResultsType;
+import tcav.manager.procedure.plmxmlpdm.type.WorkflowActionType;
+import tcav.manager.procedure.plmxmlpdm.type.WorkflowBusinessRuleHandlerType;
+import tcav.manager.procedure.plmxmlpdm.type.WorkflowHandlerType;
+import tcav.manager.procedure.plmxmlpdm.type.WorkflowTemplateType;
 import tcav.resources.*;
-import tcav.procedure.plmxmlpdm.TagTypeEnum;
-import tcav.procedure.plmxmlpdm.base.IdBase;
+import tcav.manager.procedure.plmxmlpdm.TagTypeEnum;
+import tcav.manager.procedure.plmxmlpdm.base.IdBase;
 import javax.swing.tree.*;
 import javax.swing.*;
 import java.awt.*;
-import tcav.procedure.plmxmlpdm.type.*;
-import tcav.procedure.plmxmlpdm.type.element.UserDataElementType;
-import tcav.procedure.plmxmlpdm.type.element.ValidationCheckerType;
+import tcav.manager.procedure.plmxmlpdm.type.element.UserDataElementType;
+import tcav.manager.procedure.plmxmlpdm.type.element.ValidationCheckerType;
 /**
  *
  * @author nzr4dl
