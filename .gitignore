@@ -11,3 +11,6 @@
 /build/
 /.TcEAV/
 /dist/
+/TcAdminView/build/
+/TcAdminView/dist/
+/TcAdminView/nbproject/private/

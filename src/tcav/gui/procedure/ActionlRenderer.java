@@ -12,6 +12,7 @@ package tcav.gui.procedure;
 import tcav.manager.procedure.plmxmlpdm.type.SiteType;
 import tcav.manager.procedure.plmxmlpdm.type.UserDataType;
 import tcav.manager.procedure.plmxmlpdm.type.WorkflowActionType;
+import tcav.manager.procedure.plmxmlpdm.type.WorkflowBusinessRuleType;
 import tcav.manager.procedure.plmxmlpdm.type.WorkflowBusinessRuleHandlerType;
 import tcav.manager.procedure.plmxmlpdm.type.WorkflowHandlerType;
 import tcav.manager.procedure.plmxmlpdm.type.WorkflowTemplateType;
@@ -99,15 +100,16 @@ public class ActionlRenderer  implements TreeCellRenderer {
                 break;
                 
             case WorkflowBusinessRule:
-                cell.setText("Business Rule");
-                cell.setToolTipText("Business Rule");
+                WorkflowBusinessRuleType wbr = (WorkflowBusinessRuleType)value;
+                cell.setText("Quorum Rule: "+wbr.getRuleQuorum());
+                cell.setToolTipText("Quorum Rule: "+wbr.getRuleQuorum());
                 cell.setIcon(businessRuleIcon);
                 break;
                 
             case WorkflowAction:
                 WorkflowActionType wa = (WorkflowActionType)value;
-                cell.setText("Action: Type "+wa.getActionType());
-                cell.setToolTipText("Action: Type "+wa.getActionType());
+                cell.setText("Action: "+wa.getType().getName());
+                cell.setToolTipText("Action: "+wa.getType().getName());
                 cell.setIcon(workflowActionIcon);
                 break;
             
