@@ -102,8 +102,8 @@ public class ActionlRenderer  implements TreeCellRenderer {
                 
             case WorkflowBusinessRule:
                 WorkflowBusinessRuleType wbr = (WorkflowBusinessRuleType)value;
-                cell.setText("Quorum Rule: "+wbr.getRuleQuorum());
-                cell.setToolTipText("Quorum Rule: "+wbr.getRuleQuorum());
+                cell.setText("Rule: "+wbr.getRuleQuorum());
+                cell.setToolTipText("Rule: "+wbr.getRuleQuorum());
                 cell.setIcon(businessRuleIcon);
                 break;
                 

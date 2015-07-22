@@ -47,19 +47,30 @@ public class DataModel implements TableModel {
         for(int i=0; i<wt.getActions().length; i++) {
             wh = wt.getActions()[i].getActionHandlers();
             for(int j=0; j<wh.length; j++) {
-                if(!header.contains(wh[j])) {
-                    index = header.indexOfBusinessRule();
-                    if(index > -1)
-                        header.add(index, new ColumnHeaderEntry(wh[j]));
-                    else
-                        header.add(new ColumnHeaderEntry(wh[j]));
-                }
-                for(int k=0; k<wh[j].getAttribute().size(); k++) {
-                    if(wh[j].getAttribute().get(k).getTagType() == TagTypeEnum.Arguments) {
-                        ud = (UserDataType)wh[j].getAttribute().get(k);
-                        if(!header.contains(wh[j], ud)) {
-                            index = header.lastIndexOf(wh[j]);
-                            header.add(index+1, new ColumnHeaderEntry(wh[j], ud));
+                if(wh[j].getAttribute().size() == 0) {
+                    if(!header.contains(wh[j])) {
+                        index = header.indexOfRuleClassification();
+                        if(index > -1)
+                            header.add(index, new ColumnHeaderEntry(wh[j]));
+                        else
+                            header.add(new ColumnHeaderEntry(wh[j]));
+                    }
+                } else {
+                    for(int k=0; k<wh[j].getAttribute().size(); k++) {
+                        if(wh[j].getAttribute().get(k).getTagType() == TagTypeEnum.Arguments) {
+                            ud = (UserDataType)wh[j].getAttribute().get(k);
+                            if(!header.contains(wh[j], ud)) {
+                                index = header.lastIndexOfMatches(wh[j]);
+                                if(index > -1)
+                                    header.add(index+1, new ColumnHeaderEntry(wh[j], ud));
+                                else {
+                                    index = header.indexOfRuleClassification();
+                                    if(index > -1)
+                                        header.add(index+1, new ColumnHeaderEntry(wh[j], ud));
+                                    else
+                                        header.add(new ColumnHeaderEntry(wh[j], ud));
+                                }
+                            }
                         }
                     }
                 }
@@ -67,28 +78,42 @@ public class DataModel implements TableModel {
             
             wbr = wt.getActions()[i].getRules();
             for(int j=0; j<wbr.length; j++) {
-                if(!header.contains(wbr[j]))
-                    header.add(new ColumnHeaderEntry(wbr[j]));
-                
-                wbrh = wbr[j].getRuleHandlers();
-                for(int k=0; k<wbrh.length; k++) {
-                    if(!header.contains(wbr[j], wbrh[k])){
-                        index = header.lastIndexOf(wbr[j]);
-                        header.add(index+1, new ColumnHeaderEntry(wbr[j], wbrh[k]));
-                    }
-                        
-                    for(int l=0; l<wbrh[k].getAttribute().size(); l++) {
-                        if(wbrh[k].getAttribute().get(l).getTagType() == TagTypeEnum.Arguments) {
-                            ud = (UserDataType)wbrh[k].getAttribute().get(l);
-                            if(!header.contains(wbr[j], wbrh[k], ud)) {
-                                index = header.lastIndexOf(wbr[j], wbrh[k]);
-                                header.add(index+1, new ColumnHeaderEntry(wbr[j], wbrh[k], ud));
+                if(wbr[j].getRuleHandlers().length == 0){
+                    if(!header.contains(wbr[j]))
+                        header.add(new ColumnHeaderEntry(wbr[j]));
+                } else {
+                    wbrh = wbr[j].getRuleHandlers();
+                    for(int k=0; k<wbrh.length; k++) {
+                        if(wbrh[k].getAttribute().size() == 0) {
+                            if(!header.contains(wbr[j], wbrh[k])){
+                                index = header.lastIndexOfMatches(wbr[j]);
+                                if(index > -1)
+                                    header.add(index+1, new ColumnHeaderEntry(wbr[j], wbrh[k]));
+                                else
+                                    header.add(new ColumnHeaderEntry(wbr[j], wbrh[k]));
+                            }
+                        } else {
+                            for(int l=0; l<wbrh[k].getAttribute().size(); l++) {
+                                if(wbrh[k].getAttribute().get(l).getTagType() == TagTypeEnum.Arguments) {
+                                    ud = (UserDataType)wbrh[k].getAttribute().get(l);
+                                    if(!header.contains(wbr[j], wbrh[k], ud)) {
+                                        index = header.lastIndexOfMatches(wbr[j], wbrh[k]);
+                                        if(index > -1)
+                                            header.add(index+1, new ColumnHeaderEntry(wbr[j], wbrh[k], ud));
+                                        else {
+                                            index = header.lastIndexOfMatches(wbr[j]);
+                                            if(index > -1)
+                                                header.add(index+1, new ColumnHeaderEntry(wbr[j], wbrh[k], ud));
+                                            else
+                                                header.add(new ColumnHeaderEntry(wbr[j], wbrh[k], ud));
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
                 }
             }
-            
         }
         
         
@@ -134,57 +159,61 @@ public class DataModel implements TableModel {
         
         ColumnHeaderEntry entry = getColumn(columnIndex);
         
+        
         for(int i=0; i<wt.getActions().length; i++) {
-            wh = wt.getActions()[i].getActionHandlers();
-            
-            for(int j=0; j<wh.length; j++) {
-                if(entry.equals(wh[j])) {
-                    
-                    //if(entry.isArgumentsEmpty())
-                    if(entry.isHandler())
-                        return "y";
-                    
-                    for(int k=0; k<wh[j].getAttribute().size(); k++) {
-                        if(wh[j].getAttribute().get(k).getTagType() == TagTypeEnum.Arguments) {
-                            ud = (UserDataType)wh[j].getAttribute().get(k);
-                            if(entry.equals(wh[j], ud))
-                                return "y";
-                        }
-                    }
-                    
-                }
-            }
-            
-            wbr = wt.getActions()[i].getRules();
-            for(int j=0; j<wbr.length; j++) {
-                if(entry.equals(wbr[j])){
-                    
-                    //if(entry.isHandlerEmpty() && entry.isArgumentsEmpty())
-                    if(entry.isBusinessRule())
-                        return "y";
-                    
-                    wbrh = wbr[j].getRuleHandlers();
-                    
-                    for(int k=0; k<wbrh.length; k++) {
-                        if(entry.equals(wbr[j], wbrh[k])) {
-                            
-                            //if(entry.isArgumentsEmpty())
-                            if(entry.isHandler())
-                                return "y";
-                            
-                            for(int l=0; l<wbrh[k].getAttribute().size(); l++) {
-                                if(wbrh[k].getAttribute().get(l).getTagType() == TagTypeEnum.Arguments) {
-                                    ud = (UserDataType)wbrh[k].getAttribute().get(l);
-                                    if(entry.equals(wbr[j], wbrh[k], ud))
+            if(entry.isActionClassification()) {
+                
+                wh = wt.getActions()[i].getActionHandlers();
+                for(int j=0; j<wh.length; j++) {
+                    if(entry.matches(wh[j])) {
+                        
+                        if(entry.equals(wh[j])) {
+                            return "y";
+                        } else {
+                            for(int k=0; k<wh[j].getAttribute().size(); k++) {
+                                if(wh[j].getAttribute().get(k).getTagType() == TagTypeEnum.Arguments) {
+                                    ud = (UserDataType)wh[j].getAttribute().get(k);
+                                    if(entry.equals(wh[j], ud))
                                         return "y";
-                                    
                                 }
                             }
-                            
                         }
+                        
                     }
-                    
                 }
+                
+            } else if(entry.isRuleClassicifaction()) {
+                
+                wbr = wt.getActions()[i].getRules();
+                for(int j=0; j<wbr.length; j++) {
+                    if(entry.matches(wbr[j])){
+                        
+                        if(entry.equals(wbr[j]))
+                            return "y";
+                        
+                        wbrh = wbr[j].getRuleHandlers();
+                        
+                        for(int k=0; k<wbrh.length; k++) {
+                            if(entry.matches(wbr[j], wbrh[k])) {
+                                
+                                if(entry.equals(wbr[j], wbrh[k]))
+                                    return "y";
+                                
+                                for(int l=0; l<wbrh[k].getAttribute().size(); l++) {
+                                    if(wbrh[k].getAttribute().get(l).getTagType() == TagTypeEnum.Arguments) {
+                                        ud = (UserDataType)wbrh[k].getAttribute().get(l);
+                                        if(entry.equals(wbr[j], wbrh[k], ud))
+                                            return "y";
+                                        
+                                    }
+                                }
+                                
+                            }
+                        }
+                        
+                    }
+                }
+                
             }
             
         }

@@ -21,35 +21,36 @@ import java.util.ArrayList;
  * @author nzr4dl
  */
 public class ColumnHeaderEntry {
-    private String quorum;
+    private int quorum;
     private String handler;
     private ArrayList<String> arguments;
     
     private int type;
-    public static final int WORKFLOW_HANDLER_TYPE = 0;
-    public static final int WORKFLOW_HANDLER_ARGUMENT_TYPE = 1;
-    public static final int BUSINESS_RULE_TYPE = 2;
-    public static final int BUSINESS_RULE_HANDLER_TYPE = 3;
-    public static final int BUSINESS_RULE_HANDLER_ARGUMENT_TYPE = 4;
-    public static final String ARGUMENT_PREFIX = "   ";
+    private static final int ACTION_HANDLER_TYPE = 0;
+    private static final int ACTION_HANDLER_ARGUMENT_TYPE = 1;
+    private static final int RULE_TYPE = 2;
+    private static final int RULE_HANDLER_TYPE = 3;
+    private static final int RULE_HANDLER_ARGUMENT_TYPE = 4;
     
     private int classification;
-    public static final int WORKFLOW_HANDLER_CLASSIFICATION = 0;
-    public static final int BUSINESS_RULE_CLASSIFICATION = 1;
+    private static final int ACTION_CLASSIFICATION = 0;
+    private static final int RULE_CLASSIFICATION = 1;
+    
+    public static final String ARGUMENT_PREFIX = "   ";
     
     /**
      * Creates a new instance of ColumnHeaderEntry
      */
     public ColumnHeaderEntry(WorkflowHandlerType wh) {
-        this.classification = WORKFLOW_HANDLER_CLASSIFICATION;
-        this.type = WORKFLOW_HANDLER_TYPE;
+        this.classification = ACTION_CLASSIFICATION;
+        this.type = ACTION_HANDLER_TYPE;
         this.handler = wh.getName();
         arguments = new ArrayList<String>();
     }
     
     public ColumnHeaderEntry(WorkflowHandlerType wh, UserDataType ud) {
-        this.classification = WORKFLOW_HANDLER_CLASSIFICATION;
-        this.type = WORKFLOW_HANDLER_ARGUMENT_TYPE;
+        this.classification = ACTION_CLASSIFICATION;
+        this.type = ACTION_HANDLER_ARGUMENT_TYPE;
         this.handler = wh.getName();
         arguments = new ArrayList<String>();
         for(int i=0; i<ud.getUserValue().size(); i++)
@@ -57,96 +58,152 @@ public class ColumnHeaderEntry {
     }
     
     public ColumnHeaderEntry(WorkflowBusinessRuleType wbr) {
-        this.classification = BUSINESS_RULE_CLASSIFICATION;
-        this.type = BUSINESS_RULE_TYPE;
-        this.quorum = wbr.getRuleQuorum().toString();
+        this.classification = RULE_CLASSIFICATION;
+        this.type = RULE_TYPE;
+        this.quorum = wbr.getRuleQuorum();
         this.handler = "";
         arguments = new ArrayList<String>();
     }
     
     public ColumnHeaderEntry(WorkflowBusinessRuleType wbr, WorkflowBusinessRuleHandlerType wbrh) {
-        this.classification = BUSINESS_RULE_CLASSIFICATION;
-        this.type = BUSINESS_RULE_HANDLER_TYPE;
-        this.quorum = wbr.getRuleQuorum().toString();
+        this.classification = RULE_CLASSIFICATION;
+        this.type = RULE_HANDLER_TYPE;
+        this.quorum = wbr.getRuleQuorum();
         this.handler = wbrh.getName();
         arguments = new ArrayList<String>();
     }
     
     public ColumnHeaderEntry(WorkflowBusinessRuleType wbr, WorkflowBusinessRuleHandlerType wbrh, UserDataType ud) {
-        this.classification = BUSINESS_RULE_CLASSIFICATION;
-        this.type = BUSINESS_RULE_HANDLER_ARGUMENT_TYPE;
-        this.quorum = wbr.getRuleQuorum().toString();
+        this.classification = RULE_CLASSIFICATION;
+        this.type = RULE_HANDLER_ARGUMENT_TYPE;
+        this.quorum = wbr.getRuleQuorum();
         this.handler = wbrh.getName();
         arguments = new ArrayList<String>();
         for(int i=0; i<ud.getUserValue().size(); i++)
             arguments.add(ud.getUserValue().get(i).getValue());
     }
     
-    public boolean isBusinessRule() {
-        return (type == BUSINESS_RULE_TYPE);
+    public boolean isRuleClassicifaction() {
+        return (classification == RULE_CLASSIFICATION);
+    }
+    
+    public boolean isActionClassification() {
+        return (classification == ACTION_CLASSIFICATION);
+    }
+    
+    public boolean isRule() {
+        return (type == RULE_TYPE);
     }
     
     public boolean isHandler() {
-        return (type == BUSINESS_RULE_HANDLER_TYPE || type == WORKFLOW_HANDLER_TYPE);
+        return (type == RULE_HANDLER_TYPE) || (type == ACTION_HANDLER_TYPE);
     }
     
     public boolean isArgument() {
-        return (type == BUSINESS_RULE_HANDLER_ARGUMENT_TYPE || type == WORKFLOW_HANDLER_ARGUMENT_TYPE);
+        return (type == RULE_HANDLER_ARGUMENT_TYPE) || (type == ACTION_HANDLER_ARGUMENT_TYPE);
     }
     
     public boolean equals(WorkflowBusinessRuleType wbr) {
-        if(classification != BUSINESS_RULE_CLASSIFICATION)
+        if(classification != RULE_CLASSIFICATION)
             return false;
         
-        return (quorum.equals(wbr.getRuleQuorum().toString()));
+        if(!isRule())
+            return false;
+        
+        return (quorum == wbr.getRuleQuorum());
     }
     
     public boolean equals(WorkflowBusinessRuleType wbr, WorkflowBusinessRuleHandlerType wbrh) {
-        if(classification != BUSINESS_RULE_CLASSIFICATION)
+        if(classification != RULE_CLASSIFICATION)
             return false;
         
-        if(!equals(wbr))
+        if(!isHandler())
+            return false;
+        
+        if(!matches(wbr))
             return false;
         
         return (handler.equals(wbrh.getName()));
     }
     
     public boolean equals(WorkflowBusinessRuleType wbr, WorkflowBusinessRuleHandlerType wbrh, UserDataType ud) {
-        if(classification != BUSINESS_RULE_CLASSIFICATION)
+        if(classification != RULE_CLASSIFICATION)
             return false;
         
-        if(!equals(wbr))
+        if(!isArgument())
             return false;
         
-        if(wbrh == null)
-            return isBusinessRule();
-        else if(!equals(wbr, wbrh))
+        if(!matches(wbr, wbrh))
             return false;
-        
-        if(ud == null)
-            return isHandler();
         
         return equals(ud);
     }
     
     public boolean equals(WorkflowHandlerType wh) {
-        if(classification != WORKFLOW_HANDLER_CLASSIFICATION)
+        if(classification != ACTION_CLASSIFICATION)
+            return false;
+        
+        if(!isHandler())
             return false;
         
         return handler.equals(wh.getName());
     }
     
     public boolean equals(WorkflowHandlerType wh, UserDataType ud) {
-        if(classification != WORKFLOW_HANDLER_CLASSIFICATION)
+        if(classification != ACTION_CLASSIFICATION)
             return false;
         
-        if(!equals(wh))
+        if(!isArgument())
             return false;
         
-        if(ud == null)
-            return isHandler();
-        else
-            return equals(ud);
+        if(!matches(wh))
+            return false;
+        
+        return equals(ud);
+    }
+    
+    public boolean matches(WorkflowBusinessRuleType wbr) {
+        if(classification != RULE_CLASSIFICATION)
+            return false;
+        
+        return (quorum == wbr.getRuleQuorum());
+    }
+    
+    public boolean matches(WorkflowBusinessRuleType wbr, WorkflowBusinessRuleHandlerType wbrh) {
+        if(classification != RULE_CLASSIFICATION)
+            return false;
+        
+        if(!matches(wbr))
+            return false;
+        
+        return (handler.equals(wbrh.getName()));
+    }
+    
+    public boolean matches(WorkflowBusinessRuleType wbr, WorkflowBusinessRuleHandlerType wbrh, UserDataType ud) {
+        if(classification != RULE_CLASSIFICATION)
+            return false;
+        
+        if(!matches(wbr, wbrh))
+            return false;
+        
+        return equals(ud);
+    }
+    
+    public boolean matches(WorkflowHandlerType wh) {
+        if(classification != ACTION_CLASSIFICATION)
+            return false;
+        
+        return handler.equals(wh.getName());
+    }
+    
+    public boolean matches(WorkflowHandlerType wh, UserDataType ud) {
+        if(classification != ACTION_CLASSIFICATION)
+            return false;
+        
+        if(!matches(wh))
+            return false;
+        
+        return equals(ud);
     }
     
     private String toExportString;
@@ -167,43 +224,88 @@ public class ColumnHeaderEntry {
         return toString;
     }
     
-    private String toString(boolean export) {
+    private String[] strArray;
+    
+    public String[] toStringArray() {
+        if(strArray != null)
+            return strArray;
+        
         switch(type) {
-            case WORKFLOW_HANDLER_TYPE:
-            case BUSINESS_RULE_HANDLER_TYPE:
-                return toStringHandler(export);
+            case ACTION_HANDLER_TYPE:
+                strArray = new String[] {toStringHandler(false)};
+                break;
                 
-            case WORKFLOW_HANDLER_ARGUMENT_TYPE:
-            case BUSINESS_RULE_HANDLER_ARGUMENT_TYPE:
-                return toStringArgument(export);
+            case ACTION_HANDLER_ARGUMENT_TYPE:
+                strArray = new String[] {toStringHandler(false), toStringArgument(false)};
+                break;
                 
-            case BUSINESS_RULE_TYPE:
-                return toStringBusinessRule(export);
+            case RULE_TYPE:
+                strArray = new String[] {toStringRule(false)};
+                break;
+                
+            case RULE_HANDLER_TYPE:
+                strArray = new String[] {toStringRule(false), toStringHandler(false)};
+                break;
+                
+            case RULE_HANDLER_ARGUMENT_TYPE:
+                strArray = new String[] {toStringRule(false), toStringHandler(false), toStringArgument(false)};
+                break;
                 
             default:
-                return "";
+                strArray = new String[] {};
         }
+        
+        return strArray;
     }
     
-    private String toStringBusinessRule(boolean export)  {
-        if(export)
-            return "\"Quorum Rule " + quorum + "\"";
-        else
-            return "Quorum Rule "+quorum;
+    private String toString(boolean export) {
+        String s;
+        switch(type) {
+            case ACTION_HANDLER_TYPE:
+                s = toStringHandler(export);
+                break;
+                
+            case ACTION_HANDLER_ARGUMENT_TYPE:
+                s = toStringHandler(export) + "\n" + toStringArgument(export);
+                break;
+                
+            case RULE_TYPE:
+                s = toStringRule(export);
+                break;
+                
+            case RULE_HANDLER_TYPE:
+                s = toStringRule(export) + "\n" + toStringHandler(export);
+                break;
+                
+            case RULE_HANDLER_ARGUMENT_TYPE:
+                s = toStringRule(export) + "\n" + toStringHandler(export) + "\n" + toStringArgument(export);
+                break;
+                
+            default:
+                s = "";
+        }
+        
+        if(export) {
+            s.replaceAll("\"", "\"\"");
+            s = "\"" + s + "\"";
+        }
+        
+        return s;
+    }
+    
+    private String toStringRule(boolean export)  {
+        return "Rule "+quorum;
     }
     
     private String toStringHandler(boolean export) {
         String indent;
         
-        if(type == BUSINESS_RULE_HANDLER_TYPE)
+        if(classification == RULE_CLASSIFICATION)
             indent = ARGUMENT_PREFIX;
         else
             indent = "";
         
-        if(export)
-            return "\"" + indent + handler + "\"";
-        else
-            return indent + handler;
+        return indent + handler;
     }
     
     private String toStringArgument(boolean export) {
@@ -212,7 +314,7 @@ public class ColumnHeaderEntry {
         String pad;
         String indent;
         
-        if(type == BUSINESS_RULE_HANDLER_ARGUMENT_TYPE)
+        if(classification == RULE_CLASSIFICATION)
             indent = ARGUMENT_PREFIX + ARGUMENT_PREFIX;
         else
             indent = ARGUMENT_PREFIX;
@@ -231,11 +333,7 @@ public class ColumnHeaderEntry {
                     argument += "\n";
         }
         
-        if(export) {
-            argument = argument.replaceAll("\"", "\"\"");
-            return "\"" + argument + "\"";
-        } else
-            return argument;
+        return argument;
     }
     
     private String createPadString(int index) {

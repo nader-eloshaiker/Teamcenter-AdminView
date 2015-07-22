@@ -67,8 +67,6 @@ public class TabulateComponent extends TabbedPanel {
         
         formatTable();
         
-        System.out.println(table.getColumnCount());
-        
         JPanel panelTable = new JPanel();
         panelTable.setLayout(new BorderLayout());
         panelTable.add(table.getTableHeader(), BorderLayout.NORTH);
@@ -394,8 +392,8 @@ public class TabulateComponent extends TabbedPanel {
         JLabel label = new JLabel();
         DataModel model = (DataModel)table.getModel();
         s = model.getColumn(columnIndex).toString();
-        if(!s.startsWith(ColumnHeaderEntry.ARGUMENT_PREFIX))
-            label.setFont(label.getFont().deriveFont(Font.BOLD));
+        //if(!s.startsWith(ColumnHeaderEntry.ARGUMENT_PREFIX))
+        //    label.setFont(label.getFont().deriveFont(Font.BOLD));
         label.setIcon(new RotatedTextIcon(RotatedTextIcon.LEFT, label.getFont(), s));
         width = Math.max(label.getPreferredSize().width, width);
         
