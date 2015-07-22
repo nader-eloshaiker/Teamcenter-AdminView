@@ -11,6 +11,7 @@ package tcav.ruletree;
 
 import java.io.*;
 import java.util.*;
+import tcav.utils.ArrayListSorter;
 /**
  *
  * @author NZR4DL
@@ -18,9 +19,10 @@ import java.util.*;
 public class AccessManager {
     
     private MetaData metaData;
-    private AccessControlColumns columns;
+    private AccessControlHeader acHeader;
     private AccessRuleList arList;
-    private AccessManagerTree amTree;
+    //private RuleTree ruleTree;
+    private ArrayList<RuleTreeItem> ruleTree;
     private Vector<Integer> accessRuleUnusedIndex;
     
     
@@ -28,8 +30,9 @@ public class AccessManager {
     public AccessManager() {
         metaData = new MetaData();
         arList = new AccessRuleList();
-        amTree = new AccessManagerTree();
-        columns = new AccessControlColumns();
+        //ruleTree = new RuleTree();
+        ruleTree = new ArrayList<RuleTreeItem>();
+        acHeader = new AccessControlHeader();
         accessRuleUnusedIndex = new Vector<Integer>();
     }
     
@@ -42,12 +45,12 @@ public class AccessManager {
         return accessRuleUnusedIndex.size();
     }
     
-    public AccessControlColumns getAccessControlColumns() {
-        return columns;
+    public AccessControlHeader getAccessControlColumns() {
+        return acHeader;
     }
     
-    public AccessManagerTree getAccessManagerTree() {
-        return amTree;
+    public ArrayList<RuleTreeItem> getAccessManagerTree() {
+        return ruleTree;
     }
     
     public AccessRuleList getAccessRuleList() {
@@ -60,7 +63,7 @@ public class AccessManager {
     
     public void readFile(File file) throws IOException {
         final int MODE_METADATA = 0;
-        final int MODE_ACCESS_CONTROL_COLUMNS = 1;
+        final int MODE_ACCESS_CONTROL_acHeader = 1;
         final int MODE_ACCESS_CONTROL = 2;
         final int MODE_RULE_TREE = 3;
         
@@ -72,14 +75,14 @@ public class AccessManager {
         boolean toggleTopTreeNode = true;
         boolean crDetected = false;
         AccessRule accessRule = new AccessRule();
-        AccessManagerItem amItem;
-
+        RuleTreeItem amItem;
+        
         int currentIndent = 0;
         int newIndent = 0;
         int indentVariance = 0;
         int parentNodeIndex = 0;
         Stack<Integer> parentalIndex = new Stack<Integer>();
-
+        
         
         
         FileReader fr = new FileReader(file);
@@ -101,14 +104,14 @@ public class AccessManager {
                         break;
                     } else {
                         //All meta data has been imported,
-                        //This line contains Columns, don't break.
-                        readMode = MODE_ACCESS_CONTROL_COLUMNS;
+                        //This line contains acHeader, don't break.
+                        readMode = MODE_ACCESS_CONTROL_acHeader;
                         metaData.setMetaData(ruleMetaData);
                     }
                     
-                case MODE_ACCESS_CONTROL_COLUMNS:
+                case MODE_ACCESS_CONTROL_acHeader:
                     if (thisLine.length() != 0){
-                        columns.setAccessControlColumns(thisLine);
+                        acHeader.setAccessControlColumns(thisLine);
                         readMode = MODE_ACCESS_CONTROL;
                     }
                     break;
@@ -142,13 +145,19 @@ public class AccessManager {
                     
                 case MODE_RULE_TREE:
                     if (thisLine.length() != 0) {
-                        amItem = new AccessManagerItem(thisLine);
+                        amItem = new RuleTreeItem(thisLine);
+
+                        if(conditionsList.indexOf(amItem.getCondition()) == -1) {
+                            conditionsList.add(amItem.getCondition());
+                            ArrayListSorter.sortStringArray(conditionsList);
+                        }
+                        
                         if(amItem.getAccessRuleName() != null) {
                             amItem.setAccessRuleListIndex(arList.indexOf(amItem.getAccessRuleName()));
                             accessRule = arList.get(amItem.getAccessRuleListIndex());
                             accessRule.addTreeIndex(ruleTreeIndex);
                         }
-
+                        
                         newIndent = amItem.getIndentLevel();
                         if (newIndent >  currentIndent) {
                             parentalIndex.push(ruleTreeIndex-1);
@@ -159,8 +168,8 @@ public class AccessManager {
                         }
                         currentIndent = newIndent;
                         amItem.setAncestors(getArray(parentalIndex));
-
-                        amTree.addElement(amItem);
+                        
+                        ruleTree.add(amItem);
                         ruleTreeIndex++;
                     }
                     break;
@@ -170,6 +179,12 @@ public class AccessManager {
         
         br.close();
         findUnusedRules();
+    }
+    
+    private Vector<String> conditionsList = new Vector<String>();;
+    
+    public Vector<String> getConditions() {
+        return conditionsList;
     }
     
     public int[] getArray(Stack<Integer> stack) {
@@ -183,10 +198,10 @@ public class AccessManager {
         String s;
         AccessRule ar;
         AccessControl acEntry;
-        AccessManagerItem amItem;
+        RuleTreeItem amItem;
         
         s = "MetaData:\n" + metaData.toString() + "\n" +
-                "Access Control Columns:\n" + columns.toString() + "\n" +
+                "Access Control acHeader:\n" + acHeader.toString() + "\n" +
                 "Access Rules:\n";
         
         for (int i=0; i<arList.size(); i++){
@@ -201,8 +216,8 @@ public class AccessManager {
             s += "\n\n";
         }
         
-        for (int k=0; k<amTree.size(); k++) {
-            amItem = amTree.elementAt(k);
+        for (int k=0; k<ruleTree.size(); k++) {
+            amItem = ruleTree.get(k);
             s += amItem.toString()+"\n";
         }
         

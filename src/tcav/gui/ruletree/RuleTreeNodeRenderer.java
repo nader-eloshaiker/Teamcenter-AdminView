@@ -15,7 +15,7 @@ package tcav.gui.ruletree;
 import javax.swing.*;
 import javax.swing.tree.*;
 import java.awt.*;
-import tcav.ruletree.AccessManagerItem;
+import tcav.ruletree.RuleTreeItem;
 import tcav.ResourceLocator;
 
 public class RuleTreeNodeRenderer implements TreeCellRenderer {
@@ -48,10 +48,16 @@ public class RuleTreeNodeRenderer implements TreeCellRenderer {
         if(value == null)
             return cell;
         
-        AccessManagerItem amItem = (AccessManagerItem)value;
+        RuleTreeItem amItem = (RuleTreeItem)value;
         
         cell.setText(amItem.toString());
         cell.setToolTipText(amItem.toString());
+        if(amItem.getParamters() != null)
+            for(int i=0; i<amItem.getParamters().length; i++)
+                if(amItem.getParamters()[i].equals("Protected")){
+                    cell.setBackgroundNonSelectionColor(new Color(255,0,0));
+                    cell.setBorderSelectionColor(new Color(255,0,0));
+                }
         if (leaf) {
             cell.setIcon(ruleIcon);
         }

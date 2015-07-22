@@ -9,11 +9,11 @@
 
 package tcav.gui.ruletree;
 
+import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.tree.*;
 import javax.swing.event.*;
-import tcav.ruletree.AccessManagerTree;
-import tcav.ruletree.AccessManagerItem;
+import tcav.ruletree.RuleTreeItem;
 
 
 /**
@@ -22,10 +22,10 @@ import tcav.ruletree.AccessManagerItem;
  */
 public class RuleTreeModel implements TreeModel{
     
-    private AccessManagerTree amTree;
+    private ArrayList<RuleTreeItem> amTree;
     
     /** Creates a new instance of RuleTreeModel */
-    public RuleTreeModel(AccessManagerTree amTree) {
+    public RuleTreeModel(ArrayList<RuleTreeItem> amTree) {
         this.amTree = amTree;
     }
     
@@ -38,7 +38,7 @@ public class RuleTreeModel implements TreeModel{
     } 
  
     public Object getChild(Object parent, int index){ 
-        AccessManagerItem node = (AccessManagerItem)parent; 
+        RuleTreeItem node = (RuleTreeItem)parent; 
         int indexCounter = -1;
         int parentIndex = amTree.indexOf(node);
         
@@ -56,7 +56,7 @@ public class RuleTreeModel implements TreeModel{
     } 
  
     public int getChildCount(Object parent){ 
-        AccessManagerItem node = (AccessManagerItem)parent; 
+        RuleTreeItem node = (RuleTreeItem)parent; 
         int counter = 0;
         int parentIndex = amTree.indexOf(node);
         
@@ -69,7 +69,7 @@ public class RuleTreeModel implements TreeModel{
     } 
  
     public boolean isLeaf(Object node){ 
-        AccessManagerItem leafNode = (AccessManagerItem)node; 
+        RuleTreeItem leafNode = (RuleTreeItem)node; 
         int leafIndex = amTree.indexOf(leafNode);
         if(leafIndex+1 >= amTree.size())
             return true;
@@ -89,8 +89,8 @@ public class RuleTreeModel implements TreeModel{
         if(parent == null || child == null)
             return -1;
         
-        AccessManagerItem node = (AccessManagerItem)parent; 
-        AccessManagerItem childNode = (AccessManagerItem)child; 
+        RuleTreeItem node = (RuleTreeItem)parent; 
+        RuleTreeItem childNode = (RuleTreeItem)child; 
         int indexCounter = -1;
         int parentIndex = amTree.indexOf(node);
         int childIndex = amTree.indexOf(childNode);
@@ -116,7 +116,7 @@ public class RuleTreeModel implements TreeModel{
         // not editable 
     }
     
-    private boolean isChild(AccessManagerItem parentItem, AccessManagerItem currentItem) {
+    private boolean isChild(RuleTreeItem parentItem, RuleTreeItem currentItem) {
         int[] parentAncestors = parentItem.getAncestors();
         int[] currentAncestors = currentItem.getAncestors();
         int parentIndex = amTree.indexOf(parentItem);
@@ -134,7 +134,7 @@ public class RuleTreeModel implements TreeModel{
             return true;
     }
     
-    private boolean isParent(AccessManagerItem currentItem, AccessManagerItem parentItem) {
+    private boolean isParent(RuleTreeItem currentItem, RuleTreeItem parentItem) {
         int[] parentAncestors = parentItem.getAncestors();
         int[] currentAncestors = currentItem.getAncestors();
         int parentIndex = amTree.indexOf(parentItem);
