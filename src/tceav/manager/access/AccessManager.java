@@ -138,21 +138,21 @@ public class AccessManager extends ManagerAdapter {
 
                 case MODE_ACCESS_CONTROL:
                     if (thisLine.length() == 0) {
+
                         thisLine = br.readLine();
+
                         if (thisLine != null) {
-                            if (thisLine.length() == 0) {
+
+                            if (thisLine.length() == 0)
                                 readMode = MODE_RULE_TREE;
-                            } else {
-                                accessRule = new AccessRule();
-                                accessRule.setRule(thisLine);
-                                arList.add(accessRule);
-                            }
+                            else
+                                arList.addNewRule(thisLine);
+                            
                         } else {
                             readMode = MODE_UNEXPECTED_EOF;
                         }
                     } else {
-                        AccessControl acEntry = new AccessControl(thisLine);
-                        accessRule.add(acEntry);
+                        arList.addNewAccessControl(thisLine);
                     }
                     break;
 

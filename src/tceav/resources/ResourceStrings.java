@@ -36,15 +36,15 @@ public class ResourceStrings {
     }
     
     public static String getVersion() {
-        return "5.00";
+        return "5.01";
     }
     
     public static String getBuild() {
-        return "179";
+        return "180";
     }
     
     public static String getReleaseDate() {
-        return "18-Sep-09";
+        return "25-Sep-09";
     }
     
     public static String getApplicationName() {
@@ -64,7 +64,7 @@ public class ResourceStrings {
     }
 
     public static String getWebsite() {
-        return "http://tceav.sourceforge.net";
+        return "http://sourceforge.net/projects/tceav/";
     }
     
     public static String getProjectSupporters() {

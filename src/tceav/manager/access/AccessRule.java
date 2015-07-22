@@ -29,6 +29,10 @@ public class AccessRule extends ArrayList<AccessControl>  implements CompareInte
     public AccessRule() {
     }
 
+    public AccessRule(String accessRule) {
+        setRule(accessRule);
+    }
+
     @Override
     public boolean add(AccessControl a) {
         a.setColumns(columns);
