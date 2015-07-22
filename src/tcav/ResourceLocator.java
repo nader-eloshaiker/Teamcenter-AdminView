@@ -60,11 +60,11 @@ public class ResourceLocator {
     }
     
     public static String getBuild() {
-        return "39";
+        return "40";
     }
     
     public static String getReleaseDate() {
-        return "8-Oct-07";
+        return "26-Oct-07";
     }
     
     public static String getApplicationName() {

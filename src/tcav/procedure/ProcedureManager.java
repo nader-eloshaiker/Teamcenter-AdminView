@@ -234,6 +234,7 @@ public class ProcedureManager {
     
     private void decodeXML(Node node) {
         Node currentNode = node;
+        Node parentNode = node;
         NodeList list;
         
         try {
@@ -252,9 +253,11 @@ public class ProcedureManager {
             }
             
             TagTypeEnum tagType;
+            int nodeCount = list.getLength();
+            int nodeIndex = 0;
             
-            for(int i=0; i<list.getLength(); i++) {
-                currentNode = list.item(i);
+            for(int i=0; i<nodeCount; i++) {
+                currentNode = list.item(nodeIndex);
                 tagType = TagTypeEnum.fromValue(currentNode.getNodeName());
                 
                 progressMonitor.setProgress(i);
@@ -264,69 +267,81 @@ public class ProcedureManager {
                     case Header:
                         header = new HeaderType(currentNode);
                         setIdLookup(header.getId(),TagTypeEnum.Header,0);
+                        parentNode.removeChild(currentNode);
                         break;
                         
                     case Text:
+                        nodeIndex++;
                         break;
                         
                     case WorkflowTemplate:
                         WorkflowTemplateType wt = new WorkflowTemplateType(currentNode);
                         workflowTemplateList.add(wt);
                         setIdLookup(wt.getId(), TagTypeEnum.WorkflowTemplate, workflowTemplateList.size()-1);
+                        parentNode.removeChild(currentNode);
                         break;
                         
                     case WorkflowHandler:
                         WorkflowHandlerType wh = new WorkflowHandlerType(currentNode);
                         workflowHanderList.add(wh);
                         setIdLookup(wh.getId(), TagTypeEnum.WorkflowHandler, workflowHanderList.size()-1);
+                        parentNode.removeChild(currentNode);
                         break;
                         
                     case Site:
                         SiteType stype = new SiteType(currentNode);
                         siteList.add(stype);
                         setIdLookup(stype.getId(), TagTypeEnum.Site, siteList.size()-1);
+                        parentNode.removeChild(currentNode);
                         break;
                         
                     case WorkflowAction:
                         WorkflowActionType wa = new WorkflowActionType(currentNode);
                         workflowActionList.add(wa);
                         setIdLookup(wa.getId(), TagTypeEnum.WorkflowAction, workflowActionList.size()-1);
+                        parentNode.removeChild(currentNode);
                         break;
                         
                     case WorkflowBusinessRuleHandler:
                         WorkflowBusinessRuleHandlerType wbrh = new WorkflowBusinessRuleHandlerType(currentNode);
                         workflowBusinessRuleHandlerList.add(wbrh);
                         setIdLookup(wbrh.getId(), TagTypeEnum.WorkflowBusinessRuleHandler, workflowBusinessRuleHandlerList.size()-1);
+                        parentNode.removeChild(currentNode);
                         break;
                         
                     case WorkflowBusinessRule:
                         WorkflowBusinessRuleType wbr = new WorkflowBusinessRuleType(currentNode);
                         workflowBusinessRuleList.add(wbr);
                         setIdLookup(wbr.getId(), TagTypeEnum.WorkflowBusinessRule, workflowBusinessRuleList.size()-1);
+                        parentNode.removeChild(currentNode);
                         break;
                         
                     case WorkflowSignoffProfile:
                         WorkflowSignoffProfileType wsp = new WorkflowSignoffProfileType(currentNode);
                         workflowSignoffProfileList.add(wsp);
                         setIdLookup(wsp.getId(), TagTypeEnum.WorkflowSignoffProfile, workflowSignoffProfileList.size()-1);
+                        parentNode.removeChild(currentNode);
                         break;
                         
                     case Role:
                         RoleType r = new RoleType(currentNode);
                         roleList.add(r);
                         setIdLookup(r.getId(), TagTypeEnum.Role, roleList.size()-1);
+                        parentNode.removeChild(currentNode);
                         break;
                         
                     case AccessIntent:
                         AccessIntentType ai = new AccessIntentType(currentNode);
                         accessIntentList.add(ai);
                         setIdLookup(ai.getId(), TagTypeEnum.AccessIntent, accessIntentList.size()-1);
+                        parentNode.removeChild(currentNode);
                         break;
                         
                     case Organisation:
                         OrganisationType o = new OrganisationType(currentNode);
                         organisationList.add(o);
                         setIdLookup(o.getId(), TagTypeEnum.Organisation, organisationList.size()-1);
+                        parentNode.removeChild(currentNode);
                         break;
                         
                     default:
@@ -340,6 +355,4 @@ public class ProcedureManager {
         }
         
     }
-    
-    
 }
