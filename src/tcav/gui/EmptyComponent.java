@@ -78,4 +78,5 @@ public class EmptyComponent extends TabbedPanel {
     public AbstractManager getManager() {
         return manager;
     }
+    
 }

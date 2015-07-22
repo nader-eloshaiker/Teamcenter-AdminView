@@ -24,8 +24,8 @@ public class AccessManager extends AbstractManager {
     private AccessRuleList arList;
     private ArrayList<AccessRule> unusedRules;
     private RuleTreeNode rootTreeNode;
+    private File file;
     
-    public static final String ACCESS_MANAGER_TYPE = "ACCESS";
     
     
     /** Creates a new instance of ruleTreeReader */
@@ -36,7 +36,19 @@ public class AccessManager extends AbstractManager {
     }
     
     public String getManagerType() {
-        return ACCESS_MANAGER_TYPE;
+        return super.ACCESS_MANAGER_TYPE;
+    }
+    
+    public File getFile() {
+        return file;
+    }
+    
+    public String getId() {
+        return file.toString();
+    }
+    
+    public String getName() {
+        return file.getName();
     }
     
     public boolean isValid() {
@@ -80,7 +92,7 @@ public class AccessManager extends AbstractManager {
         final int MODE_ACCESS_CONTROL = 2;
         final int MODE_RULE_TREE = 3;
         
-        super.file = file;
+        this.file = file;
         
         String thisLine;
         String ruleMetaData = "";

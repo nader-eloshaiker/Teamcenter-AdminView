@@ -36,6 +36,10 @@ public class NamedRuleComponent extends JPanel {
      * Creates a new instance of NamedRuleComponent
      */
     public NamedRuleComponent(JFrame parent, AccessManager am) {
+        this(parent, am, null);
+    }
+    
+    public NamedRuleComponent(JFrame parent, AccessManager am, String title) {
         super();
         this.am = am;
         this.parentFrame = parent;
@@ -94,8 +98,12 @@ public class NamedRuleComponent extends JPanel {
         panel.add("Center",panelRuleList);
         panel.add("South",tabNamed);
         
+        String borderName = "Named ACL";
+        if(title != null)
+            borderName = borderName.concat(": "+title);
+        
         this.setLayout(new GridLayout(1,1,GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
-        this.setBorder(new TitledBorder(new EtchedBorder(), "Named ACL"));
+        this.setBorder(new TitledBorder(new EtchedBorder(), borderName));
         this.add(GUIutilities.createPanelMargined(panel));
     }
     

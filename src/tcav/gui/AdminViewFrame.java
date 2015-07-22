@@ -9,11 +9,13 @@
 
 package tcav.gui;
 
-import tcav.gui.compare.CompareTabChooser;
+import tcav.gui.compare.*;
 import tcav.gui.ruletree.AccessManagerComponent;
 import tcav.gui.procedure.ProcedureManagerComponent;
+import tcav.manager.AbstractManager;
 import tcav.manager.access.AccessManager;
 import tcav.manager.procedure.ProcedureManager;
+import tcav.manager.compare.CompareAccessManager;
 import tcav.utils.CustomFileFilter;
 import tcav.resources.*;
 import tcav.Settings;
@@ -87,6 +89,7 @@ public class AdminViewFrame extends JFrame{
         JPanel statusBar = constructStatusBar();
         
         tabbedpane = new JTabbedPane();
+        tabbedpane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
         tabbedpane.addChangeListener(new ChangeListener(){
             public void stateChanged(ChangeEvent e) {
                 if(tabbedpane.getTabCount() > 1)
@@ -146,7 +149,7 @@ public class AdminViewFrame extends JFrame{
     }
     
     private void addStatusBarComponent(TabbedPanel tab) {
-        statusBarPanel.add(tab.getStatusBar(), tab.getFile().toString());
+        statusBarPanel.add(tab.getStatusBar(), tab.getManager().getId());
     }
     
     private void removeStatusBarComponent(TabbedPanel tab) {
@@ -154,12 +157,12 @@ public class AdminViewFrame extends JFrame{
     }
     
     private void showStatusBarComponent(TabbedPanel tab) {
-        ((CardLayout)statusBarPanel.getLayout()).show(statusBarPanel, tab.getFile().toString());
+        ((CardLayout)statusBarPanel.getLayout()).show(statusBarPanel, tab.getManager().getId());
     }
     
     private void addTabbedPane(TabbedPanel tab) {
         ((CardLayout)mainPanel.getLayout()).show(mainPanel, TABPANE);
-        tabbedpane.addTab(tab.getFile().getName(), tab.getIcon(), tab);
+        tabbedpane.addTab(tab.getManager().getName(), tab.getIcon(), tab);
         tabbedpane.setSelectedComponent(tab);
         addStatusBarComponent(tab);
         showStatusBarComponent(tab);
@@ -185,12 +188,12 @@ public class AdminViewFrame extends JFrame{
             buttonClose.setEnabled(false);
             menuClose.setEnabled(false);
         }
-
+        
         if(tabbedpane.getTabCount() <= 1) {
             buttonCompare.setEnabled(false);
             menuCompare.setEnabled(false);
         }
-}
+    }
     
     private JButton buttonClose;
     private JButton buttonCompare;
@@ -538,9 +541,9 @@ public class AdminViewFrame extends JFrame{
                 int result = fc.showOpenDialog(getFrame());
                 if(result == JFileChooser.APPROVE_OPTION) {
                     try {
-                        ProcedureManager pm;
+                        
                         Settings.setPMLoadPath(fc.getCurrentDirectory().getPath());
-                        pm = new ProcedureManager(parentFrame);
+                        ProcedureManager pm = new ProcedureManager(parentFrame);
                         try {
                             pm.readFile(fc.getSelectedFile());
                         } catch (Exception ex) {
@@ -564,7 +567,45 @@ public class AdminViewFrame extends JFrame{
     }
     
     private void actionCompare(){
-        CompareTabChooser chooser = new CompareTabChooser(tabbedpane);
-        JOptionPane.showConfirmDialog(getFrame(),chooser,"Compare Managers",JOptionPane.OK_CANCEL_OPTION,JOptionPane.PLAIN_MESSAGE,null);
+        new Thread() {
+            public void run() {
+                CompareTabChooser chooser = new CompareTabChooser(tabbedpane);
+                
+                int result = JOptionPane.showConfirmDialog(getFrame(),chooser,"Compare Managers",JOptionPane.OK_CANCEL_OPTION,JOptionPane.PLAIN_MESSAGE,null);
+                
+                if(result == JOptionPane.CANCEL_OPTION)
+                    return;
+                
+                if(chooser.getSelectionMode().equals(AbstractManager.PROCEDURE_MANAGER_TYPE)) {
+                    JOptionPane.showMessageDialog(parentFrame, "The ability to compare procedures has not yet been implemented.", "Unsupport Feature", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                
+                if(chooser.getSelectionIndexes().length != 2) {
+                    JOptionPane.showMessageDialog(parentFrame, "You need to select 1st and 2nd file.", "Selection Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                
+                if(chooser.getSelectionMode().equals(AbstractManager.ACCESS_MANAGER_TYPE)) {
+                    AccessManager[] am = new AccessManager[chooser.getSelectionIndexes().length];
+                    for(int i=0; i<am.length; i++)
+                        am[i] = (AccessManager)chooser.getSelectionIndexes()[i].getManager();
+                    
+                    try {
+                        CompareAccessManager cam = new CompareAccessManager(am);
+                        if(!cam.isValid()) {
+                            throw new Exception("Incompatible Comparison"+cam.getName());
+                        }
+                        
+                        CompareAccessManagerComponent camComponent = new CompareAccessManagerComponent(parentFrame, cam);
+                        addTabbedPane(camComponent);
+                        
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(parentFrame, ex.getMessage(), "Ruletree File Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }
+        }.start();
     }
+    
 }

@@ -9,6 +9,8 @@
 
 package tcav.manager.compare;
 
+import java.awt.Color;
+
 /**
  *
  * @author nzr4dl
@@ -16,8 +18,13 @@ package tcav.manager.compare;
 public interface CompareInterface {
     
     public static final int EQUAL = 0;
+    public static final Color EQUAL_COLOR = new Color(0,255,0);
+    
     public static final int NOT_EQUAL = 1;
+    public static final Color NOT_EQUAL_COLOR = new Color(255,255,0);
+    
     public static final int NOT_FOUND = -1;
+    public static final Color NOT_FOUND_COLOR = new Color(255,0,0);
     
     public int getComparison();
     

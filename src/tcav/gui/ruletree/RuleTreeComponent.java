@@ -31,6 +31,10 @@ public class RuleTreeComponent extends JPanel {
     
     /** Creates a new instance of RuleTreeComponent */
     public RuleTreeComponent(JFrame parent, AccessManager am) {
+        this(parent, am, null);
+    }
+    
+    public RuleTreeComponent(JFrame parent, AccessManager am, String title) {
         super();
         parentFrame = parent;
         tree = new JTreeAdvanced(new RuleTreeModel(am.getAccessManagerTree()));
@@ -179,8 +183,12 @@ public class RuleTreeComponent extends JPanel {
         panelRuleTree.add("Center",treeScroll);
         panelRuleTree.add("South",toolBarRuletree);
         
+        String borderName = "Access Tree";
+        if(title != null)
+            borderName = borderName.concat(": "+title);
+        
         this.setLayout(new GridLayout(1,1,GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
-        this.setBorder(new TitledBorder(new EtchedBorder(),"Access Manager Tree"));
+        this.setBorder(new TitledBorder(new EtchedBorder(), borderName));
         this.add(GUIutilities.createPanelMargined(panelRuleTree));
         
     }

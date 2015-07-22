@@ -13,6 +13,7 @@ import tcav.resources.*;
 import javax.swing.table.*;
 import javax.swing.*;
 import java.awt.Component;
+import tcav.manager.compare.CompareInterface;
 
 /**
  *
@@ -58,6 +59,38 @@ public class AccessRuleTableCellRenderer implements TableCellRenderer{
             cell.setText(s);
         }
         
+        int result = ((AccessRuleTableModel)table.getModel()).getAccessRule().get(row).getComparison();
+        switch(result) {
+            case CompareInterface.NOT_EQUAL:
+                if (isSelected) {
+                    cell.setForeground(CompareInterface.NOT_EQUAL_COLOR);
+                    cell.setBackground(table.getSelectionBackground());
+                } else {
+                    cell.setBackground(CompareInterface.NOT_EQUAL_COLOR);
+                    cell.setForeground(table.getSelectionForeground());
+                }
+                break;
+            case CompareInterface.NOT_FOUND:
+                if (isSelected) {
+                    cell.setForeground(CompareInterface.NOT_FOUND_COLOR);
+                    cell.setBackground(table.getSelectionBackground());
+                } else {
+                    cell.setBackground(CompareInterface.NOT_FOUND_COLOR);
+                    cell.setForeground(table.getSelectionForeground());
+                }
+                break;
+            case CompareInterface.EQUAL:
+            default:
+                if (isSelected) {
+                    cell.setForeground(table.getSelectionForeground());
+                    cell.setBackground(table.getSelectionBackground());
+                } else {
+                    cell.setForeground(table.getForeground());
+                    cell.setBackground(table.getBackground());
+                }
+                break;
+        }
+
         return cell;
     }
     

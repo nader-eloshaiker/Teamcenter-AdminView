@@ -74,8 +74,14 @@ public class AccessRule extends ArrayList<AccessControl>  implements CompareInte
     public int compare(Object o) {
         AccessRule a = (AccessRule)o;
         
-        if(!getRuleType().equals(a.getRuleType()) && !getRuleName().equals(a.getRuleName()))
+        if(!getRuleName().equals(a.getRuleName()))
             return CompareInterface.NOT_FOUND;
+        
+        if(!getRuleType().equals(a.getRuleType()))
+            return CompareInterface.NOT_FOUND;
+        
+        if((this.size() == 0) && (a.size() == 0))
+            return CompareInterface.EQUAL;
         
         int compare;
         int compareOverall = CompareInterface.EQUAL;

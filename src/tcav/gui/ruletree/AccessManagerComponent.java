@@ -25,12 +25,11 @@ import java.io.File;
  */
 public class AccessManagerComponent extends TabbedPanel {
     
-    protected JFrame parentFrame;
-    protected RuleTreeComponent ruletree;
-    protected NamedRuleComponent namedACL;
-    protected AccessRuleComponent accessControl;
-    
-    protected JSplitPane splitPane;
+    private JFrame parentFrame;
+    private RuleTreeComponent ruletree;
+    private NamedRuleComponent namedACL;
+    private AccessRuleComponent accessControl;
+    private JSplitPane splitPane;
     
     private AccessManager am;
     
@@ -50,13 +49,13 @@ public class AccessManagerComponent extends TabbedPanel {
                 int i = namedACL.getTable().getSelectedRow();
                 if (i > -1) {
                     if(namedACL.getModel().getAccessRule(i).getRuleTreeReferences().size() > 0) {
-                    
+                        
                         TreePath[] paths = getTreePaths(ruletree.getTree(), namedACL.getModel().getAccessRule(i).getRuleTreeReferences());
                         if(!isTreePathAvailable(paths, ruletree.getTree().getSelectionPaths())) {
                             ruletree.getTree().setSelectionPaths(paths);
                             ruletree.getTree().scrollPathToVisible(paths[0]);
                         }
-                       
+                        
                     } else {
                         ruletree.getTree().clearSelection();
                     }
@@ -160,7 +159,7 @@ public class AccessManagerComponent extends TabbedPanel {
             textAuthor.setBorder(new BevelBorder(BevelBorder.LOWERED));
             JLabel textDate = new JLabel(" Date: "+am.getMetaData().getTimeDetails()+" ");
             textDate.setBorder(new BevelBorder(BevelBorder.LOWERED));
-            JLabel textFile = new JLabel(" Path: "+getFile().getParent()+" ");
+            JLabel textFile = new JLabel(" Path: "+am.getFile().getParent()+" ");
             textFile.setBorder(new BevelBorder(BevelBorder.LOWERED));
             statusBar = new JPanel();
             statusBar.setLayout(new BorderLayout(1,1));

@@ -15,6 +15,7 @@ import java.io.FileOutputStream;
 import java.io.File;
 import java.util.Properties;
 import tcav.resources.ResourceStrings;
+import tcav.manager.AbstractManager;
 
 /**
  *
@@ -40,6 +41,9 @@ public class Settings {
     private static String userInterface;
     private static final String PROPERTY_USERINTERFACE = "tcav.userInterface";
     private static final String PROPERTY_USERINTERFACE_DEFAULT = "";
+    private static String compareMode;
+    private static final String PROPERTY_COMPAREMODE = "tcav.comparemode";
+    private static final String PROPERTY_COMPAREMODE_DEFAULT = AbstractManager.ACCESS_MANAGER_TYPE;
     
     /* properties access manager*/
     private static String amLoadPath;
@@ -93,6 +97,10 @@ public class Settings {
             fis.close();
         }
         
+        setCompareMode(
+                getPropertyAsString(
+                PROPERTY_COMPAREMODE,
+                PROPERTY_COMPAREMODE_DEFAULT));
         setAMLoadPath(
                 getPropertyAsString(
                 PROPERTY_AMLOADPATH,
@@ -186,6 +194,9 @@ public class Settings {
         
         
         property.setProperty(
+                PROPERTY_COMPAREMODE,
+                getCompareMode());
+        property.setProperty(
                 PROPERTY_AMLOADPATH,
                 getAMLoadPath());
         property.setProperty(
@@ -232,6 +243,14 @@ public class Settings {
             property.store(fos, ResourceStrings.getVersion());
             fos.close();
         }
+    }
+    
+    public static String getCompareMode() {
+        return compareMode;
+    }
+    
+    public static void setCompareMode(String compareMode) {
+        Settings.compareMode = compareMode;
     }
     
     public static String getAMLoadPath() {

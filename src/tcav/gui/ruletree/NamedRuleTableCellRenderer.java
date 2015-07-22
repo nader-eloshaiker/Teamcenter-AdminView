@@ -13,12 +13,13 @@ import javax.swing.table.*;
 import javax.swing.*;
 import java.awt.*;
 import tcav.resources.*;
+import tcav.manager.compare.CompareInterface;
 
 /**
  *
  * @author NZR4DL
  */
-public class NamedRuleTableCellRenderer implements TableCellRenderer{
+public class NamedRuleTableCellRenderer implements TableCellRenderer {
     
     static protected ImageIcon typeRuletreeIcon;
     static protected ImageIcon typeWorkflowIcon;
@@ -33,13 +34,13 @@ public class NamedRuleTableCellRenderer implements TableCellRenderer{
         }
     }
     
-    /** Creates a new instance of AccessRuleTableHearderRenderer */
+    /* Creates a new instance of AccessRuleTableHearderRenderer */
     public Component getTableCellRendererComponent(JTable table,
             Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         
         TableCellRenderer temp = table.getDefaultRenderer(String.class);
         DefaultTableCellRenderer cell = (DefaultTableCellRenderer)temp.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-
+        
         String s = value.toString();
         
         switch (column) {
@@ -63,6 +64,38 @@ public class NamedRuleTableCellRenderer implements TableCellRenderer{
                 cell.setIcon(null);
                 cell.setText(s);
                 cell.setToolTipText(s);
+                break;
+        }
+        
+        int result = ((NamedRuleTableModel)table.getModel()).getAccessRule(row).getComparison();
+        switch(result) {
+            case CompareInterface.NOT_EQUAL:
+                if (isSelected) {
+                    cell.setForeground(CompareInterface.NOT_EQUAL_COLOR);
+                    cell.setBackground(table.getSelectionBackground());
+                } else {
+                    cell.setBackground(CompareInterface.NOT_EQUAL_COLOR);
+                    cell.setForeground(table.getSelectionForeground());
+                }
+                break;
+            case CompareInterface.NOT_FOUND:
+                if (isSelected) {
+                    cell.setForeground(CompareInterface.NOT_FOUND_COLOR);
+                    cell.setBackground(table.getSelectionBackground());
+                } else {
+                    cell.setBackground(CompareInterface.NOT_FOUND_COLOR);
+                    cell.setForeground(table.getSelectionForeground());
+                }
+                break;
+            case CompareInterface.EQUAL:
+            default:
+                if (isSelected) {
+                    cell.setForeground(table.getSelectionForeground());
+                    cell.setBackground(table.getSelectionBackground());
+                } else {
+                    cell.setForeground(table.getForeground());
+                    cell.setBackground(table.getBackground());
+                }
                 break;
         }
         

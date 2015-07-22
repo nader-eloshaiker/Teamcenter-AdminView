@@ -118,10 +118,6 @@ public class ProcedureManagerComponent extends TabbedPanel {
         
     }
     
-    public boolean isEmptyPanel(){
-        return (pm.getWorkflowProcesses().size() == 0);
-    }
-    
     public AbstractManager getManager() {
         return pm;
     }
@@ -147,7 +143,7 @@ public class ProcedureManagerComponent extends TabbedPanel {
             textAuthor.setBorder(new BevelBorder(BevelBorder.LOWERED));
             JLabel textDate = new JLabel(" Date: "+pm.getPLMXML().getDate()+"   Time: "+pm.getPLMXML().getTime()+" ");
             textDate.setBorder(new BevelBorder(BevelBorder.LOWERED));
-            JLabel textFile = new JLabel(" Path: "+getFile().getParent()+" ");
+            JLabel textFile = new JLabel(" Path: "+pm.getFile().getParent()+" ");
             textFile.setBorder(new BevelBorder(BevelBorder.LOWERED));
             statusBar = new JPanel();
             statusBar.setLayout(new BorderLayout(1,1));

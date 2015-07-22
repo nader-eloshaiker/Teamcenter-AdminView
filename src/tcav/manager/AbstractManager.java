@@ -17,18 +17,19 @@ import java.io.File;
  */
 public abstract class AbstractManager {
     
-    /** Creates a new instance of AbstractManager */
-    protected File file;
+    public static final String EMPTY_MANAGER_TYPE = "EMPTY";
+    public static final String ACCESS_MANAGER_TYPE = "ACCESS";
+    public static final String ACCESS_COMPARE_MANAGER_TYPE = "ACCESS_COMPARE";
+    public static final String PROCEDURE_MANAGER_TYPE = "PROCEDURE";
     
-    public File getFile() {
-        return file;
-    }
-    
-    /* Set file should be done from readFile method */
     abstract public void readFile(File file) throws Exception;
     
     abstract public boolean isValid();
     
     abstract public String getManagerType();
+    
+    abstract public String getName();
+    
+    abstract public String getId();
     
 }

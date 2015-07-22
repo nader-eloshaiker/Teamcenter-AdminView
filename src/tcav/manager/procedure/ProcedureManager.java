@@ -52,9 +52,9 @@ public class ProcedureManager extends AbstractManager {
     private HeaderType header;
     private SiteType site;
     private PLMXMLType plmxml;
+    private File file;
     
-    public static final String PROCEDURE_MANAGER_TYPE = "PROCEDURE";
-    
+
     private JFrame frame;
     
     /**
@@ -64,12 +64,24 @@ public class ProcedureManager extends AbstractManager {
         this.frame = frame;
     }
     
+    public File getFile() {
+        return file;
+    }
+
+    public String getId() {
+        return file.toString();
+    }
+    
+    public String getName() {
+        return file.getName();
+    }
+    
     public String getManagerType() {
         return PROCEDURE_MANAGER_TYPE;
     }
     
     public void readFile(File file) throws Exception {
-        super.file = file;
+        this.file = file;
         FileInputStream fis = new FileInputStream(file);
         DOMUtil domUtil;
         try {

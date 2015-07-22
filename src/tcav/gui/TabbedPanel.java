@@ -28,8 +28,4 @@ public abstract class TabbedPanel extends JPanel {
     
     abstract public ImageIcon getIcon();
     
-    public File getFile() {
-        return getManager().getFile();
-    }
-    
 }

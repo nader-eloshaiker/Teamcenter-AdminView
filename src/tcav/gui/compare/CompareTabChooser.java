@@ -17,9 +17,8 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import tcav.gui.*;
 import tcav.resources.*;
-import tcav.manager.access.AccessManager;
-import tcav.manager.procedure.ProcedureManager;
 import tcav.manager.AbstractManager;
+import tcav.Settings;
 
 /**
  *
@@ -40,35 +39,43 @@ public class CompareTabChooser extends JPanel {
         super();
         this.pane = pane;
         
+        SelectionMode = Settings.getCompareMode();
         
-        ruletreeButton = new JRadioButton("RuleTree", false);
+        ruletreeButton = new JRadioButton(
+                "RuleTree", 
+                (SelectionMode.equals(AbstractManager.ACCESS_MANAGER_TYPE)));
         ruletreeButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if(ruletreeButton.isSelected()) {
-                    SelectionMode = AccessManager.ACCESS_MANAGER_TYPE;
+                    SelectionMode = AbstractManager.ACCESS_MANAGER_TYPE;
+                    Settings.setCompareMode(SelectionMode);
                     listModel = new ManagerModel();
                     list1.setModel(listModel);
                     list2.setModel(listModel);
                 }
             }
         });
-        procedureButton = new JRadioButton("Procedure", false);
+        procedureButton = new JRadioButton(
+                "Procedure", 
+                (SelectionMode.equals(AbstractManager.PROCEDURE_MANAGER_TYPE)));
         procedureButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if(procedureButton.isSelected()) {
-                    SelectionMode = ProcedureManager.PROCEDURE_MANAGER_TYPE;
+                    SelectionMode = AbstractManager.PROCEDURE_MANAGER_TYPE;
+                    Settings.setCompareMode(SelectionMode);
                     listModel = new ManagerModel();
                     list1.setModel(listModel);
                     list2.setModel(listModel);
                 }
             }
         });
-        initialiseMode();
-        
         
         ButtonGroup group = new ButtonGroup();
         group.add(ruletreeButton);
         group.add(procedureButton);
+        
+        initialiseMode();
+
         
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new GridLayout(2,1,GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
@@ -143,29 +150,35 @@ public class CompareTabChooser extends JPanel {
     
     public TabbedPanel[] getSelectionIndexes() {
         return new TabbedPanel[]{(TabbedPanel)listModel.getElementAt(list1.getSelectedIndex()),
-                (TabbedPanel)listModel.getElementAt(list2.getSelectedIndex())};
+        (TabbedPanel)listModel.getElementAt(list2.getSelectedIndex())};
     }
     
+    /* Method not used currently */
     private void initialiseMode() {
         int countRuleTree = 0;
         int countProcedure = 0;
         
         for(int i=0; i<pane.getTabCount(); i++) {
             String type = ((TabbedPanel)pane.getComponentAt(i)).getManager().getManagerType();
-            if(type.equals(AccessManager.ACCESS_MANAGER_TYPE))
+            if(type.equals(AbstractManager.ACCESS_MANAGER_TYPE))
                 countRuleTree++;
-            else if(type.equals(ProcedureManager.PROCEDURE_MANAGER_TYPE))
+            else if(type.equals(AbstractManager.PROCEDURE_MANAGER_TYPE))
                 countProcedure++;
-            
-            if(countProcedure == 0){
-                SelectionMode = AccessManager.ACCESS_MANAGER_TYPE;
-                ruletreeButton.setSelected(true);
-            } else if(countRuleTree == 0){
-                SelectionMode = ProcedureManager.PROCEDURE_MANAGER_TYPE;
-                procedureButton.setSelected(true);
-            }
         }
         
+        if(countProcedure == 0){
+            procedureButton.setEnabled(false);
+            SelectionMode = AbstractManager.ACCESS_MANAGER_TYPE;
+            //Settings.setCompareMode(SelectionMode);
+            ruletreeButton.setSelected(true);
+        } 
+        
+        if(countRuleTree == 0){
+            ruletreeButton.setEnabled(false);
+            SelectionMode = AbstractManager.PROCEDURE_MANAGER_TYPE;
+            //Settings.setCompareMode(SelectionMode);
+            procedureButton.setSelected(true);
+        }
     }
     
     class ManagerModel implements ListModel {
@@ -177,12 +190,12 @@ public class CompareTabChooser extends JPanel {
             for(int i=0; i<pane.getTabCount(); i++) {
                 String type = ((TabbedPanel)pane.getComponentAt(i)).getManager().getManagerType();
                 if(ruletreeButton.isSelected()) {
-                    if(type.equals(AccessManager.ACCESS_MANAGER_TYPE)){
+                    if(type.equals(AbstractManager.ACCESS_MANAGER_TYPE)){
                         counter++;
                         indexes.add(i);
                     }
                 } else if(procedureButton.isSelected()) {
-                    if(type.equals(ProcedureManager.PROCEDURE_MANAGER_TYPE)) {
+                    if(type.equals(AbstractManager.PROCEDURE_MANAGER_TYPE)) {
                         counter++;
                         indexes.add(i);
                     }
@@ -215,8 +228,8 @@ public class CompareTabChooser extends JPanel {
             //DefaultListCellRenderer cell = (DefaultListCellRenderer)new DefaultListCellRenderer().getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
             
             TabbedPanel tab = (TabbedPanel)value;
-            setText(tab.getFile().getName());
-            setToolTipText(tab.getFile().getPath());            
+            setText(tab.getManager().getName());
+            setToolTipText(tab.getManager().getId());
             
             if (isSelected) {
                 setBackground(list.getSelectionBackground());

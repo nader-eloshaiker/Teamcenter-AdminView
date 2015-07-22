@@ -21,10 +21,6 @@ public class EmptyManager extends AbstractManager {
     public static final String MANAGER_TYPE = "EMPTY";
     
     /** Creates a new instance of EmptyManager */
-    public EmptyManager() {
-        super.file = new File("EMPTY_MANAGER");
-    }
-    
     public void readFile(File file) throws Exception {
     }
     
@@ -33,6 +29,14 @@ public class EmptyManager extends AbstractManager {
     }
     
     public String getManagerType() {
-        return MANAGER_TYPE;
+        return super.EMPTY_MANAGER_TYPE;
+    }
+
+    public String getId() {
+        return "empty";
+    }
+    
+    public String getName() {
+        return "empty";
     }
 }

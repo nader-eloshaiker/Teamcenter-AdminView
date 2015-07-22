@@ -43,8 +43,8 @@ public class RuleTreeNodeRenderer implements TreeCellRenderer {
             boolean isSelected, boolean expanded,
             boolean leaf, int row,
             boolean hasFocus) {
-
-        //DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer();
+        
+        //DefaultTreeCellRenderer cell =  (DefaultTreeCellRenderer)super.getTreeCellRendererComponent(tree, value, isSelected, expanded, leaf, row, hasFocus);
         DefaultTreeCellRenderer cell = (DefaultTreeCellRenderer)new DefaultTreeCellRenderer().getTreeCellRendererComponent(tree, value, isSelected, expanded, leaf, row, hasFocus);
         
         if(value == null)
@@ -54,18 +54,23 @@ public class RuleTreeNodeRenderer implements TreeCellRenderer {
         
         cell.setText(amItem.toString());
         cell.setToolTipText(amItem.toString());
+        
         if(amItem.getParamters() != null)
             for(int i=0; i<amItem.getParamters().length; i++)
-                if(amItem.getParamters()[i].equals("Protected")){
-                    cell.setBackgroundNonSelectionColor(new Color(255,0,0));
-                    cell.setBorderSelectionColor(new Color(255,0,0));
-                }
+                if(!amItem.getParamters()[i].equals("Collapsed"))
+                    cell.setText(cell.getText()+" ["+amItem.getParamters()[i]+"]");
+        
         if (leaf)
             cell.setIcon(ruleIcon);
         else {
             cell.setIcon(ruleBranchIcon);
             cell.setFont(cell.getFont().deriveFont(Font.BOLD));
         }
+        
+        //cell.setBackgroundNonSelectionColor(new Color(255,0,0));
+        //cell.setBorderSelectionColor(new Color(255,0,0));
+        
+        
         return cell;
     }
 }
