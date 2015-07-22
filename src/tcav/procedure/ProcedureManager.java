@@ -55,7 +55,6 @@ public class ProcedureManager {
     private Hashtable<String, TagTypeEnum> idClassLookup;
     
     private JFrame frame;
-    private DOMUtil domUtil;
     
     public final static String[] WORKFLOW_TYPES_NAMES = {
             "Action",
@@ -99,6 +98,7 @@ public class ProcedureManager {
     
     public void readFile(File file) throws Exception {
         FileInputStream fis = new FileInputStream(file);
+        DOMUtil domUtil;
         try {
             ProgressMonitorInputStream pmi = new ProgressMonitorInputStream(
                     frame,"Reading "+file.getName(),fis);

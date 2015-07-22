@@ -9,7 +9,6 @@
 
 package tcav.gui.procedure;
 
-import javax.naming.ldap.StartTlsRequest;
 import tcav.*;
 import tcav.gui.*;
 import tcav.procedure.*;
@@ -78,6 +77,7 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
     protected JTextField textSearchValue;
     protected JRadioButton radioProcedureDependantTasks;
     protected JRadioButton radioProcedureSubWorkflow;
+    protected SearchTreeComponent searchProcedures;
     
     public JComponent createWorkflowProcessPanel() {
         
@@ -191,15 +191,21 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
         buttonCollapseAll.setIcon(iconCollapseAll);
         buttonCollapseBelow.setIcon(iconCollapseBelow);
         
-        buttonWorkflowFindNext = new JButton("Find Next");
-        buttonWorkflowFindNext.setEnabled(false);
-        buttonWorkflowFindNext.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-                findNextProcedure(treeWorkflowProcess);
-                int k = workflowSearchIndex + 1;
-                buttonWorkflowFind.setText(k+" / "+workflowSearchResults.size());
+        searchProcedures = new SearchTreeComponent(){
+            public boolean compare(TreePath parent, String type, String value) {
+                NodeReference nr = (NodeReference)parent.getLastPathComponent();
+                Boolean matched = false;
+                
+                if((!type.equals("")) && (!value.equals("")) )
+                    return isMatched(nr.getClassType().value(), type) & isMatched(nr.getName(), value);
+                else if(!type.equals(""))
+                    return isMatched(nr.getClassType().value(), type);
+                else if(!value.equals(""))
+                    return isMatched(nr.getName(), value);
+                else
+                    return false;
             }
-        });
+        };
         
         buttonWorkflowFind = new JButton("Find");
         buttonWorkflowFind.addActionListener(new ActionListener(){
@@ -217,9 +223,9 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
                                 ((valueString == null) || (valueString.equals(""))))
                             JOptionPane.showMessageDialog(parentFrame, "Search requires either a Workflow Type, value/name or any combination.", "No Search Criteria", JOptionPane.ERROR_MESSAGE);
                         else {
-                            findProcedure(treeWorkflowProcess, workflowString, valueString);
+                            searchProcedures.search(treeWorkflowProcess, workflowString, valueString);
                             
-                            if (workflowSearchResults.size() == 0) {
+                            if (searchProcedures.getResultSize() == 0) {
                                 JOptionPane.showMessageDialog(parentFrame, "No matches found", "No Matches Found", JOptionPane.WARNING_MESSAGE);
                                 buttonWorkflowFindNext.setEnabled(false);
                                 buttonWorkflowFindClear.setEnabled(false);
@@ -227,8 +233,8 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
                                 boxSearchWorkflowType.setEnabled(true);
                                 textSearchValue.setEnabled(true);
                             } else {
-                                int k = workflowSearchIndex + 1;
-                                buttonWorkflowFind.setText(k+" / "+workflowSearchResults.size());
+                                int k = searchProcedures.getResultIndex() + 1;
+                                buttonWorkflowFind.setText(k+" / "+searchProcedures.getResultSize());
                                 buttonWorkflowFindNext.setEnabled(true);
                                 buttonWorkflowFindClear.setEnabled(true);
                                 buttonWorkflowFind.setEnabled(false);
@@ -238,6 +244,16 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
                         }
                     }
                 }.start();
+            }
+        });
+        
+        buttonWorkflowFindNext = new JButton("Find Next");
+        buttonWorkflowFindNext.setEnabled(false);
+        buttonWorkflowFindNext.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                searchProcedures.searchNext(treeWorkflowProcess);
+                int k = searchProcedures.getResultIndex() + 1;
+                buttonWorkflowFind.setText(k+" / "+ searchProcedures.getResultSize());
             }
         });
         
@@ -253,9 +269,7 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
                 textSearchValue.setEnabled(true);
                 boxSearchWorkflowType.setSelectedIndex(0);
                 textSearchValue.setText("");
-                workflowSearchResults = new ArrayList<TreePath>();
-                workflowSearchIndex = 0;
-                treeWorkflowProcess.clearSelection();
+                searchProcedures.resetResults();
             }
         });
         
@@ -502,98 +516,4 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
         Utilities.packColumns(tableAttribute, 2);
     }
     
-    private int workflowSearchIndex;
-    private ArrayList<TreePath> workflowSearchResults;
-    private final int SEARCH_CONDITION_VALUE = 0;
-    private final int SEARCH_CONDITION = 1;
-    private final int SEARCH_VALUE = 2;
-    
-    private boolean findNextProcedure(JTreeAdvanced tree) {
-        workflowSearchIndex++;
-        if(workflowSearchIndex >= workflowSearchResults.size())
-            workflowSearchIndex = 0;
-        
-        if(workflowSearchResults.size() > 0) {
-            tree.expandPath(workflowSearchResults.get(workflowSearchIndex));
-            tree.setSelectionPath(workflowSearchResults.get(workflowSearchIndex));
-            tree.scrollPathToVisible(workflowSearchResults.get(workflowSearchIndex));
-            return true;
-        } else
-            return false;
-    }
-    
-    private boolean findProcedure(JTreeAdvanced tree, String condition, String value) {
-        workflowSearchResults = new ArrayList<TreePath>();
-        workflowSearchIndex = 0;
-        if((!condition.equals("")) && (!value.equals("")) )
-            findProcedureItems(
-                    tree,
-                    tree.getPathForRow(0),
-                    SEARCH_CONDITION_VALUE,
-                    condition,
-                    value);
-        else if(!condition.equals(""))
-            findProcedureItems(
-                    tree,
-                    tree.getPathForRow(0),
-                    SEARCH_CONDITION,
-                    condition,
-                    value);
-        else if(!value.equals(""))
-            findProcedureItems(
-                    tree,
-                    tree.getPathForRow(0),
-                    SEARCH_VALUE,
-                    condition,
-                    value);
-        if(workflowSearchResults.size() > 0) {
-            tree.expandPath(workflowSearchResults.get(workflowSearchIndex));
-            tree.setSelectionPath(workflowSearchResults.get(workflowSearchIndex));
-            tree.scrollPathToVisible(workflowSearchResults.get(workflowSearchIndex));
-            return true;
-        } else
-            return false;
-    }
-    
-    /*
-     * Both condition and value cannot be empty, either one or the other.
-     */
-    private void findProcedureItems(JTreeAdvanced tree, TreePath parent, int searchBias, String condition, String value) {
-        // Traverse children
-        NodeReference nr = (NodeReference)parent.getLastPathComponent();
-        Boolean matched = false;
-        switch(searchBias) {
-            case SEARCH_CONDITION_VALUE:
-                matched = isMatched(nr.getClassType().value(), condition) & isMatched(nr.getName(), value);
-                break;
-            case SEARCH_CONDITION:
-                matched = isMatched(nr.getClassType().value(), condition);
-                break;
-            case SEARCH_VALUE:
-                matched = isMatched(nr.getName(), value);
-                break;
-            default:
-                matched = false;
-        }
-        if(matched)
-            workflowSearchResults.add(parent);
-        
-        int childCount = tree.getModel().getChildCount(nr);
-        if(childCount > 0) {
-            for (int e=0; e<childCount; e++ ) {
-                TreePath path = parent.pathByAddingChild(tree.getModel().getChild(nr, e));
-                findProcedureItems(tree, path, searchBias, condition, value);
-            }
-        }
-    }
-    
-    private boolean isMatched(String s, String pattern) {
-        if((pattern != null) && (!pattern.equals(""))){
-            if((s != null) && (!s.equals(""))){
-                return PatternMatch.isStringMatch(s, pattern);
-            } else
-                return false;
-        } else
-            return false;
-    }
 }
