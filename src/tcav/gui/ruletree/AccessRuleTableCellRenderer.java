@@ -18,7 +18,7 @@ import java.awt.Component;
  *
  * @author nzr4dl
  */
-public class AccessRuleTableCellRenderer extends DefaultTableCellRenderer implements TableCellRenderer{
+public class AccessRuleTableCellRenderer implements TableCellRenderer{
     
     static protected ImageIcon yesIcon;
     static protected ImageIcon noIcon;
@@ -37,28 +37,27 @@ public class AccessRuleTableCellRenderer extends DefaultTableCellRenderer implem
     public Component getTableCellRendererComponent(JTable table,
             Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         
+        TableCellRenderer temp = table.getDefaultRenderer(String.class);
+        DefaultTableCellRenderer cell = (DefaultTableCellRenderer)temp.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
         String s = (String)value;
         
         if(column > 1) {
-            setHorizontalAlignment(CENTER);
+            cell.setHorizontalAlignment(SwingConstants.CENTER);
             if(s.equals("Y"))
-                setIcon(yesIcon);
+                cell.setIcon(yesIcon);
             else if(s.equals("N"))
-                setIcon(noIcon);
+                cell.setIcon(noIcon);
             else
-                setIcon(null);
-        } else
-            setText(s);
-        
-        if (isSelected) {
-            setForeground(table.getSelectionForeground());
-            super.setBackground(table.getSelectionBackground());
+                cell.setIcon(null);
+            cell.setText(null);
         } else {
-            setForeground(table.getForeground());
-            setBackground(table.getBackground());
+            cell.setHorizontalAlignment(SwingConstants.LEFT);
+            cell.setIcon(null);
+            cell.setText(s);
         }
         
-        return this;
+        return cell;
     }
     
 }

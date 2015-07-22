@@ -19,7 +19,7 @@ import java.awt.*;
  *
  * @author nzr4dl
  */
-public class ProcedureTreeCellRenderer  extends DefaultTreeCellRenderer implements TreeCellRenderer {
+public class ProcedureTreeCellRenderer  implements TreeCellRenderer {
     
     //Item Type
     protected static Color COLOR_COLLECTOR;
@@ -120,140 +120,129 @@ public class ProcedureTreeCellRenderer  extends DefaultTreeCellRenderer implemen
     
     public Component getTreeCellRendererComponent(JTree tree, Object value, boolean isSelected, boolean expanded, boolean leaf, int row, boolean hasFocus){
         
-        super.selected = isSelected;
-        super.hasFocus = hasFocus;
-        NodeReference nr = (NodeReference)value;
-        /*
-        switch(nr.getEntryType()){
-            case NodeReference.ENTRY_ITEM:
-                setText(nr.getName());
-                break;
-            case NodeReference.ENTRY_COLLECTOR:
-                setText('@'+nr.getName());
-                break;
-            default:
-                setText(nr.getName());
-        }
-         */
-        setText(nr.getName());
-        setToolTipText(nr.getName());
+        DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer();
+        DefaultTreeCellRenderer cell = (DefaultTreeCellRenderer)renderer.getTreeCellRendererComponent(tree, value, isSelected, expanded, leaf, row, hasFocus);
         
-        if(!isSelected){
-            setForeground(this.textNonSelectionColor);
-        }
+        if(value == null)
+            return cell;
+
+        NodeReference nr = (NodeReference)value;
+
+        cell.setText(nr.getName());
+        cell.setToolTipText(nr.getName());
         
         switch(nr.getClassType()) {
             case WorkflowTemplate:
                 String s = nr.getIconKey();
                 if(s == null)
-                    setIcon(workflow);
+                    cell.setIcon(workflow);
                 else if(s.equals("acknowledgeTask"))
-                    setIcon(acknowledgeTask);
+                    cell.setIcon(acknowledgeTask);
                 else if(s.equals("addStatusTask"))
-                    setIcon(addStatusTask);
+                    cell.setIcon(addStatusTask);
                 else if(s.equals("checkListTask"))
-                    setIcon(checkListTask);
+                    cell.setIcon(checkListTask);
                 else if(s.equals("conditionTask"))
-                    setIcon(conditionTask);
+                    cell.setIcon(conditionTask);
                 else if(s.equals("doTask"))
-                    setIcon(doTask);
+                    cell.setIcon(doTask);
                 else if(s.equals("impactAnalysisTask"))
-                    setIcon(impactAnalysisTask);
+                    cell.setIcon(impactAnalysisTask);
                 else if(s.equals("notifyTask"))
-                    setIcon(notifyTask);
+                    cell.setIcon(notifyTask);
                 else if(s.equals("orTask"))
-                    setIcon(orTask);
+                    cell.setIcon(orTask);
                 else if(s.equals("performSignoffTask"))
-                    setIcon(performSignoffTask);
+                    cell.setIcon(performSignoffTask);
                 else if(s.equals("prepareecoTask"))
-                    setIcon(prepareecoTask);
+                    cell.setIcon(prepareecoTask);
                 else if(s.equals("process"))
-                    setIcon(process);
+                    cell.setIcon(process);
                 else if(s.equals("reviewProcess"))
-                    setIcon(reviewProcess);
+                    cell.setIcon(reviewProcess);
                 else if(s.equals("reviewTask"))
-                    setIcon(reviewTask);
+                    cell.setIcon(reviewTask);
                 else if(s.equals("routeTask"))
-                    setIcon(routeTask);
+                    cell.setIcon(routeTask);
                 else if(s.equals("selectSignoffTask"))
-                    setIcon(selectSignoffTask);
+                    cell.setIcon(selectSignoffTask);
                 else if(s.equals("syncTask"))
-                    setIcon(syncTask);
+                    cell.setIcon(syncTask);
                 else if(s.equals("task"))
-                    setIcon(task);
+                    cell.setIcon(task);
                 else if(s.equals("taskProperties"))
-                    setIcon(taskProperties);
+                    cell.setIcon(taskProperties);
                 break;
                 
             case Arguments:
-                setIcon(argument);
+                cell.setIcon(argument);
                 break;
                 
             case AssociatedDataSet:
-                setIcon(associatedDataSet);
+                cell.setIcon(associatedDataSet);
                 break;
                 
             case AssociatedFolder:
-                setIcon(associatedFolder);
+                cell.setIcon(associatedFolder);
                 break;
                 
             case AssociatedForm:
-                setIcon(associatedForm);
+                cell.setIcon(associatedForm);
                 break;
                 
             case Organisation:
-                setIcon(organisation);
+                cell.setIcon(organisation);
                 break;
                 
             case Site:
-                setIcon(site);
+                cell.setIcon(site);
                 break;
                 
             case Role:
-                setIcon(role);
+                cell.setIcon(role);
                 break;
                 
             case UserData:
-                setIcon(userData);
+                cell.setIcon(userData);
                 break;
                 
             case UserValue:
-                setIcon(userValue);
+                cell.setIcon(userValue);
                 break;
                 
             case ValidationResults:
-                setIcon(validationResult);
+                cell.setIcon(validationResult);
                 break;
                 
             case Checker:
-                setIcon(validationResult);
+                cell.setIcon(validationResult);
                 break;
                 
             case WorkflowSignoffProfile:
-                setIcon(signoffProfile);
+                cell.setIcon(signoffProfile);
                 break;
                 
             case WorkflowHandler:
-                setIcon(workflowHandler);
+                cell.setIcon(workflowHandler);
                 break;
                 
             case WorkflowBusinessRuleHandler:
-                setIcon(businessRuleHandler);
+                cell.setIcon(businessRuleHandler);
                 break;
                 
             case WorkflowBusinessRule:
-                setIcon(businessRule);
+                cell.setIcon(businessRule);
                 break;
                 
             case WorkflowAction:
-                setIcon(workflowAction);
+                cell.setIcon(workflowAction);
                 break;
                 
             default:
-                setIcon(workflow);
+                cell.setIcon(workflow);
                 break;
         }
         
-        return this;
+        return cell;
     }
 }

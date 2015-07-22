@@ -18,7 +18,7 @@ import java.awt.*;
 import tcav.ruletree.AccessManagerItem;
 import tcav.ResourceLocator;
 
-public class RuleTreeNodeRenderer extends DefaultTreeCellRenderer implements TreeCellRenderer{
+public class RuleTreeNodeRenderer implements TreeCellRenderer {
     
     static protected ImageIcon ruleIcon;
     
@@ -42,58 +42,17 @@ public class RuleTreeNodeRenderer extends DefaultTreeCellRenderer implements Tre
             boolean leaf, int row,
             boolean hasFocus) {
         
-        super.selected = isSelected;
-        super.hasFocus = hasFocus;
-        /*
-        DefaultMutableTreeNode node = (DefaultMutableTreeNode)value;
+        DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer();
+        DefaultTreeCellRenderer cell = (DefaultTreeCellRenderer)renderer.getTreeCellRendererComponent(tree, value, isSelected, expanded, leaf, row, hasFocus);
         
-        if(node == null)
-            return this;
-        
-        if(node.getUserObject() == null)
-            return this;
-        
-        setLeafIcon(ruleIcon);
-        
-        AccessManagerItem amItem = (AccessManagerItem)node.getUserObject();
-        */
         if(value == null)
-            return this;
+            return cell;
         
         AccessManagerItem amItem = (AccessManagerItem)value;
         
-        setText(amItem.toString());
-        setToolTipText(amItem.toString());
-        setLeafIcon(ruleIcon);
-        
-	if(isSelected)
-	    setForeground(getTextSelectionColor());
-	else
-	    setForeground(getTextNonSelectionColor());
-	// There needs to be a way to specify disabled icons.
-	if (!tree.isEnabled()) {
-	    setEnabled(false);
-	    if (leaf) {
-		setDisabledIcon(getLeafIcon());
-	    } else if (expanded) {
-		setDisabledIcon(getOpenIcon());
-	    } else {
-		setDisabledIcon(getClosedIcon());
-	    }
-	}
-	else {
-	    setEnabled(true);
-	    if (leaf) {
-		setIcon(getLeafIcon());
-	    } else if (expanded) {
-		setIcon(getOpenIcon());
-	    } else {
-		setIcon(getClosedIcon());
-	    }
-	}
-        
-        setComponentOrientation(tree.getComponentOrientation());
-        
-        return this;
+        cell.setText(amItem.toString());
+        cell.setToolTipText(amItem.toString());
+        cell.setIcon(ruleIcon);
+        return cell;
     }
 }

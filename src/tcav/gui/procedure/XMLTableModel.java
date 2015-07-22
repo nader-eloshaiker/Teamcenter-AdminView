@@ -1,5 +1,5 @@
 /*
- * NodeTableModel.java
+ * XMLTableModel.java
  *
  * Created on 31 July 2007, 20:25
  *
@@ -21,19 +21,19 @@ import tcav.plmxmlpdm.base.*;
  *
  * @author NZR4DL
  */
-public class NodeTableModel extends AbstractTableModel implements TableModel {
+public class XMLTableModel extends AbstractTableModel implements TableModel {
     private NodeReference nr;
     private ProcedureManager pm;
     
     /**
-     * Creates a new instance of NodeTableModel
+     * Creates a new instance of XMLTableModel
      */
-    public NodeTableModel(NodeReference nr, ProcedureManager pm) {
+    public XMLTableModel(NodeReference nr, ProcedureManager pm) {
         this.nr = nr;
         this.pm = pm;
     }
     
-    public NodeTableModel() {
+    public XMLTableModel() {
         this(null, null);
     }
     

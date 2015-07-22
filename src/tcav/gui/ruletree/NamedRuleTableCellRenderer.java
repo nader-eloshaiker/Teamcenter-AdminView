@@ -18,7 +18,7 @@ import tcav.ResourceLocator;
  *
  * @author NZR4DL
  */
-public class NamedRuleTableCellRenderer extends DefaultTableCellRenderer implements TableCellRenderer{
+public class NamedRuleTableCellRenderer implements TableCellRenderer{
     
     static protected ImageIcon typeRuletreeIcon;
     static protected ImageIcon typeWorkflowIcon;
@@ -37,36 +37,35 @@ public class NamedRuleTableCellRenderer extends DefaultTableCellRenderer impleme
     public Component getTableCellRendererComponent(JTable table,
             Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         
+        TableCellRenderer temp = table.getDefaultRenderer(String.class);
+        DefaultTableCellRenderer cell = (DefaultTableCellRenderer)temp.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
         String s = value.toString();
         
         switch (column) {
             case 0:
-                if(s.equals("WORKFLOW")) {
-                    setHorizontalAlignment(CENTER);
-                    setIcon(typeWorkflowIcon);
-                    setToolTipText("Rule Type: WorkFlow");
-                } else if(s.equals("RULETREE")) {
-                    setHorizontalAlignment(CENTER);
-                    setIcon(typeRuletreeIcon);
-                    setToolTipText("Rule Type: Rultree");
-                } break;
+                if(s.equals("WORKFLOW"))
+                    cell.setIcon(typeWorkflowIcon);
+                else if(s.equals("RULETREE"))
+                    cell.setIcon(typeRuletreeIcon);
+                cell.setToolTipText("Rule Type: "+s);
+                cell.setText(null);
+                cell.setHorizontalAlignment(SwingConstants.CENTER);
+                break;
             case 1:
-                setHorizontalAlignment(CENTER);
-                setText(s);
-                setToolTipText("Instances in RuleTree: "+s);
+                cell.setIcon(null);
+                cell.setHorizontalAlignment(SwingConstants.CENTER);
+                cell.setText(s);
+                cell.setToolTipText("Instances in RuleTree: "+s);
                 break;
             default:
-                setText(s);
+                cell.setHorizontalAlignment(SwingConstants.LEFT);
+                cell.setIcon(null);
+                cell.setText(s);
+                cell.setToolTipText(s);
+                break;
         }
         
-        if (isSelected) {
-            setForeground(table.getSelectionForeground());
-            super.setBackground(table.getSelectionBackground());
-        } else {
-            setForeground(table.getForeground());
-            setBackground(table.getBackground());
-        }
-        
-        return this;
+        return cell;
     }
 }

@@ -33,14 +33,17 @@ public class Settings {
     private static int frameLocationY;
     private static final String PROPERTY_FRAMELOCATIONY = "tcav.frameLocationY";
     private static final int PROPERTY_FRAMELOCATIONY_DEFAULT = 0;
-    private static String loadPath;
-    private static final String PROPERTY_LOADPATH = "tcav.loadPath";
-    private static final String PROPERTY_LOADPATH_DEFAULT = "";
     private static boolean saveSettingsOnExit;
     private static final String PROPERTY_SAVESETTINGSONEXIT = "tcav.saveSettingsOnExit";
     private static final boolean PROPERTY_SAVESETTINGSONEXIT_DEFAULT = true;
+    private static String userInterface;
+    private static final String PROPERTY_USERINTERFACE = "tcav.userInterface";
+    private static final String PROPERTY_USERINTERFACE_DEFAULT = "";
     
     /* properties access manager*/
+    private static String amLoadPath;
+    private static final String PROPERTY_AMLOADPATH = "tcav.am.LoadPath";
+    private static final String PROPERTY_AMLOADPATH_DEFAULT = "";
     private static int amSplitLocation;
     private static final String PROPERTY_AM_SPLITLOCATION = "tcav.am.splitLocation";
     private static final int PROPERTY_AM_SPLITLOCATION_DEFAULT = -1;
@@ -55,18 +58,21 @@ public class Settings {
     private static final int PROPERTY_AM_ACLTAB_DEFAULT = 0;
     
     /* properties process manager */
+    private static String pmLoadPath;
+    private static final String PROPERTY_PMLOADPATH = "tcav.pm.loadPath";
+    private static final String PROPERTY_PMLOADPATH_DEFAULT = "";
     private static int pmProcedureMode;
     private static final String PROPERTY_PM_PROCEDUREMODE = "tcav.pm.procedureMode";
     private static int PROPERTY_PM_PROCEDUREMODE_DEFAULT = -1;
-    private static int pmSplitLocation1;
-    private static final String PROPERTY_PM_SPLITLOCATION1 = "tcav.pm.splitLocation1";
-    private static int PROPERTY_PM_SPLITLOCATION1_DEFAULT = -1;
-    private static int pmSplitLocation2;
-    private static final String PROPERTY_PM_SPLITLOCATION2 = "tcav.pm.splitLocation2";
-    private static int PROPERTY_PM_SPLITLOCATION2_DEFAULT = -1;
-    private static boolean pmExpandedView;
-    private static final String PROPERTY_PM_EXPANDEDVIEW = "tcav.pm.expandedView";
-    private static final boolean PROPERTY_PM_EXPANDEDVIEW_DEFAULT = true;
+    private static int pmSplitLocation;
+    private static final String PROPERTY_PM_SPLITLOCATION = "tcav.pm.SplitLocation";
+    private static int PROPERTY_PM_SPLITLOCATION_DEFAULT = -1;
+    private static boolean pmWokflowExpandedView;
+    private static final String PROPERTY_PM_WORKFLOWEXPANDEDVIEW = "tcav.pm.workflowExpandedView";
+    private static final boolean PROPERTY_PM_WORKFLOWEXPANDEDVIEW_DEFAULT = true;
+    private static boolean pmActionExpandedView;
+    private static final String PROPERTY_PM_ACTIONEXPANDEDVIEW = "tcav.pm.actionExpandedView";
+    private static final boolean PROPERTY_PM_ACTIONEXPANDEDVIEW_DEFAULT = true;
     
     private static Properties property = new Properties();
     
@@ -83,15 +89,18 @@ public class Settings {
             fis.close();
         }
         
-        setLoadPath(
+        setAMLoadPath(
                 getPropertyAsString(
-                PROPERTY_LOADPATH,
-                PROPERTY_LOADPATH_DEFAULT));
+                PROPERTY_AMLOADPATH,
+                PROPERTY_AMLOADPATH_DEFAULT));
+        setUserInterface(
+                getPropertyAsString(
+                PROPERTY_USERINTERFACE,
+                PROPERTY_USERINTERFACE_DEFAULT));
         setSaveSettingsOnExit(
                 getPropertyAsBoolean(
                 PROPERTY_SAVESETTINGSONEXIT,
-                PROPERTY_SAVESETTINGSONEXIT_DEFAULT
-                ));
+                PROPERTY_SAVESETTINGSONEXIT_DEFAULT));
         setFrameSizeX(
                 getPropertyAsInt(
                 PROPERTY_FRAMESIZEX,
@@ -109,9 +118,7 @@ public class Settings {
                 PROPERTY_FRAMELOCATIONY,
                 PROPERTY_FRAMELOCATIONY_DEFAULT));
         
-        
-        
-        
+
         setAMSplitLocation(
                 getPropertyAsInt(
                 PROPERTY_AM_SPLITLOCATION,
@@ -129,22 +136,27 @@ public class Settings {
                 PROPERTY_AM_ACLSORT,
                 PROPERTY_AM_ACLSORT_DEFAULT));
         
+        
+        setPMLoadPath(
+                getPropertyAsString(
+                PROPERTY_PMLOADPATH,
+                PROPERTY_PMLOADPATH_DEFAULT));
         setPMProcedureMode(
                 getPropertyAsInt(
                 PROPERTY_PM_PROCEDUREMODE,
                 PROPERTY_PM_PROCEDUREMODE_DEFAULT));
-        setPMSplitLocation1(
+        setPMSplitLocation(
                 getPropertyAsInt(
-                PROPERTY_PM_SPLITLOCATION1,
-                PROPERTY_PM_SPLITLOCATION1_DEFAULT));
-        setPMSplitLocation2(
-                getPropertyAsInt(
-                PROPERTY_PM_SPLITLOCATION2,
-                PROPERTY_PM_SPLITLOCATION2_DEFAULT));
-        setPMExpandedView(
+                PROPERTY_PM_SPLITLOCATION,
+                PROPERTY_PM_SPLITLOCATION_DEFAULT));
+        setPMWorkflowExpandedView(
                 getPropertyAsBoolean(
-                PROPERTY_PM_EXPANDEDVIEW,
-                PROPERTY_PM_EXPANDEDVIEW_DEFAULT));
+                PROPERTY_PM_WORKFLOWEXPANDEDVIEW,
+                PROPERTY_PM_WORKFLOWEXPANDEDVIEW_DEFAULT));
+        setPMActionExpandedView(
+                getPropertyAsBoolean(
+                PROPERTY_PM_ACTIONEXPANDEDVIEW,
+                PROPERTY_PM_ACTIONEXPANDEDVIEW_DEFAULT));
         
     }
     
@@ -152,8 +164,8 @@ public class Settings {
         File file = new File("TcAdminView.cfg");
         FileOutputStream fos = new FileOutputStream(file);
         property.setProperty(
-                PROPERTY_LOADPATH,
-                getLoadPath());
+                PROPERTY_USERINTERFACE,
+                getUserInterface());
         property.setProperty(
                 PROPERTY_SAVESETTINGSONEXIT,
                 Boolean.toString(getSaveSettingsOnExit()));
@@ -172,6 +184,9 @@ public class Settings {
         
         
         property.setProperty(
+                PROPERTY_AMLOADPATH,
+                getAMLoadPath());
+        property.setProperty(
                 PROPERTY_AM_SPLITLOCATION,
                 Integer.toString(getAMSplitLocation()));
         property.setProperty(
@@ -184,25 +199,49 @@ public class Settings {
                 PROPERTY_AM_ACLSORT,
                 convertIntArrayToString(getAMACLSort()));
         
+        
+        property.setProperty(
+                PROPERTY_PMLOADPATH,
+                getPMLoadPath());
         property.setProperty(
                 PROPERTY_PM_PROCEDUREMODE,
                 Integer.toString(getPMProcedureMode()));
         property.setProperty(
-                PROPERTY_PM_SPLITLOCATION1,
-                Integer.toString(getPMSplitLocation1()));
+                PROPERTY_PM_SPLITLOCATION,
+                Integer.toString(getPMSplitLocation()));
         property.setProperty(
-                PROPERTY_PM_SPLITLOCATION2,
-                Integer.toString(getPMSplitLocation2()));
+                PROPERTY_PM_WORKFLOWEXPANDEDVIEW,
+                Boolean.toString(getPMWorkflowExpandedView()));
         property.setProperty(
-                PROPERTY_PM_EXPANDEDVIEW,
-                Boolean.toString(getPMExpandedView()));
+                PROPERTY_PM_ACTIONEXPANDEDVIEW,
+                Boolean.toString(getPMActionExpandedView()));
         
         property.store(fos, ResourceLocator.getVersion());
         fos.close();
     }
     
-    public static String getLoadPath() {
-        return loadPath;
+    public static String getAMLoadPath() {
+        return amLoadPath;
+    }
+    
+    public static void setAMLoadPath(String amLoadPath) {
+        Settings.amLoadPath = amLoadPath;
+    }
+    
+    public static String getPMLoadPath() {
+        return pmLoadPath;
+    }
+    
+    public static void setPMLoadPath(String pmLoadPath) {
+        Settings.pmLoadPath = pmLoadPath;
+    }
+    
+    public static String getUserInterface() {
+        return userInterface;
+    }
+    
+    public static void setUserInterface(String userInterface) {
+        Settings.userInterface = userInterface;
     }
     
     public static boolean getSaveSettingsOnExit() {
@@ -253,10 +292,6 @@ public class Settings {
         Settings.frameLocationY = frameLocationY;
     }
     
-    public static void setLoadPath(String loadPath) {
-        Settings.loadPath = loadPath;
-    }
-    
     public static int getAMSplitLocation(){
         return amSplitLocation;
     }
@@ -303,36 +338,33 @@ public class Settings {
             Settings.pmProcedureMode = pmProcedureMode;
     }
     
-    public static int getPMSplitLocation1(){
-        return pmSplitLocation1;
+    public static int getPMSplitLocation(){
+        return pmSplitLocation;
     }
     
-    public static void setPMSplitLocation1(int pmSplitLocation1) {
-        if(pmSplitLocation1 == -1)
-            Settings.pmSplitLocation1 = (int)(frameSizeX*0.5);
+    public static void setPMSplitLocation(int pmSplitLocation) {
+        if(pmSplitLocation == -1)
+            Settings.pmSplitLocation = (int)(frameSizeX*0.5);
         else
-            Settings.pmSplitLocation1 = pmSplitLocation1;
+            Settings.pmSplitLocation = pmSplitLocation;
     }
     
-    public static int getPMSplitLocation2(){
-        return pmSplitLocation2;
+    public static boolean getPMWorkflowExpandedView() {
+        return pmWokflowExpandedView;
     }
     
-    public static void setPMSplitLocation2(int pmSplitLocation2) {
-        if(pmSplitLocation2 == -1)
-            Settings.pmSplitLocation2 = (int)(frameSizeY-380);
-        else
-            Settings.pmSplitLocation2 = pmSplitLocation2;
+    public static void setPMWorkflowExpandedView(boolean pmWokflowExpandedView) {
+        Settings.pmWokflowExpandedView = pmWokflowExpandedView;
     }
     
-    public static boolean getPMExpandedView() {
-        return pmExpandedView;
+    public static boolean getPMActionExpandedView() {
+        return pmActionExpandedView;
     }
     
-    public static void setPMExpandedView(boolean pmExpandedView) {
-        Settings.pmExpandedView = pmExpandedView;
+    public static void setPMActionExpandedView(boolean pmActionExpandedView) {
+        Settings.pmActionExpandedView = pmActionExpandedView;
     }
-    
+
     private static int getPropertyAsInt(String name, int defaultValue) throws NumberFormatException {
         int intValue = defaultValue;
         String stringValue = property.getProperty(name);
