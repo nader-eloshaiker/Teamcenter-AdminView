@@ -13,7 +13,7 @@ package tceav.manager.procedure.plmxmlpdm;
  *
  * @author NZR4DL
  */
-public enum TagTypeCompleteEnum {
+public enum PlmXmlTagTypeCompleteEnum {
     XTRep("XTRep"),
     Set("Set"),
     InformMessage("InformMessage"),
@@ -251,7 +251,7 @@ public enum TagTypeCompleteEnum {
     
     private final String value;
     
-    TagTypeCompleteEnum(String v) {
+    PlmXmlTagTypeCompleteEnum(String v) {
         value = v;
     }
     
@@ -259,8 +259,8 @@ public enum TagTypeCompleteEnum {
         return value;
     }
     
-    public static TagTypeCompleteEnum fromValue(String v) {
-        for (TagTypeCompleteEnum c: TagTypeCompleteEnum.values()) {
+    public static PlmXmlTagTypeCompleteEnum fromValue(String v) {
+        for (PlmXmlTagTypeCompleteEnum c: PlmXmlTagTypeCompleteEnum.values()) {
             if (c.value.equals(v)) {
                 return c;
             }

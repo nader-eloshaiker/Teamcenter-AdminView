@@ -13,8 +13,8 @@ import java.awt.Point;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.NamedNodeMap;
-import tceav.manager.procedure.plmxmlpdm.TagTools;
-import tceav.manager.procedure.plmxmlpdm.TagTypeEnum;
+import tceav.xml.TagTools;
+import tceav.manager.procedure.plmxmlpdm.ProcedureTagTypeEnum;
 import tceav.manager.procedure.plmxmlpdm.base.AttribOwnerBase;
 import tceav.manager.procedure.plmxmlpdm.classtype.WorkflowTemplateClassificationEnum;
 import tceav.manager.procedure.plmxmlpdm.classtype.WorkflowTemplateStageEnum;
@@ -145,10 +145,10 @@ public class WorkflowTemplateType extends AttribOwnerBase {
         TagTools.addToList(attrib, dependencyTaskTemplateRefsAttribute, getDependencyTaskTemplateRefs());
         TagTools.addToList(attrib, actionRefsAttribute, getActionRefs());
 
-        TagTypeEnum tagType;
+        ProcedureTagTypeEnum tagType;
         for (int i = 0; i < nodeList.getLength(); i++) {
             currentNode = nodeList.item(i);
-            tagType = TagTypeEnum.fromValue(currentNode.getNodeName());
+            tagType = ProcedureTagTypeEnum.fromValue(currentNode.getNodeName());
 
             switch (tagType) {
                 case DependencyTaskActions:

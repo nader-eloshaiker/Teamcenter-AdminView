@@ -11,7 +11,7 @@ package tceav.gui.tools.search;
 
 import java.util.ArrayList;
 import tceav.gui.tools.table.JTableAdvanced;
-import tceav.manager.access.AccessRule;
+import tceav.manager.access.NamedAcl;
 /**
  *
  * @author NZR4DL
@@ -82,7 +82,7 @@ public abstract class SearchTableComponent extends SearchAdapter implements Sear
 
     private void searchTable(JTableAdvanced table, String type, String value) {
         Boolean matched;
-        AccessRule ar;
+        NamedAcl ar;
         int index;
         
         for(int i=0; i<table.getRowCount(); i++) {

@@ -17,9 +17,11 @@ import tceav.resources.ImageEnum;
  */
 public enum AccessControlHeaderEnum {
     
-    AccessorType("TYPEACCESSOR", "Type Of Accessor", ImageEnum.aclAccessorType),
-    AccessorID("IDACCESSOR", "Id Of Accessor", ImageEnum.aclAccessorID),
+    AccessorType("accessor_type", "Type Of Accessor", ImageEnum.aclAccessorType),
+    Accessor("accessor", "Id Of Accessor", ImageEnum.aclAccessorID),
+    AdministerADALicense("Administer_ADA_Licenses", "Administer ADA Lisence", ImageEnum.aclAdministerADALicense), // new
     AssignToProject("ASSIGN_TO_PROJECT", "Assign to Project", ImageEnum.aclAssignToProject),
+    BatchPrint("BATCH_PRINT", "Batch Print", ImageEnum.aclBatchPrint), // new
     Change("CHANGE", "Change", ImageEnum.aclChange),
     ChangeOwnership("CHANGE_OWNER", "Change Ownership", ImageEnum.aclChangeOwnership),
     CheckInCheckOut("CICO", "CheckIn CheckOut", ImageEnum.aclCheckInCheckOut),
@@ -27,10 +29,12 @@ public enum AccessControlHeaderEnum {
     Copy("COPY", "Copy", ImageEnum.aclCopy),
     Delete("DELETE", "Delete", ImageEnum.aclDelete),
     Demote("DEMOTE", "Demote", ImageEnum.aclDemote),
+    DigitalSign("DIGITAL_SIGN", "Digital Sign", ImageEnum.aclDigitalSign),
     Export("EXPORT", "Export", ImageEnum.aclExport),
     Import("IMPORT", "Import", ImageEnum.aclImport),
     IPAdmin("IP_ADMIN", "IP Admin", ImageEnum.aclIPAdmin),
     ITARAdmin("ITAR_ADMIN", "ITAR Admin", ImageEnum.aclITARAdmin),
+    MarkUp("MARKUP", "Markup", ImageEnum.aclMarkUp), // new
     Promote("PROMOTE", "Promote", ImageEnum.aclPromote),
     Publish("PUBLISH", "Publish", ImageEnum.aclPublish),
     Read("READ", "Read", ImageEnum.aclRead),
@@ -39,6 +43,7 @@ public enum AccessControlHeaderEnum {
     Subscribe("SUBSCRIBE", "Subscribe", ImageEnum.aclSubscribe),
     TransferIn("TRANSFER_IN", "Transfer In", ImageEnum.aclTransferIn),
     TransferOut("TRANSFER_OUT", "Transfer Out", ImageEnum.aclTransferOut),
+    Translation("TRANSLATION", "Translation",ImageEnum.aclTranslation), // new
     Write("WRITE", "Write", ImageEnum.aclWrite),
     Unamanged("UNMANAGE", "Unmanage",ImageEnum.aclUnmanage),
     Undefined("UNDEFINED", null, ImageEnum.aclUndefined);
@@ -74,7 +79,7 @@ public enum AccessControlHeaderEnum {
     
     public static AccessControlHeaderEnum fromValue(String v) {
         for (AccessControlHeaderEnum c: AccessControlHeaderEnum.values())
-            if (c.value.equals(v))
+            if (c.equals(v))
                 return c;
         
         AccessControlHeaderEnum result = Undefined;
@@ -82,4 +87,11 @@ public enum AccessControlHeaderEnum {
         return result;
     }
     
+    public boolean equals(AccessControlHeaderEnum v) {
+        return value.equals(v.value);
+    }
+
+    public boolean equals(String v) {
+        return value.equals(v);
+    }
 }

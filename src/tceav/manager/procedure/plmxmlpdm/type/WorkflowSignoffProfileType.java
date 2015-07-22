@@ -8,8 +8,8 @@
 
 package tceav.manager.procedure.plmxmlpdm.type;
 
-import tceav.manager.procedure.plmxmlpdm.TagTools;
-import tceav.manager.procedure.plmxmlpdm.TagTypeEnum;
+import tceav.xml.TagTools;
+import tceav.manager.procedure.plmxmlpdm.ProcedureTagTypeEnum;
 import tceav.manager.procedure.plmxmlpdm.base.AttribOwnerBase;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;

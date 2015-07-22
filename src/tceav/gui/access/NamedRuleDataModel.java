@@ -9,8 +9,8 @@
 
 package tceav.gui.access;
 
-import tceav.manager.access.AccessRule;
-import tceav.manager.access.AccessRuleList;
+import tceav.manager.access.NamedAcl;
+import tceav.manager.access.NamedAclList;
 
 /**
  *
@@ -18,16 +18,16 @@ import tceav.manager.access.AccessRuleList;
  */
 public class NamedRuleDataModel extends NamedRuleDataAdapterModel implements NamedRuleDataFilterInterface {
     
-    protected AccessRuleList accessRuleList;
+    protected NamedAclList accessRuleList;
     
     /**
      * Creates a new instance of NamedRuleDataModel
      */
-    public NamedRuleDataModel(AccessRuleList accessRuleList) {
+    public NamedRuleDataModel(NamedAclList accessRuleList) {
         this.accessRuleList = accessRuleList;
     }
     
-    public AccessRule getAccessRule(int row) {
+    public NamedAcl getAccessRule(int row) {
         return accessRuleList.get(row);
     }
     

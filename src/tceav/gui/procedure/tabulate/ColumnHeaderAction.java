@@ -11,7 +11,7 @@ package tceav.gui.procedure.tabulate;
 import tceav.manager.procedure.plmxmlpdm.type.WorkflowHandlerType;
 import tceav.manager.procedure.plmxmlpdm.type.UserDataType;
 import tceav.manager.procedure.plmxmlpdm.type.WorkflowBusinessRuleType;
-import tceav.manager.procedure.plmxmlpdm.TagTypeEnum;
+import tceav.manager.procedure.plmxmlpdm.ProcedureTagTypeEnum;
 
 /**
  *
@@ -27,7 +27,7 @@ public class ColumnHeaderAction extends ColumnHeaderAdapter {
         UserDataType ud;
         for (int k = 0; k < wh.getAttribute().size(); k++) {
             ud = (UserDataType) wh.getAttribute().get(k);
-            if (ud.getUserDataType() == TagTypeEnum.Arguments) {
+            if (ud.getUserDataType() == ProcedureTagTypeEnum.Arguments) {
                 for (int i = 0; i < ud.getUserValue().size(); i++) {
                     getHandler(0).addArgument(ud.getUserValue().get(i).getValue());
                 }

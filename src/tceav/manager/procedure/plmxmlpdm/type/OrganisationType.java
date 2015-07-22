@@ -10,8 +10,8 @@ package tceav.manager.procedure.plmxmlpdm.type;
 
 import java.util.ArrayList;
 import java.util.List;
-import tceav.manager.procedure.plmxmlpdm.TagTools;
-import tceav.manager.procedure.plmxmlpdm.TagTypeEnum;
+import tceav.xml.TagTools;
+import tceav.manager.procedure.plmxmlpdm.ProcedureTagTypeEnum;
 import tceav.manager.procedure.plmxmlpdm.base.OwnerBase;
 
 import org.w3c.dom.Node;

@@ -16,8 +16,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import tceav.gui.AdminViewFrame;
 import tceav.manager.ManagerAdapter;
-import tceav.manager.procedure.plmxmlpdm.HeaderType;
-import tceav.manager.procedure.plmxmlpdm.TagTypeEnum;
+import tceav.manager.procedure.plmxmlpdm.ProcedureHeaderType;
+import tceav.manager.procedure.plmxmlpdm.ProcedureTagTypeEnum;
 import tceav.manager.procedure.plmxmlpdm.base.IdBase;
 import tceav.manager.procedure.plmxmlpdm.classtype.WorkflowTemplateClassificationEnum;
 import tceav.manager.procedure.plmxmlpdm.type.AccessIntentType;
@@ -40,7 +40,7 @@ import tceav.xml.DOMReader;
 public class ProcedureManager extends ManagerAdapter {
     
     private ArrayList<WorkflowTemplateType> workflowProcesses;
-    private HeaderType header;
+    private ProcedureHeaderType header;
     private ArrayList<SiteType> site;
     private PLMXMLType plmxml;
     private File file;
@@ -77,7 +77,7 @@ public class ProcedureManager extends ManagerAdapter {
     }
     
     public boolean isValid() {
-        return (getWorkflowProcesses().size() != 0);
+        return (!getWorkflowProcesses().isEmpty());
     }
     
     public ArrayList<WorkflowTemplateType> getWorkflowProcesses() {
@@ -105,7 +105,7 @@ public class ProcedureManager extends ManagerAdapter {
         return site.get(siteIndex);
     }
     
-    public HeaderType getHeader() {
+    public ProcedureHeaderType getHeader() {
         return header;
     }
     
@@ -119,10 +119,10 @@ public class ProcedureManager extends ManagerAdapter {
         int nodeCount = list.getLength();
         int nodeIndex = 0;
         
-        if (TagTypeEnum.fromValue(parentNode.getNodeName()) == TagTypeEnum.PLMXML) {
+        if (ProcedureTagTypeEnum.fromValue(parentNode.getNodeName()) == ProcedureTagTypeEnum.PLMXML) {
             plmxml = new PLMXMLType(parentNode);
         }
-        TagTypeEnum tagType;
+        ProcedureTagTypeEnum tagType;
         workflowProcesses = new ArrayList<WorkflowTemplateType>();
         site = new ArrayList<SiteType>();
         
@@ -145,14 +145,14 @@ public class ProcedureManager extends ManagerAdapter {
                 }
                 
                 currentNode = list.item(nodeIndex);
-                tagType = TagTypeEnum.fromValue(currentNode.getNodeName());
+                tagType = ProcedureTagTypeEnum.fromValue(currentNode.getNodeName());
                 
                 progressMonitor.setProgress(i);
                 progressMonitor.setNote(tagType.value());
                 
                 switch (tagType) {
                     case Header:
-                        header = new HeaderType(currentNode);
+                        header = new ProcedureHeaderType(currentNode);
                         parentNode.removeChild(currentNode);
                         break;
                         

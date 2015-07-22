@@ -125,11 +125,15 @@ public class NamedRuleSelectionListener implements ListSelectionListener {
             namedRule.updateReferences(i);
             accessRule.updateTable(namedRule.getModel().getAccessRule(i));
             
-            if(namedRuleList != null)
-                for(int k=0; k<namedRuleList.length; k++)
-                    if(k != index)
-                        if(namedRuleList[k].getTable().getSelectedRowCount() != 0)
+            if(namedRuleList != null) {
+                for(int k=0; k<namedRuleList.length; k++) {
+                    if(k != index){
+                        if(namedRuleList[k].getTable().getSelectedRowCount() != 0) {
                             namedRuleList[k].getTable().clearSelection();
+                        }
+                    }
+                }
+            }
             
         } else
             accessRule.updateTable();

@@ -10,29 +10,26 @@ package tceav.manager.access;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
+import org.w3c.dom.Node;
 import tceav.utils.ArrayListSorter;
 
 /**
  *
  * @author NZR4DL
  */
-public class AccessRuleList extends ArrayList<AccessRule> {
+public class NamedAclList extends ArrayList<NamedAcl> {
 
     private ArrayList<String> aclTypes;
     private Hashtable<String, Integer> aclTypeSize;
     private ArrayList<String> accessorTypes;
     private AccessControlHeader acHeader;
 
-    /** Creates a new instance of AccessRuleList */
-    public AccessRuleList() {
+    /* Creates a new instance of AccessRuleList */
+    public NamedAclList() {
         super();
         aclTypes = new ArrayList<String>();
         aclTypeSize = new Hashtable<String, Integer>();
         accessorTypes = new ArrayList<String>();
-    }
-
-    public void createAccessControlColumns(String s) {
-        acHeader = new AccessControlHeader(s);
     }
 
     public AccessControlHeader getAccessControlColumns() {
@@ -64,15 +61,24 @@ public class AccessRuleList extends ArrayList<AccessRule> {
         return -1;
     }
 
-    public AccessRule get(String s) {
+    public NamedAcl get(String s) {
+        if (s.equals("")) {
+            return null;
+        }
         /* Used to support ruletree entry with trailing spaces */
         return get(indexOf(s.trim()));
     }
 
+    /***************************************************************************
+     * Text File Methods
+     **************************************************************************/
+    public void createAccessControlColumns(String s) {
+        acHeader = new AccessControlHeader(s);
+    }
+
     @Override
-    public boolean add(AccessRule ar) {
-        ar.setColumns(acHeader.getColumns());
-        String s = ar.getRuleType();
+    public boolean add(NamedAcl namedACL) {
+        String s = namedACL.getRuleType();
 
         if (aclTypes.indexOf(s) == -1) {
             aclTypes.add(s);
@@ -83,27 +89,63 @@ public class AccessRuleList extends ArrayList<AccessRule> {
             aclTypeSize.put(s, i);
         }
 
-        return super.add(ar);
-    }
-    
-    AccessRule accessRule;
-
-    public boolean addNewRule(String ruleName) {
-        accessRule = new AccessRule(ruleName);
-        return add(accessRule);
+        return super.add(namedACL);
     }
 
-    public boolean addNewAccessControl(String accessControl) {
-        AccessControl ac = new AccessControl(accessControl);
-        
+    public NamedAcl addNewACL(String ruleName) {
+        NamedAcl namedACL = new NamedAcl(ruleName, acHeader);
+
+        if (add(namedACL)) {
+            return namedACL;
+        } else {
+            return null;
+        }
+    }
+
+    public boolean addNewAccessControl(String str) {
+        AccessControl ac = new AccessControl(str, acHeader);
+
         if (accessorTypes.indexOf(ac.getTypeOfAccessor()) == -1) {
             accessorTypes.add(ac.getTypeOfAccessor());
             ArrayListSorter.sortStringArray(accessorTypes);
         }
 
-        return accessRule.add(ac);
+        return get(size() - 1).add(ac);//accessRule.add(ac);
     }
 
+    /***************************************************************************
+     * XML Methods
+     **************************************************************************/
+    public void createAccessControlColumns() {
+        acHeader = new AccessControlHeader();
+    }
+
+    public NamedAcl addNewACL(Node namedAclNode) {
+        if (acHeader == null) {
+            createAccessControlColumns();
+        }
+
+        NamedAcl namedACL = new NamedAcl(namedAclNode, acHeader);
+        AccessControl ac;
+
+        for (int i = 0; i < namedACL.size(); i++) {
+            ac = namedACL.get(i);
+            if (accessorTypes.indexOf(ac.getTypeOfAccessor()) == -1) {
+                accessorTypes.add(ac.getTypeOfAccessor());
+                ArrayListSorter.sortStringArray(accessorTypes);
+            }
+        }
+
+        if (add(namedACL)) {
+            return namedACL;
+        } else {
+            return null;
+        }
+    }
+
+    /***************************************************************************
+     * Helper Methods
+     ***************************************************************************/
     public ArrayList<String> getACLTypes() {
         return aclTypes;
     }

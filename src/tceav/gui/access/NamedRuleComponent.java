@@ -20,7 +20,7 @@ import tceav.gui.tools.search.SearchTableComponent;
 import tceav.gui.tools.table.JTableAdvanced;
 import tceav.gui.tools.tree.JTreeAdvanced;
 import tceav.manager.access.AccessManager;
-import tceav.manager.access.AccessRule;
+import tceav.manager.access.NamedAcl;
 import tceav.Settings;
 import tceav.gui.*;
 import tceav.resources.*;
@@ -233,7 +233,7 @@ public class NamedRuleComponent extends JPanel {
         listUnusedNamed.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                AccessRule ar = (AccessRule) listUnusedNamed.getSelectedItem();
+                NamedAcl ar = (NamedAcl) listUnusedNamed.getSelectedItem();
                 int tableIndex = dataFilter.indexOfRuleName(ar.getRuleName());
                 table.setRowSelectionInterval(tableIndex, tableIndex);
                 table.getSelectionModel().setAnchorSelectionIndex(tableIndex);
@@ -317,7 +317,7 @@ public class NamedRuleComponent extends JPanel {
 
             public boolean compare(int row, String type, String value) {
                 boolean matched = false;
-                AccessRule ar = getModel().getAccessRule(row);
+                NamedAcl ar = getModel().getAccessRule(row);
                 for (int j = 0; j < ar.size(); j++) {
                     if ((!type.equals("")) && (!value.equals(""))) {
                         matched = isMatched(ar.get(j).getTypeOfAccessor(), type) & isMatched(ar.get(j).getIdOfAccessor(), value);
@@ -456,7 +456,7 @@ public class NamedRuleComponent extends JPanel {
     }
 
     private JPanel createTabReferences() {
-        treeReferences = new JTreeAdvanced(new RuleTreeReferencesModel(new AccessRule()));
+        treeReferences = new JTreeAdvanced(new RuleTreeReferencesModel(new NamedAcl()));
         treeReferences.setRootVisible(false);
         treeReferences.setShowsRootHandles(true);
         treeReferences.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
@@ -626,7 +626,7 @@ public class NamedRuleComponent extends JPanel {
     }
 
     public void updateReferences(int index) {
-        AccessRule ar = getModel().getAccessRule(index);
+        NamedAcl ar = getModel().getAccessRule(index);
         treeReferences.setModel(new RuleTreeReferencesModel(ar));
         treeReferences.repaint();
     }

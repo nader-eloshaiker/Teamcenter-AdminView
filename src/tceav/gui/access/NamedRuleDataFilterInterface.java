@@ -10,7 +10,7 @@
 package tceav.gui.access;
 
 import javax.swing.table.*;
-import tceav.manager.access.AccessRule;
+import tceav.manager.access.NamedAcl;
 
 /**
  *
@@ -26,7 +26,7 @@ public interface NamedRuleDataFilterInterface extends TableModel {
     
     public void applyFilter();
     
-    public AccessRule getAccessRule(int row);
+    public NamedAcl getAccessRule(int row);
     
     public void fireTableDataChanged();
     

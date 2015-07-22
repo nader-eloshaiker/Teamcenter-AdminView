@@ -10,12 +10,17 @@ package tceav.manager.access;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Vector;
-import tceav.utils.ArrayListSorter;
+import javax.swing.ProgressMonitor;
+import javax.swing.ProgressMonitorInputStream;
+import tceav.gui.AdminViewFrame;
 import tceav.manager.ManagerAdapter;
+import tceav.xml.DOMReader;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  *
@@ -24,19 +29,23 @@ import tceav.manager.ManagerAdapter;
 public class AccessManager extends ManagerAdapter {
 
     private MetaData metaData;
-    private AccessRuleList arList;
-    private ArrayList<AccessRule> unusedRules;
+    private ArrayList<NamedAcl> unusedRules;
     private RuleTreeNode rootTreeNode;
     private ArrayList<RuleTreeNode> treeNodeList;
     private File file;
+    private AdminViewFrame parentFrame;
+    private NamedAclList namedAclList;
+    private ArrayList<String> conditionsList;
 
     /** Creates a new instance of ruleTreeReader */
-    public AccessManager() {
-        arList = new AccessRuleList();
-        unusedRules = new ArrayList<AccessRule>();
+    public AccessManager(AdminViewFrame parentFrame) {
+        this.parentFrame = parentFrame;
+        namedAclList = new NamedAclList();
+        unusedRules = new ArrayList<NamedAcl>();
         treeNodeList = new ArrayList<RuleTreeNode>();
         rootTreeNode = new RuleTreeNode();
-        conditionsList = new Vector<String>();
+        conditionsList = new ArrayList<String>();
+        metaData = new MetaData();
     }
 
     public String getManagerType() {
@@ -47,23 +56,27 @@ public class AccessManager extends ManagerAdapter {
         return file;
     }
 
+    public ArrayList<String> getConditions() {
+        return conditionsList;
+    }
+
     public boolean isValid() {
         if (rootTreeNode == null) {
             return false;
         } else if (!rootTreeNode.isValid()) {
             return false;
-        } else if (arList.size() == 0) {
+        } else if (namedAclList.size() == 0) {
             return false;
         } else {
             return true;
         }
     }
 
-    public AccessRule getUnusedRule(int index) {
+    public NamedAcl getUnusedRule(int index) {
         return unusedRules.get(index);
     }
 
-    public ArrayList<AccessRule> getUnusedRules() {
+    public ArrayList<NamedAcl> getUnusedRules() {
         return unusedRules;
     }
 
@@ -75,30 +88,83 @@ public class AccessManager extends ManagerAdapter {
         return treeNodeList;
     }
 
-    public AccessRuleList getAccessRuleList() {
-        return arList;
+    public NamedAclList getAccessRuleList() {
+        return namedAclList;
     }
 
     public MetaData getMetaData() {
         return metaData;
     }
 
-    public void readFile(File file) throws IOException {
+    private void findUnusedRules() {
+        if (namedAclList.size() <= 0) {
+            return;
+        }
+        for (int i = 0; i < namedAclList.size(); i++) {
+            if (namedAclList.get(i).getRuleTreeReferences().isEmpty()) {
+                if (namedAclList.get(i).getRuleType().equals("RULETREE")) {
+                    unusedRules.add(namedAclList.get(i));
+                }
+            }
+        }
+    }
+
+    public void readFile(File file) throws Exception {
+
+        this.file = file;
+
+        if (file.length() == 0) {
+            throw (new IOException("Empty File"));
+        }
+
+        FileReader fr = new FileReader(file);
+        BufferedReader br = new BufferedReader(fr);
+        String firstLine = br.readLine();
+        br.close();
+
+
+        if (file.getName().endsWith("xml")) {
+            readXmlFile();
+        } else {
+            if (firstLine != null) {
+                if (firstLine.startsWith("<?xml")) {
+                    readXmlFile();
+                } else if (firstLine.startsWith("#AM")) {
+                    readTextFile();
+                }
+            } else {
+                throw (new IOException("Unrecognised File Format"));
+            }
+        }
+
+        findUnusedRules();
+    }
+
+    private void readXmlFile() throws Exception {
+        FileInputStream fis = new FileInputStream(file);
+        DOMReader domUtil;
+        try {
+            ProgressMonitorInputStream pmi = new ProgressMonitorInputStream(
+                    parentFrame, "Reading " + file.getName(), fis);
+            domUtil = new DOMReader(pmi);
+
+        } catch (Exception exc) {
+            throw new Exception("Error reading XML: " + exc);
+        }
+        mapXML(domUtil.getRootNode());
+    }
+
+    private void readTextFile() throws Exception {
         final int MODE_METADATA_AND_ACCESS_CONTROL_HEADER = 0;
         final int MODE_ACCESS_CONTROL = 1;
         final int MODE_RULE_TREE = 2;
         final int MODE_UNEXPECTED_EOF = 3;
         final int MODE_CORRUPTED_FILE = 4;
 
-        this.file = file;
-
         String thisLine;
         String ruleMetaData = new String();
         int readMode = MODE_METADATA_AND_ACCESS_CONTROL_HEADER;
         int ruleTreeIndex = 0;
-
-        AccessRule accessRule = new AccessRule();
-        //arList.add(accessRule);
 
         RuleTreeNode newNode;
         RuleTreeNode currentNode = new RuleTreeNode();
@@ -111,21 +177,25 @@ public class AccessManager extends ManagerAdapter {
         if (file.length() == 0) {
             throw (new IOException("Empty File"));
         }
+
         while ((thisLine = br.readLine()) != null) {
 
             switch (readMode) {
                 case MODE_METADATA_AND_ACCESS_CONTROL_HEADER:
                     if (thisLine.startsWith("#")) {
 
-                        if (ruleMetaData.length() > 0)
+                        if (ruleMetaData.length() > 0) {
                             ruleMetaData += "\n";
+                        }
 
                         ruleMetaData += thisLine;
+
                     } else {
                         if (ruleMetaData != null) {
-                            metaData = new MetaData(ruleMetaData);
+                            metaData.loadLegacey(ruleMetaData);
+
                             if (thisLine.length() != 0) {
-                                arList.createAccessControlColumns(thisLine);
+                                namedAclList.createAccessControlColumns(thisLine);
                                 readMode = MODE_ACCESS_CONTROL;
                             } else {
                                 readMode = MODE_CORRUPTED_FILE;
@@ -143,34 +213,24 @@ public class AccessManager extends ManagerAdapter {
 
                         if (thisLine != null) {
 
-                            if (thisLine.length() == 0)
+                            if (thisLine.length() == 0) {
                                 readMode = MODE_RULE_TREE;
-                            else
-                                arList.addNewRule(thisLine);
-                            
+                            } else {
+                                namedAclList.addNewACL(thisLine);
+                            }
+
                         } else {
                             readMode = MODE_UNEXPECTED_EOF;
                         }
                     } else {
-                        arList.addNewAccessControl(thisLine);
+                        namedAclList.addNewAccessControl(thisLine);
                     }
                     break;
 
                 case MODE_RULE_TREE:
                     if (thisLine.length() != 0) {
-                        newNode = new RuleTreeNode(thisLine);
+                        newNode = new RuleTreeNode(thisLine, namedAclList, conditionsList);
                         treeNodeList.add(newNode);
-
-                        // Build Conditions List
-                        if (conditionsList.indexOf(newNode.getCondition()) == -1) {
-                            conditionsList.add(newNode.getCondition());
-                            ArrayListSorter.sortStringArray(conditionsList);
-                        }
-
-                        // Attach AccessRule
-                        if (newNode.getAccessRuleName() != null) {
-                            newNode.setAccessRule(arList.get(newNode.getAccessRuleName()));
-                        }
 
                         // Build Tree Node
                         if (newNode.getIndentLevel() == 0) {
@@ -206,29 +266,107 @@ public class AccessManager extends ManagerAdapter {
         } // end while
 
         br.close();
-        findUnusedRules();
-    }
-    
-    
-    private Vector<String> conditionsList;
 
-    public Vector<String> getConditions() {
-        return conditionsList;
+    }
+
+    private void mapXML(Node parentNode) throws Exception {
+        Node currentNode;
+        NodeList rootlist = parentNode.getChildNodes();
+        AccessTagTypeEnum tagType;
+
+
+        if (AccessTagTypeEnum.fromValue(parentNode.getNodeName()) != AccessTagTypeEnum.TcDataAccessConfig) {
+            throw (new Exception("Not a Teamcenter Engineering Rule Tree"));
+        }
+
+        for (int i = 0; i < rootlist.getLength(); i++) {
+            currentNode = parentNode.getChildNodes().item(i);
+            tagType = AccessTagTypeEnum.fromValue(currentNode.getNodeName());
+
+            if (tagType == AccessTagTypeEnum.NamedACLs) {
+                mapNamedACLsFromXML(currentNode.getChildNodes());
+            } else if (tagType == AccessTagTypeEnum.RuleTree) {
+                mapRuleTreeFromXML(currentNode.getChildNodes());
+            }
+        }
+    }
+
+    private void mapNamedACLsFromXML(NodeList nodeList) {
+        AccessTagTypeEnum tagType;
+        Node currentNode;
+
+        try {
+            ProgressMonitor progressMonitor = new ProgressMonitor(
+                    parentFrame,
+                    "Mapping XML Tags to Named ACLs",
+                    "",
+                    0,
+                    nodeList.getLength() - 1);
+
+
+            for (int nodeIndex = 0; nodeIndex < nodeList.getLength(); nodeIndex++) {
+
+                if (progressMonitor.isCanceled()) {
+                    progressMonitor.close();
+                    return;
+                }
+
+                currentNode = nodeList.item(nodeIndex);
+                tagType = AccessTagTypeEnum.fromValue(currentNode.getNodeName());
+
+                progressMonitor.setProgress(nodeIndex);
+
+                if (tagType == AccessTagTypeEnum.NamedACL) {
+                    NamedAcl n = namedAclList.addNewACL(currentNode);
+
+                    if (n != null) {
+                        progressMonitor.setNote(n.getRuleName());
+                    }
+                }
+
+
+            }
+
+        } catch (Exception ex) {
+            System.err.println("Map XML Error: " + ex.getMessage());
+        }
+    }
+
+    private void mapRuleTreeFromXML(NodeList nodeList) {
+        AccessTagTypeEnum tagType;
+        Node currentNode;
+
+        try {
+
+            for (int nodeIndex = 0; nodeIndex < nodeList.getLength(); nodeIndex++) {
+
+                currentNode = nodeList.item(nodeIndex);
+                tagType = AccessTagTypeEnum.fromValue(currentNode.getNodeName());
+
+                if (tagType == AccessTagTypeEnum.TreeNode) {
+                    rootTreeNode = new RuleTreeNode(currentNode, namedAclList, conditionsList);
+                    break;
+                }
+            }
+
+        } catch (Exception ex) {
+            System.err.println("Map XML Error: " + ex.getMessage());
+        }
     }
 
     @Override
     public String toString() {
         String s;
-        AccessRule ar;
+        NamedAcl ar;
         AccessControl acEntry;
         RuleTreeNode amItem;
 
-        s = "MetaData:\n" + metaData.toString() + "\n" +
-                "Access Control acHeader:\n" + arList.getAccessControlColumns().toString() + "\n" +
-                "Access Rules:\n";
+        s = "MetaData:\n" + metaData.toString() + "\n"
+                + "Access Control acHeader:\n" + namedAclList.getAccessControlColumns().toString() + "\n"
+                + "Access Rules:\n";
 
-        for (int i = 0; i < arList.size(); i++) {
-            ar = arList.get(i);
+        for (int i = 0; i < namedAclList.size(); i++) {
+            ar = namedAclList.get(i);
             s += ar.toString() + "\n";
 
             for (int j = 0; j < ar.size(); j++) {
@@ -244,18 +382,5 @@ public class AccessManager extends ManagerAdapter {
         }
 
         return s;
-    }
-
-    private void findUnusedRules() {
-        if (arList.size() <= 0) {
-            return;
-        }
-        for (int i = 0; i < arList.size(); i++) {
-            if (arList.get(i).getRuleTreeReferences().size() == 0) {
-                if (arList.get(i).getRuleType().equals("RULETREE")) {
-                    unusedRules.add(arList.get(i));
-                }
-            }
-        }
     }
 }

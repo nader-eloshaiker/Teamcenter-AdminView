@@ -9,7 +9,7 @@
 package tceav.manager.procedure.plmxmlpdm.type;
 
 import tceav.manager.procedure.plmxmlpdm.base.AttribOwnerBase;
-import tceav.manager.procedure.plmxmlpdm.TagTypeEnum;
+import tceav.manager.procedure.plmxmlpdm.ProcedureTagTypeEnum;
 import org.w3c.dom.Node;
 /*
 import javax.xml.bind.annotation.XmlAccessType;

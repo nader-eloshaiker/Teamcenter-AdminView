@@ -13,7 +13,7 @@ package tceav.manager.procedure.plmxmlpdm;
  *
  * @author NZR4DL
  */
-public enum TagTypeEnum {
+public enum ProcedureTagTypeEnum {
     /* Custom */
     UNDEFINED("Undefined"),
     
@@ -53,7 +53,7 @@ public enum TagTypeEnum {
 
     private final String value;
 
-    TagTypeEnum(String v) {
+    ProcedureTagTypeEnum(String v) {
         value = v;
     }
 
@@ -61,8 +61,8 @@ public enum TagTypeEnum {
         return value;
     }
     
-    public static TagTypeEnum fromValue(String v) {
-        for (TagTypeEnum c: TagTypeEnum.values()) {
+    public static ProcedureTagTypeEnum fromValue(String v) {
+        for (ProcedureTagTypeEnum c: ProcedureTagTypeEnum.values()) {
             if (c.value.equals(v)) {
                 return c;
             }
