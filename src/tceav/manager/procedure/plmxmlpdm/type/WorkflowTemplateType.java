@@ -316,13 +316,22 @@ public class WorkflowTemplateType extends AttribOwnerBase {
     private WorkflowTemplateType[] dependantTasks;
     private WorkflowActionType[] actions;
     private WorkflowTemplateType parentTaskTemplate;
+    private WorkflowTemplateType parentSubTaskTemplate;
 
-    public WorkflowTemplateType getParentSubTaskTemplate() {
+    public WorkflowTemplateType getParentTaskTemplate() {
         return parentTaskTemplate;
     }
 
-    public void setParentSubTaskTemplate(WorkflowTemplateType parentTaskTemplate) {
+    public void setParentTaskTemplate(WorkflowTemplateType parentTaskTemplate) {
         this.parentTaskTemplate = parentTaskTemplate;
+    }
+
+    public WorkflowTemplateType getParentSubTaskTemplate() {
+        return parentSubTaskTemplate;
+    }
+
+    public void setParentSubTaskTemplate(WorkflowTemplateType parentSubTaskTemplate) {
+        this.parentSubTaskTemplate = parentSubTaskTemplate;
     }
 
     public WorkflowTemplateType[] getDependantTaskTemplates() {

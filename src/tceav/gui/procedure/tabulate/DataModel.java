@@ -31,9 +31,10 @@ public class DataModel implements TableModel {
         header = new ColumnHeader();
         workflowList = new ArrayList<WorkflowTemplateType>();
         
-        for (int i=0; i<pm.getWorkflowProcesses().size(); i++) {
+        for (int i=0; i<pm.getWorkflowProcesses().size(); i++) 
             scanWorkflowTemplate(pm.getWorkflowProcesses().get(i));
-        }
+        
+        header.sort();
     }
     
     private void scanWorkflowTemplate(WorkflowTemplateType wt) {
@@ -48,30 +49,16 @@ public class DataModel implements TableModel {
             wh = wt.getActions()[i].getActionHandlers();
             for(int j=0; j<wh.length; j++) {
                 if(wh[j].getAttribute().size() == 0) {
-                    if(!header.contains(wh[j])) {
-                        index = header.indexOfRuleClassification();
-                        if(index > -1)
-                            header.add(index, new ColumnHeaderEntry(wh[j]));
-                        else
-                            header.add(new ColumnHeaderEntry(wh[j]));
-                    }
+                    if(!header.contains(wh[j]))
+                        header.add(new ColumnHeaderEntry(wh[j]));
+                    
                 } else {
                     for(int k=0; k<wh[j].getAttribute().size(); k++) {
-                        if(wh[j].getAttribute().get(k).getTagType() == TagTypeEnum.Arguments) {
-                            ud = (UserDataType)wh[j].getAttribute().get(k);
-                            if(!header.contains(wh[j], ud)) {
-                                index = header.lastIndexOfMatches(wh[j]);
-                                if(index > -1)
-                                    header.add(index+1, new ColumnHeaderEntry(wh[j], ud));
-                                else {
-                                    index = header.indexOfRuleClassification();
-                                    if(index > -1)
-                                        header.add(index+1, new ColumnHeaderEntry(wh[j], ud));
-                                    else
-                                        header.add(new ColumnHeaderEntry(wh[j], ud));
-                                }
-                            }
-                        }
+                        ud = (UserDataType)wh[j].getAttribute().get(k);
+                        if(ud.getTagType() == TagTypeEnum.Arguments)
+                            if(!header.contains(wh[j], ud))
+                                header.add(new ColumnHeaderEntry(wh[j], ud));
+                    
                     }
                 }
             }
@@ -81,34 +68,21 @@ public class DataModel implements TableModel {
                 if(wbr[j].getRuleHandlers().length == 0){
                     if(!header.contains(wbr[j]))
                         header.add(new ColumnHeaderEntry(wbr[j]));
+
                 } else {
                     wbrh = wbr[j].getRuleHandlers();
                     for(int k=0; k<wbrh.length; k++) {
                         if(wbrh[k].getAttribute().size() == 0) {
-                            if(!header.contains(wbr[j], wbrh[k])){
-                                index = header.lastIndexOfMatches(wbr[j]);
-                                if(index > -1)
-                                    header.add(index+1, new ColumnHeaderEntry(wbr[j], wbrh[k]));
-                                else
-                                    header.add(new ColumnHeaderEntry(wbr[j], wbrh[k]));
-                            }
+                            if(!header.contains(wbr[j], wbrh[k]))
+                                header.add(new ColumnHeaderEntry(wbr[j], wbrh[k]));
+                            
                         } else {
                             for(int l=0; l<wbrh[k].getAttribute().size(); l++) {
-                                if(wbrh[k].getAttribute().get(l).getTagType() == TagTypeEnum.Arguments) {
-                                    ud = (UserDataType)wbrh[k].getAttribute().get(l);
-                                    if(!header.contains(wbr[j], wbrh[k], ud)) {
-                                        index = header.lastIndexOfMatches(wbr[j], wbrh[k]);
-                                        if(index > -1)
-                                            header.add(index+1, new ColumnHeaderEntry(wbr[j], wbrh[k], ud));
-                                        else {
-                                            index = header.lastIndexOfMatches(wbr[j]);
-                                            if(index > -1)
-                                                header.add(index+1, new ColumnHeaderEntry(wbr[j], wbrh[k], ud));
-                                            else
-                                                header.add(new ColumnHeaderEntry(wbr[j], wbrh[k], ud));
-                                        }
-                                    }
-                                }
+                                ud = (UserDataType)wbrh[k].getAttribute().get(l);
+                                if(ud.getTagType() == TagTypeEnum.Arguments) 
+                                    if(!header.contains(wbr[j], wbrh[k], ud)) 
+                                        header.add(new ColumnHeaderEntry(wbr[j], wbrh[k], ud));
+                                
                             }
                         }
                     }

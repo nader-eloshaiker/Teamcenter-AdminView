@@ -83,6 +83,21 @@ public class ColumnHeaderEntry {
             arguments.add(ud.getUserValue().get(i).getValue());
     }
     
+    public int compare(ColumnHeaderEntry c) {
+        if((classification == RULE_CLASSIFICATION) && (c.isActionClassification()))
+            return 1;
+        else if((classification == ACTION_CLASSIFICATION) && (c.isRuleClassicifaction()))
+            return -1;
+        
+        int result = toString().compareToIgnoreCase(c.toString());
+        if(result > 0)
+            return 1;
+        else if(result < 0)
+            return -1;
+        else
+            return 0;
+    }
+    
     public boolean isRuleClassicifaction() {
         return (classification == RULE_CLASSIFICATION);
     }
@@ -123,7 +138,10 @@ public class ColumnHeaderEntry {
         if(!matches(wbr))
             return false;
         
-        return (handler.equals(wbrh.getName()));
+        if(Settings.isPmTblStrictArgument())
+            return handler.compareTo(wbrh.getName()) == 0;
+        else
+            return handler.compareToIgnoreCase(wbrh.getName()) == 0;
     }
     
     public boolean equals(WorkflowBusinessRuleType wbr, WorkflowBusinessRuleHandlerType wbrh, UserDataType ud) {
@@ -146,7 +164,10 @@ public class ColumnHeaderEntry {
         if(!isHandler())
             return false;
         
-        return handler.equals(wh.getName());
+        if(Settings.isPmTblStrictArgument())
+            return handler.compareTo(wh.getName()) == 0;
+        else
+            return handler.compareToIgnoreCase(wh.getName()) == 0;
     }
     
     public boolean equals(WorkflowHandlerType wh, UserDataType ud) {
@@ -444,7 +465,7 @@ public class ColumnHeaderEntry {
             
             argValue = arguments.get(i).split("=");
             
-            if(!name.equals(argValue[0])) {
+            if(name.compareToIgnoreCase(argValue[0]) != 0) {
                 found = false;
                 continue;
             }
@@ -479,7 +500,7 @@ public class ColumnHeaderEntry {
     
     private int indexOfArray(String s, String[] array) {
         for(int i=0; i<array.length; i++)
-            if(s.equals(array[i]))
+            if(s.compareToIgnoreCase(array[i]) == 0)
                 return i;
         
         return -1;

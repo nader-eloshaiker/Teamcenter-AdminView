@@ -20,24 +20,10 @@ import org.w3c.dom.NamedNodeMap;
 import tceav.manager.AbstractManager;
 import tceav.manager.procedure.plmxmlpdm.HeaderType;
 import tceav.manager.procedure.plmxmlpdm.TagTypeEnum;
-import tceav.manager.procedure.plmxmlpdm.base.AttribOwnerBase;
-import tceav.manager.procedure.plmxmlpdm.base.IdBase;
+import tceav.manager.procedure.plmxmlpdm.base.*;
 import tceav.manager.procedure.plmxmlpdm.classtype.WorkflowTemplateClassificationEnum;
-import tceav.manager.procedure.plmxmlpdm.type.AccessIntentType;
-import tceav.manager.procedure.plmxmlpdm.type.AssociatedDataSetType;
-import tceav.manager.procedure.plmxmlpdm.type.AssociatedFolderType;
-import tceav.manager.procedure.plmxmlpdm.type.AssociatedFormType;
-import tceav.manager.procedure.plmxmlpdm.type.OrganisationType;
-import tceav.manager.procedure.plmxmlpdm.type.PLMXMLType;
-import tceav.manager.procedure.plmxmlpdm.type.RoleType;
-import tceav.manager.procedure.plmxmlpdm.type.SiteType;
-import tceav.manager.procedure.plmxmlpdm.type.UserDataType;
-import tceav.manager.procedure.plmxmlpdm.type.WorkflowActionType;
-import tceav.manager.procedure.plmxmlpdm.type.WorkflowBusinessRuleHandlerType;
-import tceav.manager.procedure.plmxmlpdm.type.WorkflowBusinessRuleType;
-import tceav.manager.procedure.plmxmlpdm.type.WorkflowHandlerType;
-import tceav.manager.procedure.plmxmlpdm.type.WorkflowSignoffProfileType;
-import tceav.manager.procedure.plmxmlpdm.type.WorkflowTemplateType;
+import tceav.manager.procedure.plmxmlpdm.type.*;
+import tceav.manager.procedure.plmxmlpdm.type.element.*;
 import tceav.xml.DOMUtil;
 
 import tceav.manager.procedure.plmxmlpdm.base.AttributeBase;
@@ -226,8 +212,8 @@ public class ProcedureManager extends AbstractManager {
             
             for(int iP=0; iP<workflowProcesses.size(); iP++) {
                 processSubWorkflows(workflowProcesses.get(iP), tagCache);
-                processDependantTasks(workflowProcesses.get(iP), tagCache);
                 processAttributes(workflowProcesses.get(iP), tagCache);
+                processDependantTasks(workflowProcesses.get(iP), tagCache);
             }
             
             
@@ -241,11 +227,67 @@ public class ProcedureManager extends AbstractManager {
         AttributeModel model = new AttributeModel(tagCache);
         model.processNodeAttributes(node);
         
-        for(int k=0; k<node.getActionRefs().size(); k++)
+        for(int k=0; k<node.getActions().length; k++)
             model.processNodeAttributes(node.getActions()[k]);
         
-        for(int j=0; j<node.getSubTemplateRefs().size(); j++) {
+        for(int j=0; j<node.getSubTemplates().length; j++)
             model.processNodeAttributes(node.getSubTemplates()[j]);
+        
+        sort(node, tagCache);
+        
+    }
+    
+    private void sort(WorkflowTemplateType wt, Hashtable<String,IdBase> tagCache) {
+        ArrayList<String> order = new ArrayList<String>();
+        WorkflowTemplateType tmp;
+        
+        getOrder(wt, wt.getId(), order, tagCache);
+        if(order.size() != wt.getSubTemplates().length)
+            return;
+        
+        int counter = order.size();
+        
+        for(int i=0; i<order.size(); i++) {
+            counter--;
+            for(int j=0; j<wt.getSubTemplates().length; j++) {
+                if(order.get(counter).equals(wt.getSubTemplates()[j].getId())) {
+                   tmp =  wt.getSubTemplates()[i];
+                   wt.getSubTemplates()[i] = wt.getSubTemplates()[j];
+                   wt.getSubTemplates()[j] = tmp;
+                }
+            }
+        }
+    }
+    
+    private void getOrder(WorkflowTemplateType wt, String parentId, ArrayList<String> order, Hashtable<String,IdBase> tagCache) {
+        UserDataType ud;
+        IdBase dataRef;
+        WorkflowTemplateType wtRef;
+        
+        for(int i=0; i<wt.getAttribute().size(); i++) {
+            if((wt.getAttribute().get(i).getTagType() == TagTypeEnum.UserData) ||
+                    (wt.getAttribute().get(i).getTagType() == TagTypeEnum.Arguments)) {
+                
+                ud = (UserDataType)wt.getAttribute().get(i);
+                
+                if(ud.getType().equals("reference")) {
+                    for(int j=0; j<ud.getUserValue().size(); j++) {
+                        
+                        dataRef = tagCache.get(ud.getUserValue().get(i).getDataRef());
+                        if(dataRef.getTagType() == TagTypeEnum.WorkflowTemplate) {
+                            
+                            wtRef = (WorkflowTemplateType)dataRef;
+                            if(parentId.equals(wtRef.getParentTaskTemplateRef())) {
+                                if(order.indexOf(wtRef.getId()) == -1)
+                                    order.add(wtRef.getId());
+                                
+                                getOrder(wtRef, parentId, order, tagCache);
+                            }
+                        }
+                        
+                    }
+                }
+            }
         }
     }
     
@@ -255,6 +297,7 @@ public class ProcedureManager extends AbstractManager {
         for(int i=0; i<node.getSubTemplateRefs().size(); i++) {
             node.getSubTemplates()[i] = (WorkflowTemplateType)tagCache.get(node.getSubTemplateRefs().get(i));
             node.getSubTemplates()[i].setParentSubTaskTemplate(node);
+            node.getSubTemplates()[i].setParentTaskTemplate((WorkflowTemplateType)tagCache.get(node.getSubTemplates()[i].getParentTaskTemplateRef()));
             processSubWorkflows(node.getSubTemplates()[i], tagCache);
         }
     }

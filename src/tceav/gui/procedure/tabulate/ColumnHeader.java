@@ -26,6 +26,20 @@ public class ColumnHeader extends ArrayList<ColumnHeaderEntry> {
         super();
     }
     
+    public void sort() {
+        ColumnHeaderEntry c;
+        
+        for (int i = 0; i < size(); i++) {
+            for (int j = i+1; j < size(); j++) {
+                if (get(i).compare(get(j)) == 1) {
+                    c = get(i);
+                    set(i, get(j));
+                    set(j, c);
+                }
+            }
+        }
+    }
+    
     public boolean containsRuleHandler() {
         return indexOfRuleClassification(0) >=0;
     }
@@ -261,12 +275,12 @@ public class ColumnHeader extends ArrayList<ColumnHeaderEntry> {
         
         return -1;
     }
-
+    
     
     /*************************
      * Last Index Of Matches
      *************************/
-
+    
     public int lastIndexOfMatches(WorkflowHandlerType wh) {
         return lastIndexOfMatches(wh, size()-1);
     }
