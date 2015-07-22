@@ -27,7 +27,7 @@ public class ColumnHeaderAction extends ColumnHeaderAdapter {
         UserDataType ud;
         for (int k = 0; k < wh.getAttribute().size(); k++) {
             ud = (UserDataType) wh.getAttribute().get(k);
-            if (ud.getTagType() == TagTypeEnum.Arguments) {
+            if (ud.getUserDataType() == TagTypeEnum.Arguments) {
                 for (int i = 0; i < ud.getUserValue().size(); i++) {
                     getHandler(0).addArgument(ud.getUserValue().get(i).getValue());
                 }

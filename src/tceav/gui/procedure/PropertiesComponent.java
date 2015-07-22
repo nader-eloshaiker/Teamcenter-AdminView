@@ -9,25 +9,40 @@
 
 package tceav.gui.procedure;
 
-import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.border.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.EmptyBorder;
+import tceav.gui.AdminViewFrame;
+import tceav.gui.tools.GUIutilities;
+import tceav.gui.tools.table.JTableAdvanced;
 import tceav.manager.procedure.plmxmlpdm.base.IdBase;
-import tceav.gui.*;
 
 /**
  *
  * @author nzr4dl
  */
-public class XMLComponent extends JComponent {
+public class PropertiesComponent extends JComponent {
     
     /** Creates a new instance of XMLComponent */
     private JTableAdvanced table;
     
-    public XMLComponent() {
+    public PropertiesComponent() {
         super();
-        table = new JTableAdvanced(new XMLTableData());
+        table = new JTableAdvanced(new PropertiesTableData());
         table.getTableHeader().setReorderingAllowed(false);        
     }
     
@@ -42,14 +57,14 @@ public class XMLComponent extends JComponent {
         
         if(dialog != null)
             if(dialog.isVisible()) {
-                table.setModel(new XMLTableData(procedure));
+                table.setModel(new PropertiesTableData(procedure));
                 GUIutilities.packColumns(table, 2);
             }
     }
     
     private JDialog dialog;
     
-    public void show(JFrame parentFrame) {
+    public void show(AdminViewFrame parentFrame) {
         if(dialog != null)
             if(dialog.isVisible())
                 return;
@@ -88,7 +103,7 @@ public class XMLComponent extends JComponent {
         panel.add(scrolltable, BorderLayout.CENTER);
         panel.add(panelLower, BorderLayout.SOUTH);
         
-        dialog = new JDialog(parentFrame, "XML Properties", false);
+        dialog = new JDialog(parentFrame, "Task Properties", false);
         Container contentPane = dialog.getContentPane();
         contentPane.setLayout(new BorderLayout(GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
         contentPane.add(panel, BorderLayout.CENTER);
@@ -108,7 +123,7 @@ public class XMLComponent extends JComponent {
         dialog.setVisible(true);
 
         if(procedure != null) {
-            table.setModel(new XMLTableData(procedure));
+            table.setModel(new PropertiesTableData(procedure));
             GUIutilities.packColumns(table, 2);
         }
         

@@ -9,10 +9,11 @@
 
 package tceav.gui.procedure.tabulate;
 
-import tceav.gui.TableShadedRenderer;
-import javax.swing.table.*;
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Font;
+import javax.swing.JTable;
+import javax.swing.SwingConstants;
+import javax.swing.table.TableCellRenderer;
 /**
  *
  * @author nzr4dl

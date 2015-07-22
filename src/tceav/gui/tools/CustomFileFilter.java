@@ -1,3 +1,4 @@
+package tceav.gui.tools;
 /*
  * CustomFileFilter.java
  *
@@ -6,8 +7,6 @@
  * To change this template, choose Tools | Template Manager
  * and open the template in the editor.
  */
-
-package tceav.utils;
 
 import java.io.File;
 

@@ -68,8 +68,6 @@ public class AssociatedFolderType extends AttributeBase {
        
         setFolderRef(TagTools.getStringValue(attrib, folderRefAttribute));
         setRole(TagTools.getStringValue(attrib, roleAttribute));
-        
-        setTagType(TagTypeEnum.AssociatedFolder);
     }
 
     public String getFolderRef() {

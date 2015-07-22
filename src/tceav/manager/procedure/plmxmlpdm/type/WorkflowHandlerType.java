@@ -75,8 +75,6 @@ public class WorkflowHandlerType extends AttribOwnerBase {
         NodeList nodeList = currentNode.getChildNodes();
         
         setParentRef(TagTools.getStringValue(attrib, parentRefAttribute));
-        
-        setTagType(TagTypeEnum.WorkflowHandler);
         /*
          * Moved to AttibOwnerBase
         TagTypeEnum tagType;

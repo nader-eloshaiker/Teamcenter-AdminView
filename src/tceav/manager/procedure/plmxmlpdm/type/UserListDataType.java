@@ -83,8 +83,6 @@ public class UserListDataType extends AttributeBase {
         if(s != null)
             setType(UserValueDataType.fromValue(s));
         
-        setTagType(TagTypeEnum.UserList);
-        
         TagTypeEnum tagType;
         for (int i=0; i<nodeList.getLength(); i++) {
             currentNode = nodeList.item(i);

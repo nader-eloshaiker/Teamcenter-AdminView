@@ -8,21 +8,47 @@
  */
 package tceav.gui.procedure.tabulate;
 
-import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.table.*;
-import javax.swing.border.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 import java.util.Calendar;
-import java.awt.*;
-import java.awt.event.*;
 import java.text.DecimalFormat;
-import java.io.*;
+import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JToolBar;
+import javax.swing.JViewport;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.TableColumn;
 import tceav.Settings;
-import tceav.utils.CustomFileFilter;
+import tceav.gui.tools.CustomFileFilter;
+import tceav.gui.tools.GUIutilities;
+import tceav.gui.tools.RotatedTextIcon;
+import tceav.gui.tools.table.JTableAdvanced;
 import tceav.manager.procedure.ProcedureManager;
-import tceav.gui.*;
-import tceav.resources.*;
-
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
 import org.w3c.dom.Document;
@@ -33,6 +59,10 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import tceav.gui.AdminViewFrame;
+import tceav.gui.TabbedPanel;
+import tceav.resources.ImageEnum;
+import tceav.resources.ResourceLoader;
 
 /**
  *
@@ -45,13 +75,13 @@ public class TabulateComponent extends TabbedPanel {
     private JTableAdvanced tableFreezeRow;
     private String title;
     private ProcedureManager pm;
-    private JFrame parentFrame;
+    private AdminViewFrame parentFrame;
     private FreezeRowTableData modelFreezeRow;
 
     /**
      * Creates a new instance of TabulateComponent
      */
-    public TabulateComponent(ProcedureManager pm, JFrame parentFrame) {
+    public TabulateComponent(ProcedureManager pm, AdminViewFrame parentFrame) {
         super();
         this.pm = pm;
         this.parentFrame = parentFrame;

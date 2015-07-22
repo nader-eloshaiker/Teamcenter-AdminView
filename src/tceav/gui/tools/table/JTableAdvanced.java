@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package tceav.gui;
+package tceav.gui.tools.table;
 
 import javax.swing.JTable;
 import javax.swing.table.TableModel;

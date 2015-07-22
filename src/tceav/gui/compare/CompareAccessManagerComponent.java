@@ -9,6 +9,7 @@
 
 package tceav.gui.compare;
 
+import tceav.gui.tools.GUIutilities;
 import tceav.manager.access.AccessManager;
 import tceav.manager.access.RuleTreeNode;
 import tceav.manager.ManagerAdapter;
@@ -35,7 +36,7 @@ import java.io.File;
  */
 public class CompareAccessManagerComponent extends TabbedPanel {
     
-    private JFrame parentFrame;
+    private AdminViewFrame parentFrame;
     private RuleTreeComponent[] ruleTree;
     private NamedRuleComponent[] namedRule;
     private AccessRuleComponent accessControl;
@@ -49,7 +50,7 @@ public class CompareAccessManagerComponent extends TabbedPanel {
     private CompareAccessManager cam;
     
     /** Creates a new instance of CompareAccessManagerComponent */
-    public CompareAccessManagerComponent(JFrame parent, CompareAccessManager cam) {
+    public CompareAccessManagerComponent(AdminViewFrame parent, CompareAccessManager cam) {
         super();
         this.parentFrame = parent;
         this.cam = cam;

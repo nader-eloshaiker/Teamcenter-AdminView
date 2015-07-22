@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package tceav.gui;
+package tceav.gui.tools.tree;
 
 import java.util.ArrayList;
 import javax.swing.JTree;

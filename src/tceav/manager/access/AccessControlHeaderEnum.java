@@ -40,7 +40,7 @@ public enum AccessControlHeaderEnum {
     TransferIn("TRANSFER_IN", "Transfer In", ImageEnum.aclTransferIn),
     TransferOut("TRANSFER_OUT", "Transfer Out", ImageEnum.aclTransferOut),
     Write("WRITE", "Write", ImageEnum.aclWrite),
-    Unamanged("UNMANAGE", "Unmanaged",ImageEnum.aclUnmanaged),
+    Unamanged("UNMANAGE", "Unmanage",ImageEnum.aclUnmanage),
     Undefined("UNDEFINED", null, ImageEnum.aclUndefined);
     
     private String value;

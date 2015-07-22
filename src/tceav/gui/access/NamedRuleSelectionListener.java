@@ -15,7 +15,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.event.ListSelectionEvent;
 import java.util.ArrayList;
 import tceav.manager.access.RuleTreeNode;
-import tceav.gui.JTreeAdvanced;
+import tceav.gui.tools.tree.JTreeAdvanced;
 
 
 /**

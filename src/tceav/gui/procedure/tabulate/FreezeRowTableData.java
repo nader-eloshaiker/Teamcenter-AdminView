@@ -10,12 +10,9 @@
 package tceav.gui.procedure.tabulate;
 
 import java.util.ArrayList;
-import javax.swing.table.TableModel;
-import javax.swing.event.TableModelListener;
 import tceav.Settings;
-import tceav.manager.procedure.ProcedureManager;
-import tceav.manager.procedure.plmxmlpdm.TagTypeEnum;
-import tceav.manager.procedure.plmxmlpdm.type.*;
+import tceav.manager.procedure.plmxmlpdm.type.WorkflowTemplateType;
+
 /**
  *
  * @author NZR4DL

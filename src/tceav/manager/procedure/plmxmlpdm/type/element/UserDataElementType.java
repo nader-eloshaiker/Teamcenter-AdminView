@@ -166,8 +166,6 @@ public class UserDataElementType extends IdBase {
             setType(UserValueDataType.fromValue(s));
         setValue(TagTools.getStringValue(attrib, valueAttribute));
         
-        setTagType(TagTypeEnum.UserValue);
-
         TagTypeEnum tagType;
         for (int i=0; i<nodeList.getLength(); i++) {
             currentNode = nodeList.item(i);

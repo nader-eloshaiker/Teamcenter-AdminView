@@ -13,6 +13,8 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.table.*;
 import javax.swing.border.*;
+import tceav.gui.tools.GUIutilities;
+import tceav.gui.tools.table.JTableAdvanced;
 import tceav.manager.access.AccessControlHeader;
 import tceav.manager.access.AccessManager;
 import tceav.manager.access.AccessRule;

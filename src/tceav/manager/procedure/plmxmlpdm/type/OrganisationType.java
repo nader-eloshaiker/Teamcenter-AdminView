@@ -82,8 +82,6 @@ public class OrganisationType extends OwnerBase {
         setCageCode(TagTools.getStringValue(attrib, cageCodeAttribute));
         
         TagTools.addToList(attrib, organisationRefsAttribute, getOrganisationRefs());
-        
-        setTagType(TagTypeEnum.Organisation);
     }
 
     public String getAddressRef() {

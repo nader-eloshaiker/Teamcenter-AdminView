@@ -188,5 +188,5 @@ public abstract class DescriptionBase extends IdBase {
     public void setName(String value) {
         this.name = value;
     }
-
+    
 }

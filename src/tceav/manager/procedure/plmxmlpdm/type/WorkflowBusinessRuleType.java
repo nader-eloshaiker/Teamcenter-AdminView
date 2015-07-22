@@ -79,8 +79,6 @@ public class WorkflowBusinessRuleType extends AttribOwnerBase {
         setParentRef(TagTools.getStringValue(attrib, parentRefAttribute));
         
         TagTools.addToList(attrib, ruleHandlerRefsAttribute, getRuleHandlerRefs());
-
-        setTagType(TagTypeEnum.WorkflowBusinessRule);
     }
 
     public String getParentRef() {

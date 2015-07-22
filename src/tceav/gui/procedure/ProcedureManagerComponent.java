@@ -6,125 +6,153 @@
  * To change this template, choose Tools | Template Manager
  * and open the template in the editor.
  */
-
 package tceav.gui.procedure;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JSplitPane;
+import javax.swing.JToolBar;
+import javax.swing.border.BevelBorder;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.plaf.basic.BasicSplitPaneUI;
+import tceav.gui.tools.GUIutilities;
 import tceav.manager.procedure.ProcedureManager;
-import tceav.manager.ManagerAdapter;
 import tceav.gui.procedure.tabulate.TabulateComponent;
 import tceav.manager.procedure.plmxmlpdm.base.IdBase;
-import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.table.*;
-import javax.swing.tree.*;
-import javax.swing.plaf.basic.BasicSplitPaneUI;
-import javax.swing.event.*;
-import java.awt.event.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.ArrayList;
-import java.io.File;
 import tceav.Settings;
-import tceav.gui.*;
-import tceav.resources.*;
+import tceav.gui.AdminViewFrame;
+import tceav.gui.TabbedPanel;
+import tceav.resources.ImageEnum;
+import tceav.resources.ResourceLoader;
 
 /**
  *
  * @author nzr4dl
  */
 public class ProcedureManagerComponent extends TabbedPanel {
-    
+
     private AdminViewFrame parentFrame;
     private ProcedureManager pm;
     private JSplitPane splitPane1;
-    private WorkflowTreeData modelProcedure;
-    private HandlerComponent actionComponent;
-    private ProcessComponent attributeComponent;
-    private XMLComponent xmlComponent;
-    private WorkflowComponent processComponent;
-    
-    
+    private ActionComponent actionComponent;
+    private AttributeComponent attributeComponent;
+    private PropertiesComponent xmlComponent;
+    private WorkflowComponent workflowComponent;
+    private ProcessViewComponent processViewer;
+
     /**
      * Creates a new instance of ProcedureManagerComponent
      */
     public ProcedureManagerComponent(AdminViewFrame parentFrame, ProcedureManager pm) {
         this.pm = pm;
         this.parentFrame = parentFrame;
-        
-        processComponent = new WorkflowComponent(parentFrame, pm);
-        processComponent.getTree().addTreeSelectionListener(new TreeSelectionListener() {
-            public void valueChanged(TreeSelectionEvent e) {
-                if(e.isAddedPath(e.getPath())) {
-                    IdBase procedure = (IdBase)e.getPath().getLastPathComponent();
+
+        workflowComponent = new WorkflowComponent(parentFrame, pm);
+        workflowComponent.getTree().addTreeSelectionListener(new TreeSelectionListener() {
+
+            public void valueChanged(TreeSelectionEvent tse) {
+                if (tse.isAddedPath(tse.getPath())) {
+                    IdBase procedure = (IdBase) tse.getPath().getLastPathComponent();
                     actionComponent.updateTree(procedure);
                     attributeComponent.updateTree(procedure);
                     xmlComponent.updateTable(procedure);
+                    processViewer.setWorkflowTemplate(procedure);
+                    for (int i = 0; i < processViewer.getSubComponentSize(); i++) {
+                        if (i == 0 || i == processViewer.getSubComponentSize() - 1) {
+                            if (processViewer.getTask().getParentTaskTemplateRef() != null) {
+                                processViewer.getSubComponent(i).addMouseListener(new ProcessTaskMouseAction(workflowComponent.getTree(), tse.getPath()));
+                            }
+                        } else {
+                            processViewer.getSubComponent(i).addMouseListener(new ProcessTaskMouseAction(workflowComponent.getTree(), tse.getPath(), processViewer.getSubComponent(i)));
+                        }
+                    }
                 }
             }
         });
-        
-        actionComponent = new HandlerComponent(parentFrame, pm);
+
+        processViewer = new ProcessViewComponent();
+
+        actionComponent = new ActionComponent(parentFrame, pm);
         actionComponent.getTree().addTreeSelectionListener(new TreeSelectionListener() {
+
             public void valueChanged(TreeSelectionEvent e) {
-                if(e.isAddedPath(e.getPath())) {
-                    IdBase procedure = (IdBase)e.getPath().getLastPathComponent();
-                    //processComponent.getTree().clearSelection();
-                    //attributeComponent.updateTree(procedure);
+                if (e.isAddedPath(e.getPath())) {
+                    IdBase procedure = (IdBase) e.getPath().getLastPathComponent();
                     xmlComponent.updateTable(procedure);
                 }
             }
         });
-        
-        attributeComponent = new ProcessComponent(parentFrame, pm);
+
+        attributeComponent = new AttributeComponent(parentFrame, pm);
         attributeComponent.getTree().addTreeSelectionListener(new TreeSelectionListener() {
+
             public void valueChanged(TreeSelectionEvent e) {
-                if(e.isAddedPath(e.getPath())) {
-                    IdBase procedure = (IdBase)e.getPath().getLastPathComponent();
-                    //processComponent.getTree().clearSelection();
-                    //actionComponent.getTree().clearSelection();
+                if (e.isAddedPath(e.getPath())) {
+                    IdBase procedure = (IdBase) e.getPath().getLastPathComponent();
                     xmlComponent.updateTable(procedure);
                 }
             }
         });
-        
-        xmlComponent = new XMLComponent();
-        
-        
-        
-        JPanel panelLeft = new JPanel();
-        panelLeft.setLayout(new GridLayout(2,1,GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
-        panelLeft.add(GUIutilities.createPanelMargined(processComponent));
-        panelLeft.add(GUIutilities.createPanelMargined(attributeComponent));
-        
-        JPanel panelRight = new JPanel();
-        panelRight.setLayout(new GridLayout(1,1,GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
-        panelRight.add("Center",GUIutilities.createPanelMargined(actionComponent));
-        //panelRight.add("South", GUIutilities.createPanelMargined(xmlComponent));
-        
-        splitPane1 = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, panelLeft, panelRight);
-        splitPane1.setResizeWeight(1.0);
+
+        xmlComponent = new PropertiesComponent();
+
+        workflowComponent.setPreferredSize(new Dimension(310,310));
+        attributeComponent.setPreferredSize(new Dimension(310,310));
+
+        JPanel panelBottom = new JPanel();
+        panelBottom.setLayout(new BorderLayout());
+        panelBottom.add(GUIutilities.createPanelMargined(attributeComponent), BorderLayout.WEST);
+        panelBottom.add(GUIutilities.createPanelMargined(processViewer), BorderLayout.CENTER);
+
+        JPanel panelTop = new JPanel();
+        panelTop.setLayout(new BorderLayout());
+        panelTop.add(GUIutilities.createPanelMargined(workflowComponent), BorderLayout.WEST);
+        panelTop.add(GUIutilities.createPanelMargined(actionComponent), BorderLayout.CENTER);
+
+        splitPane1 = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true, panelTop, panelBottom);
+        splitPane1.setResizeWeight(1);
         splitPane1.setBorder(null);
         splitPane1.setDividerLocation(Settings.getPmSplitLocation());
         splitPane1.setOneTouchExpandable(true);
-        ((BasicSplitPaneUI)splitPane1.getUI()).getDivider().addComponentListener(new ComponentAdapter(){
-            public void componentMoved(ComponentEvent e){
+        ((BasicSplitPaneUI) splitPane1.getUI()).getDivider().addComponentListener(new ComponentAdapter() {
+
+            @Override
+            public void componentMoved(ComponentEvent e) {
                 Settings.setPmSplitLocation(splitPane1.getDividerLocation());
             }
         });
-        
+
         this.setLayout(new BorderLayout());
-        this.add("Center",splitPane1);
-        
+        this.add("Center", splitPane1);
+
     }
-    
+
+    @Override
+    public void updateUI() {
+        super.updateUI();
+        if (attributeComponent != null && workflowComponent != null) {
+            attributeComponent.setPreferredSize(workflowComponent.getPreferredSize());
+        }
+    }
+
     public String getTitle() {
         return pm.getFile().getName();
     }
-    
     private ImageIcon iconProcedure;
-    
+
     public ImageIcon getIcon() {
-        if(iconProcedure == null) {
+        if (iconProcedure == null) {
             try {
                 iconProcedure = ResourceLoader.getImage(ImageEnum.pmWorkflow);
             } catch (Exception ex) {
@@ -133,110 +161,110 @@ public class ProcedureManagerComponent extends TabbedPanel {
         }
         return iconProcedure;
     }
-    
     private JToolBar toolBar;
-    
+
     public JToolBar getToolBar() {
-        
-        if(toolBar != null)
+
+        if (toolBar != null) {
             return toolBar;
-        
-        JButton buttonXML = new JButton("XML Properties");
+        }
+        JButton buttonXML = new JButton("Task Properties");
+        buttonXML.setToolTipText("View Task propeties");
         buttonXML.setOpaque(false);
         buttonXML.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e){
+
+            public void actionPerformed(ActionEvent e) {
                 xmlComponent.show(parentFrame);
             }
         });
-        
+
         JButton buttonTabulate = new JButton("Tabulate Procedures");
+        buttonTabulate.setToolTipText("Show procedures/handlers in a spreadsheet view");
         buttonTabulate.setOpaque(false);
         buttonTabulate.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e){
+
+            public void actionPerformed(ActionEvent e) {
                 TabulateComponent component = new TabulateComponent(pm, parentFrame);
                 parentFrame.addTabbedPane(component);
             }
         });
-        
+
         try {
             buttonTabulate.setIcon(ResourceLoader.getImage(ImageEnum.pmTabulate));
             buttonXML.setIcon(ResourceLoader.getImage(ImageEnum.pmXML));
         } catch (Exception ex) {
-                JOptionPane.showMessageDialog(parentFrame, ex.getMessage(), "Error Load Images", JOptionPane.ERROR_MESSAGE);
-            }
-        
+            JOptionPane.showMessageDialog(parentFrame, ex.getMessage(), "Error Load Images", JOptionPane.ERROR_MESSAGE);
+        }
+
         toolBar = new JToolBar();
         toolBar.add(buttonXML);
         toolBar.add(buttonTabulate);
-        
+
         return toolBar;
     }
-    
     private JPanel statusBar;
-    
+
     public JComponent getStatusBar() {
-        if(statusBar != null)
+        if (statusBar != null) {
             return statusBar;
-        
+        }
         JLabel textFileLabel = new JLabel(" Path:");
-        JLabel textFile = new JLabel(" "+pm.getFile().getParent()+" ");
+        JLabel textFile = new JLabel(" " + pm.getFile().getParent() + " ");
         textFile.setBorder(new BevelBorder(BevelBorder.LOWERED));
         JPanel panelFile = new JPanel();
         panelFile.setLayout(new BorderLayout());
         panelFile.add(textFileLabel, BorderLayout.WEST);
         panelFile.add(textFile, BorderLayout.CENTER);
-        
+
         JLabel textSchemaLabel = new JLabel("  Schema:");
-        JLabel textSchema = new JLabel(" "+pm.getPLMXML().getSchemaVersion()+" ");
+        JLabel textSchema = new JLabel(" " + pm.getPLMXML().getSchemaVersion() + " ");
         textSchema.setBorder(new BevelBorder(BevelBorder.LOWERED));
         JPanel panelSchema = new JPanel();
         panelSchema.setLayout(new BorderLayout());
         panelSchema.add(textSchemaLabel, BorderLayout.WEST);
         panelSchema.add(textSchema, BorderLayout.CENTER);
-        
+
         JPanel panelPathSchema = new JPanel();
         panelPathSchema.setLayout(new BorderLayout());
         panelPathSchema.add(panelFile, BorderLayout.WEST);
         panelPathSchema.add(panelSchema, BorderLayout.EAST);
-        
+
         JLabel textAuthorLabel = new JLabel("  Author:");
-        JLabel textAuthor = new JLabel(" "+pm.getPLMXML().getAuthor()+" ");
+        JLabel textAuthor = new JLabel(" " + pm.getPLMXML().getAuthor() + " ");
         textAuthor.setBorder(new BevelBorder(BevelBorder.LOWERED));
         JPanel panelAuthor = new JPanel();
         panelAuthor.setLayout(new BorderLayout());
         panelAuthor.add(textAuthorLabel, BorderLayout.WEST);
         panelAuthor.add(textAuthor, BorderLayout.CENTER);
-        
+
         JLabel textDateLabel = new JLabel("  Date:");
-        JLabel textDate = new JLabel(" "+pm.getPLMXML().getDate()+" ");
+        JLabel textDate = new JLabel(" " + pm.getPLMXML().getDate() + " ");
         textDate.setBorder(new BevelBorder(BevelBorder.LOWERED));
         JPanel panelDate = new JPanel();
         panelDate.setLayout(new BorderLayout());
         panelDate.add(textDateLabel, BorderLayout.WEST);
         panelDate.add(textDate, BorderLayout.CENTER);
-        
+
         JLabel textTimeLabel = new JLabel("  Time:");
-        JLabel textTime = new JLabel(" "+pm.getPLMXML().getTime()+" ");
+        JLabel textTime = new JLabel(" " + pm.getPLMXML().getTime() + " ");
         textTime.setBorder(new BevelBorder(BevelBorder.LOWERED));
         JPanel panelTime = new JPanel();
         panelTime.setLayout(new BorderLayout());
         panelTime.add(textTimeLabel, BorderLayout.WEST);
         panelTime.add(textTime, BorderLayout.CENTER);
-        
+
         JPanel panelDateTime = new JPanel();
         panelDateTime.setLayout(new BorderLayout());
         panelDateTime.add(panelDate, BorderLayout.WEST);
         panelDateTime.add(panelTime, BorderLayout.EAST);
-        
-        
+
+
         statusBar = new JPanel();
         statusBar.setLayout(new BorderLayout());
         statusBar.add(panelPathSchema, BorderLayout.WEST);
         statusBar.add(panelAuthor, BorderLayout.CENTER);
         statusBar.add(panelDateTime, BorderLayout.EAST);
-        
+
         return statusBar;
     }
-    
-    
 }

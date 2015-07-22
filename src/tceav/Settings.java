@@ -43,6 +43,9 @@ public class Settings {
     private static String userInterface;
     private static final String PROPERTY_USERINTERFACE = "tcav.userInterface";
     private static final String PROPERTY_USERINTERFACE_DEFAULT = "";
+    private static String version;
+    private static final String PROPERTY_VERSION = "tcav.version";
+    private static final String PROPERTY_VERSION_DEFAULT = "";
     
     /* properties access manager*/
     private static String amLoadPath;
@@ -68,18 +71,9 @@ public class Settings {
     private static String pmLoadPath;
     private static final String PROPERTY_PMLOADPATH = "tcav.pm.loadPath";
     private static final String PROPERTY_PMLOADPATH_DEFAULT = "";
-    private static int pmProcedureMode;
-    private static final String PROPERTY_PM_PROCEDUREMODE = "tcav.pm.procedureMode";
-    private static int PROPERTY_PM_PROCEDUREMODE_DEFAULT = -1;
     private static int pmSplitLocation;
     private static final String PROPERTY_PM_SPLITLOCATION = "tcav.pm.SplitLocation";
     private static int PROPERTY_PM_SPLITLOCATION_DEFAULT = -1;
-    private static boolean pmWokflowExpandedView;
-    private static final String PROPERTY_PM_WORKFLOWEXPANDEDVIEW = "tcav.pm.workflowExpandedView";
-    private static final boolean PROPERTY_PM_WORKFLOWEXPANDEDVIEW_DEFAULT = true;
-    private static boolean pmActionExpandedView;
-    private static final String PROPERTY_PM_ACTIONEXPANDEDVIEW = "tcav.pm.actionExpandedView";
-    private static final boolean PROPERTY_PM_ACTIONEXPANDEDVIEW_DEFAULT = true;
     
     
     private static boolean pmTblStrictArgument;
@@ -97,7 +91,7 @@ public class Settings {
     private static boolean pmTblDatabaseMode;
     private static final String PROPERTY_PM_TBL_DATABASEMODE = "tcav.pm.tbl.database";
     private static final boolean PROPERTY_PM_TBL_DATABASEMODE_DEFAULT = true;
-
+    
     
     private static String compareMode;
     private static final String PROPERTY_COMPAREMODE = "tcav.compareMode";
@@ -148,6 +142,11 @@ public class Settings {
             property.load(fis);
             fis.close();
         }
+        
+        setVersion(
+                getPropertyAsString(
+                PROPERTY_VERSION,
+                PROPERTY_VERSION_DEFAULT));
         
         setUserInterface(
                 getPropertyAsString(
@@ -235,32 +234,20 @@ public class Settings {
                 getPropertyAsIntArray(
                 PROPERTY_AM_ACLSORT,
                 PROPERTY_AM_ACLSORT_DEFAULT));
-         setAmSyncSelection(
+        setAmSyncSelection(
                 getPropertyAsBoolean(
                 PROPERTY_AM_SYNCSELECTION,
                 PROPERTY_AM_SYNCSELECTION_DEFAULT));
-       
+        
         
         setPmLoadPath(
                 getPropertyAsString(
                 PROPERTY_PMLOADPATH,
                 PROPERTY_PMLOADPATH_DEFAULT));
-        setPmProcedureMode(
-                getPropertyAsInt(
-                PROPERTY_PM_PROCEDUREMODE,
-                PROPERTY_PM_PROCEDUREMODE_DEFAULT));
         setPmSplitLocation(
                 getPropertyAsInt(
                 PROPERTY_PM_SPLITLOCATION,
                 PROPERTY_PM_SPLITLOCATION_DEFAULT));
-        setPmWorkflowExpandedView(
-                getPropertyAsBoolean(
-                PROPERTY_PM_WORKFLOWEXPANDEDVIEW,
-                PROPERTY_PM_WORKFLOWEXPANDEDVIEW_DEFAULT));
-        setPmActionExpandedView(
-                getPropertyAsBoolean(
-                PROPERTY_PM_ACTIONEXPANDEDVIEW,
-                PROPERTY_PM_ACTIONEXPANDEDVIEW_DEFAULT));
         
         
         setPmTblStrictArgument(
@@ -287,6 +274,9 @@ public class Settings {
     }
     
     public static void store() throws Exception  {
+        property.setProperty(
+                PROPERTY_VERSION,
+                ResourceStrings.getVersion());
         property.setProperty(
                 PROPERTY_USERINTERFACE,
                 getUserInterface());
@@ -360,19 +350,10 @@ public class Settings {
                 PROPERTY_PMLOADPATH,
                 getPmLoadPath());
         property.setProperty(
-                PROPERTY_PM_PROCEDUREMODE,
-                Integer.toString(getPmProcedureMode()));
-        property.setProperty(
                 PROPERTY_PM_SPLITLOCATION,
                 Integer.toString(getPmSplitLocation()));
-        property.setProperty(
-                PROPERTY_PM_WORKFLOWEXPANDEDVIEW,
-                Boolean.toString(isPmWorkflowExpandedView()));
-        property.setProperty(
-                PROPERTY_PM_ACTIONEXPANDEDVIEW,
-                Boolean.toString(isPmActionExpandedView()));
         
-
+        
         property.setProperty(
                 PROPERTY_PM_TBL_STRICTARUMENT,
                 Boolean.toString(isPmTblStrictArgument()));
@@ -388,7 +369,7 @@ public class Settings {
         property.setProperty(
                 PROPERTY_PM_TBL_DATABASEMODE,
                 Boolean.toString(isPmTblDatabaseMode()));
-
+        
         
         File path = new File(System.getenv("USERPROFILE"),".TcAV");
         if(!path.exists())
@@ -406,6 +387,14 @@ public class Settings {
         }
     }
     
+    public static void setVersion(String version) {
+        Settings.version = version;
+    }
+    
+    public static int compareVersion() {
+        return version.compareToIgnoreCase(ResourceStrings.getVersion());
+    }
+    
     public static String getCompareMode() {
         return compareMode;
     }
@@ -421,11 +410,11 @@ public class Settings {
     public static void setAmCmpRuleTab(int amCmpACLTab) {
         Settings.amCmpACLTab = amCmpACLTab;
     }
-
+    
     public static void setAmCmpSyncSelection(boolean amCmpSyncSelection) {
         Settings.amCmpSyncSelection = amCmpSyncSelection;
     }
-
+    
     public static boolean isAmCmpSyncSelection() {
         return amCmpSyncSelection;
     }
@@ -437,7 +426,7 @@ public class Settings {
     public static void setAmCmpDisplayMode(String amCmpDisplayMode) {
         Settings.amCmpDisplayMode = amCmpDisplayMode;
     }
-
+    
     public static int getAmCmpFilterEqual() {
         return  amCmpFilterEqual;
     }
@@ -469,7 +458,7 @@ public class Settings {
     public static void setAmCmpRuleSort(int[] amCmpACLSort) {
         Settings.amCmpACLSort = amCmpACLSort;
     }
-
+    
     public static boolean isAmCmpRuleSortAscending() {
         return amCmpACLSortAscending;
     }
@@ -479,7 +468,7 @@ public class Settings {
     }
     
     
-
+    
     public static String getAmLoadPath() {
         return amLoadPath;
     }
@@ -557,7 +546,9 @@ public class Settings {
     }
     
     public static void setAmSplitLocation(int amSplitLocation) {
-        if(amSplitLocation == -1)
+        if(compareVersion() != 0)
+            Settings.amSplitLocation = (int)(frameSizeY*0.58); 
+        else if(amSplitLocation == -1)
             Settings.amSplitLocation = (int)(frameSizeY*0.58);
         else
             Settings.amSplitLocation = amSplitLocation;
@@ -590,20 +581,9 @@ public class Settings {
     public static void setAmSyncSelection(boolean amSyncSelection) {
         Settings.amSyncSelection = amSyncSelection;
     }
-
+    
     public static boolean isAmSyncSelection() {
         return amSyncSelection;
-    }
-    
-    public static int getPmProcedureMode() {
-        return pmProcedureMode;
-    }
-    
-    public static void setPmProcedureMode(int pmProcedureMode) {
-        if(pmProcedureMode == -1)
-            Settings.pmProcedureMode = 0;
-        else
-            Settings.pmProcedureMode = pmProcedureMode;
     }
     
     public static int getPmSplitLocation(){
@@ -611,35 +591,21 @@ public class Settings {
     }
     
     public static void setPmSplitLocation(int pmSplitLocation) {
-        if(pmSplitLocation == -1)
+        if(compareVersion() != 0)
+            Settings.pmSplitLocation = (int)(frameSizeX*0.5);
+        else if(pmSplitLocation == -1)
             Settings.pmSplitLocation = (int)(frameSizeX*0.5);
         else
             Settings.pmSplitLocation = pmSplitLocation;
     }
     
-    public static boolean isPmWorkflowExpandedView() {
-        return pmWokflowExpandedView;
-    }
     
-    public static void setPmWorkflowExpandedView(boolean pmWokflowExpandedView) {
-        Settings.pmWokflowExpandedView = pmWokflowExpandedView;
-    }
     
-    public static boolean isPmActionExpandedView() {
-        return pmActionExpandedView;
-    }
     
-    public static void setPmActionExpandedView(boolean pmActionExpandedView) {
-        Settings.pmActionExpandedView = pmActionExpandedView;
-    }
-    
-
-    
-
     public static boolean isPmTblDatabaseMode() {
         return pmTblDatabaseMode;
     }
-
+    
     public static void setPmTblDatabaseMode(boolean pmTblDatabaseMode) {
         Settings.pmTblDatabaseMode = pmTblDatabaseMode;
     }
@@ -647,7 +613,7 @@ public class Settings {
     public static boolean isPmTblIncludeIndents() {
         return pmTblIncludeIndents;
     }
-
+    
     public static void setPmTblIncludeIndents(boolean pmTblIncludeIndents) {
         Settings.pmTblIncludeIndents = pmTblIncludeIndents;
     }
@@ -655,15 +621,15 @@ public class Settings {
     public static boolean isPmTblMultiSheet() {
         return pmTblMultiSheet;
     }
-
+    
     public static void setPmTblMultiSheet(boolean pmTblMultiSheet) {
         Settings.pmTblMultiSheet = pmTblMultiSheet;
     }
-
+    
     public static boolean isPmTblShowActions() {
         return pmTblShowActions;
     }
-
+    
     public static void setPmTblShowActions(boolean pmTblShowActions) {
         Settings.pmTblShowActions = pmTblShowActions;
     }
@@ -671,7 +637,7 @@ public class Settings {
     public static boolean isPmTblStrictArgument() {
         return pmTblStrictArgument;
     }
-
+    
     public static void setPmTblStrictArgument(boolean pmTblStrictArgument) {
         Settings.pmTblStrictArgument = pmTblStrictArgument;
     }

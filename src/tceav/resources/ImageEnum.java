@@ -37,7 +37,7 @@ public enum ImageEnum {
     aclSubscribe("images/acl/subscribe_16.png"),
     aclTransferIn("images/acl/unreserve_16.png"),
     aclTransferOut("images/acl/reserve_16.png"),
-    aclUnmanaged("images/acl/unmanaged_16.png"),
+    aclUnmanage("images/acl/unmanaged_16.png"),
     aclWrite("images/acl/writeaccess_16.png"),
     aclUndefined("images/acl/error_16.png"),
 
@@ -107,9 +107,11 @@ public enum ImageEnum {
     utilExit("images/util/exit_16.png"),
     utilFind("images/util/find_16.png"),
     utilCompare("images/util/bid_package_rev_16.png"),
+    utilClipboardCopy("images/util/copy_16.png"),
 
-    appLogo("images/app/logoIcon.gif"),
-    appLogoBanner("images/app/logoBanner.gif");
+    appLogo("images/app/logo.png"),
+    appIcon("images/app/icon.png"),
+    appLogoBanner("images/app/logoBanner.png");
     
     
     private final String value;

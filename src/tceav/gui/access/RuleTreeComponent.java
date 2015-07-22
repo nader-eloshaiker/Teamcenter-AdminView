@@ -9,16 +9,34 @@
 
 package tceav.gui.access;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.border.*;
-import javax.swing.*;
-import javax.swing.tree.*;
-import javax.swing.event.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.ToolTipManager;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
+import javax.swing.tree.TreePath;
+import tceav.gui.AdminViewFrame;
+import tceav.gui.tools.GUIutilities;
+import tceav.gui.tools.search.SearchTreeComponent;
+import tceav.gui.tools.tree.JTreeAdvanced;
+import tceav.gui.tools.tree.toolbar.TreeCopyRuleTreeAdaptor;
+import tceav.gui.tools.tree.toolbar.TreeToolBar;
 import tceav.manager.access.AccessManager;
 import tceav.manager.access.RuleTreeNode;
-import tceav.gui.*;
-import tceav.resources.*;
+import tceav.resources.ImageEnum;
+import tceav.resources.ResourceLoader;
 
 /**
  *
@@ -27,19 +45,19 @@ import tceav.resources.*;
 public class RuleTreeComponent extends JPanel {
     
     private JTreeAdvanced tree;
-    private JFrame parentFrame;
+    private AdminViewFrame parentFrame;
     
     
     /** Creates a new instance of RuleTreeComponent */
-    public RuleTreeComponent(JFrame parent, AccessManager am) {
+    public RuleTreeComponent(AdminViewFrame parent, AccessManager am) {
         this(parent, am, null);
     }
     
-    public RuleTreeComponent(JFrame parent, AccessManager am, String title) {
+    public RuleTreeComponent(AdminViewFrame parent, AccessManager am, String title) {
         this(parent, am, title, false);
     }
     
-    public RuleTreeComponent(JFrame parent, AccessManager am, String title, boolean compareMode) {
+    public RuleTreeComponent(AdminViewFrame parent, AccessManager am, String title, boolean compareMode) {
         super();
         parentFrame = parent;
         tree = new JTreeAdvanced(new RuleTreeModel(am.getAccessTree()));
@@ -54,7 +72,7 @@ public class RuleTreeComponent extends JPanel {
         treeScroll.setPreferredSize(new Dimension(550,340));
         treeScroll.setBorder(new BevelBorder(BevelBorder.LOWERED));
         treeScroll.getViewport().add(tree);
-        
+        /*
         JButton buttonExpandAll = createButton("Expand All", ImageEnum.utilExpandAll);
         buttonExpandAll.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
@@ -98,7 +116,7 @@ public class RuleTreeComponent extends JPanel {
                 }.start();
             }
         });
-        
+        */
         searchRuleTree = new SearchTreeComponent() {
             public boolean compare(TreePath path, String type, String value) {
                 RuleTreeNode amItem = (RuleTreeNode)path.getLastPathComponent();
@@ -161,28 +179,28 @@ public class RuleTreeComponent extends JPanel {
                 boxSearchCondition.addItem(am.getConditions().get(x));
         }
         
-        
-        JToolBar toolBarRuletree = new JToolBar();
-        toolBarRuletree.setMargin(GUIutilities.GAP_INSETS);
-        toolBarRuletree.setFloatable(false);
-        toolBarRuletree.add(buttonExpandAll);
-        toolBarRuletree.add(buttonCollapseAll);
-        toolBarRuletree.add(buttonExpandBelow);
-        toolBarRuletree.add(buttonCollapseBelow);
-        toolBarRuletree.addSeparator();
-        toolBarRuletree.add(new JLabel("Search:"));
-        toolBarRuletree.add(boxSearchCondition);
-        toolBarRuletree.addSeparator();
-        toolBarRuletree.add(textSearchValue);
-        toolBarRuletree.addSeparator();
-        toolBarRuletree.add(buttonRuleTreeFindClear);
-        toolBarRuletree.add(buttonRuleTreeFindNext);
-        toolBarRuletree.add(buttonRuleTreeFind);
+        TreeToolBar toolbar = new TreeToolBar(tree, parentFrame, new TreeCopyRuleTreeAdaptor());
+        //JToolBar toolBarRuletree = new JToolBar();
+        //toolbar.setMargin(GUIutilities.GAP_INSETS);
+        //toolbar.setFloatable(false);
+        //toolbar.add(buttonExpandAll);
+        //toolbar.add(buttonCollapseAll);
+        //toolbar.add(buttonExpandBelow);
+        //toolbar.add(buttonCollapseBelow);
+        toolbar.addSeparator();
+        toolbar.add(new JLabel("Search:"));
+        toolbar.add(boxSearchCondition);
+        toolbar.addSeparator();
+        toolbar.add(textSearchValue);
+        toolbar.addSeparator();
+        toolbar.add(buttonRuleTreeFindClear);
+        toolbar.add(buttonRuleTreeFindNext);
+        toolbar.add(buttonRuleTreeFind);
         
         JPanel panelRuleTree =  new JPanel();
         panelRuleTree.setLayout(new BorderLayout(GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
         panelRuleTree.add("Center",treeScroll);
-        panelRuleTree.add("South",toolBarRuletree);
+        panelRuleTree.add("South",toolbar);
         
         String borderName = "Access Tree";
         if(title != null)

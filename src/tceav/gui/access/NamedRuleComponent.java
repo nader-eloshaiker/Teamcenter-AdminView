@@ -17,6 +17,10 @@ import javax.swing.table.*;
 import javax.swing.border.*;
 import javax.swing.tree.*;
 import tceav.gui.access.NamedRuleDataFilterInterface;
+import tceav.gui.tools.GUIutilities;
+import tceav.gui.tools.search.SearchTableComponent;
+import tceav.gui.tools.table.JTableAdvanced;
+import tceav.gui.tools.tree.JTreeAdvanced;
 import tceav.manager.access.AccessManager;
 import tceav.manager.access.AccessRule;
 import tceav.Settings;
@@ -36,7 +40,7 @@ public class NamedRuleComponent extends JPanel {
     private NamedRuleDataFilterCompare dataCompareFilter;
     private NamedRuleDataFilterSearch dataFilter;
     private AccessManager am;
-    private JFrame parentFrame;
+    private AdminViewFrame parentFrame;
     private boolean compareMode;
     
     private final int TAB_MAX_COUNT = 6;
@@ -44,15 +48,15 @@ public class NamedRuleComponent extends JPanel {
     /**
      * Creates a new instance of NamedRuleComponent
      */
-    public NamedRuleComponent(JFrame parent, AccessManager am) {
+    public NamedRuleComponent(AdminViewFrame parent, AccessManager am) {
         this(parent, am, null);
     }
     
-    public NamedRuleComponent(JFrame parent, AccessManager am, String title) {
+    public NamedRuleComponent(AdminViewFrame parent, AccessManager am, String title) {
         this(parent, am, null, false);
     }
     
-    public NamedRuleComponent(JFrame parent, AccessManager am, String title, boolean mode) {
+    public NamedRuleComponent(AdminViewFrame parent, AccessManager am, String title, boolean mode) {
         super();
         this.am = am;
         this.parentFrame = parent;
