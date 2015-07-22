@@ -48,11 +48,11 @@ public class ResourceStrings {
     }
     
     public static String getApplicationName() {
-        return "Teamcenter Engineering Admin View";
+        return "Teamcenter Admin View";
     }
     
     public static String getApplicationNameShort() {
-        return "TcEAV";
+        return "TcAV";
     }
     
     public static String getDeveloperName() {
@@ -69,6 +69,7 @@ public class ResourceStrings {
     
     public static String getProjectSupporters() {
         return "Anja Bartsch\n"+ 
+               "Nikolaos Boidoglou\n"+ 
                "Doug Schilling\n"+
                "Kevin Coykendal\n"+
                "Annemie Witters";
