@@ -11,7 +11,6 @@ package tceav.gui.procedure;
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
-import tceav.manager.procedure.plmxmlpdm.ProcedureTagTypeEnum;
 import tceav.manager.procedure.plmxmlpdm.base.IdBase;
 import tceav.manager.procedure.plmxmlpdm.base.AttribOwnerBase;
 import tceav.manager.procedure.plmxmlpdm.type.AssociatedDataSetType;

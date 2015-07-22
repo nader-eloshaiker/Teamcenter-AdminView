@@ -280,6 +280,8 @@ public class ProcedureManager extends ManagerAdapter {
         for (int k = 0; k < node.getActions().length; k++) {
             model.processNodeAttributes(node.getActions()[k]);
         }
+
+        
         for (int j = 0; j < node.getSubTemplates().length; j++) {
             model.processNodeAttributes(node.getSubTemplates()[j]);
         }
