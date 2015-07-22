@@ -56,15 +56,15 @@ public class ResourceLocator {
     }
     
     public static String getVersion() {
-        return "1.5";
+        return "1.6";
     }
     
     public static String getBuild() {
-        return "56";
+        return "63";
     }
     
     public static String getReleaseDate() {
-        return "17-Dec-07";
+        return "8-Jan-08";
     }
     
     public static String getApplicationName() {

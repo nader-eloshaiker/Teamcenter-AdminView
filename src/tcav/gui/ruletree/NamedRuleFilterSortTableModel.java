@@ -9,7 +9,7 @@
 
 package tcav.gui.ruletree;
 
-import tcav.ruletree.AccessRuleList;
+import tcav.ruletree.*;
 import java.util.*;
 import javax.swing.table.*;
 
@@ -19,11 +19,11 @@ import javax.swing.table.*;
  */
 public class NamedRuleFilterSortTableModel extends NamedRuleTableModel {
     private int[] indexes;
-    private Vector<Integer> sortingColumns = new Vector<Integer>();
+    private ArrayList<Integer> sortingColumns = new ArrayList<Integer>();
     private boolean ascending = true;
     private String strPattern;
-    private Vector<Integer> filteringColumns = new Vector<Integer>();
-    private Vector<String> filteringPatterns = new Vector<String>();
+    private ArrayList<Integer> filteringColumns = new ArrayList<Integer>();
+    private ArrayList<String> filteringPatterns = new ArrayList<String>();
     
     public static final String[] SORT_COLUMN_SELECTION = new String[]{"Type","Instance Count","ACL Name","None"};
     private final int SORT_NONE_VALUE = 3;
@@ -58,24 +58,35 @@ public class NamedRuleFilterSortTableModel extends NamedRuleTableModel {
         return indexes.length;
     }
     
+    public int indexOfRuleName(String name) {
+        for(int i=0; i<getRowCount(); i++)
+            if(getAccessRule(i).getRuleName().equals(name))
+                return i;
+        return -1;
+    }
+    
+    public AccessRule getAccessRule(int row) {
+        return super.getAccessRule(indexes[row]);
+    }
+    
     public void setFilter(int column, String value) {
         if((value == null) || (value.equals("")))
             return;
         
-        filteringColumns.removeAllElements();
-        filteringColumns.addElement(new Integer(column));
-        filteringPatterns.removeAllElements();
-        filteringPatterns.addElement(value);
+        filteringColumns.clear();
+        filteringColumns.add(new Integer(column));
+        filteringPatterns.clear();
+        filteringPatterns.add(value);
         
         reallocateIndexes();
-        if(sortingColumns.size() > 0)
-            sort();
+        
+        sort();
         filter();
     }
     
     public void setFilter(int[] columns, String[] patterns) {
-        filteringColumns.removeAllElements();
-        filteringPatterns.removeAllElements();
+        filteringColumns.clear();
+        filteringPatterns.clear();
         
         int length;
         if (columns.length < TOTAL_COLUMNS)
@@ -85,14 +96,14 @@ public class NamedRuleFilterSortTableModel extends NamedRuleTableModel {
         
         for(int i=0; i<length; i++) {
             if((patterns[i] != null) &&(!patterns[i].equals(""))) {
-                filteringColumns.addElement(new Integer(columns[i]));
-                filteringPatterns.addElement(patterns[i]);
+                filteringColumns.add(new Integer(columns[i]));
+                filteringPatterns.add(patterns[i]);
             }
         }
         
         reallocateIndexes();
-        if(sortingColumns.size() > 0)
-            sort();
+        
+        sort();
         filter();
     }
     
@@ -103,34 +114,34 @@ public class NamedRuleFilterSortTableModel extends NamedRuleTableModel {
         if(i == -1)
             return null;
         else
-            return filteringPatterns.elementAt(i);
+            return filteringPatterns.get(i);
     }
     
     public String[] getFilterPatterns() {
         String[] patterns = new String[filteringPatterns.size()];
         for(int i=0; i<patterns.length; i++)
-            patterns[i] = filteringPatterns.elementAt(i);
+            patterns[i] = filteringPatterns.get(i);
         return patterns;
     }
     
     public int[] getFilterColumns() {
         int[] columns = new int[filteringColumns.size()];
         for(int i=0; i<columns.length; i++)
-            columns[i] = filteringColumns.elementAt(i).intValue();
+            columns[i] = filteringColumns.get(i).intValue();
         return columns;
     }
-
+    
     public void resetFilter(){
-        filteringColumns.removeAllElements();
-        filteringPatterns.removeAllElements();
+        filteringColumns.clear();
+        filteringPatterns.clear();
         reallocateIndexes();
         sort();
     }
-
+    
     public void setSort(int column, boolean ascending) {
         this.ascending = ascending;
-        sortingColumns.removeAllElements();
-        sortingColumns.addElement(new Integer(column));
+        sortingColumns.clear();
+        sortingColumns.add(new Integer(column));
         
         reallocateIndexes();
         sort();
@@ -140,7 +151,7 @@ public class NamedRuleFilterSortTableModel extends NamedRuleTableModel {
     
     public void setSort(int[] columns, boolean ascending) {
         this.ascending = ascending;
-        sortingColumns.removeAllElements();
+        sortingColumns.clear();
         
         int length;
         if (columns.length < TOTAL_COLUMNS)
@@ -150,7 +161,7 @@ public class NamedRuleFilterSortTableModel extends NamedRuleTableModel {
         
         for(int i=0; i<length; i++)
             if(columns[i] != SORT_NONE_VALUE)
-                sortingColumns.addElement(new Integer(columns[i]));
+                sortingColumns.add(new Integer(columns[i]));
         
         reallocateIndexes();
         sort();
@@ -162,7 +173,7 @@ public class NamedRuleFilterSortTableModel extends NamedRuleTableModel {
         if ((column >= sortingColumns.size()) || (column >= TOTAL_COLUMNS))
             return SORT_NONE_VALUE;
         
-        return sortingColumns.elementAt(column).intValue();
+        return sortingColumns.get(column).intValue();
     }
     
     public int[] getSort() {
@@ -172,46 +183,35 @@ public class NamedRuleFilterSortTableModel extends NamedRuleTableModel {
         return columns;
     }
     
+    /*
+    // DELETE: This should be obselete
     public int getDataIndex(int modelIndex) {
         if(modelIndex >= indexes.length)
             return -1;
         else
             return indexes[modelIndex];
     }
-    
+     
+    // DELETE: This should be obselete
     public int getModelIndex(int dataIndex) {
         for(int i=0; i<indexes.length; i++)
             if (indexes[i] == dataIndex)
                 return i;
         return -1;
     }
-    
-    /*
-     public String getRuleType(int row) {
-        return super.getRuleType(row);
-    }
-    
-    public int getInstanceCount(int row) {
-        return super.getInstanceCount(row);
-    }
-    
-    public String getRuleName(int row) {
-        return super.getRuleName(row);
-    }
-    */
+     */
     private void reallocateIndexes() {
         int rowCount = super.getRowCount();
         indexes = new int[rowCount];
-
+        
         for (int row = 0; row < rowCount; row++) {
             indexes[row] = row;
         }
     }
     
     private void sort() {
-        // n2sort();
-        // qsort(0, indexes.length-1);
-        shuttlesort((int[])indexes.clone(), indexes, 0, indexes.length);
+        if(sortingColumns.size() > 0)
+            shuttlesort((int[])indexes.clone(), indexes, 0, indexes.length);
     }
     
     private void filter(){
@@ -235,7 +235,7 @@ public class NamedRuleFilterSortTableModel extends NamedRuleTableModel {
     
     private int compare(int row1, int row2) {
         for (int level = 0; level < sortingColumns.size(); level++) {
-            Integer column = sortingColumns.elementAt(level);
+            Integer column = sortingColumns.get(level);
             int result = compareRowsByColumn(row1, row2, column.intValue());
             if (result != 0) {
                 return ascending ? result : -result;
@@ -272,8 +272,8 @@ public class NamedRuleFilterSortTableModel extends NamedRuleTableModel {
         int i2;
         switch(column) {
             case TYPE_COLUMN:
-                s1 = getRuleType(row1);
-                s2 = getRuleType(row2);
+                s1 = getData(row1).getRuleType();
+                s2 = getData(row2).getRuleType();
                 result = s1.compareToIgnoreCase(s2);
                 if (result < 0) {
                     return -1;
@@ -284,8 +284,8 @@ public class NamedRuleFilterSortTableModel extends NamedRuleTableModel {
                 }
                 
             case INSTANCES_COLUMN:
-                i1 = getInstanceCount(row1);
-                i2 = getInstanceCount(row2);
+                i1 = getData(row1).getRuleTreeReferences().size();
+                i2 = getData(row2).getRuleTreeReferences().size();
                 
                 if (i1 < i2) {
                     return -1;
@@ -296,8 +296,8 @@ public class NamedRuleFilterSortTableModel extends NamedRuleTableModel {
                 }
                 
             case NAME_COLUMN:
-                s1 = getRuleName(row1);
-                s2 = getRuleName(row2);
+                s1 = getData(row1).getRuleName();
+                s2 = getData(row2).getRuleName();
                 result = s1.compareToIgnoreCase(s2);
                 
                 if (result < 0) {
@@ -322,6 +322,7 @@ public class NamedRuleFilterSortTableModel extends NamedRuleTableModel {
         }
     }
     
+    /*
     private void n2sort() {
         for (int i = 0; i < getRowCount(); i++) {
             for (int j = i+1; j < getRowCount(); j++) {
@@ -331,6 +332,7 @@ public class NamedRuleFilterSortTableModel extends NamedRuleTableModel {
             }
         }
     }
+     */
     
     // This is a home-grown implementation which we have not had time
     // to research - it may perform poorly in some circumstances. It
@@ -392,8 +394,8 @@ public class NamedRuleFilterSortTableModel extends NamedRuleTableModel {
     private boolean compareFilter(int row) {
         boolean result;
         for (int level = 0; level < filteringColumns.size(); level++) {
-            Integer column = filteringColumns.elementAt(level);
-            result = compareFilterRowsByColumn(row, filteringPatterns.elementAt(level), column.intValue());
+            Integer column = filteringColumns.get(level);
+            result = compareFilterRowsByColumn(row, filteringPatterns.get(level), column.intValue());
             if (!result) {
                 return result;
             }
@@ -418,11 +420,11 @@ public class NamedRuleFilterSortTableModel extends NamedRuleTableModel {
         Integer i2;
         switch(column) {
             case TYPE_COLUMN:
-                s = getRuleType(row);
+                s = getData(row).getRuleType();
                 return isStringMatch(s,strPattern);
                 
             case INSTANCES_COLUMN:
-                i1 = getInstanceCount(row);
+                i1 = getData(row).getRuleTreeReferences().size();
                 i2 = new Integer(strPattern);
                 
                 if (i1 == i2.intValue())
@@ -431,7 +433,7 @@ public class NamedRuleFilterSortTableModel extends NamedRuleTableModel {
                     return false;
                 
             case NAME_COLUMN:
-                s = getRuleName(row);
+                s = getData(row).getRuleName();
                 return isStringMatch(s,strPattern);
                 
             default:

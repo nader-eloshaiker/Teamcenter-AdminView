@@ -8,56 +8,53 @@
  */
 
 package tcav.ruletree;
-import java.util.Vector;
-import java.util.Hashtable;
-import java.util.ArrayList;
+import java.util.*;
 import tcav.utils.ArrayListSorter;
 
 /**
  *
  * @author NZR4DL
  */
-public class AccessRuleList extends Vector<AccessRule>{
+public class AccessRuleList extends ArrayList<AccessRule>{
     
-    private Vector<String> aclTypes;
+    private ArrayList<String> aclTypes;
     private Hashtable<String, Integer> aclTypeSize;
-    private Vector<String> accessorTypes;
+    private ArrayList<String> accessorTypes;
     
     /** Creates a new instance of AccessRuleList */
     public AccessRuleList() {
         super();
-        aclTypes = new Vector<String>();
+        aclTypes = new ArrayList<String>();
         aclTypeSize = new Hashtable<String,Integer>();
-        accessorTypes = new Vector<String>();
+        accessorTypes = new ArrayList<String>();
     }
     
     public boolean contains(String s) {
         return indexOf(s, 0) >= 0;
     }
     
-    public synchronized int indexOf(String str) {
-        return indexOf(str,0);
+    public int indexOf(String s) {
+        return indexOf(s,0);
     }
     
-    public synchronized int indexOf(String str, int index) {
+    public int indexOf(String str, int index) {
         if (str == null) {
-            for (int i = index ; i < elementCount ; i++)
-                if (elementData[i]==null)
+            for (int i=index; i<size(); i++)
+                if (get(i)==null)
                     return i;
         } else {
-            for (int i = index ; i < elementCount ; i++)
-                if (str.equals( ((AccessRule)elementData[i]).getRuleName() ))
+            for (int i=index; i<size(); i++)
+                if (str.equals(get(i).getRuleName()))
                     return i;
         }
         return -1;
     }
     
-    public AccessRule elementAt(int index) {
-        return (AccessRule)super.elementAt(index);
+    public AccessRule get(String s) {
+        return get(indexOf(s));
     }
     
-    public void addElement(AccessRule ar){
-        super.addElement(ar);
+    public boolean add(AccessRule ar){
         String s = ar.getRuleType();
         
         if(aclTypes.indexOf(s) == -1){
@@ -76,9 +73,11 @@ public class AccessRuleList extends Vector<AccessRule>{
                 ArrayListSorter.sortStringArray(accessorTypes);
             }
         }
+        
+        return super.add(ar);
     }
     
-    public Vector<String> getACLTypes() {
+    public ArrayList<String> getACLTypes() {
         return aclTypes;
     }
     
@@ -86,7 +85,7 @@ public class AccessRuleList extends Vector<AccessRule>{
         return aclTypeSize.get(key);
     }
     
-    public Vector<String> getAccessorTypes() {
+    public ArrayList<String> getAccessorTypes() {
         return accessorTypes;
     }
     

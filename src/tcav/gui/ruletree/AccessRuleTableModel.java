@@ -63,7 +63,7 @@ public class AccessRuleTableModel extends AbstractTableModel implements TableMod
     
     public Object getValueAt(int row, int col) {
         if((col < getColumnCount()) && (row < getRowCount())){
-            return accessRule.elementAt(row).getAccessControl()[col];
+            return accessRule.get(row).getAccessControl()[col];
         } else
             return null;
     }
