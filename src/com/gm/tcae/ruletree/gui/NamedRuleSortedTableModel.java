@@ -18,14 +18,12 @@ import com.gm.tcae.ruletree.acl.*;
  * @author NZR4DL
  */
 public class NamedRuleSortedTableModel extends NamedRuleTableModel {
-    private int indexes[];
+    private int[] indexes;
     private Vector<Integer> sortingColumns = new Vector<Integer>();
     private boolean ascending = true;
-    private int compares;
     
     public static final String[] SORT_COLUMN_SELECTION = new String[]{"Type","Instance Count","ACL Name","None"};
     private final int SORT_NONE_VALUE = 3;
-    private final int SORT_TOTAL_COLUMNS = 3;
     
     /** Creates a new instance of NamedRuleSortedTableModel */
     public NamedRuleSortedTableModel(AccessRuleList accessRuleList) {
@@ -41,12 +39,116 @@ public class NamedRuleSortedTableModel extends NamedRuleTableModel {
         ascending = state;
     }
     
-    private int compareRowsByColumn(int row1, int row2, int column) {
-        Class type = getColumnClass(column);
+    // The mapping only affects the contents of the data rows.
+    // Pass all requests to these rows through the mapping array: "indexes".
+    public Object getValueAt(int aRow, int aColumn) {
+        return super.getValueAt(indexes[aRow], aColumn);
+    }
+    
+    public void setValueAt(Object aValue, int aRow, int aColumn) {
         
+    }
+    
+    public int getRowCount() {
+        return indexes.length;
+    }
+    
+    public void setSort(int column, boolean ascending) {
+        this.ascending = ascending;
+        sortingColumns.removeAllElements();
+        sortingColumns.addElement(new Integer(column));
+        sort();
+    }
+    
+    public void setSort(int[] columns, boolean ascending) {
+        this.ascending = ascending;
+        sortingColumns.removeAllElements();
+        
+        int length;
+        if (columns.length < TOTAL_COLUMNS)
+            length = columns.length;
+        else
+            length = TOTAL_COLUMNS;
+        
+        for(int i=0; i<length; i++)
+            if(columns[i] != SORT_NONE_VALUE)
+                sortingColumns.addElement(new Integer(columns[i]));
+        
+        sort();
+    }
+    
+    public int getSort(int column) {
+        if ((column >= sortingColumns.size()) || (column >= TOTAL_COLUMNS))
+            return SORT_NONE_VALUE;
+        
+        return sortingColumns.elementAt(column).intValue();
+    }
+    
+    public int[] getSort() {
+        int[] columns = new int[TOTAL_COLUMNS];
+        for(int i=0; i<columns.length; i++)
+            columns[i] = getSort(i);
+        return columns;
+    }
+    
+    public int getDataIndex(int modelIndex) {
+        if(modelIndex >= indexes.length)
+            return -1;
+        else
+            return indexes[modelIndex];
+    }
+    
+    public int getModelIndex(int dataIndex) {
+        for(int i=0; i<indexes.length; i++)
+            if (indexes[i] == dataIndex)
+                return i;
+        return -1;
+    }
+    
+    /*
+     public String getRuleType(int row) {
+        return super.getRuleType(row);
+    }
+    
+    public int getInstanceCount(int row) {
+        return super.getInstanceCount(row);
+    }
+    
+    public String getRuleName(int row) {
+        return super.getRuleName(row);
+    }
+    */
+    private void reallocateIndexes() {
+        int rowCount = super.getRowCount();
+        indexes = new int[rowCount];
+
+        for (int row = 0; row < rowCount; row++) {
+            indexes[row] = row;
+        }
+    }
+    
+    private void sort() {
+        reallocateIndexes();
+        // n2sort();
+        // qsort(0, indexes.length-1);
+        shuttlesort((int[])indexes.clone(), indexes, 0, indexes.length);
+    }
+    
+    private int compare(int row1, int row2) {
+        for (int level = 0; level < sortingColumns.size(); level++) {
+            Integer column = sortingColumns.elementAt(level);
+            int result = compareRowsByColumn(row1, row2, column.intValue());
+            if (result != 0) {
+                return ascending ? result : -result;
+            }
+        }
+        return 0;
+    }
+    
+    private int compareRowsByColumn(int row1, int row2, int column) {
         // Check for nulls.
-        Object o1 = getValueAt(row1, column);
-        Object o2 = getValueAt(row2, column);
+        Object o1 = super.getValueAt(row1, column);
+        Object o2 = super.getValueAt(row2, column);
         // If both values are null, return 0.
         if (o1 == null && o2 == null) {
             return 0;
@@ -71,8 +173,8 @@ public class NamedRuleSortedTableModel extends NamedRuleTableModel {
         int i2;
         switch(column) {
             case TYPE_COLUMN:
-                s1 = accessRuleList.elementAt(row1).getRuleType();
-                s2 = accessRuleList.elementAt(row2).getRuleType();
+                s1 = getRuleType(row1);
+                s2 = getRuleType(row2);
                 result = s1.compareToIgnoreCase(s2);
                 if (result < 0) {
                     return -1;
@@ -83,8 +185,8 @@ public class NamedRuleSortedTableModel extends NamedRuleTableModel {
                 }
                 
             case INSTANCES_COLUMN:
-                i1 = accessRuleList.elementAt(row1).getTreeIndexSize();
-                i2 = accessRuleList.elementAt(row2).getTreeIndexSize();
+                i1 = getInstanceCount(row1);
+                i2 = getInstanceCount(row2);
                 
                 if (i1 < i2) {
                     return -1;
@@ -95,8 +197,8 @@ public class NamedRuleSortedTableModel extends NamedRuleTableModel {
                 }
                 
             case NAME_COLUMN:
-                s1 = accessRuleList.elementAt(row1).getRuleName();
-                s2 = accessRuleList.elementAt(row2).getRuleName();
+                s1 = getRuleName(row1);
+                s2 = getRuleName(row2);
                 result = s1.compareToIgnoreCase(s2);
                 
                 if (result < 0) {
@@ -107,8 +209,8 @@ public class NamedRuleSortedTableModel extends NamedRuleTableModel {
                     return 0;
                 }
             default:
-                s1 = getValueAt(row1, column).toString();
-                s2 = getValueAt(row2, column).toString();
+                s1 = super.getValueAt(row1, column).toString();
+                s2 = super.getValueAt(row2, column).toString();
                 result = s1.compareToIgnoreCase(s2);
                 
                 if (result < 0) {
@@ -119,51 +221,6 @@ public class NamedRuleSortedTableModel extends NamedRuleTableModel {
                     return 0;
                 }
         }
-    }
-    
-    public int getDataIndex(int modelIndex) {
-        return indexes[modelIndex];
-    }
-    
-    public int getModelIndex(int dataIndex) {
-        for(int i=0; i<indexes.length; i++)
-            if (indexes[i] == dataIndex)
-                return i;
-        return -1;
-    }
-    
-    private int compare(int row1, int row2) {
-        compares++;
-        for (int level = 0; level < sortingColumns.size(); level++) {
-            Integer column = sortingColumns.elementAt(level);
-            int result = compareRowsByColumn(row1, row2, column.intValue());
-            if (result != 0) {
-                return ascending ? result : -result;
-            }
-        }
-        return 0;
-    }
-    
-    private void reallocateIndexes() {
-        int rowCount = getRowCount();
-        
-        // Set up a new array of indexes with the right number of elements
-        // for the new data model.
-        indexes = new int[rowCount];
-        
-        // Initialise with the identity mapping.
-        for (int row = 0; row < rowCount; row++) {
-            indexes[row] = row;
-        }
-    }
-    
-    private void sort(Object sender) {
-        reallocateIndexes();
-        compares = 0;
-        // n2sort();
-        // qsort(0, indexes.length-1);
-        shuttlesort((int[])indexes.clone(), indexes, 0, indexes.length);
-        //System.out.println("Compares: "+compares);
     }
     
     private void n2sort() {
@@ -231,65 +288,6 @@ public class NamedRuleSortedTableModel extends NamedRuleTableModel {
         int tmp = indexes[i];
         indexes[i] = indexes[j];
         indexes[j] = tmp;
-    }
-    
-    // The mapping only affects the contents of the data rows.
-    // Pass all requests to these rows through the mapping array: "indexes".
-    
-    public Object getValueAt(int aRow, int aColumn) {
-        return super.getValueAt(indexes[aRow], aColumn);
-    }
-    
-    public void setValueAt(Object aValue, int aRow, int aColumn) {
-        super.setValueAt(aValue, indexes[aRow], aColumn);
-    }
-    
-    public void sortByColumn(int column) {
-        sortByColumn(column, true);
-    }
-    
-    public void sortByColumn(int column, boolean ascending) {
-        this.ascending = ascending;
-        if(column != SORT_NONE_VALUE) {
-            sortingColumns.removeAllElements();
-            sortingColumns.addElement(new Integer(column));
-            sort(this);
-        }
-    }
-    
-    public void sortByColumns(int[] columns) {
-        sortByColumns(columns, true);
-    }
-    
-    public void sortByColumns(int[] columns, boolean ascending) {
-        this.ascending = ascending;
-        sortingColumns.removeAllElements();
-        
-        int length;
-        if (columns.length < SORT_TOTAL_COLUMNS)
-            length = columns.length;
-        else
-            length = SORT_TOTAL_COLUMNS;
-        
-        for(int i=0; i<length; i++)
-            if(columns[i] != SORT_NONE_VALUE)
-                sortingColumns.addElement(new Integer(columns[i]));
-        
-        sort(this);
-    }
-    
-    public int getSortColumn(int column) {
-        if ((column >= sortingColumns.size()) || (column >= SORT_TOTAL_COLUMNS))
-            return SORT_NONE_VALUE;
-        
-        return sortingColumns.elementAt(column).intValue();
-    }
-    
-    public int[] getSortColumns() {
-        int[] columns = new int[SORT_TOTAL_COLUMNS];
-        for(int i=0; i<columns.length; i++)
-            columns[i] = getSortColumn(i);
-        return columns;
     }
     
 }

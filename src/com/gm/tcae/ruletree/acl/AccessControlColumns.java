@@ -57,8 +57,8 @@ public class AccessControlColumns {
         "Remove From Project"
     };
     private final String[] ACCESS_CONTROL_IMAGES = new String[]{
-        "AccessorId.gif",
         "AccessorType.gif",
+        "AccessorId.gif",
         "ReadAccess.gif",
         "WriteAccess.gif",
         "DeleteAccess.gif",

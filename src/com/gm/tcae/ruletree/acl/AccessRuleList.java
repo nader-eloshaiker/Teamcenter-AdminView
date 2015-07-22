@@ -16,13 +16,15 @@ import java.util.Vector;
  */
 public class AccessRuleList extends Vector<AccessRule>{
     
-    private int ruleTreeSize = 0;
-    private int workflowSize = 0;
+    private int acRuleTreeSize = 0;
+    private int acWorkFlowSize = 0;
+    private Vector<String> acTypes;
     
     /** Creates a new instance of AccessRuleList */
     public AccessRuleList() {
         super();
-    }
+         acTypes = new Vector<String>();
+   }
     
     
     
@@ -53,18 +55,31 @@ public class AccessRuleList extends Vector<AccessRule>{
     
     public void addElement(AccessRule ar){
         super.addElement(ar);
+        String s = ar.getRuleType();
+        
+        if(acTypes.indexOf(s) == -1)
+            acTypes.addElement(s);
+        
         if(ar.getRuleType().equals("WORKFLOW"))
-            workflowSize++;
+            acWorkFlowSize++;
         else if(ar.getRuleType().equals("RULETREE"))
-            ruleTreeSize++;
+            acRuleTreeSize++;
     }
     
     public int getTreeTypeSize() {
-        return ruleTreeSize;
+        return acRuleTreeSize;
     }
     
     public int getWorkFlowTypeSize() {
-        return workflowSize;
+        return acWorkFlowSize;
+    }
+    
+    public String getType(int index) {
+        return acTypes.elementAt(index);
+    }
+    
+    public int getTypeSize() {
+        return acTypes.size();
     }
     
 }

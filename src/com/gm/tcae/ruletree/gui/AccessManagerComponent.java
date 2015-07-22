@@ -30,13 +30,17 @@ public class AccessManagerComponent extends JPanel {
     protected JTable accessRuleComponent;
     protected AccessRuleTableModel accessRuleDataModel;
     protected DefaultTreeModel ruletreeModel;
-    protected NamedRuleSortedTableModel namedRuleDataModel;
+    protected NamedRuleFilteredTableModel namedRuleDataModel;
     
     protected JComboBox listUnusedNamedACL;
     protected JComboBox boxFirstSort;
     protected JComboBox boxSecondSort;
     protected JComboBox boxThirdSort;
     protected JCheckBox checkAscending;
+    
+    protected JTextField textFilterName;
+    protected JTextField textFilterInstanceCount;
+    protected JComboBox boxfilterType;
     
     protected boolean eventAllowed = true;
     
@@ -109,6 +113,11 @@ public class AccessManagerComponent extends JPanel {
     }
     
     private void updateAccessRuleComponent(AccessRule ar) {
+        /*
+        accessRuleDataModel.setAccessRule(ar);
+        accessRuleDataModel.fireTableDataChanged();
+        accessRuleComponent.repaint();
+        /*/
         accessRuleDataModel = new AccessRuleTableModel(accessManager.getAccessControlColumns(),ar);
         accessRuleComponent.setModel(accessRuleDataModel);
         accessRuleComponent.setRowSelectionAllowed(true);
@@ -139,6 +148,28 @@ public class AccessManagerComponent extends JPanel {
     
     private void createAccessRuleComponent() {
         accessRuleComponent = new JTable();
+        /*
+        accessRuleDataModel = new AccessRuleTableModel(accessManager.getAccessControlColumns());
+        accessRuleComponent.setModel(accessRuleDataModel);
+        accessRuleComponent.setRowSelectionAllowed(true);
+        TableColumn column;
+        for (int i=0; i<accessRuleDataModel.getColumnCount(); i++){
+            column = accessRuleComponent.getColumnModel().getColumn(i);
+            column.setHeaderValue(accessRuleDataModel.getColumn(i));
+            column.setHeaderRenderer(new AccessRuleTableHearderRenderer());
+            column.setCellRenderer(new AccessRuleTableCellRenderer());
+            if(i == 0 || i == 1) {
+                column.setResizable(true);
+                column.setPreferredWidth(80);
+            } else {
+                column.setResizable(false);
+                column.setPreferredWidth(28);
+                column.setMaxWidth(28);
+                column.setMinWidth(28);
+                column.setWidth(28);
+            }
+        }
+         */
     }
     
     private void createRuletreeComponent() {
@@ -180,8 +211,8 @@ public class AccessManagerComponent extends JPanel {
     
     private void createNamedAclTable() {
         namedAclComponent = new JTable();
-        namedRuleDataModel = new NamedRuleSortedTableModel(accessManager.getAccessRuleList());
-        namedRuleDataModel.sortByColumns(new int[]{0,2});
+        namedRuleDataModel = new NamedRuleFilteredTableModel(accessManager.getAccessRuleList());
+        namedRuleDataModel.setSort(new int[]{0,2},true);
         namedAclComponent.setModel(namedRuleDataModel);
         namedAclComponent.setRowSelectionAllowed(true);
         namedAclComponent.setSelectionMode(0);
@@ -207,34 +238,16 @@ public class AccessManagerComponent extends JPanel {
         
         namedAclComponent.getSelectionModel().addListSelectionListener( new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent e) {
-                //if(eventAllowed) {
-                //eventAllowed = false;
-                //ruletreeComponent.setSelectionRows(accessManager.getAccessRuleList().elementAt(namedAclComponent.getSelectedRow()).getTreeIndex());
-                //eventAllowed = true;
-                //}
                 updateAccessRuleComponent(accessManager.getAccessRuleList().elementAt(namedRuleDataModel.getDataIndex(namedAclComponent.getSelectedRow())));
             }
         });
     }
     
     private JProgressBar createNamedACLDetailsComponent(int minValue, int maxValue, int value, String maxTitle) {
-        /*
-        JSlider slider = new JSlider(minValue,maxValue,value);
-        slider.setPaintTicks(true);
-        slider.setMajorTickSpacing(maxValue);
-        slider.setPaintLabels(true);
-        if(maxValue != 0) {
-            Hashtable<Integer, JLabel> table = new Hashtable<Integer,JLabel>();
-            table.put(new Integer(minValue), new JLabel(String.valueOf(minValue)));
-            table.put(new Integer(value), new JLabel(String.valueOf(value)));
-            table.put(new Integer(maxValue), new JLabel(String.valueOf(maxValue)));
-            slider.setLabelTable(table);
-        }
-         */
         JProgressBar jp = new JProgressBar(minValue,maxValue);
         jp.setValue(value);
         jp.setToolTipText("Total "+maxTitle+": " + maxValue);
-        jp.setString(String.valueOf(value));
+        jp.setString(String.valueOf(value+" / "+maxValue));
         jp.setStringPainted(true);
         return jp;
         
@@ -255,8 +268,8 @@ public class AccessManagerComponent extends JPanel {
         panelNamedACLDetails.setLayout(new BorderLayout(GAP_COMPONENT,GAP_COMPONENT));
         JPanel panelNamedACLDetailsLeft = new JPanel(true);
         panelNamedACLDetailsLeft.setLayout(new GridLayout(2,1,GAP_COMPONENT,GAP_COMPONENT));
-        panelNamedACLDetailsLeft.add(new JLabel("RuleTree Access Rules"));
-        panelNamedACLDetailsLeft.add(new JLabel("Workflow Access Rules"));
+        panelNamedACLDetailsLeft.add(new JLabel("RuleTree Named ACLs"));
+        panelNamedACLDetailsLeft.add(new JLabel("Workflow Named ACLs"));
         JPanel panelNamedACLDetailsRight = new JPanel(true);
         panelNamedACLDetailsRight.setLayout(new GridLayout(2,1,GAP_COMPONENT,GAP_COMPONENT));
         panelNamedACLDetailsRight.add(createNamedACLDetailsComponent(
@@ -273,7 +286,7 @@ public class AccessManagerComponent extends JPanel {
         panelNamedACLDetails.add("Center",panelNamedACLDetailsRight);
         JPanel panelNamedACLMissing = new JPanel(true);
         panelNamedACLMissing.setLayout(new BorderLayout(GAP_COMPONENT,GAP_COMPONENT));
-        panelNamedACLMissing.add("West",new JLabel("Total Unused Access Rules"));
+        panelNamedACLMissing.add("West",new JLabel("Total Unused Named ACLs"));
         panelNamedACLMissing.add("Center",createNamedACLDetailsComponent(
                 0,
                 accessManager.getAccessRuleList().size(),
@@ -305,12 +318,12 @@ public class AccessManagerComponent extends JPanel {
         panelNamedACLMissingFull.add("South",listUnusedNamedACL);
         
         
-        boxFirstSort = new JComboBox(NamedRuleSortedTableModel.SORT_COLUMN_SELECTION);
-        boxFirstSort.setSelectedIndex(namedRuleDataModel.getSortColumn(0));
-        boxSecondSort = new JComboBox(NamedRuleSortedTableModel.SORT_COLUMN_SELECTION);
-        boxSecondSort.setSelectedIndex(namedRuleDataModel.getSortColumn(1));
-        boxThirdSort = new JComboBox(NamedRuleSortedTableModel.SORT_COLUMN_SELECTION);
-        boxThirdSort.setSelectedIndex(namedRuleDataModel.getSortColumn(2));
+        boxFirstSort = new JComboBox(NamedRuleFilteredTableModel.SORT_COLUMN_SELECTION);
+        boxFirstSort.setSelectedIndex(namedRuleDataModel.getSort(0));
+        boxSecondSort = new JComboBox(NamedRuleFilteredTableModel.SORT_COLUMN_SELECTION);
+        boxSecondSort.setSelectedIndex(namedRuleDataModel.getSort(1));
+        boxThirdSort = new JComboBox(NamedRuleFilteredTableModel.SORT_COLUMN_SELECTION);
+        boxThirdSort.setSelectedIndex(namedRuleDataModel.getSort(2));
         checkAscending = new JCheckBox("Ascending",namedRuleDataModel.isAscending());
         JButton buttonSortNamedACL = new JButton("Sort");
         buttonSortNamedACL.addActionListener(new ActionListener() {
@@ -319,8 +332,9 @@ public class AccessManagerComponent extends JPanel {
                  sort[0] = boxFirstSort.getSelectedIndex();
                  sort[1] = boxSecondSort.getSelectedIndex();
                  sort[2] = boxThirdSort.getSelectedIndex();
-                 namedRuleDataModel.sortByColumns(sort, checkAscending.isSelected());
+                 namedRuleDataModel.setSort(sort, checkAscending.isSelected());
                  namedRuleDataModel.fireTableDataChanged();
+                 namedAclComponent.repaint();
              }
         });
         
@@ -334,12 +348,59 @@ public class AccessManagerComponent extends JPanel {
         panelNamedACLSort.add(buttonSortNamedACL);
         
         
+        boxfilterType = new JComboBox();
+        boxfilterType.addItem(null);
+        for(int i=0; i<accessManager.getAccessRuleList().getTypeSize(); i++)
+            boxfilterType.addItem(accessManager.getAccessRuleList().getType(i));
+        boxfilterType.setSelectedItem(namedRuleDataModel.getFilterPattern(namedRuleDataModel.TYPE_COLUMN));
+        textFilterInstanceCount = new JTextField();
+        textFilterInstanceCount.setToolTipText("Must be a number");
+        textFilterInstanceCount.setText(namedRuleDataModel.getFilterPattern(namedRuleDataModel.INSTANCES_COLUMN));
+        textFilterName = new JTextField();
+        textFilterName.setToolTipText("Wildcards accepted");
+        textFilterName.setText(namedRuleDataModel.getFilterPattern(namedRuleDataModel.NAME_COLUMN));
+        JButton buttonFilter = new JButton("Filter");
+        buttonFilter.addActionListener(new ActionListener(){
+             public void actionPerformed(ActionEvent e) {
+                 int[] filterColumns = new int[]{0,1,2};
+                 String[] filterPatterns = new String[]{
+                     (String)boxfilterType.getSelectedItem(),
+                     textFilterInstanceCount.getText(),
+                     textFilterName.getText()
+                 };
+                 namedRuleDataModel.setFilter(filterColumns,filterPatterns);
+                 namedRuleDataModel.fireTableDataChanged();
+                 namedAclComponent.repaint();
+             }            
+        });
+        JButton buttonReset = new JButton("Reset");
+        buttonReset.addActionListener(new ActionListener(){
+             public void actionPerformed(ActionEvent e) {
+                     boxfilterType.setSelectedItem(null);
+                     textFilterInstanceCount.setText(null);
+                     textFilterName.setText(null);
+                 namedRuleDataModel.resetFilter();
+                 namedRuleDataModel.fireTableDataChanged();
+                 namedAclComponent.repaint();
+            }            
+        });
+        
+        JPanel panelNamedACLFilter = new JPanel(true);
+        panelNamedACLFilter.setLayout(new GridLayout(2,4,GAP_COMPONENT,GAP_COMPONENT));
+        panelNamedACLFilter.add(new JLabel("Match Type"));
+        panelNamedACLFilter.add(new JLabel("Match Count"));
+        panelNamedACLFilter.add(new JLabel("Match Name"));
+        panelNamedACLFilter.add(buttonReset);
+        panelNamedACLFilter.add(boxfilterType);
+        panelNamedACLFilter.add(textFilterInstanceCount);
+        panelNamedACLFilter.add(textFilterName);
+        panelNamedACLFilter.add(buttonFilter);
         
         JTabbedPane tabNamedAcl = new JTabbedPane();
         tabNamedAcl.add("Details",createMarginedPanel(panelNamedACLDetails));
         tabNamedAcl.add("Unused ACLs",createMarginedPanel(panelNamedACLMissingFull));
         tabNamedAcl.add("Sort",createMarginedPanel(panelNamedACLSort));
-        tabNamedAcl.add("Filter",new JButton("hello"));
+        tabNamedAcl.add("Filter",createMarginedPanel(panelNamedACLFilter));
         
         
         JPanel panelACL = new JPanel(true);

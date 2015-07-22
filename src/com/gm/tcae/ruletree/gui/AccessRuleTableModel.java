@@ -28,8 +28,9 @@ public class AccessRuleTableModel extends AbstractTableModel implements TableMod
     }
     
     public AccessRuleTableModel(AccessControlColumns acc) {
-        this(acc, null);
+        this(acc, new AccessRule());
     }
+
     
     public AccessRule getAccessRule() {
         return accessRule;
@@ -40,7 +41,6 @@ public class AccessRuleTableModel extends AbstractTableModel implements TableMod
      */
     public void setAccessRule(AccessRule ar) {
         accessRule = ar;
-        fireTableDataChanged();
     }
     
     public int getColumnCount() { 

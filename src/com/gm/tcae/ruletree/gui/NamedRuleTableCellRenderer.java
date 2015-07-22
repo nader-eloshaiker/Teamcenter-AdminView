@@ -52,7 +52,7 @@ public class NamedRuleTableCellRenderer extends DefaultTableCellRenderer impleme
             case 1:
                 setHorizontalAlignment(CENTER);
                 setText(s);
-                setToolTipText("Instances in Tree: "+s);
+                setToolTipText("Instances in RuleTree: "+s);
                 break;
             default:
                 setText(s);

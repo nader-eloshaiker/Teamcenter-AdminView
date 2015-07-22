@@ -23,6 +23,7 @@ public class NamedRuleTableModel extends AbstractTableModel implements TableMode
     protected final int TYPE_COLUMN = 0;
     protected final int INSTANCES_COLUMN = 1;
     protected final int NAME_COLUMN = 2;
+    protected final int TOTAL_COLUMNS = 3;
     /**
      * Creates a new instance of NamedRuleTableModel
      */
@@ -41,14 +42,26 @@ public class NamedRuleTableModel extends AbstractTableModel implements TableMode
     public Object getValueAt(int row, int col) {
             switch(col) {
                 case TYPE_COLUMN:
-                    return accessRuleList.elementAt(row).getRuleType();
+                    return getRuleType(row);
                 case INSTANCES_COLUMN:
-                    return accessRuleList.elementAt(row).getTreeIndexSize();
+                    return getInstanceCount(row);
                 case NAME_COLUMN:
-                    return accessRuleList.elementAt(row).getRuleName();
+                    return getRuleName(row);
                 default:
                     return null;
             }
+    }
+    
+    public String getRuleType(int row) {
+        return accessRuleList.elementAt(row).getRuleType();
+    }
+    
+    public int getInstanceCount(int row) {
+        return accessRuleList.elementAt(row).getTreeIndexSize();
+    }
+    
+    public String getRuleName(int row) {
+        return accessRuleList.elementAt(row).getRuleName();
     }
     
     public String[] getColumns() {

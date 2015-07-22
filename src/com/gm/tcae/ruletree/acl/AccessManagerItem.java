@@ -76,10 +76,10 @@ public class AccessManagerItem extends Object {
     }
     
     public String toString() {
-        String s = condition+" ("+value+")";
+        String s = condition+"( "+value+" )";
         
         if (accessRuleName != null)
-            s += " = "+accessRuleName;
+            s += " -> "+accessRuleName;
 
         return s;
     }
@@ -90,9 +90,7 @@ public class AccessManagerItem extends Object {
         for(int l=0; l<indentLevel; l++)
             s += "    ";
         
-        s += condition+"( "+value+" )";
-        if (accessRuleName != null)
-            s += "->"+accessRuleName;
+        s += toString();
         
         if (isCollapsed())
             s += " , Collapsed";

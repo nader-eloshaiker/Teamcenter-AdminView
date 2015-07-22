@@ -203,9 +203,9 @@ public class RuleTreeFrame extends JFrame{
                 JOptionPane.showMessageDialog(
                         getFrame(),
                         "<html><p>Rule Tree Viewer</p>"+ "<p></p>" +
-                        "<p>Version: 0.1.3 Alpha </p>" +
-                        "<p>Release Date: 13-Jul-07</p>"+  "<p></p>" +
-                        "<p>Developed by: Nader Eloshaiker<br> General Motors - Holden</p>" +
+                        "<p>Version: 0.1.5 Alpha </p>" +
+                        "<p>Release Date: 17-Jul-07</p>"+  "<p></p>" +
+                        "<p>Developed by:<br> Nader Eloshaiker<br>Math Based Systems<br>General Motors - Holden</p>" +
                         "</html>");
             }
         });
