@@ -346,10 +346,29 @@ public class ColumnHeaderEntry {
         return indent + handler;
     }
     
-    public String getArgument() {
+    public int getArgumentTotalHashCode() {
         String s = "";
         for(int i=0; i<arguments.size(); i++)
-            s += arguments.get(i)+"|";
+            s += arguments.get(i);
+        
+        return s.hashCode();
+    }
+    
+    public int getArgumentHashCode(int index) {
+        if(index > arguments.size())
+            return -1;
+        else
+            return arguments.get(index).hashCode();
+    }
+
+    public ArrayList<String> getArguments() {
+        return arguments;
+    }
+    
+    public String getArgumentsString() {
+        String s = "";
+        for(int i=0; i<arguments.size(); i++)
+            s += arguments.get(i);
         return s;
     }
     

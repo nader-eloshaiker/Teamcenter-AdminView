@@ -1,5 +1,5 @@
 /*
- * ProcedureTreeModel.java
+ * ProcessTreeModel.java
  *
  * Created on 5 August 2007, 09:23
  *
@@ -22,7 +22,7 @@ import tceav.manager.procedure.plmxmlpdm.type.WorkflowTemplateType;
  *
  * @author NZR4DL
  */
-public class ProcedureTreeModel implements TreeModel {
+public class ProcessTreeModel implements TreeModel {
     
     private ArrayList<WorkflowTemplateType> workflowProcesses;
     private SiteType site;
@@ -32,7 +32,7 @@ public class ProcedureTreeModel implements TreeModel {
     public static final int MODE_SUB_WORKFLOWS = 1;
     
     /** Creates a new instance of RuleTreeModel */
-    public ProcedureTreeModel(ArrayList<WorkflowTemplateType> workflowProcesses, SiteType site, int procedureMode) {
+    public ProcessTreeModel(ArrayList<WorkflowTemplateType> workflowProcesses, SiteType site, int procedureMode) {
         this.workflowProcesses = workflowProcesses;
         this.site = site;
         this.procedureMode = procedureMode;

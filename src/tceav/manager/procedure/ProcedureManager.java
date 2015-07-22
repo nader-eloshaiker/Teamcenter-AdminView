@@ -36,7 +36,7 @@ public class ProcedureManager extends AbstractManager {
     
     private ArrayList<WorkflowTemplateType> workflowProcesses;
     private HeaderType header;
-    private SiteType site;
+    private ArrayList<SiteType> site;
     private PLMXMLType plmxml;
     private File file;
     
@@ -81,8 +81,25 @@ public class ProcedureManager extends AbstractManager {
         return workflowProcesses;
     }
     
-    public SiteType getSite() {
+    public ArrayList<SiteType> getSites() {
         return site;
+    }
+    
+    private int siteIndex = -1;
+    
+    public SiteType getSite() {
+        if(siteIndex == -1) {
+            for(int i=0; i<site.size(); i++) {
+                if(getPLMXML().getAuthor().indexOf(site.get(i).getSiteId()) > 0) {
+                    siteIndex = i;
+                    break;
+                }
+            }
+            if(siteIndex == -1)
+                siteIndex = 0;
+        }
+
+        return site.get(siteIndex);
     }
     
     public HeaderType getHeader() {
@@ -104,6 +121,7 @@ public class ProcedureManager extends AbstractManager {
         
         TagTypeEnum tagType;
         workflowProcesses = new ArrayList<WorkflowTemplateType>();
+        site = new ArrayList<SiteType>();
         
         Hashtable<String,IdBase> tagCache = new Hashtable<String,IdBase>();
         
@@ -136,7 +154,7 @@ public class ProcedureManager extends AbstractManager {
                         break;
                         
                     case Site:
-                        site = new SiteType(currentNode);
+                        site.add(new SiteType(currentNode));
                         parentNode.removeChild(currentNode);
                         break;
                         
@@ -253,9 +271,9 @@ public class ProcedureManager extends AbstractManager {
                 if(i == j)
                     continue;
                 if(order.get(counter).equals(wt.getSubTemplates()[j].getId())) {
-                   tmp =  wt.getSubTemplates()[i];
-                   wt.getSubTemplates()[i] = wt.getSubTemplates()[j];
-                   wt.getSubTemplates()[j] = tmp;
+                    tmp =  wt.getSubTemplates()[i];
+                    wt.getSubTemplates()[i] = wt.getSubTemplates()[j];
+                    wt.getSubTemplates()[j] = tmp;
                 }
             }
         }
