@@ -17,7 +17,9 @@ import tceav.manager.compare.CompareInterface;
  * @author NZR4DL
  */
 public class RuleTreeNode implements CompareInterface {
-    
+
+    private static final String INDENT = "    ";
+    private static final String MARKER = "->";
     private String condition;
     private String value;
     private String accessRuleName;
@@ -41,8 +43,8 @@ public class RuleTreeNode implements CompareInterface {
         if(s == null)
             return;
         
-        String[] s1 = s.split("    ");
-        String[] s2 = s1[s1.length-1].split("->");
+        String[] s1 = s.split(INDENT);
+        String[] s2 = s1[s1.length-1].split(MARKER);
         
         indentLevel = s1.length-1;
         
