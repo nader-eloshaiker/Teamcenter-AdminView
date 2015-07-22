@@ -103,15 +103,16 @@ public class AccessManager extends ManagerAdapter {
         if (namedAclList.size() <= 0) {
             return;
         }
-        for (int i = 0; i < namedAclList.size(); i++) {
-            if (namedAclList.get(i).getRuleTreeReferences().isEmpty()) {
-                if (namedAclList.get(i).getRuleType().equals("RULETREE")) {
-                    unusedRules.add(namedAclList.get(i));
+        for (NamedAcl namedAcl : namedAclList) {
+            if (namedAcl.getRuleTreeReferences().isEmpty()) {
+                if (namedAcl.getRuleType().equals("RULETREE")) {
+                    unusedRules.add(namedAcl);
                 }
             }
         }
     }
 
+    @Override
     public void readFile(File file) throws Exception {
 
         this.file = file;
@@ -121,9 +122,10 @@ public class AccessManager extends ManagerAdapter {
         }
 
         FileReader fr = new FileReader(file);
-        BufferedReader br = new BufferedReader(fr);
-        String firstLine = br.readLine();
-        br.close();
+        String firstLine;
+        try (BufferedReader br = new BufferedReader(fr)) {
+            firstLine = br.readLine();
+        }
 
 
         if (file.getName().endsWith("xml")) {
@@ -171,104 +173,102 @@ public class AccessManager extends ManagerAdapter {
 
         RuleTreeNode newNode;
         RuleTreeNode currentNode = new RuleTreeNode();
-        int indentVariance = 0;
+        int indentVariance;
 
 
         FileReader fr = new FileReader(file);
-        BufferedReader br = new BufferedReader(fr);
-
-        if (file.length() == 0) {
-            throw (new IOException("Empty File"));
-        }
-
-        while ((thisLine = br.readLine()) != null) {
-
-            switch (readMode) {
-                case MODE_METADATA_AND_ACCESS_CONTROL_HEADER:
-                    if (thisLine.startsWith("#")) {
-
-                        if (ruleMetaData.length() > 0) {
-                            ruleMetaData += "\n";
-                        }
-
-                        ruleMetaData += thisLine;
-
-                    } else {
-                        if (ruleMetaData != null) {
-                            metaData.loadLegacey(ruleMetaData);
-
-                            if (thisLine.length() != 0) {
-                                namedAclList.createAccessControlColumns(thisLine);
-                                readMode = MODE_ACCESS_CONTROL;
+        try (BufferedReader br = new BufferedReader(fr)) {
+            if (file.length() == 0) {
+                throw (new IOException("Empty File"));
+            }
+            
+            while ((thisLine = br.readLine()) != null) {
+                
+                switch (readMode) {
+                    case MODE_METADATA_AND_ACCESS_CONTROL_HEADER:
+                        if (thisLine.startsWith("#")) {
+                            
+                            if (ruleMetaData.length() > 0) {
+                                ruleMetaData += "\n";
+                            }
+                            
+                            ruleMetaData += thisLine;
+                            
+                        } else {
+                            if (!ruleMetaData.equals("")) {
+                                metaData.loadLegacey(ruleMetaData);
+                                
+                                if (thisLine.length() != 0) {
+                                    namedAclList.createAccessControlColumns(thisLine);
+                                    readMode = MODE_ACCESS_CONTROL;
+                                } else {
+                                    readMode = MODE_CORRUPTED_FILE;
+                                }
                             } else {
                                 readMode = MODE_CORRUPTED_FILE;
                             }
-                        } else {
-                            readMode = MODE_CORRUPTED_FILE;
                         }
-                    }
-                    break;
-
-                case MODE_ACCESS_CONTROL:
-                    if (thisLine.length() == 0) {
-
-                        thisLine = br.readLine();
-
-                        if (thisLine != null) {
-
-                            if (thisLine.length() == 0) {
-                                readMode = MODE_RULE_TREE;
+                        break;
+                        
+                    case MODE_ACCESS_CONTROL:
+                        if (thisLine.length() == 0) {
+                            
+                            thisLine = br.readLine();
+                            
+                            if (thisLine != null) {
+                                
+                                if (thisLine.length() == 0) {
+                                    readMode = MODE_RULE_TREE;
+                                } else {
+                                    namedAclList.addNewACL(thisLine);
+                                }
+                                
                             } else {
-                                namedAclList.addNewACL(thisLine);
+                                readMode = MODE_UNEXPECTED_EOF;
                             }
-
                         } else {
-                            readMode = MODE_UNEXPECTED_EOF;
+                            namedAclList.addNewAccessControl(thisLine);
                         }
-                    } else {
-                        namedAclList.addNewAccessControl(thisLine);
-                    }
-                    break;
-
-                case MODE_RULE_TREE:
-                    if (thisLine.length() != 0) {
-                        newNode = new RuleTreeNode(thisLine, namedAclList, conditionsList);
-                        treeNodeList.add(newNode);
-
-                        // Build Tree Node
-                        if (newNode.getIndentLevel() == 0) {
-                            rootTreeNode = newNode;
-                        } else if (newNode.getIndentLevel() > currentNode.getIndentLevel()) {
-                            currentNode.addChild(newNode);
-                        } else if (newNode.getIndentLevel() == currentNode.getIndentLevel()) {
-                            currentNode.getParent().addChild(newNode);
-                        } else if (newNode.getIndentLevel() < currentNode.getIndentLevel()) {
-                            indentVariance = currentNode.getIndentLevel() - newNode.getIndentLevel() + 1;
-
-                            for (int j = 1; j < indentVariance; j++) {
-                                currentNode = currentNode.getParent();
+                        break;
+                        
+                    case MODE_RULE_TREE:
+                        if (thisLine.length() != 0) {
+                            newNode = new RuleTreeNode(thisLine, namedAclList, conditionsList);
+                            treeNodeList.add(newNode);
+                            
+                            // Build Tree Node
+                            if (newNode.getIndentLevel() == 0) {
+                                rootTreeNode = newNode;
+                            } else if (newNode.getIndentLevel() > currentNode.getIndentLevel()) {
+                                currentNode.addChild(newNode);
+                            } else if (newNode.getIndentLevel() == currentNode.getIndentLevel()) {
+                                currentNode.getParent().addChild(newNode);
+                            } else if (newNode.getIndentLevel() < currentNode.getIndentLevel()) {
+                                indentVariance = currentNode.getIndentLevel() - newNode.getIndentLevel() + 1;
+                                
+                                for (int j = 1; j < indentVariance; j++) {
+                                    currentNode = currentNode.getParent();
+                                }
+                                currentNode.getParent().addChild(newNode);
                             }
-                            currentNode.getParent().addChild(newNode);
+
+                            currentNode = newNode;
+                            ruleTreeIndex++;
                         }
-
-                        currentNode = newNode;
-                        ruleTreeIndex++;
-                    }
-                    break;
-
-                case MODE_UNEXPECTED_EOF:
-                    throw new IOException("Unexpected End Of File");
-
-                case MODE_CORRUPTED_FILE:
-                    throw new IOException("Corrupted File");
-
-                default:
-                    break;
-            }
-
-        } // end while
-
-        br.close();
+                        break;
+                        
+                    case MODE_UNEXPECTED_EOF:
+                        throw new IOException("Unexpected End Of File");
+                        
+                    case MODE_CORRUPTED_FILE:
+                        throw new IOException("Corrupted File");
+                        
+                    default:
+                        break;
+                }
+                
+            } // end while
+        }
 
     }
 
@@ -360,28 +360,22 @@ public class AccessManager extends ManagerAdapter {
     @Override
     public String toString() {
         String s;
-        NamedAcl ar;
-        AccessControl acEntry;
         RuleTreeNode amItem;
 
         s = "MetaData:\n" + metaData.toString() + "\n"
                 + "Access Control acHeader:\n" + namedAclList.getAccessControlColumns().toString() + "\n"
                 + "Access Rules:\n";
 
-        for (int i = 0; i < namedAclList.size(); i++) {
-            ar = namedAclList.get(i);
-            s += ar.toString() + "\n";
-
-            for (int j = 0; j < ar.size(); j++) {
-                acEntry = ar.get(j);
+        for (NamedAcl namedAcl : namedAclList) {
+            s += namedAcl.toString() + "\n";
+            for (AccessControl acEntry : namedAcl) {
                 s += acEntry.toString() + "\n";
             }
-
             s += "\n\n";
         }
 
-        for (int i = 0; i < treeNodeList.size(); i++) {
-            s += treeNodeList.get(i).toString() + "\n";
+        for (RuleTreeNode treeNode : treeNodeList) {
+            s += treeNode.toString() + "\n";
         }
 
         return s;
