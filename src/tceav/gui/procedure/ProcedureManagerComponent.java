@@ -50,6 +50,7 @@ public class ProcedureManagerComponent extends TabbedPanel {
     private PropertiesComponent xmlComponent;
     private WorkflowComponent workflowComponent;
     private ProcessViewComponent processViewer;
+    private DescriptionComponent descriptionComponent;
 
     /**
      * Creates a new instance of ProcedureManagerComponent
@@ -57,6 +58,9 @@ public class ProcedureManagerComponent extends TabbedPanel {
     public ProcedureManagerComponent(AdminViewFrame parentFrame, ProcedureManager pm) {
         this.pm = pm;
         this.parentFrame = parentFrame;
+
+        descriptionComponent = new DescriptionComponent();
+        processViewer = new ProcessViewComponent();
 
         workflowComponent = new WorkflowComponent(parentFrame, pm);
         workflowComponent.getTree().addTreeSelectionListener(new TreeSelectionListener() {
@@ -68,6 +72,7 @@ public class ProcedureManagerComponent extends TabbedPanel {
                     attributeComponent.updateTree(procedure);
                     xmlComponent.updateTable(procedure);
                     processViewer.setWorkflowTemplate(procedure);
+                    descriptionComponent.setDescription(procedure);
                     for (int i = 0; i < processViewer.getSubComponentSize(); i++) {
                         if (i == 0 || i == processViewer.getSubComponentSize() - 1) {
                             if (processViewer.getTask().getParentTaskTemplateRef() != null) {
@@ -81,7 +86,6 @@ public class ProcedureManagerComponent extends TabbedPanel {
             }
         });
 
-        processViewer = new ProcessViewComponent();
 
         actionComponent = new ActionComponent(parentFrame, pm);
         actionComponent.getTree().addTreeSelectionListener(new TreeSelectionListener() {
@@ -115,10 +119,16 @@ public class ProcedureManagerComponent extends TabbedPanel {
         panelBottom.add(GUIutilities.createPanelMargined(attributeComponent), BorderLayout.WEST);
         panelBottom.add(GUIutilities.createPanelMargined(processViewer), BorderLayout.CENTER);
 
+        JPanel panelTopRight = new JPanel();
+        panelTopRight.setLayout(new BorderLayout());
+        panelTopRight.add(GUIutilities.createPanelMargined(actionComponent), BorderLayout.CENTER);
+        panelTopRight.add(GUIutilities.createPanelMargined(descriptionComponent), BorderLayout.NORTH);
+
         JPanel panelTop = new JPanel();
         panelTop.setLayout(new BorderLayout());
         panelTop.add(GUIutilities.createPanelMargined(workflowComponent), BorderLayout.WEST);
-        panelTop.add(GUIutilities.createPanelMargined(actionComponent), BorderLayout.CENTER);
+        panelTop.add(panelTopRight, BorderLayout.CENTER);
+        //panelTop.add(GUIutilities.createPanelMargined(actionComponent), BorderLayout.CENTER);
 
         splitPane1 = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true, panelTop, panelBottom);
         splitPane1.setResizeWeight(1);
@@ -134,7 +144,7 @@ public class ProcedureManagerComponent extends TabbedPanel {
         });
 
         this.setLayout(new BorderLayout());
-        this.add("Center", splitPane1);
+        this.add(splitPane1, BorderLayout.CENTER);
 
     }
 

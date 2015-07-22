@@ -39,6 +39,7 @@ public class ProcessViewRenderer extends JPanel {
         
         JTree tree = new JTree();
         setBackground(tree.getBackground());
+        setOpaque(true);
         tree = null;
         
         if (rootTask == null) {

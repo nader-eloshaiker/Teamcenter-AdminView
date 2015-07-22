@@ -89,8 +89,7 @@ public abstract class DescriptionBase extends IdBase {
         NamedNodeMap attrib = currentNode.getAttributes();
         NodeList nodeList = currentNode.getChildNodes();
         
-        setName(
-                TagTools.getStringValue(attrib, nameAttribute));
+        setName(TagTools.getStringValue(attrib, nameAttribute));
         
         TagTypeEnum tagType;
         for (int i=0; i<nodeList.getLength(); i++) {

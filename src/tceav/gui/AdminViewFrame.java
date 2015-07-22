@@ -32,7 +32,6 @@ import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -52,7 +51,6 @@ import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import tceav.gui.compare.CompareAccessManagerComponent;
@@ -76,7 +74,7 @@ import tceav.Settings;
  * @author NZR4DL
  */
 public class AdminViewFrame extends JFrame {
-    
+
     /** Window for showing Tree. */
     private AdminViewFrame parentFrame;
     private JTabbedPane tabbedpane;
@@ -91,34 +89,34 @@ public class AdminViewFrame extends JFrame {
     private final String TABPANE = "TABPANE";
     private final String EMPTYPANE = "EMPTYPANE";
     private ClipboardManager clipboard;
-    
+
     /**
      * Creates a new instance of AdminViewFrame
      */
     public AdminViewFrame() {
         super("TcAV");
         parentFrame = this;
-        
+
         try {
             Settings.load();
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Load Settings Error", JOptionPane.ERROR_MESSAGE);
         }
-        
+
         try {
             if (Settings.getUserInterface().equals("")) {
                 UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
                 Settings.setUserInterface(UIManager.getCrossPlatformLookAndFeelClassName());
             } else {
                 UIManager.setLookAndFeel(Settings.getUserInterface());
-                // If you want the System L&F instead, comment out the above line and
-                // uncomment the following:
-                // UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            // If you want the System L&F instead, comment out the above line and
+            // uncomment the following:
+            // UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             }
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage(), "GUI Error", JOptionPane.ERROR_MESSAGE);
         }
-        
+
         try {
             iconRuleTree = ResourceLoader.getImage(ImageEnum.amRuletree);
             iconProcedure = ResourceLoader.getImage(ImageEnum.pmWorkflow);
@@ -129,15 +127,15 @@ public class AdminViewFrame extends JFrame {
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Error Load Images", JOptionPane.ERROR_MESSAGE);
         }
-        
+
         JMenuBar menuBar = constructMenuBar();
         JPanel toolbar = constructToolBar();
         JPanel statusBar = constructStatusBar();
-        
+
         tabbedpane = new JTabbedPane();
         tabbedpane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
         tabbedpane.addChangeListener(new ChangeListener() {
-            
+
             public void stateChanged(ChangeEvent e) {
                 if (tabbedpane.getTabCount() > 1) {
                     showBarComponent((TabbedPanel) tabbedpane.getSelectedComponent());
@@ -145,7 +143,7 @@ public class AdminViewFrame extends JFrame {
             }
         });
         emptyPane = new EmptyComponent();
-        
+
         mainPanel = new JPanel();
         mainPanel.setLayout(new CardLayout());
         mainPanel.add(tabbedpane, TABPANE);
@@ -153,22 +151,22 @@ public class AdminViewFrame extends JFrame {
         ((CardLayout) mainPanel.getLayout()).show(mainPanel, EMPTYPANE);
         addBarComponent(emptyPane);
         showBarComponent(emptyPane);
-        
-        
+
+
         //this.getContentPane().setLayout(new BorderLayout(1,1));
-        this.getContentPane().add("Center", mainPanel);
-        this.getContentPane().add("North", toolbar);
-        this.getContentPane().add("South", statusBar);
+        this.getContentPane().add(mainPanel, BorderLayout.CENTER);
+        this.getContentPane().add(toolbar, BorderLayout.NORTH);
+        this.getContentPane().add(statusBar, BorderLayout.SOUTH);
         this.setJMenuBar(menuBar);
         this.setIconImage(iconApp.getImage());
         this.addWindowListener(new WindowAdapter() {
-            
+
             @Override
             public void windowClosing(WindowEvent e) {
                 actionExit();
             }
         });
-        
+
         this.pack();
         this.setSize(new Dimension(Settings.getFrameSizeX(), Settings.getFrameSizeY()));
         this.setLocation(
@@ -176,18 +174,18 @@ public class AdminViewFrame extends JFrame {
                 Settings.getFrameLocationY());
         this.setVisible(true);
         this.setTitle(ResourceStrings.getApplicationNameShort());
-        
+
         clipboard = new ClipboardManager();
     }
-    
+
     public ClipboardManager getClipboardManager() {
         return clipboard;
     }
-    
+
     public JFileChooser createFileChooser(String type) {
         String path = "";
         JFileChooser fc = new JFileChooser();
-        
+
         if (type.equals(ManagerAdapter.ACCESS_MANAGER_TYPE)) {
             path = Settings.getAmLoadPath();
             fc.setCurrentDirectory(new File(path));
@@ -199,53 +197,53 @@ public class AdminViewFrame extends JFrame {
             fc.addChoosableFileFilter(new CustomFileFilter(
                     new String[]{"xml", "plmxml"}, "XML File (*.xml; *.plmxml)"));
         }
-        
+
         return fc;
     }
-    
+
     public JFrame getFrame() {
         return this;
     }
     private JPanel statusBarPanel;
-    
+
     private JPanel constructStatusBar() {
         statusBarPanel = new JPanel();
         statusBarPanel.setBorder(new EmptyBorder(1, 1, 1, 1));
         statusBarPanel.setLayout(new CardLayout());
         return statusBarPanel;
     }
-    
+
     private void addBarComponent(TabbedPanel tab) {
         //((CardLayout) statusBarPanel.getLayout()).addLayoutComponent(tab.getStatusBar(), Integer.toString(tab.hashCode()));
         statusBarPanel.add(tab.getStatusBar(), Integer.toString(tab.hashCode()));
         //((CardLayout) toolBarPanel.getLayout()).addLayoutComponent(tab.getToolBar(), Integer.toString(tab.hashCode()));
         toolBarPanel.add(tab.getToolBar(), Integer.toString(tab.hashCode()));
     }
-    
+
     private void removeBarComponent(TabbedPanel tab) {
         //((CardLayout) statusBarPanel.getLayout()).removeLayoutComponent(tab.getStatusBar());
         statusBarPanel.remove(tab.getStatusBar());
         //((CardLayout) toolBarPanel.getLayout()).removeLayoutComponent(tab.getToolBar());
         toolBarPanel.remove(tab.getToolBar());
     }
-    
+
     private void showBarComponent(TabbedPanel tab) {
         ((CardLayout) statusBarPanel.getLayout()).show(statusBarPanel, Integer.toString(tab.hashCode()));
         ((CardLayout) toolBarPanel.getLayout()).show(toolBarPanel, Integer.toString(tab.hashCode()));
     }
-    
+
     public void addTabbedPane(TabbedPanel tab) {
         ((CardLayout) mainPanel.getLayout()).show(mainPanel, TABPANE);
         tabbedpane.addTab(tab.getTitle(), tab.getIcon(), tab);
         tabbedpane.setSelectedComponent(tab);
         addBarComponent(tab);
         showBarComponent(tab);
-        
+
         buttonClose.setEnabled(true);
         menuClose.setEnabled(true);
-        
+
     }
-    
+
     private void removeTabbedPane(TabbedPanel tab) {
         if (tabbedpane.getTabCount() <= 0) {
             return;
@@ -262,46 +260,46 @@ public class AdminViewFrame extends JFrame {
     private JButton buttonClose;
     private JButton buttonCompare;
     private JPanel toolBarPanel;
-    
+
     private JPanel constructToolBar() {
         JToolBar toolbar = new JToolBar("Main ToolBar");
-        
+
         JButton buttonOpenRuleTree = new JButton("Load Tree");
         buttonOpenRuleTree.setOpaque(false);
         buttonOpenRuleTree.setIcon(iconRuleTree);
         buttonOpenRuleTree.setHorizontalTextPosition(SwingConstants.RIGHT);
         buttonOpenRuleTree.setToolTipText("Import TcAE Ruletree File");
         buttonOpenRuleTree.addActionListener(new ActionListener() {
-            
+
             public void actionPerformed(ActionEvent e) {
                 actionLoadRuleTree();
             }
         });
-        
+
         JButton buttonOpenProcedure = new JButton("Load Procedure");
         buttonOpenProcedure.setOpaque(false);
         buttonOpenProcedure.setIcon(iconProcedure);
         buttonOpenProcedure.setHorizontalTextPosition(SwingConstants.RIGHT);
         buttonOpenProcedure.setToolTipText("Import TcAE Procedure File");
         buttonOpenProcedure.addActionListener(new ActionListener() {
-            
+
             public void actionPerformed(ActionEvent e) {
                 actionLoadProcedure();
             }
         });
-        
+
         buttonCompare = new JButton("Compare");
         buttonCompare.setOpaque(false);
         buttonCompare.setIcon(iconCompare);
         buttonCompare.setHorizontalTextPosition(SwingConstants.RIGHT);
         buttonCompare.setToolTipText("Compare tabbs");
         buttonCompare.addActionListener(new ActionListener() {
-            
+
             public void actionPerformed(ActionEvent e) {
                 actionCompare();
             }
         });
-        
+
         buttonClose = new JButton("Close Tab");
         buttonClose.setOpaque(false);
         buttonClose.setIcon(iconClose);
@@ -309,24 +307,24 @@ public class AdminViewFrame extends JFrame {
         buttonClose.setHorizontalTextPosition(SwingConstants.RIGHT);
         buttonClose.setToolTipText("Close the current tabb");
         buttonClose.addActionListener(new ActionListener() {
-            
+
             public void actionPerformed(ActionEvent e) {
                 actionCloseTab();
             }
         });
-        
+
         JButton buttonExit = new JButton("Exit");
         buttonExit.setOpaque(false);
         buttonExit.setIcon(iconExit);
         buttonExit.setHorizontalTextPosition(SwingConstants.RIGHT);
         buttonExit.setToolTipText("End this application");
         buttonExit.addActionListener(new ActionListener() {
-            
+
             public void actionPerformed(ActionEvent e) {
                 actionExit();
             }
         });
-        
+
         toolbar.setMargin(GUIutilities.GAP_INSETS);
         toolbar.add(buttonOpenRuleTree);
         toolbar.add(buttonOpenProcedure);
@@ -335,103 +333,103 @@ public class AdminViewFrame extends JFrame {
         toolbar.addSeparator();
         toolbar.add(buttonClose);
         toolbar.add(buttonExit);
-        
+
         toolBarPanel = new JPanel();
         toolBarPanel.setLayout(new CardLayout());
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout(0, 0));//FlowLayout(FlowLayout.LEFT,0,0));
-        
+
         panel.add(toolbar, BorderLayout.WEST);//, BorderLayout.WEST);
-        
+
         panel.add(toolBarPanel, BorderLayout.CENTER);
-        
+
         return panel;
     }
     private JCheckBoxMenuItem menuItemSaveSettingsOnExit;
     private JMenuItem menuClose;
     private JMenuItem menuCompare;
-    
+
     /** Construct a menu. */
     private JMenuBar constructMenuBar() {
         JMenu menu;
         JMenuBar menuBar = new JMenuBar();
         JMenuItem menuItem;
-        
-        
-        
+
+
+
         /* Good ol exit. */
         menu = new JMenu("File");
         menu.setMnemonic('F');
         menuBar.add(menu);
-        
+
         menuItem = menu.add(new JMenuItem("Load RuleTree", 'R'));
         menuItem.setAccelerator(KeyStroke.getKeyStroke('R', Event.CTRL_MASK));
         menuItem.setIcon(iconRuleTree);
         menuItem.addActionListener(new ActionListener() {
-            
+
             public void actionPerformed(ActionEvent e) {
                 actionLoadRuleTree();
             }
         });
-        
+
         menuItem = menu.add(new JMenuItem("Load Procedure", 'P'));
         menuItem.setAccelerator(KeyStroke.getKeyStroke('P', Event.CTRL_MASK));
         menuItem.setIcon(iconProcedure);
         menuItem.addActionListener(new ActionListener() {
-            
+
             public void actionPerformed(ActionEvent e) {
                 actionLoadProcedure();
             }
         });
-        
+
         menu.addSeparator();
-        
+
         menuClose = menu.add(new JMenuItem("Close Tab", 'C'));
         menuClose.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, Event.CTRL_MASK));
         menuClose.setIcon(iconClose);
         menuClose.setEnabled(false);
         menuClose.addActionListener(new ActionListener() {
-            
+
             public void actionPerformed(ActionEvent e) {
                 actionCloseTab();
             }
         });
-        
+
         menuItem = menu.add(new JMenuItem("Exit", 'E'));
         menuItem.setIcon(iconExit);
         menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, Event.ALT_MASK));
         menuItem.addActionListener(new ActionListener() {
-            
+
             public void actionPerformed(ActionEvent e) {
                 actionExit();
             }
         });
-        
+
         /* Tools */
         menu = new JMenu("Tools");
         menu.setMnemonic('T');
         menuBar.add(menu);
-        
+
         menuCompare = menu.add(new JMenuItem("Compare", 'o'));
         menuCompare.setIcon(iconCompare);
         menuCompare.setAccelerator(KeyStroke.getKeyStroke('O', Event.CTRL_MASK));
         menuCompare.addActionListener(new ActionListener() {
-            
+
             public void actionPerformed(ActionEvent e) {
                 actionCompare();
             }
         });
-        
-        
+
+
         /* Edit. */
         menu = new JMenu("Edit");
         menu.setMnemonic('E');
         menuBar.add(menu);
-        
+
         menuItem = menu.add(new JMenuItem("Save Settings", 'S'));
         menuItem.setAccelerator(KeyStroke.getKeyStroke('S', Event.CTRL_MASK));
         menuItem.addActionListener(new ActionListener() {
-            
+
             public void actionPerformed(ActionEvent e) {
                 actionSaveSettings();
             }
@@ -442,21 +440,21 @@ public class AdminViewFrame extends JFrame {
         menuItem = menu.add(menuItemSaveSettingsOnExit);
         menuItem.setMnemonic('X');
         menuItem.addActionListener(new ActionListener() {
-            
+
             public void actionPerformed(ActionEvent e) {
                 Settings.setSaveSettingsOnExit(menuItemSaveSettingsOnExit.isSelected());
                 actionSaveSettings();
             }
         });
-        
+
         /* Look and Feel */
         menu = new JMenu("Interface");
         menuBar.add(menu);
         menu.setMnemonic('I');
-        
+
         UIManager.LookAndFeelInfo[] lafInfo = UIManager.getInstalledLookAndFeels();
         ButtonGroup lafMenuGroup = new ButtonGroup();
-        
+
         for (int counter = 0; counter < lafInfo.length; counter++) {
             menuItem = (JRadioButtonMenuItem) menu.add(new JRadioButtonMenuItem(lafInfo[counter].getName()));
             lafMenuGroup.add(menuItem);
@@ -466,21 +464,23 @@ public class AdminViewFrame extends JFrame {
             menuItem.addActionListener(new ChangeLookAndFeelAction(lafInfo[counter].getClassName()));
             menuItem.setEnabled(isAvailableLookAndFeel(lafInfo[counter].getClassName()));
         }
-        
+
         /* Misc. */
         menu = new JMenu("Help");
         menu.setMnemonic('H');
         menuBar.add(menu);
-        
+
         menuItem = menu.add(new JMenuItem("Change Log", 'C'));
         menuItem.addActionListener(new ActionListener() {
-            
+
             public void actionPerformed(ActionEvent e) {
                 URL url = null;
                 JEditorPane html = new JEditorPane();
+                html.setEditable(false);
                 try {
                     url = tceav.resources.ResourceStrings.getChangeLog();
                     html = new JEditorPane(url);
+                    html.setEditable(false);
                 } catch (Exception ex) {
                     System.err.println("Failed to open file");
                     url = null;
@@ -490,66 +490,89 @@ public class AdminViewFrame extends JFrame {
                     scroll.setPreferredSize(new Dimension(500, 500));
                     scroll.getViewport().add(html);
                     scroll.setBorder(new BevelBorder(BevelBorder.LOWERED));
-                    JPanel panel = new JPanel(true);
-                    panel.setLayout(new GridLayout(1, 1));
-                    panel.setBorder(new TitledBorder("Change Log"));
                     JOptionPane.showMessageDialog(getFrame(), scroll, "Change Log", JOptionPane.PLAIN_MESSAGE, null);
                 }
             }
         });
-        
-        menuItem = menu.add(new JMenuItem("About", 'A'));
+
+        menuItem = menu.add(new JMenuItem("License", 'L'));
         menuItem.addActionListener(new ActionListener() {
-            
+
             public void actionPerformed(ActionEvent e) {
-                actionAbout();
-                /*
-                JOptionPane.showMessageDialog(
-                        getFrame(),
-                        ResourceStrings.getAboutInfo());
-                 */
+                URL url = null;
+                JEditorPane html = new JEditorPane();
+                html.setEditable(false);
+                try {
+                    url = tceav.resources.ResourceStrings.getLicense();
+                    html = new JEditorPane(url);
+                    html.setEditable(false);
+                } catch (Exception ex) {
+                    System.err.println("Failed to open file");
+                    url = null;
+                }
+                if (html != null) {
+                    JScrollPane scroll = new JScrollPane();
+                    scroll.setPreferredSize(new Dimension(500, 500));
+                    scroll.getViewport().add(html);
+                    scroll.setBorder(new BevelBorder(BevelBorder.LOWERED));
+                    JOptionPane.showMessageDialog(getFrame(), scroll, "License", JOptionPane.PLAIN_MESSAGE, null);
+                }
             }
         });
-        
+
+        menuItem = menu.add(new JMenuItem("About", 'A'));
+        menuItem.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                actionAbout();
+            }
+        });
+
         return menuBar;
     }
-    
     private JDialog aboutDialog;
-    
+
     protected void actionAbout() {
         JLabel labelVersion = new JLabel("Version:");
         labelVersion.setHorizontalAlignment(SwingConstants.RIGHT);
         JTextField textVersion = new JTextField(ResourceStrings.getVersion());
         textVersion.setEditable(false);
         textVersion.setBorder(null);
-        
+
         JLabel labelBuild = new JLabel("Build:");
         labelBuild.setHorizontalAlignment(SwingConstants.RIGHT);
         JTextField textBuild = new JTextField(ResourceStrings.getBuild());
         textBuild.setEditable(false);
         textBuild.setBorder(null);
-        
+
         JLabel labelDate = new JLabel("Release Date:");
         labelDate.setHorizontalAlignment(SwingConstants.RIGHT);
         JTextField textDate = new JTextField(ResourceStrings.getReleaseDate());
         textDate.setEditable(false);
         textDate.setBorder(null);
-        
+
         JLabel labelDevName = new JLabel("Developed By:");
         labelDevName.setHorizontalAlignment(SwingConstants.RIGHT);
         JTextField textDevName = new JTextField(ResourceStrings.getDeveloperName());
         textDevName.setEditable(false);
         textDevName.setBorder(null);
-        
+
         JLabel labelDevEmail = new JLabel("Email:");
         labelDevEmail.setHorizontalAlignment(SwingConstants.RIGHT);
         JTextField textDevEmail = new JTextField(ResourceStrings.getDeveloperEmail());
         textDevEmail.setEditable(false);
         textDevEmail.setBorder(null);
-        
-        
+
+        JLabel labelWebsite = new JLabel("Website:");
+        labelWebsite.setHorizontalAlignment(SwingConstants.RIGHT);
+        JTextField textWebsite = new JTextField(ResourceStrings.getWebsite());
+        textWebsite.setEditable(false);
+        textWebsite.setBorder(null);
+
+
+
         JPanel panelInfoLeft = new JPanel();
-        panelInfoLeft.setLayout(new GridLayout(7,1));
+        panelInfoLeft.setLayout(new GridLayout(9, 1));
         panelInfoLeft.add(labelVersion);
         panelInfoLeft.add(labelBuild);
         panelInfoLeft.add(labelDate);
@@ -557,9 +580,11 @@ public class AdminViewFrame extends JFrame {
         panelInfoLeft.add(labelDevName);
         panelInfoLeft.add(labelDevEmail);
         panelInfoLeft.add(new JLabel());
-        
+        panelInfoLeft.add(labelWebsite);
+        panelInfoLeft.add(new JLabel());
+
         JPanel panelInfoRight = new JPanel();
-        panelInfoRight.setLayout(new GridLayout(7,1));
+        panelInfoRight.setLayout(new GridLayout(9, 1));
         panelInfoRight.add(textVersion);
         panelInfoRight.add(textBuild);
         panelInfoRight.add(textDate);
@@ -567,12 +592,14 @@ public class AdminViewFrame extends JFrame {
         panelInfoRight.add(textDevName);
         panelInfoRight.add(textDevEmail);
         panelInfoRight.add(new JLabel());
-        
+        panelInfoRight.add(textWebsite);
+        panelInfoRight.add(new JLabel());
+
         JPanel panelInfo = new JPanel();
-        panelInfo.setLayout(new BorderLayout(4,4));
+        panelInfo.setLayout(new BorderLayout(4, 4));
         panelInfo.add(panelInfoLeft, BorderLayout.WEST);
         panelInfo.add(panelInfoRight, BorderLayout.CENTER);
-        
+
         try {
             ImageIcon icon = ResourceLoader.getImage(ImageEnum.appLogo);
             JLabel logoLabel = new JLabel(icon);
@@ -581,57 +608,58 @@ public class AdminViewFrame extends JFrame {
         } catch (Exception e) {
             System.out.println("Couldn't load images: " + e);
         }
-        
 
-        
-        
-        JTextArea textSupporters = new JTextArea(5,20);
+
+
+
+        JTextArea textSupporters = new JTextArea(5, 20);
         textSupporters.setEditable(false);
         textSupporters.setText(ResourceStrings.getProjectSupporters());
         textSupporters.setFont(labelDevName.getFont());
         textSupporters.setOpaque(false);
         JScrollPane scrollSupport = new JScrollPane();
         scrollSupport.getViewport().add(textSupporters);
-        
+
         JPanel panelSupport = new JPanel();
-        panelSupport.setLayout(new BorderLayout(4,4));
+        panelSupport.setLayout(new BorderLayout(4, 4));
         panelSupport.add(new JLabel("Project Supporters:"), BorderLayout.NORTH);
         panelSupport.add(scrollSupport, BorderLayout.CENTER);
-        
-        
+
+
 
         JPanel panelAbout = new JPanel();
         panelAbout.setLayout(new BorderLayout());
         panelAbout.add(panelInfo, BorderLayout.CENTER);
         panelAbout.add(panelSupport, BorderLayout.SOUTH);
 
-        
+
         JButton button = new JButton("Close");
         button.addActionListener(new ActionListener() {
+
             public void actionPerformed(ActionEvent e) {
                 aboutDialog.dispose();
             }
         });
-        
+
         JPanel closePanel = new JPanel();
         closePanel.setLayout(new FlowLayout(FlowLayout.CENTER));
         closePanel.add(button);
-        
+
         JLabel labelApp = new JLabel("TcE Admin View");
-        labelApp.setFont(labelApp.getFont().deriveFont(Font.BOLD, labelApp.getFont().getSize2D()+4));
-        
+        labelApp.setFont(labelApp.getFont().deriveFont(Font.BOLD, labelApp.getFont().getSize2D() + 4));
+
         JPanel titlePanel = new JPanel();
         titlePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         titlePanel.add(labelApp);
-        
+
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
         panel.add(titlePanel, BorderLayout.NORTH);
         panel.add(panelAbout, BorderLayout.CENTER);
         panel.add(closePanel, BorderLayout.SOUTH);
-        panel.setBorder(new EmptyBorder(4,4,4,4));
-        
-        
+        panel.setBorder(new EmptyBorder(4, 4, 4, 4));
+
+
         aboutDialog = new JDialog(this, "About", true);
         aboutDialog.setComponentOrientation(this.getComponentOrientation());
         aboutDialog.getContentPane().add(panel, BorderLayout.CENTER);
@@ -641,34 +669,34 @@ public class AdminViewFrame extends JFrame {
         aboutDialog.setLocationRelativeTo(this);
         aboutDialog.setVisible(true);
     }
-    
+
     protected void actionUserInterface(String laf) {
         try {
             UIManager.setLookAndFeel(laf);
             SwingUtilities.updateComponentTreeUI(parentFrame);
             Settings.setUserInterface(laf);
-            // If you want the System L&F instead, comment out the above line and
-            // uncomment the following:
-            // UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        // If you want the System L&F instead, comment out the above line and
+        // uncomment the following:
+        // UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(parentFrame, ex.getMessage(), "GUI Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-    
+
     class ChangeLookAndFeelAction extends AbstractAction {
-        
+
         String laf;
-        
+
         protected ChangeLookAndFeelAction(String laf) {
             super("ChangeTheme");
             this.laf = laf;
         }
-        
+
         public void actionPerformed(ActionEvent e) {
             actionUserInterface(laf);
         }
     }
-    
+
     /**
      * A utility function that layers on top of the LookAndFeel's
      * isSupportedLookAndFeel() method. Returns true if the LookAndFeel
@@ -686,11 +714,11 @@ public class AdminViewFrame extends JFrame {
             LookAndFeel newLAF = (LookAndFeel) (lnfClass.newInstance());
             return newLAF.isSupportedLookAndFeel();
         } catch (Exception e) { // If ANYTHING weird happens, return false
-            
+
             return false;
         }
     }
-    
+
     private void actionSaveSettings() {
         try {
             Settings.setFrameSizeX(parentFrame.getSize().width);
@@ -702,12 +730,12 @@ public class AdminViewFrame extends JFrame {
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Save Settings Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-    
+
     private void actionCloseTab() {
         removeTabbedPane((TabbedPanel) tabbedpane.getSelectedComponent());
         System.gc();
     }
-    
+
     private void actionExit() {
         Settings.setFrameSizeX(this.getSize().width);
         Settings.setFrameSizeY(this.getSize().height);
@@ -716,10 +744,10 @@ public class AdminViewFrame extends JFrame {
         actionSaveSettings();
         System.exit(0);
     }
-    
+
     private void actionLoadRuleTree() {
         new Thread() {
-            
+
             @Override
             public void run() {
                 JFileChooser fc = createFileChooser(ManagerAdapter.ACCESS_MANAGER_TYPE);
@@ -737,7 +765,7 @@ public class AdminViewFrame extends JFrame {
                         System.gc();
                         return;
                     }
-                    
+
                     if (!am.isValid()) {
                         JOptionPane.showMessageDialog(parentFrame,
                                 "No rule tree found in file " + fc.getSelectedFile().getName(),
@@ -746,19 +774,19 @@ public class AdminViewFrame extends JFrame {
                         System.gc();
                         return;
                     }
-                    
+
                     AccessManagerComponent amComponent = new AccessManagerComponent(parentFrame, am);
                     addTabbedPane(amComponent);
-                    
+
                 }
                 System.gc();
             }
         }.start();
     }
-    
+
     private void actionLoadProcedure() {
         new Thread() {
-            
+
             @Override
             public void run() {
                 JFileChooser fc = createFileChooser(ManagerAdapter.PROCEDURE_MANAGER_TYPE);
@@ -776,7 +804,7 @@ public class AdminViewFrame extends JFrame {
                         System.gc();
                         return;
                     }
-                    
+
                     if (!pm.isValid()) {
                         JOptionPane.showMessageDialog(parentFrame,
                                 "No workflow processes found in file" + fc.getSelectedFile().getName(),
@@ -785,25 +813,25 @@ public class AdminViewFrame extends JFrame {
                         System.gc();
                         return;
                     }
-                    
+
                     ProcedureManagerComponent proComponent = new ProcedureManagerComponent(parentFrame, pm);
                     addTabbedPane(proComponent);
-                    
+
                 }
                 System.gc();
             }
         }.start();
     }
-    
+
     private void actionCompare() {
         new Thread() {
-            
+
             @Override
             public void run() {
                 CompareTabChooser chooser = new CompareTabChooser(parentFrame);
-                
+
                 int result = JOptionPane.showConfirmDialog(getFrame(), chooser, "Compare Managers", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null);
-                
+
                 if (result == JOptionPane.CANCEL_OPTION) {
                     return;
                 }
@@ -811,18 +839,18 @@ public class AdminViewFrame extends JFrame {
                     JOptionPane.showMessageDialog(parentFrame, "The ability to compare procedures has not yet been implemented.", "Unsupport Feature", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-                
+
                 if ((chooser.getSelectedFiles()[0] == null) || (chooser.getSelectedFiles()[1] == null)) {
                     JOptionPane.showMessageDialog(parentFrame, "You need to select 1st and 2nd file.", "Selection Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-                
+
                 if (chooser.getSelectionMode().equals(ManagerAdapter.ACCESS_MANAGER_TYPE)) {
                     File files[] = chooser.getSelectedFiles();
                     AccessManager[] am = new AccessManager[files.length];
                     for (int k = 0; k < files.length; k++) {
                         am[k] = new AccessManager();
-                        
+
                         try {
                             am[k].readFile(files[k]);
                         } catch (Exception ex) {
@@ -833,7 +861,7 @@ public class AdminViewFrame extends JFrame {
                             System.gc();
                             return;
                         }
-                        
+
                         if (!am[k].isValid()) {
                             JOptionPane.showMessageDialog(parentFrame,
                                     "No rule tree found in file " + files[k].getName(),
@@ -843,9 +871,9 @@ public class AdminViewFrame extends JFrame {
                             return;
                         }
                     }
-                    
+
                     CompareAccessManager cam = new CompareAccessManager(am);
-                    
+
                     if (!cam.isValid()) {
                         JOptionPane.showMessageDialog(parentFrame,
                                 "Incompatible Comparison" + cam.getAccessManagers()[0].getFile().getName() + "::" + cam.getAccessManagers()[1].getFile().getName(),
@@ -856,7 +884,7 @@ public class AdminViewFrame extends JFrame {
                     }
                     CompareAccessManagerComponent camComponent = new CompareAccessManagerComponent(parentFrame, cam);
                     addTabbedPane(camComponent);
-                    
+
                 }
             }
         }.start();

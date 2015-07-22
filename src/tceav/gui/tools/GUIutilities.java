@@ -9,8 +9,8 @@
 
 package tceav.gui.tools;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.GridLayout;
 import java.awt.Insets;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -32,7 +32,7 @@ public class GUIutilities {
     public final static int GAP_COMPONENT = 4;
     public final static Insets GAP_INSETS = new Insets(1,1,1,1);
     public final static Insets GAP_INSETS_HEADER = new Insets(2,2,2,2);
-    public final static int GAP_MARGIN = 4;
+    public final static int GAP_MARGIN = 2;
     public final static int GAP_OUTER_BORDER = 8;
     
     
@@ -44,9 +44,9 @@ public class GUIutilities {
     
     public static JPanel createPanelMargined(JComponent component) {
         JPanel SpacedPanel = new JPanel();
-        SpacedPanel.setLayout(new GridLayout(1,1,GAP_COMPONENT,GAP_COMPONENT));
+        SpacedPanel.setLayout(new BorderLayout());
         SpacedPanel.setBorder(new EmptyBorder(GAP_MARGIN,GAP_MARGIN,GAP_MARGIN,GAP_MARGIN));
-        SpacedPanel.add("Center",component);
+        SpacedPanel.add(component, BorderLayout.CENTER);
         
         return SpacedPanel;
     }

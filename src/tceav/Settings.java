@@ -26,102 +26,102 @@ import tceav.gui.compare.CompareAccessManagerComponent;
 public class Settings {
     /* properties application*/
     private static int frameSizeX;
-    private static final String PROPERTY_FRAMESIZEX = "tcav.frameSizeX";
+    private static final String PROPERTY_FRAMESIZEX = "tceav.frameSizeX";
     private static final int PROPERTY_FRAMESIZEX_DEFAULT = -1;
     private static int frameSizeY;
-    private static final String PROPERTY_FRAMESIZEY = "tcav.frameSizeY";
+    private static final String PROPERTY_FRAMESIZEY = "tceav.frameSizeY";
     private static final int PROPERTY_FRAMESIZEY_DEFAULT = -1;
     private static int frameLocationX;
-    private static final String PROPERTY_FRAMELOCATIONX = "tcav.frameLocationX";
+    private static final String PROPERTY_FRAMELOCATIONX = "tceav.frameLocationX";
     private static final int PROPERTY_FRAMELOCATIONX_DEFAULT = 0;
     private static int frameLocationY;
-    private static final String PROPERTY_FRAMELOCATIONY = "tcav.frameLocationY";
+    private static final String PROPERTY_FRAMELOCATIONY = "tceav.frameLocationY";
     private static final int PROPERTY_FRAMELOCATIONY_DEFAULT = 0;
     private static boolean saveSettingsOnExit;
-    private static final String PROPERTY_SAVESETTINGSONEXIT = "tcav.saveSettingsOnExit";
+    private static final String PROPERTY_SAVESETTINGSONEXIT = "tceav.saveSettingsOnExit";
     private static final boolean PROPERTY_SAVESETTINGSONEXIT_DEFAULT = true;
     private static String userInterface;
-    private static final String PROPERTY_USERINTERFACE = "tcav.userInterface";
+    private static final String PROPERTY_USERINTERFACE = "tceav.userInterface";
     private static final String PROPERTY_USERINTERFACE_DEFAULT = "";
     private static String version;
-    private static final String PROPERTY_VERSION = "tcav.version";
-    private static final String PROPERTY_VERSION_DEFAULT = "";
+    private static final String PROPERTY_VERSION = "tceav.version";
+    private static final String PROPERTY_VERSION_DEFAULT = "1.0";
     
     /* properties access manager*/
     private static String amLoadPath;
-    private static final String PROPERTY_AMLOADPATH = "tcav.am.LoadPath";
+    private static final String PROPERTY_AMLOADPATH = "tceav.am.LoadPath";
     private static final String PROPERTY_AMLOADPATH_DEFAULT = "";
     private static int amSplitLocation;
-    private static final String PROPERTY_AM_SPLITLOCATION = "tcav.am.splitLocation";
+    private static final String PROPERTY_AM_SPLITLOCATION = "tceav.am.splitLocation";
     private static final int PROPERTY_AM_SPLITLOCATION_DEFAULT = -1;
     private static int[] amACLSort;
-    private static final String PROPERTY_AM_ACLSORT = "tcav.am.aclSort";
+    private static final String PROPERTY_AM_ACLSORT = "tceav.am.aclSort";
     private static final String PROPERTY_AM_ACLSORT_DEFAULT = "0,2";
     private static boolean amACLSortAscending;
-    private static final String PROPERTY_AM_ACLSORTASCENDING = "tcav.am.aclSortAscending";
+    private static final String PROPERTY_AM_ACLSORTASCENDING = "tceav.am.aclSortAscending";
     private static final boolean PROPERTY_AM_ACLSORTASCENDING_DEFAULT = true;
     private static int amACLTab;
-    private static final String PROPERTY_AM_ACLTAB = "tcav.am.aclTab";
+    private static final String PROPERTY_AM_ACLTAB = "tceav.am.aclTab";
     private static final int PROPERTY_AM_ACLTAB_DEFAULT = 0;
     private static boolean amSyncSelection;
-    private static final String PROPERTY_AM_SYNCSELECTION = "tcav.am.syncSelection";
+    private static final String PROPERTY_AM_SYNCSELECTION = "tceav.am.syncSelection";
     private static final boolean PROPERTY_AM_SYNCSELECTION_DEFAULT = true;
     
     /* properties process manager */
     private static String pmLoadPath;
-    private static final String PROPERTY_PMLOADPATH = "tcav.pm.loadPath";
+    private static final String PROPERTY_PMLOADPATH = "tceav.pm.loadPath";
     private static final String PROPERTY_PMLOADPATH_DEFAULT = "";
     private static int pmSplitLocation;
-    private static final String PROPERTY_PM_SPLITLOCATION = "tcav.pm.SplitLocation";
+    private static final String PROPERTY_PM_SPLITLOCATION = "tceav.pm.SplitLocation";
     private static int PROPERTY_PM_SPLITLOCATION_DEFAULT = -1;
     
     
     private static boolean pmTblStrictArgument;
-    private static final String PROPERTY_PM_TBL_STRICTARUMENT = "tcav.pm.tbl.strictArgument";
+    private static final String PROPERTY_PM_TBL_STRICTARUMENT = "tceav.pm.tbl.strictArgument";
     private static final boolean PROPERTY_PM_TBL_STRICTARUMENT_DEFAULT = false;
     private static boolean pmTblMultiSheet;
-    private static final String PROPERTY_PM_TBL_MULTISHEET = "tcav.pm.tbl.multiSheet";
+    private static final String PROPERTY_PM_TBL_MULTISHEET = "tceav.pm.tbl.multiSheet";
     private static final boolean PROPERTY_PM_TBL_MULTISHEET_DEFAULT = true;
     private static boolean pmTblShowActions;
-    private static final String PROPERTY_PM_TBL_SHOWACTIONS = "tcav.pm.tbl.showActions";
+    private static final String PROPERTY_PM_TBL_SHOWACTIONS = "tceav.pm.tbl.showActions";
     private static final boolean PROPERTY_PM_TBL_SHOWACTIONS_DEFAULT = true;
     private static boolean pmTblIncludeIndents;
-    private static final String PROPERTY_PM_TBL_INCLUDEINDENTS = "tcav.pm.tbl.includeIndents";
+    private static final String PROPERTY_PM_TBL_INCLUDEINDENTS = "tceav.pm.tbl.includeIndents";
     private static final boolean PROPERTY_PM_TBL_INCLUDEINDENTS_DEFAULT = true;
     private static boolean pmTblDatabaseMode;
-    private static final String PROPERTY_PM_TBL_DATABASEMODE = "tcav.pm.tbl.database";
+    private static final String PROPERTY_PM_TBL_DATABASEMODE = "tceav.pm.tbl.database";
     private static final boolean PROPERTY_PM_TBL_DATABASEMODE_DEFAULT = true;
     
     
     private static String compareMode;
-    private static final String PROPERTY_COMPAREMODE = "tcav.compareMode";
+    private static final String PROPERTY_COMPAREMODE = "tceav.compareMode";
     private static final String PROPERTY_COMPAREMODE_DEFAULT = ManagerAdapter.ACCESS_MANAGER_TYPE;
     
     
     /* properties access manager comparison */
     private static boolean amCmpSyncSelection;
-    private static final String PROPERTY_AM_CMP_SYNCSELECTION = "tcav.am.cmp.syncSelection";
+    private static final String PROPERTY_AM_CMP_SYNCSELECTION = "tceav.am.cmp.syncSelection";
     private static final boolean PROPERTY_AM_CMP_SYNCSELECTION_DEFAULT = true;
     private static int amCmpACLTab;
-    private static final String PROPERTY_AM_CMP_ACLTAB = "tcav.am.cmp.aclTab";
+    private static final String PROPERTY_AM_CMP_ACLTAB = "tceav.am.cmp.aclTab";
     private static final int PROPERTY_AM_CMP_ACLTAB_DEFAULT = 6;
     private static String amCmpDisplayMode;
-    private static final String PROPERTY_AM_CMP_DISPLAYMODE = "tcav.am.cmp.displayMode";
+    private static final String PROPERTY_AM_CMP_DISPLAYMODE = "tceav.am.cmp.displayMode";
     private static final String PROPERTY_AM_CMP_DISPLAYMODE_DEFAULT = CompareAccessManagerComponent.MODE_TREE;
     private static int amCmpFilterEqual;
-    private static final String PROPERTY_AM_CMP_FILTEREQUAL = "tcav.am.cmp.filterEqual";
+    private static final String PROPERTY_AM_CMP_FILTEREQUAL = "tceav.am.cmp.filterEqual";
     private static final int PROPERTY_AM_CMP_FILTEREQUAL_DEFAULT = NamedRuleComponent.COMPARE_HIDE_INDEX;
     private static int amCmpFilterNotEqual;
-    private static final String PROPERTY_AM_CMP_FILTERNOTEQUAL = "tcav.am.cmp.filterNotEqual";
+    private static final String PROPERTY_AM_CMP_FILTERNOTEQUAL = "tceav.am.cmp.filterNotEqual";
     private static final int PROPERTY_AM_CMP_FILTERNOTEQUAL_DEFAULT = NamedRuleComponent.COMPARE_SHOW_INDEX;
     private static int amCmpFilterNotFound;
-    private static final String PROPERTY_AM_CMP_FILTERNOTFOUND = "tcav.am.cmp.filterNotFound";
+    private static final String PROPERTY_AM_CMP_FILTERNOTFOUND = "tceav.am.cmp.filterNotFound";
     private static final int PROPERTY_AM_CMP_FILTERNOTFOUND_DEFAULT = NamedRuleComponent.COMPARE_SHOW_INDEX;
     private static int[] amCmpACLSort;
-    private static final String PROPERTY_AM_CMP_ACLSORT = "tcav.am.cmp.aclSort";
+    private static final String PROPERTY_AM_CMP_ACLSORT = "tceav.am.cmp.aclSort";
     private static final String PROPERTY_AM_CMP_ACLSORT_DEFAULT = "3,0,2";
     private static boolean amCmpACLSortAscending;
-    private static final String PROPERTY_AM_CMP_ACLSORTASCENDING = "tcav.am.cmp.aclSortAscending";
+    private static final String PROPERTY_AM_CMP_ACLSORTASCENDING = "tceav.am.cmp.aclSortAscending";
     private static final boolean PROPERTY_AM_CMP_ACLSORTASCENDING_DEFAULT = true;
     
     
@@ -133,10 +133,10 @@ public class Settings {
     }
     
     public static void load() throws Exception {
-        File path = new File(System.getenv("USERPROFILE"),".TcAV");
+        File path = new File(System.getenv("USERPROFILE"),".TcEAV");
         if(!path.exists())
             path.mkdir();
-        File file = new File(path,"TcAdminView.cfg");
+        File file = new File(path,"TcEAdminView.cfg");
         if(file.exists()) {
             FileInputStream fis =  new FileInputStream(file);
             property.load(fis);
@@ -371,10 +371,10 @@ public class Settings {
                 Boolean.toString(isPmTblDatabaseMode()));
         
         
-        File path = new File(System.getenv("USERPROFILE"),".TcAV");
+        File path = new File(System.getenv("USERPROFILE"),".TcEAV");
         if(!path.exists())
             path.mkdir();
-        File file = new File(path,"TcAdminView.cfg");
+        File file = new File(path,"TcEAdminView.cfg");
         
         if(file.exists())
             if(!file.canWrite())
@@ -592,9 +592,9 @@ public class Settings {
     
     public static void setPmSplitLocation(int pmSplitLocation) {
         if(compareVersion() != 0)
-            Settings.pmSplitLocation = (int)(frameSizeX*0.5);
+            Settings.pmSplitLocation = (int)(frameSizeY*0.5);
         else if(pmSplitLocation == -1)
-            Settings.pmSplitLocation = (int)(frameSizeX*0.5);
+            Settings.pmSplitLocation = (int)(frameSizeY*0.5);
         else
             Settings.pmSplitLocation = pmSplitLocation;
     }

@@ -27,6 +27,10 @@ public class ResourceStrings {
         return ResourceStrings.class.getResource("ChangeLog.html");
     }
     
+    public static URL getLicense() throws IOException {
+        return ResourceStrings.class.getResource("gpl-3.html");
+    }
+
     public static URL getPLMXMLPDMSchema() throws IOException {
         return ResourceStrings.class.getResource("schema/PLMXMLPDMSchema.xsd");
     }
@@ -36,11 +40,11 @@ public class ResourceStrings {
     }
     
     public static String getBuild() {
-        return "174";
+        return "175";
     }
     
     public static String getReleaseDate() {
-        return "03-Dec-08";
+        return "04-Dec-08";
     }
     
     public static String getApplicationName() {
@@ -57,6 +61,10 @@ public class ResourceStrings {
     
     public static String getDeveloperEmail() {
         return "whoisnader@gmail.com";
+    }
+
+    public static String getWebsite() {
+        return "http://tceav.sourceforge.net";
     }
     
     public static String getProjectSupporters() {

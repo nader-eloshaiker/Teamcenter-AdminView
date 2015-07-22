@@ -48,13 +48,11 @@ public class AccessManagerComponent extends TabbedPanel {
         /* Rules Panel */
         JPanel panelRule =  new JPanel();
         panelRule.setLayout(new BorderLayout(GUIutilities.GAP_MARGIN,GUIutilities.GAP_MARGIN));
-        panelRule.add("East", namedACL);
-        panelRule.add("Center",ruletree);
+        panelRule.add(GUIutilities.createPanelMargined(namedACL), BorderLayout.EAST);
+        panelRule.add(GUIutilities.createPanelMargined(ruletree), BorderLayout.CENTER);
         
         splitPane = new JSplitPane(
-                JSplitPane.VERTICAL_SPLIT,
-                true,
-                GUIutilities.createPanelMargined(panelRule),
+                JSplitPane.VERTICAL_SPLIT, true, panelRule,
                 GUIutilities.createPanelMargined(accessControl));
         splitPane.setDividerLocation(Settings.getAmSplitLocation());
         splitPane.setResizeWeight(1.0);
@@ -68,8 +66,8 @@ public class AccessManagerComponent extends TabbedPanel {
         });
         
         /* And show it. */
-        this.setLayout(new BorderLayout());//GUIutilities.GAP_MARGIN,GUIutilities.GAP_MARGIN));
-        this.add("Center",splitPane);
+        this.setLayout(new BorderLayout());
+        this.add(splitPane, BorderLayout.CENTER);
         
     }
     

@@ -88,7 +88,7 @@ public class RotatedTextIcon implements Icon {
     }
     
     private ArrayList<String> hyphenateString(String s) {
-        int stringLimit = 50;
+        int stringLimit = 45;
         int division;
         String indent;
         String pad = "   ";
