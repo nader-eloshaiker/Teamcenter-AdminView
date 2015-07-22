@@ -99,7 +99,7 @@ public class AttributeTreeModel implements TreeModel {
             case Arguments:
             case UserData:
                 aob = pm.getAttribOwnerBase(nrParent.getParentId());
-                ud = (UserDataType)aob.getAttribute().get(aob.getAttributeIdIndex(nrParent.getId()));
+                ud = (UserDataType)aob.getAttribute(nrParent.getId());
                 nr = new NodeReference(
                         ud.getId(),
                         ud.getUserValue().get(index).getTitle()+": "+ud.getUserValue().get(index).getValue(),
@@ -111,7 +111,7 @@ public class AttributeTreeModel implements TreeModel {
                 
             case UserValue:
                 aob = pm.getAttribOwnerBase(nrParent.getParentId());
-                ud = (UserDataType)aob.getAttribute().get(aob.getAttributeIdIndex(nrParent.getId()));
+                ud = (UserDataType)aob.getAttribute(nrParent.getId());
                 UserDataElementType uv = ud.getUserValue().get(nrParent.getIndex());
                 return new NodeReference(
                         uv.getDataRef(),
@@ -121,7 +121,7 @@ public class AttributeTreeModel implements TreeModel {
                 
             case AssociatedDataSet:
                 aob = pm.getAttribOwnerBase(nrParent.getParentId());
-                AssociatedDataSetType ad = (AssociatedDataSetType)aob.getAttribute().get(aob.getAttributeIdIndex(nrParent.getId()));
+                AssociatedDataSetType ad = (AssociatedDataSetType)aob.getAttribute(nrParent.getId());
                 if(pm.getIdClass(ad.getDataSetRef()) == TagTypeEnum.WorkflowSignoffProfile){
                     WorkflowSignoffProfileType wsp =
                             pm.getWorkflowSignoffProfiles().get(pm.getIdIndex(ad.getDataSetRef()));
@@ -136,7 +136,7 @@ public class AttributeTreeModel implements TreeModel {
                 
             case AssociatedFolder:
                 aob = pm.getAttribOwnerBase(nrParent.getParentId());
-                AssociatedFolderType af = (AssociatedFolderType)aob.getAttribute().get(aob.getAttributeIdIndex(nrParent.getId()));
+                AssociatedFolderType af = (AssociatedFolderType)aob.getAttribute(nrParent.getId());
                 if(pm.getIdClass(af.getFolderRef()) == TagTypeEnum.WorkflowSignoffProfile){
                     WorkflowSignoffProfileType wsp =
                             pm.getWorkflowSignoffProfiles().get(pm.getIdIndex(af.getFolderRef()));
@@ -150,7 +150,7 @@ public class AttributeTreeModel implements TreeModel {
                 
             case AssociatedForm:
                 aob = pm.getAttribOwnerBase(nrParent.getParentId());
-                AssociatedFormType afm = (AssociatedFormType)aob.getAttribute().get(aob.getAttributeIdIndex(nrParent.getId()));
+                AssociatedFormType afm = (AssociatedFormType)aob.getAttribute(nrParent.getId());
                 if(pm.getIdClass(afm.getFormRef()) == TagTypeEnum.WorkflowSignoffProfile){
                     WorkflowSignoffProfileType wsp =
                             pm.getWorkflowSignoffProfiles().get(pm.getIdIndex(afm.getFormRef()));
@@ -164,7 +164,7 @@ public class AttributeTreeModel implements TreeModel {
                 
             case ValidationResults:
                 aob = pm.getAttribOwnerBase(nrParent.getParentId());
-                ValidationResultsType vr = (ValidationResultsType)aob.getAttribute().get(aob.getAttributeIdIndex(nrParent.getId()));
+                ValidationResultsType vr = (ValidationResultsType)aob.getAttribute(nrParent.getId());
                 nr = new NodeReference(
                         vr.getId(),
                         vr.getApplicationRef().get(index).getLabel(),
@@ -226,12 +226,12 @@ public class AttributeTreeModel implements TreeModel {
             case Arguments:
             case UserData:
                 aob = pm.getAttribOwnerBase(nrParent.getParentId());
-                UserDataType ud = (UserDataType)aob.getAttribute().get(aob.getAttributeIdIndex(nrParent.getId()));
+                UserDataType ud = (UserDataType)aob.getAttribute(nrParent.getId());
                 return ud.getUserValue().size();
                 
             case UserValue:
                 aob = pm.getAttribOwnerBase(nrParent.getParentId());
-                ud = (UserDataType)aob.getAttribute().get(aob.getAttributeIdIndex(nrParent.getId()));
+                ud = (UserDataType)aob.getAttribute(nrParent.getId());
                 if((ud.getUserValue().get(nrParent.getIndex()).getDataRef() == null) ||
                         (ud.getUserValue().get(nrParent.getIndex()).getDataRef().equals("")))
                     return 0;
@@ -245,7 +245,7 @@ public class AttributeTreeModel implements TreeModel {
                 
             case ValidationResults:
                 aob = pm.getAttribOwnerBase(nrParent.getParentId());
-                ValidationResultsType vr = (ValidationResultsType)aob.getAttribute().get(aob.getAttributeIdIndex(nrParent.getId()));
+                ValidationResultsType vr = (ValidationResultsType)aob.getAttribute(nrParent.getId());
                 return vr.getChecker().size();
                 
             case WorkflowSignoffProfile:
@@ -282,12 +282,12 @@ public class AttributeTreeModel implements TreeModel {
             case Arguments:
             case UserData:
                 aob = pm.getAttribOwnerBase(nr.getParentId());
-                UserDataType ud = (UserDataType)aob.getAttribute().get(aob.getAttributeIdIndex(nr.getId()));
+                UserDataType ud = (UserDataType)aob.getAttribute(nr.getId());
                 return (ud.getUserValue().size()==0);
                 
             case UserValue:
                 aob = pm.getAttribOwnerBase(nr.getParentId());
-                ud = (UserDataType)aob.getAttribute().get(aob.getAttributeIdIndex(nr.getId()));
+                ud = (UserDataType)aob.getAttribute(nr.getId());
                 if((ud.getUserValue().get(nr.getIndex()).getDataRef() == null) ||
                         (ud.getUserValue().get(nr.getIndex()).getDataRef().equals("")))
                     return true;
@@ -301,7 +301,7 @@ public class AttributeTreeModel implements TreeModel {
                 
             case ValidationResults:
                 aob = pm.getAttribOwnerBase(nr.getParentId());
-                ValidationResultsType vr = (ValidationResultsType)aob.getAttribute().get(aob.getAttributeIdIndex(nr.getId()));
+                ValidationResultsType vr = (ValidationResultsType)aob.getAttribute(nr.getId());
                 return (vr.getChecker().size()==0);
                 
             case WorkflowSignoffProfile:
@@ -327,7 +327,7 @@ public class AttributeTreeModel implements TreeModel {
             case Organisation:
             case WorkflowTemplate:
                 aob = pm.getAttribOwnerBase(nrParent.getId());
-                return aob.getAttributeIdIndex(nrChild.getId());
+                return aob.getAttributeIndex(nrChild.getId());
                 
             case UserData:
             case Arguments:

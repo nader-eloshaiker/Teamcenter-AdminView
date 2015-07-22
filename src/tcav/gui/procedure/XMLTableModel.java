@@ -172,7 +172,7 @@ public class XMLTableModel extends AbstractTableModel implements TableModel {
     
     private Object getUserDataValueAt(int rowIndex, int columnIndex) {
         AttribOwnerBase aob = pm.getAttribOwnerBase(nr.getParentId());
-        UserDataType ud = (UserDataType)aob.getAttribute().get(aob.getAttributeIdIndex(nr.getId()));
+        UserDataType ud = (UserDataType)aob.getAttribute(nr.getId());
         switch(rowIndex){
             case 0:
                 if(columnIndex == 0)
@@ -206,7 +206,7 @@ public class XMLTableModel extends AbstractTableModel implements TableModel {
     
     private Object getUserValueAt(int rowIndex, int columnIndex) {
         AttribOwnerBase aob = pm.getAttribOwnerBase(nr.getParentId());
-        UserDataType ud = (UserDataType)aob.getAttribute().get(aob.getAttributeIdIndex(nr.getId()));
+        UserDataType ud = (UserDataType)aob.getAttribute(nr.getId());
         UserDataElementType uv = ud.getUserValue().get(nr.getIndex());
         switch(rowIndex){
             case 0:
@@ -645,7 +645,7 @@ public class XMLTableModel extends AbstractTableModel implements TableModel {
     
     private Object getAssociatedDataSetValueAt(int rowIndex, int columnIndex) {
         AttribOwnerBase aob = pm.getAttribOwnerBase(nr.getParentId());
-        AssociatedDataSetType ad = (AssociatedDataSetType)aob.getAttribute().get(aob.getAttributeIdIndex(nr.getId()));
+        AssociatedDataSetType ad = (AssociatedDataSetType)aob.getAttribute(nr.getId());
         switch(rowIndex){
             case 0:
                 if(columnIndex == 0)
@@ -690,7 +690,7 @@ public class XMLTableModel extends AbstractTableModel implements TableModel {
     
     private Object getAssociatedFolderValueAt(int rowIndex, int columnIndex) {
         AttribOwnerBase aob = pm.getAttribOwnerBase(nr.getParentId());
-        AssociatedFolderType af = (AssociatedFolderType)aob.getAttribute().get(aob.getAttributeIdIndex(nr.getId()));
+        AssociatedFolderType af = (AssociatedFolderType)aob.getAttribute(nr.getId());
         switch(rowIndex){
             case 0:
                 if(columnIndex == 0)
@@ -735,7 +735,7 @@ public class XMLTableModel extends AbstractTableModel implements TableModel {
     
     private Object getAssociatedFormValueAt(int rowIndex, int columnIndex) {
         AttribOwnerBase aob = pm.getAttribOwnerBase(nr.getParentId());
-        AssociatedFormType af = (AssociatedFormType)aob.getAttribute().get(aob.getAttributeIdIndex(nr.getId()));
+        AssociatedFormType af = (AssociatedFormType)aob.getAttribute(nr.getId());
         switch(rowIndex){
             case 0:
                 if(columnIndex == 0)
@@ -780,7 +780,7 @@ public class XMLTableModel extends AbstractTableModel implements TableModel {
     
     private Object getValidationResultsValueAt(int rowIndex, int columnIndex) {
         AttribOwnerBase aob = pm.getAttribOwnerBase(nr.getParentId());
-        ValidationResultsType vr = (ValidationResultsType)aob.getAttribute().get(aob.getAttributeIdIndex(nr.getId()));
+        ValidationResultsType vr = (ValidationResultsType)aob.getAttribute(nr.getId());
         switch(rowIndex){
             case 0:
                 if(columnIndex == 0)
