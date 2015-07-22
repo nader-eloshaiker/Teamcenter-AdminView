@@ -109,7 +109,7 @@ public class UserDataType extends AttributeBase {
         if (userValue == null)
             userValue = new ArrayList<UserDataElementType>();
         
-        return this.userValue;
+        return userValue;
     }
 
     public String getType() {

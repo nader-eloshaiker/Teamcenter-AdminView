@@ -306,13 +306,13 @@ public class UserDataElementType extends IdBase {
      * Customisation
      ***************/
     
-    private WorkflowTemplateType data;
+    private IdBase data;
     
-    public WorkflowTemplateType getData() {
+    public IdBase getData() {
         return data;
     }
     
-    public void setData(WorkflowTemplateType data) {
+    public void setData(IdBase data) {
         this.data = data;
     }
 }

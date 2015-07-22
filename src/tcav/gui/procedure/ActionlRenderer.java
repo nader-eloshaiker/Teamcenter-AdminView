@@ -72,6 +72,13 @@ public class ActionlRenderer  implements TreeCellRenderer {
                 cell.setIcon(siteIcon);
                 break;
                 
+            case WorkflowTemplate:
+                WorkflowTemplateType wt = (WorkflowTemplateType)value;
+                cell.setText(wt.getName());
+                cell.setToolTipText(wt.getName());
+                cell.setIcon(workflowIcon);
+                break;
+                
             case WorkflowHandler:
                 WorkflowHandlerType wh = (WorkflowHandlerType)value;
                 cell.setText(wh.getName());
@@ -105,6 +112,9 @@ public class ActionlRenderer  implements TreeCellRenderer {
                 cell.setIcon(workflowIcon);
                 break;
         }
+        
+        if (!leaf)
+            cell.setFont(cell.getFont().deriveFont(Font.BOLD));
         
         return cell;
     }

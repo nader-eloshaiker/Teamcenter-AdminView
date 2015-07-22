@@ -62,8 +62,10 @@ public class RuleTreeNodeRenderer implements TreeCellRenderer {
                 }
         if (leaf)
             cell.setIcon(ruleIcon);
-        else
+        else {
             cell.setIcon(ruleBranchIcon);
+            cell.setFont(cell.getFont().deriveFont(Font.BOLD));
+        }
         return cell;
     }
 }

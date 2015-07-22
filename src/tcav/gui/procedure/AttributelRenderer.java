@@ -217,6 +217,9 @@ public class AttributelRenderer  implements TreeCellRenderer {
                 
         }
         
+        if (!leaf)
+            cell.setFont(cell.getFont().deriveFont(Font.BOLD));
+        
         return cell;
     }
 }

@@ -17,16 +17,8 @@ import java.util.*;
 import tcav.procedure.plmxmlpdm.TagTypeEnum;
 import tcav.procedure.plmxmlpdm.base.AttribOwnerBase;
 import tcav.procedure.plmxmlpdm.base.IdBase;
-import tcav.procedure.plmxmlpdm.type.AssociatedDataSetType;
-import tcav.procedure.plmxmlpdm.type.AssociatedFolderType;
-import tcav.procedure.plmxmlpdm.type.AssociatedFormType;
-import tcav.procedure.plmxmlpdm.type.OrganisationType;
-import tcav.procedure.plmxmlpdm.type.UserDataType;
-import tcav.procedure.plmxmlpdm.type.ValidationResultsType;
-import tcav.procedure.plmxmlpdm.type.WorkflowSignoffProfileType;
-import tcav.procedure.plmxmlpdm.type.WorkflowTemplateType;
-import tcav.procedure.plmxmlpdm.type.element.UserDataElementType;
-import tcav.procedure.plmxmlpdm.type.element.ValidationCheckerType;
+import tcav.procedure.plmxmlpdm.type.*;
+import tcav.procedure.plmxmlpdm.type.element.*;
 /**
  *
  * @author NZR4DL
@@ -63,6 +55,10 @@ public class AttributeTreeModel implements TreeModel {
                 aob = (AttribOwnerBase)nrParent;
                 return aob.getAttribute().get(index);
                 
+            case WorkflowAction:
+                WorkflowActionType wa = (WorkflowActionType)nrParent;
+                return wa.getActionHandlers()[index];
+                
             case Organisation:
                 OrganisationType o = (OrganisationType)nrParent;
                 return o.getAttribute().get(index);
@@ -78,24 +74,15 @@ public class AttributeTreeModel implements TreeModel {
                 
             case AssociatedDataSet:
                 AssociatedDataSetType ad = (AssociatedDataSetType)nrParent;
-                if(ad.getDataSet().getTagType() == TagTypeEnum.WorkflowSignoffProfile)
-                    return (WorkflowSignoffProfileType)ad.getDataSet();
-                else
-                    return null;
+                return ad.getDataSet();
                 
             case AssociatedFolder:
                 AssociatedFolderType af = (AssociatedFolderType)nrParent;
-                if(af.getFolder().getTagType() == TagTypeEnum.WorkflowSignoffProfile)
-                    return (WorkflowSignoffProfileType)af.getFolder();
-                else
-                    return null;
+                af.getFolder();
                 
             case AssociatedForm:
                 AssociatedFormType afm = (AssociatedFormType)nrParent;
-                if(afm.getForm().getTagType() == TagTypeEnum.WorkflowSignoffProfile)
-                    return (WorkflowSignoffProfileType)afm.getForm();
-                else
-                    return null;
+                afm.getForm();
                 
             case ValidationResults:
                 ValidationResultsType vr = (ValidationResultsType)nrParent;
@@ -130,6 +117,10 @@ public class AttributeTreeModel implements TreeModel {
                 aob = (AttribOwnerBase)nrParent;
                 return aob.getAttribute().size();
                 
+            case WorkflowAction:
+                WorkflowActionType wa = (WorkflowActionType)parent;
+                return wa.getActionHandlers().length;
+                
             case Organisation:
                 aob = (AttribOwnerBase)nrParent;
                 return aob.getAttribute().size();
@@ -147,10 +138,26 @@ public class AttributeTreeModel implements TreeModel {
                     return 1;
                 
             case AssociatedDataSet:
-            case AssociatedFolder:
-            case AssociatedForm:
-                return 1;
+                AssociatedDataSetType ad = (AssociatedDataSetType)nrParent;
+                if(ad.getDataSet() == null)
+                    return 0;
+                else
+                    return 1;
                 
+            case AssociatedFolder:
+                AssociatedFolderType af = (AssociatedFolderType)nrParent;
+                if(af.getFolder() == null)
+                    return 0;
+                else
+                    return 1;
+                
+            case AssociatedForm:
+                AssociatedFormType afm = (AssociatedFormType)nrParent;
+                if(afm.getForm() == null)
+                    return 0;
+                else
+                    return 1;
+
             case ValidationResults:
                 ValidationResultsType vr = (ValidationResultsType)nrParent;
                 return vr.getChecker().size();
@@ -183,7 +190,11 @@ public class AttributeTreeModel implements TreeModel {
             case WorkflowTemplate:
                 aob = (AttribOwnerBase)nr;
                 return (aob.getAttribute().size() == 0);
-
+                
+            case WorkflowAction:
+                WorkflowActionType wa = (WorkflowActionType)nr;
+                return (wa.getActionHandlers().length == 0);
+                
             case Organisation:
                 aob = (AttribOwnerBase)nr;
                 return (aob.getAttribute().size() == 0);
@@ -201,9 +212,25 @@ public class AttributeTreeModel implements TreeModel {
                     return false;
                 
             case AssociatedDataSet:
+                AssociatedDataSetType ad = (AssociatedDataSetType)nr;
+                if(ad.getDataSet() == null)
+                    return true;
+                else
+                    return false;
+                
             case AssociatedFolder:
+                AssociatedFolderType af = (AssociatedFolderType)nr;
+                if(af.getFolder() == null)
+                    return true;
+                else
+                    return false;
+                
             case AssociatedForm:
-                return false;
+                AssociatedFormType afm = (AssociatedFormType)nr;
+                if(afm.getForm() == null)
+                    return true;
+                else
+                    return false;
                 
             case ValidationResults:
                 ValidationResultsType vr = (ValidationResultsType)nr;
@@ -233,6 +260,13 @@ public class AttributeTreeModel implements TreeModel {
                 aob = (AttribOwnerBase)nrParent;
                 return aob.getAttributeRefs().indexOf(nrChild.getId());
                 
+            case WorkflowAction:
+                WorkflowActionType wa = (WorkflowActionType)nrParent;
+                for(int i=0; i<wa.getActionHandlers().length; i++)
+                    if(wa.getActionHandlers()[i].getId().equals(nrChild.getId()))
+                        return i;
+                return -1;
+                
             case UserData:
             case Arguments:
                 UserDataType ud = (UserDataType)nrParent;
@@ -253,13 +287,39 @@ public class AttributeTreeModel implements TreeModel {
                         return 0;
                     else if(nrChild.getTagType() == TagTypeEnum.Organisation)
                         return 1;
-                }
-            case AssociatedDataSet:
-            case AssociatedFolder:
-            case AssociatedForm:
+                } else
+                    return -1;
+                
             case UserValue:
+                UserDataElementType uv = (UserDataElementType)nrParent;
+                if(uv.getDataRef() == null)
+                    return -1;
+                else
+                    return 0;
+                
+            case AssociatedDataSet:
+                AssociatedDataSetType ad = (AssociatedDataSetType)nrParent;
+                if(ad.getDataSet() == null)
+                    return -1;
+                else
+                    return 0;
+                
+            case AssociatedFolder:
+                AssociatedFolderType af = (AssociatedFolderType)nrParent;
+                if(af.getFolder() == null)
+                    return -1;
+                else
+                    return 0;
+                
+            case AssociatedForm:
+                AssociatedFormType afm = (AssociatedFormType)nrParent;
+                if(afm.getForm() == null)
+                    return -1;
+                else
+                    return 0;
+
             default:
-                return 0;
+                return -1;
         }
     }
     
