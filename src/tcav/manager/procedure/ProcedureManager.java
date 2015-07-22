@@ -54,7 +54,7 @@ public class ProcedureManager extends AbstractManager {
     private PLMXMLType plmxml;
     private File file;
     
-
+    
     private JFrame frame;
     
     /**
@@ -67,7 +67,7 @@ public class ProcedureManager extends AbstractManager {
     public File getFile() {
         return file;
     }
-
+    
     public String getId() {
         return file.toString();
     }
@@ -278,6 +278,18 @@ public class ProcedureManager extends AbstractManager {
             node.getActions()[iA] = (WorkflowActionType)tagCache.get(node.getActionRefs().get(iA));
             attachActionHandlers(node.getActions()[iA], tagCache);
             attachBusinessRules(node.getActions()[iA], tagCache);
+        }
+        
+        WorkflowActionType tmp;
+        
+        for (int i = 0; i < node.getActions().length; i++) {
+            for (int j = i+1; j < node.getActions().length; j++) {
+                if (node.getActions()[i].getType().getOrder() > node.getActions()[j].getType().getOrder()) {
+                    tmp = node.getActions()[i];
+                    node.getActions()[i] = node.getActions()[j];
+                    node.getActions()[j] = tmp;
+                }
+            }
         }
     }
     
