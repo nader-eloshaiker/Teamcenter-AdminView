@@ -21,6 +21,10 @@ import java.util.*;
  */
 public class RuleTreeNodeBuilder {
     
+    /*
+     * Depreciated as it is nolonger required. The JTree component is now
+     * implemented instead of populated.
+     */
     public static DefaultMutableTreeNode getRuleTreeNodes(AccessManagerTree amTree) {
         int currentIndent = 0;
         int newIndent = 0;

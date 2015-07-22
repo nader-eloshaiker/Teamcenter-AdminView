@@ -35,6 +35,7 @@ public class ProcedureComponent extends JPanel{
     protected JTable tableWorkflowTemplatesSub;
     protected JTable tableActionsRef;
     protected JTable tableSubTemplateRef;
+    protected JTree treeWorkflowProcess;
     
     protected ProcedureManager pm;
     
@@ -68,7 +69,20 @@ public class ProcedureComponent extends JPanel{
         panelDebug.setBorder(new TitledBorder(new EtchedBorder(),"PLMXML Debug Window"));
         panelDebug.add(GUITools.createPanelMargined(scrollTreeXML));
         */
+        
+        // Workflow Process Tree
+        treeWorkflowProcess = new JTree(ProcedureNodeBuilder.buildProcessNodes(pm));
+        treeWorkflowProcess.setCellRenderer(new WorkflowTreeCellRenderer());
+        JScrollPane scrollTreeWorkflowProcess = new JScrollPane();
+        //scrollTreeWorkflowProcess.setPreferredSize(new Dimension(600,500));
+        scrollTreeWorkflowProcess.setBorder(new BevelBorder(BevelBorder.LOWERED));
+        scrollTreeWorkflowProcess.getViewport().add(treeWorkflowProcess);
+        JPanel panelTreeWorkflowProcess = new JPanel();
+        panelTreeWorkflowProcess.setLayout(new BorderLayout(GUITools.GAP_COMPONENT,GUITools.GAP_COMPONENT));
+        panelTreeWorkflowProcess.setBorder(new TitledBorder(new EtchedBorder(),"Workflow Templates: PROCESS"));
+        panelTreeWorkflowProcess.add(GUITools.createPanelMargined(scrollTreeWorkflowProcess));
 
+        
         TableColumn column;
         
         // Process Workflows
@@ -169,9 +183,14 @@ public class ProcedureComponent extends JPanel{
 
         
         JPanel panelWorkflowTamplates = new JPanel();
+        /*
         panelWorkflowTamplates.setLayout(new GridLayout(2,1,GUITools.GAP_COMPONENT,GUITools.GAP_COMPONENT));
         panelWorkflowTamplates.add(panelWorkflowTemplatesProcess);
         panelWorkflowTamplates.add(panelWorkflowTemplatesSub);
+        */
+        panelWorkflowTamplates.setLayout(new GridLayout(1,1,GUITools.GAP_COMPONENT,GUITools.GAP_COMPONENT));
+        panelWorkflowTamplates.add(panelTreeWorkflowProcess);
+        
         
         tableDepTaskTemplateRef = new JTable();
         tableDepTaskTemplateRef.setModel(new ReferencesTableModel(pm));
@@ -237,7 +256,6 @@ public class ProcedureComponent extends JPanel{
         this.setLayout(new BorderLayout(GUITools.GAP_COMPONENT,GUITools.GAP_COMPONENT));
         this.add("Center",panelWorkflowTeamplates);
         this.add("South",GUITools.createPanelMargined(panelSummary));
-
         
     }
     

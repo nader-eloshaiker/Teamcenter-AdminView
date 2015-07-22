@@ -72,6 +72,9 @@ public class WorkflowIconKeyRenderer extends DefaultTableCellRenderer implements
     public Component getTableCellRendererComponent(JTable table,
             Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         
+        if(value == null)
+            return this;
+        
         String s = (String)value;
         
         if(s.equals("acknowledgeTask"))

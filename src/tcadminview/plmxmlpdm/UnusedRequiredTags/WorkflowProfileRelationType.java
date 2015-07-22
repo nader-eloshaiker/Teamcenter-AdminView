@@ -6,11 +6,10 @@
 //
 
 
-package tcadminview.plmxmlpdm;
+package tcadminview.plmxmlpdm.UnusedRequiredTags;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Date;
 import tcadminview.plmxmlpdm.base.AttribOwnerBase;
 import org.w3c.dom.Node;
 /*
@@ -18,29 +17,25 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.datatype.XMLGregorianCalendar;
 */
 
 /**
  * 
- *       ReleaseStatus. Specifies date of release, and effectivities.
- * 
- *       Attributes:
- *       
- *       dateReleased:    Date and time released.
- *       effectivityRefs: Reference to Effectivity elements.
+ *       A base type for defining relations between workflow task template and signoff profile elements. 
+ *       ownerRef is a reference to an owning object, such as a task template or a task. profileRefs is 
+ *       a reference to one or many signoff profiles that this owner object is associated to.
  *       
  * 
- * <p>Java class for ReleaseStatusType complex type.
+ * <p>Java class for WorkflowProfileRelationType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="ReleaseStatusType">
+ * &lt;complexType name="WorkflowProfileRelationType">
  *   &lt;complexContent>
  *     &lt;extension base="{http://www.plmxml.org/Schemas/PLMXMLSchema}AttribOwnerBase">
- *       &lt;attribute name="dateReleased" type="{http://www.w3.org/2001/XMLSchema}dateTime" />
- *       &lt;attribute name="effectivityRefs" type="{http://www.plmxml.org/Schemas/PLMXMLSchema}uriReferenceListType" />
+ *       &lt;attribute name="ownerRef" use="required" type="{http://www.plmxml.org/Schemas/PLMXMLSchema}anyURIType" />
+ *       &lt;attribute name="profileRefs" use="required" type="{http://www.plmxml.org/Schemas/PLMXMLSchema}uriReferenceListType" />
  *     &lt;/extension>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -49,55 +44,56 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * 
  */
 //@XmlAccessorType(XmlAccessType.FIELD)
-//@XmlType(name = "ReleaseStatusType")
-public class ReleaseStatusType extends AttribOwnerBase {
+//@XmlType(name = "WorkflowProfileRelationType")
+public class WorkflowProfileRelationType extends AttribOwnerBase {
 
-    //@XmlAttribute
-    protected Date dateReleased;
-    //@XmlAttribute
-    protected List<String> effectivityRefs;
+    //@XmlAttribute(required = true)
+    protected String ownerRef;
+    //@XmlAttribute(required = true)
+    protected List<String> profileRefs;
     
-    public ReleaseStatusType(Node node) {
+    
+    public WorkflowProfileRelationType(Node node) {
         super(node);
     }
 
     /**
-     * Gets the value of the dateReleased property.
+     * Gets the value of the ownerRef property.
      * 
      * @return
      *     possible object is
-     *     {@link XMLGregorianCalendar }
+     *     {@link String }
      *     
      */
-    public Date getDateReleased() {
-        return dateReleased;
+    public String getOwnerRef() {
+        return ownerRef;
     }
 
     /**
-     * Sets the value of the dateReleased property.
+     * Sets the value of the ownerRef property.
      * 
      * @param value
      *     allowed object is
-     *     {@link XMLGregorianCalendar }
+     *     {@link String }
      *     
      */
-    public void setDateReleased(Date value) {
-        this.dateReleased = value;
+    public void setOwnerRef(String value) {
+        this.ownerRef = value;
     }
 
     /**
-     * Gets the value of the effectivityRefs property.
+     * Gets the value of the profileRefs property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the effectivityRefs property.
+     * This is why there is not a <CODE>set</CODE> method for the profileRefs property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getEffectivityRefs().add(newItem);
+     *    getProfileRefs().add(newItem);
      * </pre>
      * 
      * 
@@ -107,11 +103,11 @@ public class ReleaseStatusType extends AttribOwnerBase {
      * 
      * 
      */
-    public List<String> getEffectivityRefs() {
-        if (effectivityRefs == null) {
-            effectivityRefs = new ArrayList<String>();
+    public List<String> getProfileRefs() {
+        if (profileRefs == null) {
+            profileRefs = new ArrayList<String>();
         }
-        return this.effectivityRefs;
+        return this.profileRefs;
     }
 
 }

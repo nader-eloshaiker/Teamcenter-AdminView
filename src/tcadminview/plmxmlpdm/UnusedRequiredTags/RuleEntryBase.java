@@ -6,7 +6,7 @@
 //
 
 
-package tcadminview.plmxmlpdm;
+package tcadminview.plmxmlpdm.UnusedRequiredTags;
 
 import tcadminview.plmxmlpdm.base.DescriptionBase;
 import org.w3c.dom.Node;

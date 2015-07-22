@@ -6,7 +6,7 @@
 //
 
 
-package tcadminview.plmxmlpdm;
+package tcadminview.plmxmlpdm.UnusedRequiredTags;
 
 import java.util.ArrayList;
 import java.util.List;

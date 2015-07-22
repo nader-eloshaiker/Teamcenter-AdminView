@@ -48,11 +48,11 @@ public class ResourceLocator {
     }
     
     public static String getVersion() {
-        return "1.1.10 Alpha";
+        return "1.1.11 Alpha";
     }
     
     public static String getReleaseDate() {
-        return "1-Aug-07";
+        return "6-Aug-07";
     }
     
     public static String getApplicationName() {

@@ -12,11 +12,6 @@ package tcadminview.gui.ruletree;
 import javax.swing.*;
 import javax.swing.tree.*;
 import javax.swing.event.*;
-import java.io.*;
-import javax.xml.*;
-import org.xml.sax.*;
-import org.w3c.dom.*;
-import tcadminview.xml.DOMUtil;
 import tcadminview.ruletree.AccessManagerTree;
 import tcadminview.ruletree.AccessManagerItem;
 

@@ -6,7 +6,7 @@
 //
 
 
-package tcadminview.plmxmlpdm;
+package tcadminview.plmxmlpdm.UnusedRequiredTags;
 /*
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;

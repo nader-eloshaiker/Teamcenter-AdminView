@@ -6,7 +6,7 @@
 //
 
 
-package tcadminview.plmxmlpdm;
+package tcadminview.plmxmlpdm.UnusedRequiredTags;
 
 import java.util.Date;
 import tcadminview.plmxmlpdm.base.DescriptionBase;
