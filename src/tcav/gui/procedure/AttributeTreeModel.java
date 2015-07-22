@@ -13,7 +13,7 @@ import tcav.plmxmlpdm.*;
 import tcav.plmxmlpdm.type.*;
 import tcav.plmxmlpdm.type.element.*;
 import tcav.plmxmlpdm.base.*;
-import tcav.procedure.ProcedureManager;
+import tcav.procedure.*;
 import javax.swing.JTree;
 import javax.swing.tree.*;
 import javax.swing.event.*;
@@ -24,185 +24,84 @@ import java.util.*;
  */
 public class AttributeTreeModel implements TreeModel {
     
-    private ProcedureManager pm;
-    private NodeReference rootNode;
+    private IdBase root;
     
     /** Creates a new instance of AttributeTreeModel */
-    public AttributeTreeModel(NodeReference rootNode, ProcedureManager pm) {
-        this.pm = pm;
-        this.rootNode = rootNode;
+    public AttributeTreeModel(IdBase root) {
+        this.root = root;
     }
     
     public AttributeTreeModel() {
-        this(null, null);
+        this(null);
     }
     
     public Object getRoot(){
-        if(rootNode == null)
-            return null;
-        else
-            return rootNode;
+        return root;
     }
     
     public Object getChild(Object parent, int index){
-        NodeReference nrParent = (NodeReference)parent;
+        IdBase nrParent = (IdBase)parent;
         
-        NodeReference nr;
+        IdBase nr;
         AttribOwnerBase aob;
         UserDataType ud;
         WorkflowTemplateType wt;
         
-        switch(nrParent.getClassType()){
+        switch(nrParent.getTagType()){
             case WorkflowHandler:
             case WorkflowBusinessRuleHandler:
-            case Organisation:
             case WorkflowTemplate:
-                aob = pm.getAttribOwnerBase(nrParent.getId());
-                nr = new NodeReference(
-                        aob.getAttribute().get(index).getId(),
-                        aob.getAttributeName(index),
-                        NodeReference.PROCEDURE_ATTRIBUTE,
-                        aob.getAttributeClass(index));
-                nr.setParentId(nrParent.getId());
-                return nr;
-            /*
-            case WorkflowHandler:
-                WorkflowHandlerType wh = pm.getWorkflowHandlers().get(pm.getIdIndex(nrParent.getId()));
-                nr = new NodeReference(
-                        wh.getAttribute().get(index).getId(),
-                        wh.getAttributeName(index),
-                        wh.getAttributeClass(index));
-                nr.setParentId(wh.getId());
-                //nr.setParentClassType(TagTypeEnum.WorkflowHandler);
-                return nr;
-             
-            case WorkflowBusinessRuleHandler:
-                WorkflowBusinessRuleHandlerType wbrh = pm.getWorkflowBusinessRuleHandlers().get(pm.getIdIndex(nrParent.getId()));
-                nr = new NodeReference(
-                        wbrh.getAttribute().get(index).getId(),
-                        wbrh.getAttributeName(index),
-                        wbrh.getAttributeClass(index));
-                nr.setParentId(wbrh.getId());
-                //nr.setParentClassType(TagTypeEnum.WorkflowBusinessRuleHandler);
-                return nr;
-             
-             case Organisation:
-                OrganisationType o = pm.getOrganisations().get(pm.getIdIndex(nrParent.getId()));
-                nr = new NodeReference(
-                        o.getAttribute().get(index).getId(),
-                        o.getAttributeName(index),
-                        o.getAttributeClass(index));
-                nr.setParentId(o.getId());
-                return nr;
-             */
+                aob = (AttribOwnerBase)nrParent;
+                return aob.getAttribute().get(index);
+                
+            case Organisation:
+                OrganisationType o = (OrganisationType)nrParent;
+                return o.getAttribute().get(index);
                 
             case Arguments:
             case UserData:
-                aob = pm.getAttribOwnerBase(nrParent.getParentId());
-                ud = (UserDataType)aob.getAttribute(nrParent.getId());
-                nr = new NodeReference(
-                        ud.getId(),
-                        ud.getUserValue().get(index).getTitle()+": "+ud.getUserValue().get(index).getValue(),
-                        NodeReference.PROCEDURE_ATTRIBUTE,
-                        TagTypeEnum.UserValue);
-                nr.setParentId(aob.getId());
-                nr.setIndex(index);
-                return nr;
+                ud = (UserDataType)nrParent;
+                return ud.getUserValue().get(index);
                 
             case UserValue:
-                aob = pm.getAttribOwnerBase(nrParent.getParentId());
-                ud = (UserDataType)aob.getAttribute(nrParent.getId());
-                UserDataElementType uv = ud.getUserValue().get(nrParent.getIndex());
-                return new NodeReference(
-                        uv.getDataRef(),
-                        pm.getAttribOwnerBase(uv.getDataRef()).getName(),
-                        NodeReference.PROCEDURE_ATTRIBUTE,
-                        pm.getIdClass(uv.getDataRef()));
+                UserDataElementType uv = (UserDataElementType)nrParent;
+                return uv.getData();
                 
             case AssociatedDataSet:
-                aob = pm.getAttribOwnerBase(nrParent.getParentId());
-                AssociatedDataSetType ad = (AssociatedDataSetType)aob.getAttribute(nrParent.getId());
-                if(pm.getIdClass(ad.getDataSetRef()) == TagTypeEnum.WorkflowSignoffProfile){
-                    WorkflowSignoffProfileType wsp =
-                            pm.getWorkflowSignoffProfiles().get(pm.getIdIndex(ad.getDataSetRef()));
-                    return new NodeReference(
-                            wsp.getId(),
-                            "Signoff Profile",
-                            NodeReference.PROCEDURE_ATTRIBUTE,
-                            TagTypeEnum.WorkflowSignoffProfile);
-                    
-                } else
+                AssociatedDataSetType ad = (AssociatedDataSetType)nrParent;
+                if(ad.getDataSet().getTagType() == TagTypeEnum.WorkflowSignoffProfile)
+                    return (WorkflowSignoffProfileType)ad.getDataSet();
+                else
                     return null;
                 
             case AssociatedFolder:
-                aob = pm.getAttribOwnerBase(nrParent.getParentId());
-                AssociatedFolderType af = (AssociatedFolderType)aob.getAttribute(nrParent.getId());
-                if(pm.getIdClass(af.getFolderRef()) == TagTypeEnum.WorkflowSignoffProfile){
-                    WorkflowSignoffProfileType wsp =
-                            pm.getWorkflowSignoffProfiles().get(pm.getIdIndex(af.getFolderRef()));
-                    return new NodeReference(
-                            wsp.getId(),
-                            "Signoff Profile",
-                            NodeReference.PROCEDURE_ATTRIBUTE,
-                            TagTypeEnum.WorkflowSignoffProfile);
-                } else
+                AssociatedFolderType af = (AssociatedFolderType)nrParent;
+                if(af.getFolder().getTagType() == TagTypeEnum.WorkflowSignoffProfile)
+                    return (WorkflowSignoffProfileType)af.getFolder();
+                else
                     return null;
                 
             case AssociatedForm:
-                aob = pm.getAttribOwnerBase(nrParent.getParentId());
-                AssociatedFormType afm = (AssociatedFormType)aob.getAttribute(nrParent.getId());
-                if(pm.getIdClass(afm.getFormRef()) == TagTypeEnum.WorkflowSignoffProfile){
-                    WorkflowSignoffProfileType wsp =
-                            pm.getWorkflowSignoffProfiles().get(pm.getIdIndex(afm.getFormRef()));
-                    return new NodeReference(
-                            wsp.getId(),
-                            "Signoff Profile",
-                            NodeReference.PROCEDURE_ATTRIBUTE,
-                            TagTypeEnum.WorkflowSignoffProfile);
-                } else
+                AssociatedFormType afm = (AssociatedFormType)nrParent;
+                if(afm.getForm().getTagType() == TagTypeEnum.WorkflowSignoffProfile)
+                    return (WorkflowSignoffProfileType)afm.getForm();
+                else
                     return null;
                 
             case ValidationResults:
-                aob = pm.getAttribOwnerBase(nrParent.getParentId());
-                ValidationResultsType vr = (ValidationResultsType)aob.getAttribute(nrParent.getId());
-                nr = new NodeReference(
-                        vr.getId(),
-                        vr.getApplicationRef().get(index).getLabel(),
-                        NodeReference.PROCEDURE_ATTRIBUTE,
-                        TagTypeEnum.Checker);
-                nr.setParentId(aob.getId());
-                nr.setIndex(index);
-                return nr;
+                ValidationResultsType vr = (ValidationResultsType)nrParent;
+                return vr.getChecker().get(index);
                 
             case WorkflowSignoffProfile:
-                WorkflowSignoffProfileType wsp =
-                        pm.getWorkflowSignoffProfiles().get(pm.getIdIndex(nrParent.getId()));
+                WorkflowSignoffProfileType wsp = (WorkflowSignoffProfileType)nrParent;
                 if(index == 0){
-                    if(wsp.getRoleRef() != null) {
-                        RoleType tr = pm.getRoles().get(pm.getIdIndex(wsp.getRoleRef()));
-                        return new NodeReference(
-                                tr.getId(),
-                                tr.getName(),
-                                NodeReference.PROCEDURE_ATTRIBUTE,
-                                TagTypeEnum.Role);
-                    } else if(wsp.getGroupRef() != null) {
-                        OrganisationType o = pm.getOrganisations().get(pm.getIdIndex(wsp.getGroupRef()));
-                        return new NodeReference(
-                                o.getId(),
-                                o.getName(),
-                                NodeReference.PROCEDURE_ATTRIBUTE,
-                                TagTypeEnum.Organisation);
-                    }
-                } else if(index == 1) {
-                    if(wsp.getGroupRef() != null) {
-                        OrganisationType o = pm.getOrganisations().get(pm.getIdIndex(wsp.getGroupRef()));
-                        return new NodeReference(
-                                o.getId(),
-                                o.getName(),
-                                NodeReference.PROCEDURE_ATTRIBUTE,
-                                TagTypeEnum.Organisation);
-                    }
-                }
+                    if(wsp.getRoleRef() != null)
+                        return wsp.getRole();
+                    else if(wsp.getGroupRef() != null)
+                        return wsp.getGroup();
+                } else if(index == 1)
+                    if(wsp.getGroupRef() != null)
+                        return wsp.getGroup();
                 
             default:
                 return null;
@@ -211,29 +110,29 @@ public class AttributeTreeModel implements TreeModel {
     
     
     public int getChildCount(Object parent){
-        NodeReference nrParent = (NodeReference)parent;
+        IdBase nrParent = (IdBase)parent;
         AttribOwnerBase aob;
         WorkflowTemplateType wt;
         
-        switch(nrParent.getClassType()) {
+        switch(nrParent.getTagType()) {
             case WorkflowHandler:
             case WorkflowBusinessRuleHandler:
-            case Organisation:
             case WorkflowTemplate:
-                aob = pm.getAttribOwnerBase(nrParent.getId());
+                aob = (AttribOwnerBase)nrParent;
+                return aob.getAttribute().size();
+                
+            case Organisation:
+                aob = (AttribOwnerBase)nrParent;
                 return aob.getAttribute().size();
                 
             case Arguments:
             case UserData:
-                aob = pm.getAttribOwnerBase(nrParent.getParentId());
-                UserDataType ud = (UserDataType)aob.getAttribute(nrParent.getId());
+                UserDataType ud = (UserDataType)nrParent;
                 return ud.getUserValue().size();
                 
             case UserValue:
-                aob = pm.getAttribOwnerBase(nrParent.getParentId());
-                ud = (UserDataType)aob.getAttribute(nrParent.getId());
-                if((ud.getUserValue().get(nrParent.getIndex()).getDataRef() == null) ||
-                        (ud.getUserValue().get(nrParent.getIndex()).getDataRef().equals("")))
+                UserDataElementType uv = (UserDataElementType)nrParent;
+                if(uv.getDataRef() == null)
                     return 0;
                 else
                     return 1;
@@ -244,13 +143,11 @@ public class AttributeTreeModel implements TreeModel {
                 return 1;
                 
             case ValidationResults:
-                aob = pm.getAttribOwnerBase(nrParent.getParentId());
-                ValidationResultsType vr = (ValidationResultsType)aob.getAttribute(nrParent.getId());
+                ValidationResultsType vr = (ValidationResultsType)nrParent;
                 return vr.getChecker().size();
                 
             case WorkflowSignoffProfile:
-                WorkflowSignoffProfileType wsp =
-                        pm.getWorkflowSignoffProfiles().get(pm.getIdIndex(nrParent.getId()));
+                WorkflowSignoffProfileType wsp = (WorkflowSignoffProfileType)nrParent;
                 if( (wsp.getRoleRef() == null) && (wsp.getGroupRef() == null))
                     return 0;
                 else if( (wsp.getRoleRef() == null) && (wsp.getGroupRef() != null))
@@ -267,29 +164,29 @@ public class AttributeTreeModel implements TreeModel {
     }
     
     public boolean isLeaf(Object node){
-        NodeReference nr = (NodeReference)node;
+        IdBase nr = (IdBase)node;
         AttribOwnerBase aob;
         WorkflowTemplateType wt;
         
-        switch(nr.getClassType()){
+        switch(nr.getTagType()){
             case WorkflowHandler:
             case WorkflowBusinessRuleHandler:
-            case Organisation:
             case WorkflowTemplate:
-                aob = pm.getAttribOwnerBase(nr.getId());
+                aob = (AttribOwnerBase)nr;
+                return (aob.getAttribute().size() == 0);
+
+            case Organisation:
+                aob = (AttribOwnerBase)nr;
                 return (aob.getAttribute().size() == 0);
                 
             case Arguments:
             case UserData:
-                aob = pm.getAttribOwnerBase(nr.getParentId());
-                UserDataType ud = (UserDataType)aob.getAttribute(nr.getId());
+                UserDataType ud = (UserDataType)nr;
                 return (ud.getUserValue().size()==0);
                 
             case UserValue:
-                aob = pm.getAttribOwnerBase(nr.getParentId());
-                ud = (UserDataType)aob.getAttribute(nr.getId());
-                if((ud.getUserValue().get(nr.getIndex()).getDataRef() == null) ||
-                        (ud.getUserValue().get(nr.getIndex()).getDataRef().equals("")))
+                UserDataElementType uv = (UserDataElementType)nr;
+                if(uv.getDataRef() == null)
                     return true;
                 else
                     return false;
@@ -300,13 +197,11 @@ public class AttributeTreeModel implements TreeModel {
                 return false;
                 
             case ValidationResults:
-                aob = pm.getAttribOwnerBase(nr.getParentId());
-                ValidationResultsType vr = (ValidationResultsType)aob.getAttribute(nr.getId());
+                ValidationResultsType vr = (ValidationResultsType)nr;
                 return (vr.getChecker().size()==0);
                 
             case WorkflowSignoffProfile:
-                WorkflowSignoffProfileType wsp =
-                        pm.getWorkflowSignoffProfiles().get(pm.getIdIndex(nr.getId()));
+                WorkflowSignoffProfileType wsp = (WorkflowSignoffProfileType)nr;
                 return ((wsp.getRoleRef() == null) && (wsp.getGroupRef() == null));
                 
             case Role:
@@ -316,35 +211,38 @@ public class AttributeTreeModel implements TreeModel {
     }
     
     public int getIndexOfChild(Object parent, Object child){
-        NodeReference nrParent = (NodeReference)parent;
-        NodeReference nrChild = (NodeReference)child;
+        IdBase nrParent = (IdBase)parent;
+        IdBase nrChild = (IdBase)child;
         AttribOwnerBase aob;
         WorkflowTemplateType wt;
         
-        switch(nrParent.getClassType()){
+        switch(nrParent.getTagType()){
             case WorkflowHandler:
             case WorkflowBusinessRuleHandler:
             case Organisation:
             case WorkflowTemplate:
-                aob = pm.getAttribOwnerBase(nrParent.getId());
-                return aob.getAttributeIndex(nrChild.getId());
+                aob = (AttribOwnerBase)nrParent;
+                return aob.getAttributeRefs().indexOf(nrChild.getId());
                 
             case UserData:
             case Arguments:
+                UserDataType ud = (UserDataType)nrParent;
+                return ud.getUserValue().indexOf((UserDataElementType)nrChild);
+                
             case ValidationResults:
-                return nrChild.getIndex();
+                ValidationResultsType vr = (ValidationResultsType)nrParent;
+                return vr.getChecker().indexOf((ValidationCheckerType)nrChild);
                 
             case WorkflowSignoffProfile:
-                WorkflowSignoffProfileType wsp =
-                        pm.getWorkflowSignoffProfiles().get(pm.getIdIndex(nrParent.getId()));
+                WorkflowSignoffProfileType wsp = (WorkflowSignoffProfileType)nrParent;
                 if( (wsp.getRoleRef() == null) && (wsp.getGroupRef() != null))
                     return 0;
                 else if( (wsp.getRoleRef() != null) && (wsp.getGroupRef() == null))
                     return 0;
                 else if( (wsp.getRoleRef() != null) && (wsp.getGroupRef() != null)){
-                    if(nrChild.getClassType() == TagTypeEnum.Role)
+                    if(nrChild.getTagType() == TagTypeEnum.Role)
                         return 0;
-                    else if(nrChild.getClassType() == TagTypeEnum.Organisation)
+                    else if(nrChild.getTagType() == TagTypeEnum.Organisation)
                         return 1;
                 }
             case AssociatedDataSet:

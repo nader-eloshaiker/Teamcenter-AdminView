@@ -85,6 +85,8 @@ public class ValidationResultsType extends AttributeBase {
         
         setApplication(TagTools.getStringValue(attrib, applicationAttribute));
         
+        setTagType(TagTypeEnum.ValidationResults);
+        
         TagTypeEnum tagType;
         for (int i=0; i<nodeList.getLength(); i++) {
             currentNode = nodeList.item(i);
@@ -100,28 +102,7 @@ public class ValidationResultsType extends AttributeBase {
             }
         }
     } 
-    /**
-     * Gets the value of the checker property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the checker property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getChecker().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link ValidationCheckerType }
-     * 
-     * 
-     */
+
     public List<ValidationCheckerType> getChecker() {
         if (checker == null) {
             checker = new ArrayList<ValidationCheckerType>();
@@ -129,26 +110,10 @@ public class ValidationResultsType extends AttributeBase {
         return this.checker;
     }
 
-    /**
-     * Gets the value of the application property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getApplication() {
         return application;
     }
 
-    /**
-     * Sets the value of the application property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setApplication(String value) {
         this.application = value;
     }

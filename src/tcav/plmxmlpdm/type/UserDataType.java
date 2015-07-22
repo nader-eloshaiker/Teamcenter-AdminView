@@ -86,6 +86,8 @@ public class UserDataType extends AttributeBase {
         
         setType(TagTools.getStringValue(attrib, typeAttribute));
         
+        setTagType(TagTypeEnum.UserData);
+        
         TagTypeEnum tagType;
         for (int i=0; i<nodeList.getLength(); i++) {
             currentNode = nodeList.item(i);
@@ -103,55 +105,17 @@ public class UserDataType extends AttributeBase {
 
     }
 
-    /**
-     * Gets the value of the userValue property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the userValue property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getUserValue().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link UserDataElementType }
-     * 
-     * 
-     */
     public List<UserDataElementType> getUserValue() {
-        if (userValue == null) {
+        if (userValue == null)
             userValue = new ArrayList<UserDataElementType>();
-        }
+        
         return this.userValue;
     }
 
-    /**
-     * Gets the value of the type property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getType() {
         return type;
     }
 
-    /**
-     * Sets the value of the type property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setType(String value) {
         this.type = value;
     }

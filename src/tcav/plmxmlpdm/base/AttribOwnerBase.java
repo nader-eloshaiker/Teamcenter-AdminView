@@ -77,17 +77,17 @@ public abstract class AttribOwnerBase extends DescriptionBase {
     
     //@XmlAttribute
     //@XmlIDREF
-    protected List<Object> attributeRefs;
+    /***************
+     * Customisation
+     * List<String> attributeRefs, use to be List<Object> attributeRefs
+     ***************/
+    protected List<String> attributeRefs;
     
-    private Hashtable<String, TagTypeEnum> idClassLookup;
-
     public AttribOwnerBase(Node node) {
         super(node);
         Node currentNode = node;
         NamedNodeMap attrib = currentNode.getAttributes();
         NodeList nodeList = currentNode.getChildNodes();
-        
-        idClassLookup = new Hashtable<String, TagTypeEnum>();
         
         TagTypeEnum tagType;
         for (int i=0; i<nodeList.getLength(); i++) {
@@ -96,34 +96,40 @@ public abstract class AttribOwnerBase extends DescriptionBase {
             
             switch(tagType) {
                 case Arguments:
+                    UserDataType arg = new UserDataType(currentNode);
+                    arg.setTagType(TagTypeEnum.Arguments);
+                    getAttribute().add(arg);
+                    getAttributeRefs().add(arg.getId());
+                    break;
+
                 case UserData:          
                     UserDataType ud = new UserDataType(currentNode);
                     getAttribute().add(ud);
-                    idClassLookup.put(ud.getId(),tagType);
+                    getAttributeRefs().add(ud.getId());
                     break;
                     
                 case AssociatedDataSet:
                     AssociatedDataSetType ad = new AssociatedDataSetType(currentNode);
                     getAttribute().add(ad);
-                    idClassLookup.put(ad.getId(),tagType);
+                    getAttributeRefs().add(ad.getId());
                     break;
                     
                 case AssociatedFolder:
                     AssociatedFolderType afd = new AssociatedFolderType(currentNode);
                     getAttribute().add(afd);
-                    idClassLookup.put(afd.getId(),tagType);
+                    getAttributeRefs().add(afd.getId());
                     break;
                     
                 case AssociatedForm:
                     AssociatedFormType afm = new AssociatedFormType(currentNode);
                     getAttribute().add(afm);
-                    idClassLookup.put(afm.getId(),tagType);
+                    getAttributeRefs().add(afm.getId());
                     break;
                     
                 case ValidationResults:
                     ValidationResultsType vr = new ValidationResultsType(currentNode);
                     getAttribute().add(vr);
-                    idClassLookup.put(vr.getId(),tagType);
+                    getAttributeRefs().add(vr.getId());
                     break;
                     
                 default:
@@ -133,88 +139,9 @@ public abstract class AttribOwnerBase extends DescriptionBase {
         }
     }
     
-    private String toStringId(String id){
-        if(id.charAt(0)== '#')
-            return id.substring(1);
-        else
-            return id;
-    }
-    
-    private TagTypeEnum getAttributeClass(String id) {
-        if(id == null || id.equals(""))
-            return null;
-        else
-            return idClassLookup.get(toStringId(id));
-        
-    }
-
-    public TagTypeEnum getAttributeClass(int index) {
-        if(index >= getAttribute().size())
-            return null;
-        else
-            return getAttributeClass(getAttribute().get(index).getId());
-     
-    }
-    
-    public AttributeBase getAttribute(String id){
-        for(int i=0; i<getAttribute().size(); i++)
-            if(getAttribute().get(i).getId().equals(toStringId(id)))
-                return getAttribute().get(i);
-        return null;
-    }
-    
-    public int getAttributeIndex(String id){
-        for(int i=0; i<getAttribute().size(); i++)
-            if(getAttribute().get(i).getId().equals(toStringId(id)))
-                return i;
-        return -1;
-    }
-    
-    public String getAttributeName(int index){
-        if(index >= getAttribute().size())
-            return null;
-        
-        String id = getAttribute().get(index).getId();
-        switch(getAttributeClass(id)) {
-            case Arguments:
-            case UserData:
-                return ((UserDataType)getAttribute().get(index)).getType();
-                
-            case AssociatedDataSet:
-                return ((AssociatedDataSetType)getAttribute().get(index)).getRole();
-                
-            case AssociatedFolder:
-                return ((AssociatedFolderType)getAttribute().get(index)).getRole();
-                
-            case AssociatedForm:
-                return ((AssociatedFormType)getAttribute().get(index)).getRole();
-                
-            case ValidationResults:
-                return ((ValidationResultsType)getAttribute().get(index)).getApplication();
-                
-            default:
-                return null;
-                
-        }
-    }
-    
     /**
      * Gets the value of the attribute property.
      *
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the attribute property.
-     *
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getAttribute().add(newItem);
-     * </pre>
-     *
-     *
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link AssociatedFormType }{@code >}
      * {@link JAXBElement }{@code <}{@link UserListDataType }{@code >}
@@ -236,31 +163,9 @@ public abstract class AttribOwnerBase extends DescriptionBase {
         return this.attribute;
     }
     
-    /**
-     * Gets the value of the attributeRefs property.
-     *
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the attributeRefs property.
-     *
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getAttributeRefs().add(newItem);
-     * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Object }
-     *
-     *
-     */
-    public List<Object> getAttributeRefs() {
+    public List<String> getAttributeRefs() {
         if (attributeRefs == null) {
-            attributeRefs = new ArrayList<Object>();
+            attributeRefs = new ArrayList<String>();
         }
         return this.attributeRefs;
     }
