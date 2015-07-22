@@ -35,9 +35,9 @@ public class XMLComponent extends JComponent {
         scrollTreeXML.setPreferredSize(new Dimension(550,340));
         scrollTreeXML.setBorder(new BevelBorder(BevelBorder.LOWERED));
         scrollTreeXML.getViewport().add(treeXML);
-        this.setLayout(new GridLayout(1,1,Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
+        this.setLayout(new GridLayout(1,1,GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
         this.setBorder(new TitledBorder(new EtchedBorder(),"PLMXML Debug Window"));
-        this.add(Utilities.createPanelMargined(scrollTreeXML));
+        this.add(GUIutilities.createPanelMargined(scrollTreeXML));
     }
     
 }

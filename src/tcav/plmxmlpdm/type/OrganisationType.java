@@ -77,84 +77,30 @@ public class OrganisationType extends OwnerBase {
         Node currentNode = node;
         NamedNodeMap attrib = currentNode.getAttributes();
 
-        setAddressRef(
-                TagTools.getStringValue(attrib, addressRefAttribute));
-        setCageCode(
-                TagTools.getStringValue(attrib, cageCodeAttribute));
+        setAddressRef(TagTools.getStringValue(attrib, addressRefAttribute));
+        setCageCode(TagTools.getStringValue(attrib, cageCodeAttribute));
         
         TagTools.addToList(attrib, organisationRefsAttribute, getOrganisationRefs());
+        
+        setTagType(TagTypeEnum.Organisation);
     }
 
-    /**
-     * Gets the value of the addressRef property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getAddressRef() {
         return addressRef;
     }
 
-    /**
-     * Sets the value of the addressRef property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setAddressRef(String value) {
         this.addressRef = value;
     }
 
-    /**
-     * Gets the value of the cageCode property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getCageCode() {
         return cageCode;
     }
 
-    /**
-     * Sets the value of the cageCode property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setCageCode(String value) {
         this.cageCode = value;
     }
 
-    /**
-     * Gets the value of the organisationRefs property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the organisationRefs property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getOrganisationRefs().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link String }
-     * 
-     * 
-     */
     public List<String> getOrganisationRefs() {
         if (organisationRefs == null) {
             organisationRefs = new ArrayList<String>();
@@ -162,4 +108,15 @@ public class OrganisationType extends OwnerBase {
         return this.organisationRefs;
     }
 
+    /***************
+     * Customisation
+     ***************/
+    private OrganisationType[] subOrganisations;
+    
+    public OrganisationType[] getSubOrganisations() {
+        if(subOrganisations == null)
+            subOrganisations = new OrganisationType[getOrganisationRefs().size()];
+        
+        return subOrganisations;
+    }
 }

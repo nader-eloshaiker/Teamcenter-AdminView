@@ -12,14 +12,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.NamedNodeMap;
 import tcav.plmxmlpdm.*;
-
-
-/*
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlType;
-*/
+import tcav.plmxmlpdm.base.IdBase;
 
 /**
  * 
@@ -68,7 +61,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 //@XmlAccessorType(XmlAccessType.FIELD)
 //@XmlType(name = "ApplicationRefType")
-public class ApplicationRefType {
+public class ApplicationRefType extends IdBase {
 
     //@XmlAttribute
     protected final String applicationAttribute = "application";
@@ -86,13 +79,11 @@ public class ApplicationRefType {
     public ApplicationRefType(Node node) {
         NamedNodeMap attrib = node.getAttributes();
         
-        setApplication(
-                TagTools.getStringValue(attrib, applicationAttribute));
-        setLabel(
-                TagTools.getStringValue(attrib, labelAttribute));
-        setVersion(
-                TagTools.getStringValue(attrib, versionAttribute));
+        setApplication(TagTools.getStringValue(attrib, applicationAttribute));
+        setLabel(TagTools.getStringValue(attrib, labelAttribute));
+        setVersion(TagTools.getStringValue(attrib, versionAttribute));
 
+        setTagType(TagTypeEnum.ApplicationRef);
     }
 
     /**

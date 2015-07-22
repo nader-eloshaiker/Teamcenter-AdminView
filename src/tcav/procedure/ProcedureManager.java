@@ -17,20 +17,10 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.NamedNodeMap;
 
-import tcav.plmxmlpdm.HeaderType;
-import tcav.plmxmlpdm.TagTypeEnum;
-import tcav.plmxmlpdm.base.AttribOwnerBase;
-import tcav.plmxmlpdm.type.WorkflowHandlerType;
-import tcav.plmxmlpdm.type.WorkflowTemplateType;
-import tcav.plmxmlpdm.type.SiteType;
-import tcav.plmxmlpdm.type.WorkflowActionType;
-import tcav.plmxmlpdm.type.WorkflowBusinessRuleHandlerType;
-import tcav.plmxmlpdm.type.WorkflowBusinessRuleType;
-import tcav.plmxmlpdm.type.WorkflowSignoffProfileType;
-import tcav.plmxmlpdm.type.RoleType;
-import tcav.plmxmlpdm.type.AccessIntentType;
-import tcav.plmxmlpdm.type.OrganisationType;
-import tcav.plmxmlpdm.classtype.WorkflowTemplateClassificationEnum;
+import tcav.plmxmlpdm.*;
+import tcav.plmxmlpdm.base.*;
+import tcav.plmxmlpdm.type.*;
+import tcav.plmxmlpdm.classtype.*;
 import tcav.xml.DOMUtil;
 
 import tcav.plmxmlpdm.base.AttributeBase;
@@ -41,62 +31,17 @@ import tcav.plmxmlpdm.base.AttributeBase;
  */
 public class ProcedureManager {
     
-    //private ArrayList<WorkflowTemplateType> worklowTemplateList;
+    private ArrayList<WorkflowTemplateType> workflowProcesses;
     private HeaderType header;
-    private WorkflowTemplateList workflowTemplateList;
-    private ArrayList<WorkflowHandlerType> workflowHandlerList;
-    private ArrayList<SiteType> siteList;
-    private ArrayList<WorkflowActionType> workflowActionList;
-    private ArrayList<WorkflowBusinessRuleHandlerType> workflowBusinessRuleHandlerList;
-    private ArrayList<WorkflowBusinessRuleType> workflowBusinessRuleList;
-    private ArrayList<WorkflowSignoffProfileType> workflowSignoffProfileList;
-    private ArrayList<RoleType> roleList;
-    private ArrayList<AccessIntentType> accessIntentList;
-    private ArrayList<OrganisationType> organisationList;
-    
-    private Hashtable<String, Integer> idIndexLookup;
-    private Hashtable<String, TagTypeEnum> idClassLookup;
+    private SiteType site;
     
     private JFrame frame;
-    
-    public final static String[] WORKFLOW_TYPES_NAMES = {
-        "Action",
-        "Business Rule",
-        "Business Handler",
-        "Handler",
-        "Template"
-    };
-    
-    public final static TagTypeEnum[] WORKFLOW_TYPES = {
-        TagTypeEnum.WorkflowAction,
-        TagTypeEnum.WorkflowBusinessRule,
-        TagTypeEnum.WorkflowBusinessRuleHandler,
-        TagTypeEnum.WorkflowHandler,
-        TagTypeEnum.WorkflowTemplate
-    };
-    
     
     /**
      * Creates a new instance of ProcedureManager
      */
     public ProcedureManager(JFrame frame) {
         this.frame = frame;
-        
-        idIndexLookup = new Hashtable<String, Integer>();
-        idClassLookup = new Hashtable<String, TagTypeEnum>();
-        
-        //worklowTemplateList = new ArrayList<WorkflowTemplateType>();
-        workflowTemplateList = new WorkflowTemplateList();
-        workflowHandlerList = new ArrayList<WorkflowHandlerType>();
-        siteList = new ArrayList<SiteType>();
-        workflowActionList = new ArrayList<WorkflowActionType>();
-        workflowBusinessRuleHandlerList = new ArrayList<WorkflowBusinessRuleHandlerType>();
-        workflowBusinessRuleList = new ArrayList<WorkflowBusinessRuleType>();
-        workflowSignoffProfileList = new ArrayList<WorkflowSignoffProfileType>();
-        roleList = new ArrayList<RoleType>();
-        accessIntentList = new ArrayList<AccessIntentType>();
-        organisationList = new ArrayList<OrganisationType>();
-        
     }
     
     public void readFile(File file) throws Exception {
@@ -110,146 +55,40 @@ public class ProcedureManager {
         } catch (Exception exc) {
             throw new Exception("Error reading XML: " + exc);
         }
-        decodeXML(domUtil.getRootNode());
+        mapXML(domUtil.getRootNode());
     }
     
-    
-    private String toStringId(String id){
-        if(id.charAt(0)== '#')
-            return id.substring(1);
-        else
-            return id;
+    public ArrayList<WorkflowTemplateType> getWorkflowProcesses(){
+        return workflowProcesses;
     }
     
-    public int getIdIndex(String id) {
-        if(id == null || id.equals(""))
-            return -1;
-        else
-            return idIndexLookup.get(toStringId(id)).intValue();
-        
-    }
-    
-    public TagTypeEnum getIdClass(String id) {
-        if(id == null || id.equals(""))
-            return null;
-        else
-            return idClassLookup.get(toStringId(id));
-        
-    }
-    
-    public AttribOwnerBase getAttribOwnerBase(String id){
-        if(id == null || id.equals(""))
-            return null;
-        switch(getIdClass(id)){
-            case WorkflowTemplate:
-                return workflowTemplateList.get(getIdIndex(id));
-                
-            case WorkflowHandler:
-                return workflowHandlerList.get(getIdIndex(id));
-                
-            case Site:
-                return siteList.get(getIdIndex(id));
-                
-            case WorkflowAction:
-                return workflowActionList.get(getIdIndex(id));
-                
-            case WorkflowBusinessRuleHandler:
-                return workflowBusinessRuleHandlerList.get(getIdIndex(id));
-                
-            case WorkflowBusinessRule:
-                return workflowBusinessRuleList.get(getIdIndex(id));
-                
-            case WorkflowSignoffProfile:
-                return workflowSignoffProfileList.get(getIdIndex(id));
-                
-            case Role:
-                return roleList.get(getIdIndex(id));
-                
-            case AccessIntent:
-                return accessIntentList.get(getIdIndex(id));
-                
-            case Organisation:
-                return organisationList.get(getIdIndex(id));
-                
-            default:
-                return null;
-        }
-        
+    public SiteType getSite() {
+        return site;
     }
     
     public HeaderType getHeader() {
         return header;
     }
     
-    public ArrayList<AccessIntentType> getAccessIntents() {
-        return accessIntentList;
-    }
-    
-    public ArrayList<WorkflowActionType> getWorkflowActions() {
-        return workflowActionList;
-    }
-    
-    public ArrayList<WorkflowBusinessRuleType> getWorkflowBusinessRules() {
-        return workflowBusinessRuleList;
-    }
-    
-    public ArrayList<WorkflowBusinessRuleHandlerType> getWorkflowBusinessRuleHandlers() {
-        return workflowBusinessRuleHandlerList;
-    }
-    
-    public ArrayList<WorkflowHandlerType> getWorkflowHandlers() {
-        return workflowHandlerList;
-    }
-    
-    public ArrayList<WorkflowSignoffProfileType> getWorkflowSignoffProfiles() {
-        return workflowSignoffProfileList;
-    }
-    
-    public /*ArrayList<WorkflowTemplateType>*/WorkflowTemplateList getWorkflowTemplates() {
-        return workflowTemplateList;
-    }
-    
-    public ArrayList<OrganisationType> getOrganisations() {
-        return organisationList;
-    }
-    
-    public ArrayList<RoleType> getRoles() {
-        return roleList;
-    }
-    
-    public ArrayList<SiteType> getSites() {
-        return siteList;
-    }
-    
-    private void traverse(Node node) {
-        NodeList list = node.getChildNodes();
-        int length = list.getLength();
-        for (int i=0; i<length; i++) {
-            Node n = list.item(i);
-            traverse(n);
-        }
-    }
-    
-    private void setIdLookup(String id, TagTypeEnum tagType, int index) {
-        idIndexLookup.put(id, index);
-        idClassLookup.put(id, tagType);
-    }
-    
-    /* This entire method needs to be uncommented and backported */
-    private void decodeXML(Node parentNode) {
+    private void mapXML(Node parentNode) throws Exception {
         Node currentNode;
         NodeList list = parentNode.getChildNodes();
-        TagTypeEnum tagType;
         int nodeCount = list.getLength();
         int nodeIndex = 0;
+        
+        TagTypeEnum tagType;
+        workflowProcesses = new ArrayList<WorkflowTemplateType>();
+        
+        Hashtable<String,IdBase> tagCache = new Hashtable<String,IdBase>();
         
         try {
             ProgressMonitor progressMonitor = new ProgressMonitor(
                     frame,
-                    "Decoding XML Tags",
+                    "Mapping XML Tags to Procedures",
                     "",
                     0,
                     list.getLength()-1);
+            
             
             for(int i=0; i<nodeCount; i++) {
                 
@@ -257,6 +96,7 @@ public class ProcedureManager {
                     progressMonitor.close();
                     return;
                 }
+                
                 currentNode = list.item(nodeIndex);
                 tagType = TagTypeEnum.fromValue(currentNode.getNodeName());
                 
@@ -266,7 +106,11 @@ public class ProcedureManager {
                 switch(tagType) {
                     case Header:
                         header = new HeaderType(currentNode);
-                        setIdLookup(header.getId(),TagTypeEnum.Header,0);
+                        parentNode.removeChild(currentNode);
+                        break;
+                        
+                    case Site:
+                        site = new SiteType(currentNode);
                         parentNode.removeChild(currentNode);
                         break;
                         
@@ -276,86 +120,215 @@ public class ProcedureManager {
                         
                     case WorkflowTemplate:
                         WorkflowTemplateType wt = new WorkflowTemplateType(currentNode);
-                        workflowTemplateList.add(wt);
-                        setIdLookup(wt.getId(), TagTypeEnum.WorkflowTemplate, workflowTemplateList.size()-1);
-                        parentNode.removeChild(currentNode);
-                        break;
                         
-                    case WorkflowHandler:
-                        WorkflowHandlerType wh = new WorkflowHandlerType(currentNode);
-                        workflowHandlerList.add(wh);
-                        setIdLookup(wh.getId(), TagTypeEnum.WorkflowHandler, workflowHandlerList.size()-1);
-                        parentNode.removeChild(currentNode);
-                        break;
+                        if(wt.getTemplateClassification() == WorkflowTemplateClassificationEnum.PROCESS)
+                            workflowProcesses.add(wt);
+                        tagCache.put(wt.getId(),wt);
                         
-                    case Site:
-                        SiteType stype = new SiteType(currentNode);
-                        siteList.add(stype);
-                        setIdLookup(stype.getId(), TagTypeEnum.Site, siteList.size()-1);
                         parentNode.removeChild(currentNode);
                         break;
                         
                     case WorkflowAction:
                         WorkflowActionType wa = new WorkflowActionType(currentNode);
-                        workflowActionList.add(wa);
-                        setIdLookup(wa.getId(), TagTypeEnum.WorkflowAction, workflowActionList.size()-1);
+                        tagCache.put(wa.getId(), wa);
                         parentNode.removeChild(currentNode);
                         break;
                         
-                    case WorkflowBusinessRuleHandler:
-                        WorkflowBusinessRuleHandlerType wbrh = new WorkflowBusinessRuleHandlerType(currentNode);
-                        workflowBusinessRuleHandlerList.add(wbrh);
-                        setIdLookup(wbrh.getId(), TagTypeEnum.WorkflowBusinessRuleHandler, workflowBusinessRuleHandlerList.size()-1);
+                    case WorkflowHandler:
+                        WorkflowHandlerType wh = new WorkflowHandlerType(currentNode);
+                        tagCache.put(wh.getId(), wh);
                         parentNode.removeChild(currentNode);
                         break;
                         
                     case WorkflowBusinessRule:
                         WorkflowBusinessRuleType wbr = new WorkflowBusinessRuleType(currentNode);
-                        workflowBusinessRuleList.add(wbr);
-                        setIdLookup(wbr.getId(), TagTypeEnum.WorkflowBusinessRule, workflowBusinessRuleList.size()-1);
+                        tagCache.put(wbr.getId(), wbr);
                         parentNode.removeChild(currentNode);
                         break;
                         
+                    case WorkflowBusinessRuleHandler:
+                        WorkflowBusinessRuleHandlerType wbrh = new WorkflowBusinessRuleHandlerType(currentNode);
+                        tagCache.put(wbrh.getId(), wbrh);
+                        parentNode.removeChild(currentNode);
+                        break;
+                        
+                        
+                        
                     case WorkflowSignoffProfile:
                         WorkflowSignoffProfileType wsp = new WorkflowSignoffProfileType(currentNode);
-                        workflowSignoffProfileList.add(wsp);
-                        setIdLookup(wsp.getId(), TagTypeEnum.WorkflowSignoffProfile, workflowSignoffProfileList.size()-1);
+                        tagCache.put(wsp.getId(), wsp);
                         parentNode.removeChild(currentNode);
                         break;
                         
                     case Role:
                         RoleType r = new RoleType(currentNode);
-                        roleList.add(r);
-                        setIdLookup(r.getId(), TagTypeEnum.Role, roleList.size()-1);
+                        tagCache.put(r.getId(), r);
                         parentNode.removeChild(currentNode);
                         break;
                         
                     case AccessIntent:
                         AccessIntentType ai = new AccessIntentType(currentNode);
-                        accessIntentList.add(ai);
-                        setIdLookup(ai.getId(), TagTypeEnum.AccessIntent, accessIntentList.size()-1);
+                        tagCache.put(ai.getId(), ai);
                         parentNode.removeChild(currentNode);
                         break;
                         
                     case Organisation:
                         OrganisationType o = new OrganisationType(currentNode);
-                        organisationList.add(o);
-                        setIdLookup(o.getId(), TagTypeEnum.Organisation, organisationList.size()-1);
+                        tagCache.put(o.getId(), o);
                         parentNode.removeChild(currentNode);
                         break;
                         
                     default:
-                        nodeCount++;
-                        System.out.println("ProcedureManager: "+currentNode.getNodeName());
+                        nodeIndex++;
                         break;
                 }
             }
+            
+            for(int iP=0; iP<workflowProcesses.size(); iP++) {
+                processSubWorkflows(workflowProcesses.get(iP), tagCache);
+                processDependantTasks(workflowProcesses.get(iP), tagCache);
+                processAttributes(workflowProcesses.get(iP), tagCache);
+            }
+            
+            
         } catch (Exception ex) {
-            System.err.println("XML Decode Error: "+ex.getMessage());
+            System.err.println("Map XML Error: "+ex.getMessage());
             ex.printStackTrace();
         }
-        
     }
     
+    private void processAttributes(WorkflowTemplateType node, Hashtable<String,IdBase> tagCache) {
+        
+        processAttribOwnerBase(node, tagCache);
+        for(int k=0; k<node.getActionRefs().size(); k++)
+            attachAttributeToAction(node.getActions()[k], tagCache);
+        
+        for(int j=0; j<node.getSubTemplateRefs().size(); j++) {
+            processAttribOwnerBase(node.getSubTemplates()[j], tagCache);
+        }
+    }
+    
+    private void processAttribOwnerBase(AttribOwnerBase node, Hashtable<String, IdBase> tagCache){
+        for(int i=0; i<node.getAttributeRefs().size(); i++) {
+            switch(node.getAttribute().get(i).getTagType()){
+                case AssociatedDataSet:
+                    AssociatedDataSetType ad = (AssociatedDataSetType)node.getAttribute().get(i);
+                    if(ad.getDataSetRef() != null) {
+                        ad.setDataSet(tagCache.get(ad.getDataSetRef()));
+                        if(tagCache.get(ad.getDataSetRef()).getTagType() == TagTypeEnum.WorkflowSignoffProfile)
+                            attachAttributeToSignoffProfile((WorkflowSignoffProfileType)ad.getDataSet(),tagCache);
+                    }
+                    break;
+                    
+                case AssociatedFolder:
+                    AssociatedFolderType afd = (AssociatedFolderType)node.getAttribute().get(i);
+                    if(afd.getFolderRef() != null) {
+                        afd.setFolder(tagCache.get(afd.getFolderRef()));
+                        if(tagCache.get(afd.getFolderRef()).getTagType() == TagTypeEnum.WorkflowSignoffProfile)
+                            attachAttributeToSignoffProfile((WorkflowSignoffProfileType)afd.getFolder(),tagCache);
+                    }
+                    break;
+                    
+                case AssociatedForm:
+                    AssociatedFormType afm = (AssociatedFormType)node.getAttribute().get(i);
+                    if(afm.getFormRef() != null) {
+                        afm.setForm(tagCache.get(afm.getFormRef()));
+                        if(tagCache.get(afm.getFormRef()).getTagType() == TagTypeEnum.WorkflowSignoffProfile)
+                            attachAttributeToSignoffProfile((WorkflowSignoffProfileType)afm.getForm(),tagCache);
+                        
+                    }
+                    break;
+                    
+                case Arguments:
+                case UserData:
+                    UserDataType ud = (UserDataType)node.getAttribute().get(i);
+                    for(int k=0; k<ud.getUserValue().size(); k++) {
+                        if(ud.getUserValue().get(k).getDataRef() != null) {
+                            ud.getUserValue().get(k).setData((WorkflowTemplateType)tagCache.get(ud.getUserValue().get(k).getDataRef()));
+                            processAttribOwnerBase(ud.getUserValue().get(k).getData(), tagCache);
+                        }
+                    }
+                    
+                case ValidationResults:
+                default:
+                    break;
+            }
+        }
+    }
+    
+    private void attachAttributeToAction(WorkflowActionType wa, Hashtable<String,IdBase> tagCache) {
+        for(int i=0; i<wa.getActionHandlerRefs().size(); i++) {
+            processAttribOwnerBase(wa.getActionHandlers()[i], tagCache);
+        }
+    }
+    
+    private void attachAttributeToSignoffProfile(WorkflowSignoffProfileType wsp, Hashtable<String,IdBase> tagCache) {
+        if(wsp.getRoleRef() != null)
+            wsp.setRole((RoleType)tagCache.get(wsp.getRoleRef()));
+        if(wsp.getGroupRef() != null)
+            wsp.setGroup((OrganisationType)tagCache.get(wsp.getGroupRef()));
+    }
+    
+    private void processSubWorkflows(WorkflowTemplateType node, Hashtable<String, IdBase> tagCache) {
+        processActions(node, tagCache);
+        
+        for(int i=0; i<node.getSubTemplateRefs().size(); i++) {
+            if(tagCache.containsKey(node.getSubTemplateRefs().get(i))) {
+                node.getSubTemplates()[i] = (WorkflowTemplateType)tagCache.get(node.getSubTemplateRefs().get(i));
+                processSubWorkflows(node.getSubTemplates()[i], tagCache);
+            } else
+                System.out.println("Mapping Workflow Cache Error: Could not find "+node.getSubTemplates()[i]);
+        }
+    }
+    
+    private void processDependantTasks(WorkflowTemplateType node, Hashtable<String, IdBase> tagCache) {
+        for(int iD=0; iD<node.getDependencyTaskTemplateRefs().size(); iD++) {
+            if(tagCache.containsKey(node.getDependencyTaskTemplateRefs().get(iD))) {
+                node.getDependantTaskTemplates()[iD] = (WorkflowTemplateType)tagCache.get(node.getDependencyTaskTemplateRefs().get(iD));
+                processDependantTasks(node.getDependantTaskTemplates()[iD], tagCache);
+            } else
+                System.out.println("Mapping Dependant Task Cache Error: Could not find "+node.getDependencyTaskTemplateRefs().get(iD));
+        }
+    }
+    
+    private void processActions(WorkflowTemplateType node, Hashtable<String, IdBase> tagCache) {
+        for(int iA=0; iA<node.getActionRefs().size(); iA++) {
+            if(tagCache.containsKey(node.getActionRefs().get(iA))) {
+                node.getActions()[iA] = (WorkflowActionType)tagCache.get(node.getActionRefs().get(iA));
+                attachActionHandlers(node.getActions()[iA], tagCache);
+                attachBusinessRules(node.getActions()[iA], tagCache);
+            } else
+                System.out.println("Mapping Action Cache Error: Could not find "+node.getActions()[iA]);
+        }
+    }
+    
+    private void attachActionHandlers(WorkflowActionType node, Hashtable<String, IdBase> tagCache) {
+        for(int iH=0; iH<node.getActionHandlerRefs().size(); iH++) {
+            if(tagCache.containsKey(node.getActionHandlerRefs().get(iH))) {
+                node.getActionHandlers()[iH] = (WorkflowHandlerType)tagCache.get(node.getActionHandlerRefs().get(iH));
+            } else
+                System.out.println("Mapping Handler Cache Error: Could not find "+node.getActionHandlerRefs().get(iH));
+        }
+    }
+    
+    private void attachBusinessRules(WorkflowActionType node, Hashtable<String, IdBase> tagCache){
+        for(int iR=0; iR<node.getRuleRefs().size(); iR++) {
+            if(tagCache.containsKey(node.getRuleRefs().get(iR))) {
+                node.getRules()[iR] = (WorkflowBusinessRuleType)tagCache.get(node.getRuleRefs().get(iR));
+                attachBusinessRuleHandlers(node.getRules()[iR], tagCache);
+                
+            } else
+                System.out.println("Mapping Business Rule Cache Error: Could not find "+node.getRuleRefs().get(iR));
+        }
+    }
+    
+    private void attachBusinessRuleHandlers(WorkflowBusinessRuleType node, Hashtable<String, IdBase> tagCache){
+        for(int irh=0; irh<node.getRuleHandlerRefs().size(); irh++) {
+            if(tagCache.containsKey(node.getRuleHandlerRefs().get(irh))) {
+                node.getRuleHandlers()[irh] = (WorkflowBusinessRuleHandlerType)tagCache.get(node.getRuleHandlerRefs().get(irh));
+            } else
+                System.out.println("Mapping Business Rule Handler Cache Error: Could not find "+node.getRuleHandlerRefs().get(irh));
+        }
+    }
     
 }

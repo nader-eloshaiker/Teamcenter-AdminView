@@ -1,5 +1,5 @@
 /*
- * ProcedureComponent.java
+ * ProcedureManagerComponent.java
  *
  * Created on 20 July 2007, 11:46
  *
@@ -36,7 +36,7 @@ import java.util.ArrayList;
  *
  * @author nzr4dl
  */
-public class ProcedureComponent extends JPanel implements TabbedPanel {
+public class ProcedureManagerComponent extends JPanel implements TabbedPanel {
     
     protected JFrame parentFrame;
     protected ProcedureManager pm;
@@ -44,23 +44,21 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
     protected ProcedureTreeModel modelProcedure;
     
     /**
-     * Creates a new instance of ProcedureComponent
+     * Creates a new instance of ProcedureManagerComponent
      */
-    public ProcedureComponent(JFrame parentFrame, ProcedureManager pm) {
+    public ProcedureManagerComponent(JFrame parentFrame, ProcedureManager pm) {
         this.pm = pm;
         this.parentFrame = parentFrame;
         
         JPanel panelLeft = new JPanel();
-        panelLeft.setLayout(new GridLayout(2,1,Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
-        panelLeft.add(Utilities.createPanelMargined(createWorkflowProcessPanel()));
-        panelLeft.add(Utilities.createPanelMargined(createActionPanel()));
+        panelLeft.setLayout(new GridLayout(2,1,GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
+        panelLeft.add(GUIutilities.createPanelMargined(createWorkflowProcessPanel()));
+        panelLeft.add(GUIutilities.createPanelMargined(createActionPanel()));
         
         JPanel panelRight = new JPanel();
         panelRight.setLayout(new BorderLayout());
-        panelRight.add("Center",Utilities.createPanelMargined(createAttributesPanel()));
-        panelRight.add("South", Utilities.createPanelMargined(createXMLPanel()));
-        
-        
+        panelRight.add("Center",GUIutilities.createPanelMargined(createAttributesPanel()));
+        panelRight.add("South", GUIutilities.createPanelMargined(createXMLPanel()));
         
         splitPane1 = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, panelLeft, panelRight);
         splitPane1.setResizeWeight(1.0);
@@ -72,6 +70,11 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
                 Settings.setPMSplitLocation(splitPane1.getDividerLocation());
             }
         });
+        
+        ToolTipManager.sharedInstance().registerComponent(treeWorkflowProcess);
+        ToolTipManager.sharedInstance().registerComponent(treeAction);
+        ToolTipManager.sharedInstance().registerComponent(treeAttributes);
+        
         this.setLayout(new BorderLayout());
         this.add("Center",splitPane1);
         
@@ -86,13 +89,12 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
         // Action Tree
         treeAction = new JTreeAdvanced(new ActionTreeModel());
         treeAction.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-        //treeAction.setLargeModel(true);
-        treeAction.setCellRenderer(new ProcedureTreeCellRenderer());
+        treeAction.setCellRenderer(new ActionTreeCellRenderer());
         treeAction.addTreeSelectionListener(new TreeSelectionListener() {
             public void valueChanged(TreeSelectionEvent e) {
                 TreePath path = e.getPath();
-                NodeReference nr = (NodeReference)path.getLastPathComponent();
-                updateNodeDetails(nr);
+                IdBase procedure = (IdBase)path.getLastPathComponent();
+                updateAttributeTree(procedure);
             }
         });
         JScrollPane scrollTreeAction = new JScrollPane();
@@ -130,8 +132,8 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
         JPanel panelActions = new JPanel();
         panelActions.setBorder(new CompoundBorder(
                 new TitledBorder(new EtchedBorder(),"Actions"),
-                new EmptyBorder(Utilities.GAP_MARGIN,Utilities.GAP_MARGIN,Utilities.GAP_MARGIN,Utilities.GAP_MARGIN)));
-        panelActions.setLayout(new BorderLayout(Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
+                new EmptyBorder(GUIutilities.GAP_MARGIN,GUIutilities.GAP_MARGIN,GUIutilities.GAP_MARGIN,GUIutilities.GAP_MARGIN)));
+        panelActions.setLayout(new BorderLayout(GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
         panelActions.add("Center",scrollTreeAction);
         panelActions.add("South",toolbar);
         
@@ -145,18 +147,18 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
     public JComponent createWorkflowProcessPanel() {
         
         // Workflow Process Tree
-        treeWorkflowProcess = new JTreeAdvanced(new ProcedureTreeModel(pm, Settings.getPMProcedureMode()));
+        treeWorkflowProcess = new JTreeAdvanced(new ProcedureTreeModel(pm.getWorkflowProcesses(), pm.getSite(), Settings.getPMProcedureMode()));
         treeWorkflowProcess.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-        //treeWorkflowProcess.setLargeModel(true);
-        treeWorkflowProcess.setCellRenderer(new ProcedureTreeCellRenderer());
+        treeWorkflowProcess.setCellRenderer(new TagTreeCellRenderer());
         treeWorkflowProcess.addTreeSelectionListener(new TreeSelectionListener() {
             public void valueChanged(TreeSelectionEvent e) {
                 TreePath path = e.getPath();
-                NodeReference nr = (NodeReference)path.getLastPathComponent();
-                updateNodeDetails(nr);
-                updateActionDetails(nr);
+                IdBase procedure = (IdBase)path.getLastPathComponent();
+                updateAttributeTree(procedure);
+                updateActionTree(procedure);
             }
         });
+        
         JScrollPane scrollTreeWorkflowProcess = new JScrollPane();
         scrollTreeWorkflowProcess.setBorder(new BevelBorder(BevelBorder.LOWERED));
         scrollTreeWorkflowProcess.getViewport().add(treeWorkflowProcess);
@@ -167,7 +169,7 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
         radioProcedureDependantTasks.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
                 Settings.setPMProcedureMode(ProcedureTreeModel.MODE_DEPENDANT_TASKS);
-                treeWorkflowProcess.setModel(new ProcedureTreeModel(pm, Settings.getPMProcedureMode()));
+                treeWorkflowProcess.setModel(new ProcedureTreeModel(pm.getWorkflowProcesses(), pm.getSite(), Settings.getPMProcedureMode()));
             }
         });
         radioProcedureSubWorkflow = new JRadioButton("Sub Workflows");
@@ -175,7 +177,7 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
         radioProcedureSubWorkflow.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
                 Settings.setPMProcedureMode(ProcedureTreeModel.MODE_SUB_WORKFLOWS);
-                treeWorkflowProcess.setModel(new ProcedureTreeModel(pm, Settings.getPMProcedureMode()));
+                treeWorkflowProcess.setModel(new ProcedureTreeModel(pm.getWorkflowProcesses(), pm.getSite(), Settings.getPMProcedureMode()));
             }
         });
         ButtonGroup buttonGroupProcedureMode = new ButtonGroup();
@@ -197,10 +199,10 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
         
         
         JPanel panelWorkflowProcess =  new JPanel();
-        panelWorkflowProcess.setLayout(new BorderLayout(Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
+        panelWorkflowProcess.setLayout(new BorderLayout(GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
         panelWorkflowProcess.setBorder(new CompoundBorder(
                 new TitledBorder(new EtchedBorder(),"Workflow Templates"),
-                new EmptyBorder(Utilities.GAP_MARGIN,Utilities.GAP_MARGIN,Utilities.GAP_MARGIN,Utilities.GAP_MARGIN)));
+                new EmptyBorder(GUIutilities.GAP_MARGIN,GUIutilities.GAP_MARGIN,GUIutilities.GAP_MARGIN,GUIutilities.GAP_MARGIN)));
         panelWorkflowProcess.add("South",toolBarWorkflowView);
         panelWorkflowProcess.add("Center",scrollTreeWorkflowProcess);
         
@@ -209,7 +211,7 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
     }
     
     public boolean isEmptyPanel(){
-        return (pm.getWorkflowTemplates().size() == 0);
+        return (pm.getWorkflowProcesses().size() == 0);
     }
     
     protected JTreeAdvanced treeAttributes;
@@ -220,12 +222,12 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
         treeAttributes = new JTreeAdvanced(new AttributeTreeModel());
         treeAttributes.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         treeAttributes.setLargeModel(true);
-        treeAttributes.setCellRenderer(new ProcedureTreeCellRenderer());
+        treeAttributes.setCellRenderer(new TagTreeCellRenderer());
         treeAttributes.addTreeSelectionListener(new TreeSelectionListener() {
             public void valueChanged(TreeSelectionEvent e) {
                 TreePath path = e.getPath();
-                NodeReference nr = (NodeReference)path.getLastPathComponent();
-                updateAttribDetails(nr);
+                IdBase procedure = (IdBase)path.getLastPathComponent();
+                updateXMLTable(procedure);
             }
         });
         
@@ -263,18 +265,18 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
         
         
         JPanel panelAttributeInner =  new JPanel();
-        panelAttributeInner.setLayout(new BorderLayout(Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
+        panelAttributeInner.setLayout(new BorderLayout(GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
         panelAttributeInner.add("Center",scrollTreeAttributes);
         panelAttributeInner.add("South",toolBarAttributeView);
         
         
         JPanel panelAttributes = new JPanel();
-        panelAttributes.setLayout(new BorderLayout(Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
+        panelAttributes.setLayout(new BorderLayout(GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
         panelAttributes.setBorder(new CompoundBorder(
                 new TitledBorder(new EtchedBorder(),"Attributes"),
-                new EmptyBorder(Utilities.GAP_MARGIN,Utilities.GAP_MARGIN,Utilities.GAP_MARGIN,Utilities.GAP_MARGIN)));
+                new EmptyBorder(GUIutilities.GAP_MARGIN,GUIutilities.GAP_MARGIN,GUIutilities.GAP_MARGIN,GUIutilities.GAP_MARGIN)));
         
-        panelAttributes.add("Center",Utilities.createPanelMargined(panelAttributeInner));
+        panelAttributes.add("Center",GUIutilities.createPanelMargined(panelAttributeInner));
         
         return panelAttributes;
     }
@@ -289,31 +291,31 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
         scrolltableXML.getViewport().add(tableXML);
         
         JPanel panelAttributeDetails = new JPanel();
-        panelAttributeDetails.setLayout(new BorderLayout(Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
+        panelAttributeDetails.setLayout(new BorderLayout(GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
         panelAttributeDetails.setBorder(new CompoundBorder(
                 new TitledBorder(new EtchedBorder(),"Details"),
-                new EmptyBorder(Utilities.GAP_MARGIN,Utilities.GAP_MARGIN,Utilities.GAP_MARGIN,Utilities.GAP_MARGIN)));
+                new EmptyBorder(GUIutilities.GAP_MARGIN,GUIutilities.GAP_MARGIN,GUIutilities.GAP_MARGIN,GUIutilities.GAP_MARGIN)));
         panelAttributeDetails.add("Center",scrolltableXML);
         
         return panelAttributeDetails;
     }
     
-    private void updateNodeDetails(NodeReference nr) {
-        updateAttribDetails(nr);
-        treeAttributes.setModel(new AttributeTreeModel(nr,pm));
+    private void updateAttributeTree(IdBase procedure) {
+        updateXMLTable(procedure);
+        treeAttributes.setModel(new AttributeTreeModel(procedure));
         if(Settings.getPMWorkflowExpandedView())
-            Utilities.expandTree(treeAttributes, parentFrame);
+            GUIutilities.expandTree(treeAttributes, parentFrame);
     }
     
-    private void updateAttribDetails(NodeReference nr){
-        tableXML.setModel(new XMLTableModel(nr, pm));
-        Utilities.packColumns(tableXML, 2);
+    private void updateXMLTable(IdBase procedure){
+        tableXML.setModel(new XMLTableModel(procedure));
+        GUIutilities.packColumns(tableXML, 2);
     }
     
-    private void updateActionDetails(NodeReference nr) {
-        treeAction.setModel(new ActionTreeModel(nr, pm));
+    private void updateActionTree(IdBase procedure) {
+        treeAction.setModel(new ActionTreeModel(procedure));
         if(Settings.getPMActionExpandedView())
-            Utilities.expandTree(treeAction, parentFrame);
+            GUIutilities.expandTree(treeAction, parentFrame);
     }
     
     public JToolBar createTreeToolbar(JTreeAdvanced tree) {
@@ -324,7 +326,7 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
             public void actionPerformed(ActionEvent e) {
                 new Thread() {
                     public void run() {
-                        Utilities.expandTreeBranch(tree, parentFrame);
+                        GUIutilities.expandTreeBranch(tree, parentFrame);
                     }
                 }.start();
             }
@@ -336,7 +338,7 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
             public void actionPerformed(ActionEvent e) {
                 new Thread() {
                     public void run() {
-                        Utilities.expandTree(tree, parentFrame);
+                        GUIutilities.expandTree(tree, parentFrame);
                     }
                 }.start();
             }
@@ -348,7 +350,7 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
             public void actionPerformed(ActionEvent e) {
                 new Thread() {
                     public void run() {
-                        Utilities.collapseTreeBranch(tree, parentFrame);
+                        GUIutilities.collapseTreeBranch(tree, parentFrame);
                     }
                 }.start();
             }
@@ -360,7 +362,7 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
             public void actionPerformed(ActionEvent e) {
                 new Thread() {
                     public void run() {
-                        Utilities.collapseTree(tree, parentFrame);
+                        GUIutilities.collapseTree(tree, parentFrame);
                     }
                 }.start();
             }
@@ -387,10 +389,10 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
         
         JToolBar toolbar = new JToolBar();
         toolbar.setMargin(new Insets(
-                Utilities.GAP_INSET,
-                Utilities.GAP_INSET,
-                Utilities.GAP_INSET,
-                Utilities.GAP_INSET));
+                GUIutilities.GAP_INSET,
+                GUIutilities.GAP_INSET,
+                GUIutilities.GAP_INSET,
+                GUIutilities.GAP_INSET));
         //toolbar.setFloatable(false);
         toolbar.add(buttonExpandAll);
         toolbar.add(buttonExpandBelow);

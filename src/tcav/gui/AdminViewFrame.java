@@ -10,7 +10,7 @@
 package tcav.gui;
 
 import tcav.gui.ruletree.AccessManagerComponent;
-import tcav.gui.procedure.ProcedureComponent;
+import tcav.gui.procedure.ProcedureManagerComponent;
 import tcav.ruletree.AccessManager;
 import tcav.procedure.ProcedureManager;
 import tcav.utils.CustomFileFilter;
@@ -159,10 +159,10 @@ public class AdminViewFrame extends JFrame{
         });
         
         toolbar.setMargin(new Insets(
-                Utilities.GAP_INSET,
-                Utilities.GAP_INSET,
-                Utilities.GAP_INSET,
-                Utilities.GAP_INSET));
+                GUIutilities.GAP_INSET,
+                GUIutilities.GAP_INSET,
+                GUIutilities.GAP_INSET,
+                GUIutilities.GAP_INSET));
         toolbar.add(buttonOpenRuleTree);
         toolbar.add(buttonOpenProcedure);
         toolbar.addSeparator();
@@ -441,8 +441,8 @@ public class AdminViewFrame extends JFrame{
                             throw new Exception("Corrupted File: "+fc.getSelectedFile().getName());
                         }
                         
-                        if(pm.getWorkflowTemplates().size() == 0) {
-                            throw new Exception("No workflow templates found in file"+fc.getSelectedFile().getName());
+                        if(pm.getWorkflowProcesses().size() == 0) {
+                            throw new Exception("No workflow processes found in file"+fc.getSelectedFile().getName());
                         }
                         
                         for(int index=0; index<tabbedpane.getTabCount(); index++) {
@@ -451,7 +451,7 @@ public class AdminViewFrame extends JFrame{
                             }
                         }
                         
-                        ProcedureComponent wfComponent = new ProcedureComponent(parentFrame, pm);
+                        ProcedureManagerComponent wfComponent = new ProcedureManagerComponent(parentFrame, pm);
                         tabbedpane.addTab(fc.getSelectedFile().getName(), iconProcedure, wfComponent);
                         tabbedpane.setSelectedComponent(wfComponent);
                         

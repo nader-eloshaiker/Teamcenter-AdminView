@@ -2,18 +2,9 @@
 package tcav.plmxmlpdm.base;
 
 import tcav.plmxmlpdm.TagTools;
+import tcav.plmxmlpdm.TagTypeEnum;
 import org.w3c.dom.Node;
 import org.w3c.dom.NamedNodeMap;
-
-/*
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-*/
 
 /**
  * <p>Java class for IdBase complex type.
@@ -51,28 +42,28 @@ public abstract class IdBase {
         
     }
 
-    /**
-     * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
+    public IdBase() {
+    }
+
     public String getId() {
         return id;
     }
 
-    /**
-     * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setId(String value) {
         this.id = value;
+    }
+    
+    /***************
+     * Customisation 
+     ***************/
+    private TagTypeEnum tagType;
+
+    protected void setTagType(TagTypeEnum tagType){
+        this.tagType = tagType;
+    }
+    
+    public TagTypeEnum getTagType() {
+        return tagType;
     }
 
 }

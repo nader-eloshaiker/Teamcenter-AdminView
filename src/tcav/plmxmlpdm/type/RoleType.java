@@ -9,6 +9,7 @@
 package tcav.plmxmlpdm.type;
 
 import tcav.plmxmlpdm.base.AttribOwnerBase;
+import tcav.plmxmlpdm.TagTypeEnum;
 import org.w3c.dom.Node;
 /*
 import javax.xml.bind.annotation.XmlAccessType;
@@ -47,6 +48,8 @@ public class RoleType extends AttribOwnerBase {
     
     public RoleType(Node node) {
         super(node);
+        
+        setTagType(TagTypeEnum.Role);
     }
 
 

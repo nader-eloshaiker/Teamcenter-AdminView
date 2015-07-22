@@ -9,15 +9,11 @@
 package tcav.plmxmlpdm.type;
 
 import tcav.plmxmlpdm.TagTools;
+import tcav.plmxmlpdm.TagTypeEnum;
 import tcav.plmxmlpdm.base.AttributeBase;
+import tcav.plmxmlpdm.base.IdBase;
 import org.w3c.dom.Node;
 import org.w3c.dom.NamedNodeMap;
-/*
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlType;
-*/
 
 /**
  * 
@@ -66,54 +62,36 @@ public class AssociatedFormType extends AttributeBase {
        
         setFormRef(TagTools.getStringValue(attrib, formRefAttribute));
         setRole(TagTools.getStringValue(attrib, roleAttribute));
+        
+        setTagType(TagTypeEnum.AssociatedForm);
     }
 
-    /**
-     * Gets the value of the formRef property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getFormRef() {
         return formRef;
     }
 
-    /**
-     * Sets the value of the formRef property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setFormRef(String value) {
         this.formRef = value;
     }
 
-    /**
-     * Gets the value of the role property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getRole() {
         return role;
     }
 
-    /**
-     * Sets the value of the role property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setRole(String value) {
         this.role = value;
     }
 
+    /***************
+     * Customisation
+     ***************/
+    private IdBase form;
+    
+    public IdBase getForm() {
+        return form;
+    }
+
+    public void setForm(IdBase form) {
+        this.form = form;
+    }
 }

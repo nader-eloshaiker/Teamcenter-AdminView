@@ -13,15 +13,10 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.NamedNodeMap;
 import tcav.plmxmlpdm.*;
+import tcav.plmxmlpdm.base.IdBase;
 import tcav.plmxmlpdm.classtype.UserValueDataType;
 import tcav.plmxmlpdm.type.UserListDataType;
-/*
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-*/
+import tcav.plmxmlpdm.type.WorkflowTemplateType;
 
 /**
  * 
@@ -89,7 +84,7 @@ import javax.xml.bind.annotation.XmlType;
     "userList"
 })
  **/
-public class UserDataElementType {
+public class UserDataElementType extends IdBase {
 
     //@XmlElement(name = "UserList")
     //NOTE:This needs to be checked for implementation
@@ -153,35 +148,25 @@ public class UserDataElementType {
         NamedNodeMap attrib = currentNode.getAttributes();
         NodeList nodeList = currentNode.getChildNodes();
         
-        setDataRef(
-                TagTools.getStringValue(attrib, dataRefAttribute));
-        setEditable(
-                Boolean.parseBoolean(
+        setDataRef(TagTools.getStringValue(attrib, dataRefAttribute));
+        setEditable(Boolean.parseBoolean(
                 TagTools.getStringValue(attrib, editableAttribute)));
-        setFormat(
-                TagTools.getStringValue(attrib, formatAttribute));
-        setMaxExclusive(
-                TagTools.getDoubleValue(attrib, maxExclusiveAttribute));
-        setMaxInclusive(
-                TagTools.getDoubleValue(attrib, maxInclusiveAttribute));
-        setMaxLength(
-                TagTools.getIntegerValue(attrib, maxLengthAttribute));
-        setMinExclusive(
-                TagTools.getDoubleValue(attrib, minExclusiveAttribute));
-        setMinInclusive(
-                TagTools.getDoubleValue(attrib, minInclusiveAttribute));
-        setMinLength(
-                TagTools.getIntegerValue(attrib, minLengthAttribute));
-        setStepValue(
-                TagTools.getDoubleValue(attrib, stepValueAttribute));
-        setTitle(
-                TagTools.getStringValue(attrib, titleAttribute));
+        setFormat(TagTools.getStringValue(attrib, formatAttribute));
+        setMaxExclusive(TagTools.getDoubleValue(attrib, maxExclusiveAttribute));
+        setMaxInclusive(TagTools.getDoubleValue(attrib, maxInclusiveAttribute));
+        setMaxLength(TagTools.getIntegerValue(attrib, maxLengthAttribute));
+        setMinExclusive(TagTools.getDoubleValue(attrib, minExclusiveAttribute));
+        setMinInclusive(TagTools.getDoubleValue(attrib, minInclusiveAttribute));
+        setMinLength(TagTools.getIntegerValue(attrib, minLengthAttribute));
+        setStepValue(TagTools.getDoubleValue(attrib, stepValueAttribute));
+        setTitle(TagTools.getStringValue(attrib, titleAttribute));
         
         String s = TagTools.getStringValue(attrib, typeAttribute);
         if(s != null)
             setType(UserValueDataType.fromValue(s));
-        setValue(
-                TagTools.getStringValue(attrib, valueAttribute));
+        setValue(TagTools.getStringValue(attrib, valueAttribute));
+        
+        setTagType(TagTypeEnum.UserValue);
 
         TagTypeEnum tagType;
         for (int i=0; i<nodeList.getLength(); i++) {
@@ -198,62 +183,22 @@ public class UserDataElementType {
         }
     }
 
-    /**
-     * Gets the value of the userList property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link UserListDataType }
-     *     
-     */
     public UserListDataType getUserList() {
         return userList;
     }
 
-    /**
-     * Sets the value of the userList property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link UserListDataType }
-     *     
-     */
     public void setUserList(UserListDataType value) {
         this.userList = value;
     }
 
-    /**
-     * Gets the value of the dataRef property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getDataRef() {
         return dataRef;
     }
 
-    /**
-     * Sets the value of the dataRef property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setDataRef(String value) {
         this.dataRef = value;
     }
 
-    /**
-     * Gets the value of the editable property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
-     */
     public Boolean isEditable() {
         if (editable == null) {
             return false;
@@ -262,242 +207,82 @@ public class UserDataElementType {
         }
     }
 
-    /**
-     * Sets the value of the editable property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
-     */
     public void setEditable(Boolean value) {
         this.editable = value;
     }
 
-    /**
-     * Gets the value of the format property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getFormat() {
         return format;
     }
 
-    /**
-     * Sets the value of the format property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setFormat(String value) {
         this.format = value;
     }
 
-    /**
-     * Gets the value of the maxExclusive property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Double }
-     *     
-     */
     public Double getMaxExclusive() {
         return maxExclusive;
     }
 
-    /**
-     * Sets the value of the maxExclusive property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Double }
-     *     
-     */
     public void setMaxExclusive(Double value) {
         this.maxExclusive = value;
     }
 
-    /**
-     * Gets the value of the maxInclusive property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Double }
-     *     
-     */
     public Double getMaxInclusive() {
         return maxInclusive;
     }
 
-    /**
-     * Sets the value of the maxInclusive property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Double }
-     *     
-     */
     public void setMaxInclusive(Double value) {
         this.maxInclusive = value;
     }
 
-    /**
-     * Gets the value of the maxLength property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigInteger }
-     *     
-     */
     public Integer getMaxLength() {
         return maxLength;
     }
 
-    /**
-     * Sets the value of the maxLength property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigInteger }
-     *     
-     */
     public void setMaxLength(Integer value) {
         this.maxLength = value;
     }
 
-    /**
-     * Gets the value of the minExclusive property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Double }
-     *     
-     */
     public Double getMinExclusive() {
         return minExclusive;
     }
 
-    /**
-     * Sets the value of the minExclusive property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Double }
-     *     
-     */
     public void setMinExclusive(Double value) {
         this.minExclusive = value;
     }
 
-    /**
-     * Gets the value of the minInclusive property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Double }
-     *     
-     */
     public Double getMinInclusive() {
         return minInclusive;
     }
 
-    /**
-     * Sets the value of the minInclusive property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Double }
-     *     
-     */
     public void setMinInclusive(Double value) {
         this.minInclusive = value;
     }
 
-    /**
-     * Gets the value of the minLength property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigInteger }
-     *     
-     */
     public Integer getMinLength() {
         return minLength;
     }
 
-    /**
-     * Sets the value of the minLength property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigInteger }
-     *     
-     */
     public void setMinLength(Integer value) {
         this.minLength = value;
     }
 
-    /**
-     * Gets the value of the stepValue property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Double }
-     *     
-     */
     public Double getStepValue() {
         return stepValue;
     }
 
-    /**
-     * Sets the value of the stepValue property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Double }
-     *     
-     */
     public void setStepValue(Double value) {
         this.stepValue = value;
     }
 
-    /**
-     * Gets the value of the title property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getTitle() {
         return title;
     }
 
-    /**
-     * Sets the value of the title property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setTitle(String value) {
         this.title = value;
     }
 
-    /**
-     * Gets the value of the type property.
-     * 
-     * 
-     * 
-     * @return possible object is
-     *     {@link UserValueDataType }
-     */
     public UserValueDataType getType() {
         if (type == null) {
             return UserValueDataType.STRING;
@@ -506,41 +291,29 @@ public class UserDataElementType {
         }
     }
 
-    /**
-     * Sets the value of the type property.
-     * 
-     * 
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link UserValueDataType }
-     */
     public void setType(UserValueDataType value) {
         this.type = value;
     }
 
-    /**
-     * Gets the value of the value property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getValue() {
         return value;
     }
 
-    /**
-     * Sets the value of the value property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setValue(String value) {
         this.value = value;
     }
 
+    /***************
+     * Customisation
+     ***************/
+    
+    private WorkflowTemplateType data;
+    
+    public WorkflowTemplateType getData() {
+        return data;
+    }
+    
+    public void setData(WorkflowTemplateType data) {
+        this.data = data;
+    }
 }

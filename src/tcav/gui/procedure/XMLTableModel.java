@@ -22,19 +22,18 @@ import tcav.plmxmlpdm.base.*;
  * @author NZR4DL
  */
 public class XMLTableModel extends AbstractTableModel implements TableModel {
-    private NodeReference nr;
-    private ProcedureManager pm;
+    private IdBase data;
+    //private ProcedureManager pm;
     
     /**
      * Creates a new instance of XMLTableModel
      */
-    public XMLTableModel(NodeReference nr, ProcedureManager pm) {
-        this.nr = nr;
-        this.pm = pm;
+    public XMLTableModel(IdBase data) {
+        this.data = data;
     }
     
     public XMLTableModel() {
-        this(null, null);
+        this(null);
     }
     
     public Class getColumnClass(int columnIndex) {
@@ -59,10 +58,10 @@ public class XMLTableModel extends AbstractTableModel implements TableModel {
     }
     
     public int getRowCount() {
-        if((nr == null) || (pm == null))
+        if(data == null)
             return 0;
         
-        switch(nr.getClassType()) {
+        switch(data.getTagType()) {
             case WorkflowTemplate:
                 return 12;
                 
@@ -109,10 +108,10 @@ public class XMLTableModel extends AbstractTableModel implements TableModel {
     }
     
     public Object getValueAt(int rowIndex, int columnIndex) {
-        if((nr == null) || (pm == null))
+        if(data == null)
             return null;
         
-        switch(nr.getClassType()){
+        switch(data.getTagType()){
             case WorkflowTemplate:
                 return getWorkflowTemplateValueAt(rowIndex, columnIndex);
                 
@@ -171,8 +170,7 @@ public class XMLTableModel extends AbstractTableModel implements TableModel {
     }
     
     private Object getUserDataValueAt(int rowIndex, int columnIndex) {
-        AttribOwnerBase aob = pm.getAttribOwnerBase(nr.getParentId());
-        UserDataType ud = (UserDataType)aob.getAttribute(nr.getId());
+        UserDataType ud = (UserDataType)data;
         switch(rowIndex){
             case 0:
                 if(columnIndex == 0)
@@ -193,7 +191,7 @@ public class XMLTableModel extends AbstractTableModel implements TableModel {
                 if(columnIndex == 0)
                     return "Procedure Type";
                 else
-                    return nr.getClassType().value();
+                    return data.getTagType().value();
             case 4:
                 if(columnIndex == 0)
                     return "Type";
@@ -205,9 +203,7 @@ public class XMLTableModel extends AbstractTableModel implements TableModel {
     }
     
     private Object getUserValueAt(int rowIndex, int columnIndex) {
-        AttribOwnerBase aob = pm.getAttribOwnerBase(nr.getParentId());
-        UserDataType ud = (UserDataType)aob.getAttribute(nr.getId());
-        UserDataElementType uv = ud.getUserValue().get(nr.getIndex());
+        UserDataElementType uv = (UserDataElementType)data;
         switch(rowIndex){
             case 0:
                 if(columnIndex == 0)
@@ -218,7 +214,7 @@ public class XMLTableModel extends AbstractTableModel implements TableModel {
                 if(columnIndex == 0)
                     return "Procedure Type";
                 else
-                    return nr.getClassType().value();
+                    return data.getTagType().value();
             case 2:
                 if(columnIndex == 0)
                     return "Value";
@@ -232,13 +228,8 @@ public class XMLTableModel extends AbstractTableModel implements TableModel {
             case 4:
                 if(columnIndex == 0)
                     return "Data Reference";
-                else {
-                    if((ud.getUserValue().get(nr.getIndex()).getDataRef() != null) &&
-                            (!ud.getUserValue().get(nr.getIndex()).getDataRef().equals("")))
-                        return pm.getAttribOwnerBase(uv.getDataRef()).getName();
-                    else
-                        return null;
-                }
+                else
+                    return uv.getDataRef();
             case 5:
                 if(columnIndex == 0)
                     return "Editable";
@@ -299,7 +290,7 @@ public class XMLTableModel extends AbstractTableModel implements TableModel {
     }
     
     private Object getWorkflowTemplateValueAt(int rowIndex, int columnIndex) {
-        WorkflowTemplateType wt = pm.getWorkflowTemplates().get(pm.getIdIndex(nr.getId()));
+        WorkflowTemplateType wt = (WorkflowTemplateType)data;
         switch(rowIndex){
             case 0:
                 if(columnIndex == 0)
@@ -320,7 +311,7 @@ public class XMLTableModel extends AbstractTableModel implements TableModel {
                 if(columnIndex == 0)
                     return "Procedure Type";
                 else
-                    return nr.getClassType().value();
+                    return data.getTagType().value();
             case 4:
                 if(columnIndex == 0)
                     return "Sign Off Quorum";
@@ -339,12 +330,8 @@ public class XMLTableModel extends AbstractTableModel implements TableModel {
             case 7:
                 if(columnIndex == 0)
                     return "Parent Task";
-                else {
-                    if((wt.getParentTaskTemplateRef() != null) && (!wt.getParentTaskTemplateRef().equals("")))
-                        return pm.getAttribOwnerBase(wt.getParentTaskTemplateRef()).getName();
-                    else
-                        return null;
-                }
+                else
+                    wt.getParentTaskTemplateRef();
             case 8:
                 if(columnIndex == 0)
                     return "Stage";
@@ -376,7 +363,7 @@ public class XMLTableModel extends AbstractTableModel implements TableModel {
     }
     
     private Object getWorkflowActionValueAt(int rowIndex, int columnIndex) {
-        WorkflowActionType wa = pm.getWorkflowActions().get(pm.getIdIndex(nr.getId()));
+        WorkflowActionType wa = (WorkflowActionType)data;
         switch(rowIndex){
             case 0:
                 if(columnIndex == 0)
@@ -397,7 +384,7 @@ public class XMLTableModel extends AbstractTableModel implements TableModel {
                 if(columnIndex == 0)
                     return "Procedure Type";
                 else
-                    return nr.getClassType().value();
+                    return data.getTagType().value();
             case 4:
                 if(columnIndex == 0)
                     return "Action Type";
@@ -406,19 +393,15 @@ public class XMLTableModel extends AbstractTableModel implements TableModel {
             case 5:
                 if(columnIndex == 0)
                     return "Parent Process";
-                else {
-                    if((!wa.getParentRef().equals("")) && (wa.getParentRef() != null))
-                        return pm.getAttribOwnerBase(wa.getParentRef()).getName();
-                    else
-                        return null;
-                }
+                else
+                    wa.getParentRef();
             default:
                 return null;
         }
     }
     
     private Object getWorkflowHandlerValueAt(int rowIndex, int columnIndex) {
-        WorkflowHandlerType wh = pm.getWorkflowHandlers().get(pm.getIdIndex(nr.getId()));
+        WorkflowHandlerType wh = (WorkflowHandlerType)data;
         switch(rowIndex){
             case 0:
                 if(columnIndex == 0)
@@ -439,14 +422,14 @@ public class XMLTableModel extends AbstractTableModel implements TableModel {
                 if(columnIndex == 0)
                     return "Procedure Type";
                 else
-                    return nr.getClassType().value();
+                    return data.getTagType().value();
             default:
                 return null;
         }
     }
     
     private Object getWorkflowBusinessRuleValueAt(int rowIndex, int columnIndex) {
-        WorkflowBusinessRuleType wbr = pm.getWorkflowBusinessRules().get(pm.getIdIndex(nr.getId()));
+        WorkflowBusinessRuleType wbr = (WorkflowBusinessRuleType)data;
         switch(rowIndex){
             case 0:
                 if(columnIndex == 0)
@@ -467,7 +450,7 @@ public class XMLTableModel extends AbstractTableModel implements TableModel {
                 if(columnIndex == 0)
                     return "Procedure Type";
                 else
-                    return nr.getClassType().value();
+                    return data.getTagType().value();
             case 4:
                 if(columnIndex == 0)
                     return "Sign Off Quorum";
@@ -484,7 +467,7 @@ public class XMLTableModel extends AbstractTableModel implements TableModel {
     }
     
     private Object getWorkflowBusinessRuleHandlerValueAt(int rowIndex, int columnIndex) {
-        WorkflowBusinessRuleHandlerType wbrh = pm.getWorkflowBusinessRuleHandlers().get(pm.getIdIndex(nr.getId()));
+        WorkflowBusinessRuleHandlerType wbrh = (WorkflowBusinessRuleHandlerType)data;
         switch(rowIndex){
             case 0:
                 if(columnIndex == 0)
@@ -505,7 +488,7 @@ public class XMLTableModel extends AbstractTableModel implements TableModel {
                 if(columnIndex == 0)
                     return "Procedure Type";
                 else
-                    return nr.getClassType().value();
+                    return data.getTagType().value();
             case 4:
                 if(columnIndex == 0)
                     return "Negated";
@@ -522,8 +505,7 @@ public class XMLTableModel extends AbstractTableModel implements TableModel {
     }
     
     private Object getWorkflowSignoffProfileValueAt(int rowIndex, int columnIndex) {
-        WorkflowSignoffProfileType wsp =
-                pm.getWorkflowSignoffProfiles().get(pm.getIdIndex(nr.getId()));
+        WorkflowSignoffProfileType wsp = (WorkflowSignoffProfileType)data;
         switch(rowIndex){
             case 0:
                 if(columnIndex == 0)
@@ -544,7 +526,7 @@ public class XMLTableModel extends AbstractTableModel implements TableModel {
                 if(columnIndex == 0)
                     return "Procedure Type";
                 else
-                    return nr.getClassType().value();
+                    return data.getTagType().value();
             case 4:
                 if(columnIndex == 0)
                     return "Sign Off Quorum";
@@ -563,32 +545,20 @@ public class XMLTableModel extends AbstractTableModel implements TableModel {
             case 7:
                 if(columnIndex == 0)
                     return "Role Reference";
-                else {
-                    if((wsp.getRoleRef() != null) && (!wsp.getRoleRef().equals("")))
-                        return pm.getAttribOwnerBase(wsp.getRoleRef()).getId()
-                        +" "+
-                                pm.getAttribOwnerBase(wsp.getRoleRef()).getName();
-                    else
-                        return null;
-                }
+                else 
+                    return wsp.getRoleRef()+" "+wsp.getRole().getName();
             case 8:
                 if(columnIndex == 0)
                     return "Group Reference";
-                else {
-                    if((wsp.getGroupRef() != null) && (!wsp.getGroupRef().equals("")))
-                        return pm.getAttribOwnerBase(wsp.getGroupRef()).getId()
-                        +" "+
-                                pm.getAttribOwnerBase(wsp.getGroupRef()).getName();
-                    else
-                        return null;
-                }
+                else 
+                    return wsp.getGroupRef()+" "+wsp.getGroup().getName();
             default:
                 return null;
         }
     }
     
     private Object getOrganisationValueAt(int rowIndex, int columnIndex){
-        OrganisationType o = pm.getOrganisations().get(pm.getIdIndex(nr.getId()));
+        OrganisationType o = (OrganisationType)data;
         switch(rowIndex){
             case 0:
                 if(columnIndex == 0)
@@ -609,14 +579,14 @@ public class XMLTableModel extends AbstractTableModel implements TableModel {
                 if(columnIndex == 0)
                     return "Procedure Type";
                 else
-                    return nr.getClassType().value();
+                    return data.getTagType().value();
             default:
                 return null;
         }
     }
     
     private Object getRoleValueAt(int rowIndex, int columnIndex) {
-        RoleType r = pm.getRoles().get(pm.getIdIndex(nr.getId()));
+        RoleType r = (RoleType)data;
         switch(rowIndex){
             case 0:
                 if(columnIndex == 0)
@@ -637,15 +607,14 @@ public class XMLTableModel extends AbstractTableModel implements TableModel {
                 if(columnIndex == 0)
                     return "Procedure Type";
                 else
-                    return nr.getClassType().value();
+                    return data.getTagType().value();
             default:
                 return null;
         }
     }
     
     private Object getAssociatedDataSetValueAt(int rowIndex, int columnIndex) {
-        AttribOwnerBase aob = pm.getAttribOwnerBase(nr.getParentId());
-        AssociatedDataSetType ad = (AssociatedDataSetType)aob.getAttribute(nr.getId());
+        AssociatedDataSetType ad = (AssociatedDataSetType)data;
         switch(rowIndex){
             case 0:
                 if(columnIndex == 0)
@@ -666,7 +635,7 @@ public class XMLTableModel extends AbstractTableModel implements TableModel {
                 if(columnIndex == 0)
                     return "Procedure Type";
                 else
-                    return nr.getClassType().value();
+                    return data.getTagType().value();
             case 4:
                 if(columnIndex == 0)
                     return "Role";
@@ -675,22 +644,15 @@ public class XMLTableModel extends AbstractTableModel implements TableModel {
             case 5:
                 if(columnIndex == 0)
                     return "DataSet Reference";
-                else {
-                    if(pm.getIdClass(ad.getDataSetRef()) == TagTypeEnum.WorkflowSignoffProfile){
-                        WorkflowSignoffProfileType wsp =
-                                pm.getWorkflowSignoffProfiles().get(pm.getIdIndex(ad.getDataSetRef()));
-                        return "Sign Off Profile: "+ad.getId();
-                    }
-                    return null;
-                }
+                else
+                    return ad.getDataSetRef();
             default:
                 return null;
         }
     }
     
     private Object getAssociatedFolderValueAt(int rowIndex, int columnIndex) {
-        AttribOwnerBase aob = pm.getAttribOwnerBase(nr.getParentId());
-        AssociatedFolderType af = (AssociatedFolderType)aob.getAttribute(nr.getId());
+        AssociatedFolderType af = (AssociatedFolderType)data;
         switch(rowIndex){
             case 0:
                 if(columnIndex == 0)
@@ -711,7 +673,7 @@ public class XMLTableModel extends AbstractTableModel implements TableModel {
                 if(columnIndex == 0)
                     return "Procedure Type";
                 else
-                    return nr.getClassType().value();
+                    return data.getTagType().value();
             case 4:
                 if(columnIndex == 0)
                     return "Role";
@@ -720,22 +682,15 @@ public class XMLTableModel extends AbstractTableModel implements TableModel {
             case 5:
                 if(columnIndex == 0)
                     return "Folder Reference";
-                else {
-                    if(pm.getIdClass(af.getFolderRef()) == TagTypeEnum.WorkflowSignoffProfile){
-                        WorkflowSignoffProfileType wsp =
-                                pm.getWorkflowSignoffProfiles().get(pm.getIdIndex(af.getFolderRef()));
-                        return "Sign Off Profile: "+af.getId();
-                    }
-                    return null;
-                }
+                else 
+                    return af.getFolderRef();
             default:
                 return null;
         }
     }
     
     private Object getAssociatedFormValueAt(int rowIndex, int columnIndex) {
-        AttribOwnerBase aob = pm.getAttribOwnerBase(nr.getParentId());
-        AssociatedFormType af = (AssociatedFormType)aob.getAttribute(nr.getId());
+        AssociatedFormType af = (AssociatedFormType)data;
         switch(rowIndex){
             case 0:
                 if(columnIndex == 0)
@@ -756,7 +711,7 @@ public class XMLTableModel extends AbstractTableModel implements TableModel {
                 if(columnIndex == 0)
                     return "Procedure Type";
                 else
-                    return nr.getClassType().value();
+                    return data.getTagType().value();
             case 4:
                 if(columnIndex == 0)
                     return "Role";
@@ -765,22 +720,15 @@ public class XMLTableModel extends AbstractTableModel implements TableModel {
             case 5:
                 if(columnIndex == 0)
                     return "Folder Reference";
-                else {
-                    if(pm.getIdClass(af.getFormRef()) == TagTypeEnum.WorkflowSignoffProfile){
-                        WorkflowSignoffProfileType wsp =
-                                pm.getWorkflowSignoffProfiles().get(pm.getIdIndex(af.getFormRef()));
-                        return "Sign Off Profile: "+af.getId();
-                    }
-                    return null;
-                }
+                else 
+                    return af.getFormRef();
             default:
                 return null;
         }
     }
     
     private Object getValidationResultsValueAt(int rowIndex, int columnIndex) {
-        AttribOwnerBase aob = pm.getAttribOwnerBase(nr.getParentId());
-        ValidationResultsType vr = (ValidationResultsType)aob.getAttribute(nr.getId());
+        ValidationResultsType vr = (ValidationResultsType)data;
         switch(rowIndex){
             case 0:
                 if(columnIndex == 0)
@@ -806,7 +754,7 @@ public class XMLTableModel extends AbstractTableModel implements TableModel {
                 if(columnIndex == 0)
                     return "Procedure Type";
                 else
-                    return nr.getClassType().value();
+                    return data.getTagType().value();
             default:
                 return null;
         }

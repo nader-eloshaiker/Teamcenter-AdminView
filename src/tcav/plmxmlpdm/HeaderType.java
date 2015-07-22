@@ -38,10 +38,11 @@ public class HeaderType extends AttribOwnerBase{
         NamedNodeMap attrib = currentNode.getAttributes();
         NodeList nodeList = currentNode.getChildNodes();
         
-        setTransferContext(
-                TagTools.getStringValue(attrib, transferContextAttribute));
+        setTransferContext(TagTools.getStringValue(attrib, transferContextAttribute));
         
         TagTools.addToList(attrib, traverseRootRefsAttribute, getTraverseRootRefs());
+        
+        setTagType(TagTypeEnum.Header);
     }
     
     public List<String> getTraverseRootRefs() {

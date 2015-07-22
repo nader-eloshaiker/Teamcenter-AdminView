@@ -9,7 +9,9 @@
 package tcav.plmxmlpdm.type;
 
 import tcav.plmxmlpdm.TagTools;
+import tcav.plmxmlpdm.TagTypeEnum;
 import tcav.plmxmlpdm.base.AttributeBase;
+import tcav.plmxmlpdm.base.IdBase;
 import org.w3c.dom.Node;
 import org.w3c.dom.NamedNodeMap;
 /*
@@ -66,54 +68,36 @@ public class AssociatedFolderType extends AttributeBase {
        
         setFolderRef(TagTools.getStringValue(attrib, folderRefAttribute));
         setRole(TagTools.getStringValue(attrib, roleAttribute));
+        
+        setTagType(TagTypeEnum.AssociatedFolder);
     }
 
-    /**
-     * Gets the value of the folderRef property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getFolderRef() {
         return folderRef;
     }
 
-    /**
-     * Sets the value of the folderRef property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setFolderRef(String value) {
         this.folderRef = value;
     }
 
-    /**
-     * Gets the value of the role property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getRole() {
         return role;
     }
 
-    /**
-     * Sets the value of the role property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setRole(String value) {
         this.role = value;
     }
 
+    /***************
+     * Customisation
+     ***************/
+    private IdBase folder;
+    
+    public IdBase getFolder() {
+        return folder;
+    }
+
+    public void setFolder(IdBase folder) {
+        this.folder = folder;
+    }
 }

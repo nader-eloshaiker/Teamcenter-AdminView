@@ -92,142 +92,78 @@ public class WorkflowSignoffProfileType extends AttribOwnerBase {
         setRoleRef(TagTools.getStringValue(attrib, roleRefAttribute));
         setSignoffQuorum(TagTools.getIntegerValue(attrib, signoffQuorumAttribute));
         setTemplateRef(TagTools.getStringValue(attrib, templateRefAttribute));
+        
+        setTagType(TagTypeEnum.WorkflowSignoffProfile);
     }
 
-    /**
-     * Gets the value of the allowSubgroups property.
-     * 
-     */
     public Boolean isAllowSubgroups() {
         return allowSubgroups;
     }
 
-    /**
-     * Sets the value of the allowSubgroups property.
-     * 
-     */
     public void setAllowSubgroups(Boolean value) {
         this.allowSubgroups = value;
     }
 
-    /**
-     * Gets the value of the groupRef property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getGroupRef() {
         return groupRef;
     }
 
-    /**
-     * Sets the value of the groupRef property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setGroupRef(String value) {
         this.groupRef = value;
     }
 
-    /**
-     * Gets the value of the numberOfSignoffs property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Integer }
-     *     
-     */
     public Integer getNumberOfSignoffs() {
         return numberOfSignoffs;
     }
 
-    /**
-     * Sets the value of the numberOfSignoffs property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Integer }
-     *     
-     */
     public void setNumberOfSignoffs(Integer value) {
         this.numberOfSignoffs = value;
     }
 
-    /**
-     * Gets the value of the roleRef property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getRoleRef() {
         return roleRef;
     }
 
-    /**
-     * Sets the value of the roleRef property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setRoleRef(String value) {
         this.roleRef = value;
     }
 
-    /**
-     * Gets the value of the signoffQuorum property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Integer }
-     *     
-     */
     public Integer getSignoffQuorum() {
         return signoffQuorum;
     }
 
-    /**
-     * Sets the value of the signoffQuorum property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Integer }
-     *     
-     */
     public void setSignoffQuorum(Integer value) {
         this.signoffQuorum = value;
     }
 
-    /**
-     * Gets the value of the templateRef property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getTemplateRef() {
         return templateRef;
     }
 
-    /**
-     * Sets the value of the templateRef property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setTemplateRef(String value) {
         this.templateRef = value;
     }
 
+    /***************
+     * Customisation
+     ***************/
+    
+    private RoleType role;
+    private OrganisationType group;
+
+    public RoleType getRole() {
+        return role;
+    }
+    
+    public void setRole(RoleType role) {
+        this.role = role;
+    }
+    
+    public OrganisationType getGroup() {
+        return group;
+    }
+    
+    public void setGroup(OrganisationType group) {
+        this.group = group;
+    }
 }
