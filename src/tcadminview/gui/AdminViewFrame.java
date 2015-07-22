@@ -14,6 +14,7 @@ import tcadminview.gui.procedure.ProcedureComponent;
 import tcadminview.ruletree.AccessManager;
 import tcadminview.procedure.ProcedureManager;
 import tcadminview.ResourceLocator;
+import tcadminview.Settings;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.border.*;
@@ -36,7 +37,6 @@ public class AdminViewFrame extends JFrame{
     protected ImageIcon iconProcedure;
     protected ImageIcon iconClose;
     protected ImageIcon iconExit;
-    protected File path;
     
     
     /**
@@ -85,15 +85,14 @@ public class AdminViewFrame extends JFrame{
         });
         
         this.pack();
-        this.setSize(new Dimension(1024,740));
+        this.setSize(new Dimension(Settings.getFrameSizeX(),Settings.getFrameSizeY()));
         this.setVisible(true);
         this.setTitle(ResourceLocator.getApplicationName()+" v"+ResourceLocator.getVersion());
     }
     
     public JFileChooser createFileChooser() {
         JFileChooser fc = new JFileChooser();
-        if(path != null)
-            fc.setCurrentDirectory(path);
+        fc.setCurrentDirectory(new File(Settings.getLoadPath()));
         return fc;
     }
     
@@ -256,7 +255,7 @@ public class AdminViewFrame extends JFrame{
         JFileChooser fc = createFileChooser();
         int result = fc.showOpenDialog(getFrame());
         if(result == JFileChooser.APPROVE_OPTION) {
-            path = fc.getCurrentDirectory();
+            Settings.setLoadPath(fc.getCurrentDirectory().getPath());
             try {
                 AccessManager am = new AccessManager();
                 
@@ -291,7 +290,7 @@ public class AdminViewFrame extends JFrame{
         JFileChooser fc = createFileChooser();
         int result = fc.showOpenDialog(getFrame());
         if(result == JFileChooser.APPROVE_OPTION) {
-            path = fc.getCurrentDirectory();
+            Settings.setLoadPath(fc.getCurrentDirectory().getPath());
             
             try {
                 ProcedureManager pm = new ProcedureManager(this);

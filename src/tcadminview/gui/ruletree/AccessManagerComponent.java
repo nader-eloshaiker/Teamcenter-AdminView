@@ -15,6 +15,7 @@ import tcadminview.ruletree.AccessManagerItem;
 import tcadminview.ruletree.AccessRule;
 import tcadminview.utils.*;
 import tcadminview.ResourceLocator;
+import tcadminview.Settings;
 import java.util.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -23,6 +24,7 @@ import javax.swing.event.*;
 import javax.swing.border.*;
 import javax.swing.table.*;
 import javax.swing.tree.*;
+import javax.swing.plaf.basic.BasicSplitPaneUI;
 
 /**
  *
@@ -31,31 +33,14 @@ import javax.swing.tree.*;
 public class AccessManagerComponent extends JPanel implements TabbedPanel {
     
     protected JFrame parentFrame;
-    protected JTree treeRuleTree;
+    protected JTreeAdvanced treeRuleTree;
     protected JTableAdvanced tableNamedACL;
     protected JTableAdvanced tableAccessRule;
     protected AccessRuleTableModel tableDataAccessRule;
     protected DefaultTreeModel treeDataRuleTree;
     protected NamedRuleFilterSortTableModel tableDataFilterSortNamedACL;
     
-    
-    protected JComboBox listUnusedNamedACL;
-    protected JComboBox boxFirstSort;
-    protected JComboBox boxSecondSort;
-    protected JComboBox boxThirdSort;
-    protected JCheckBox checkAscending;
-    protected JTextField textFilterName;
-    protected JTextField textFilterInstanceCount;
-    protected JComboBox boxfilterType;
-    protected JTree treeReferences;
-    
-    
-    protected JTextField textSearchValue;
-    protected JComboBox boxSearchCondition;
-    protected JButton buttonRuleTreeFindNext;
-    protected JButton buttonRuleTreeFind;
-    protected JButton buttonRuleTreeFindClear;
-    
+    protected JSplitPane splitPane;
     
     private AccessManager accessManager;
     private ArrayList<TreePath> ruleTreeSearchResults = new ArrayList<TreePath>();
@@ -92,13 +77,20 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         panelRule.add("East", createPanelNamedACL());
         panelRule.add("Center",createPanelRuleTree());
         
-        JSplitPane splitPane = new JSplitPane(
+        splitPane = new JSplitPane(
                 JSplitPane.VERTICAL_SPLIT,
                 true,
                 Utilities.createPanelMargined(panelRule),
                 Utilities.createPanelMargined(panelRuleTable));
-        splitPane.setResizeWeight(0.6);
+        splitPane.setResizeWeight(1.0);
+        splitPane.setDividerLocation(Settings.getAMSplitLocation());
         splitPane.setOneTouchExpandable(true);
+        splitPane.setBorder(null);
+        ((BasicSplitPaneUI)splitPane.getUI()).getDivider().addComponentListener(new ComponentAdapter(){
+            public void componentMoved(ComponentEvent e){
+                Settings.setAMSplitLocation(splitPane.getDividerLocation());
+            }
+        });
         
         /* And show it. */
         this.setLayout(new BorderLayout());//Utilities.GAP_MARGIN,Utilities.GAP_MARGIN));
@@ -145,23 +137,12 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         }
     }
     
-    private void updateReferences(AccessRule ar) {
-        DefaultMutableTreeNode root;
-        if(ar.getTreeIndexSize() > 0)
-            root = RuleTreeNodeBuilder.getRuleTreePathsForRule(accessManager.getAccessManagerTree(),ar);
-        else
-            root = null;
-        
-        ((DefaultTreeModel)treeReferences.getModel()).setRoot(root);
-        treeReferences.repaint();
-    }
-    
     private void createTableAccessControl() {
         tableAccessRule = new JTableAdvanced();
         updateTableAccessControl();
     }
     
-    private JTree createTreeRuleTree() {
+    private JTreeAdvanced createTreeRuleTree() {
         /*
         DefaultMutableTreeNode root;
         if(accessManager.getAccessManagerTreeSize()!=0)
@@ -170,7 +151,8 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
             root = null;
         treeDataRuleTree = new DefaultTreeModel(root);
          **/
-        JTree tree = new JTree(new RuleTreeModel(accessManager.getAccessManagerTree()));
+        JTreeAdvanced tree = new JTreeAdvanced(new RuleTreeModel(accessManager.getAccessManagerTree()));
+        tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         tree.setCellRenderer(new RuleTreeNodeRenderer());
         tree.addTreeSelectionListener(new TreeSelectionListener() {
             public void valueChanged(TreeSelectionEvent e) {
@@ -201,7 +183,7 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
     private JTableAdvanced createTableNamedACL() {
         JTableAdvanced table = new JTableAdvanced();
         tableDataFilterSortNamedACL = new NamedRuleFilterSortTableModel(accessManager.getAccessRuleList());
-        tableDataFilterSortNamedACL.setSort(new int[]{0,2},true);
+        tableDataFilterSortNamedACL.setSort(Settings.getAMNamedACLSort(),Settings.getAMNamedACLSortAscending());
         table.setModel(tableDataFilterSortNamedACL);
         table.setRowSelectionAllowed(true);
         table.setSelectionMode(0);
@@ -275,7 +257,7 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
     /*
      * Both condition and value cannot be empty, either one or the other.
      */
-    private void findRuleTreeItem(JTree tree, TreePath parent, String condition, String value) {
+    private void findRuleTreeItem(JTreeAdvanced tree, TreePath parent, String condition, String value) {
         // Traverse children
         AccessManagerItem amItem = (AccessManagerItem)parent.getLastPathComponent();
         Boolean matched = false;
@@ -312,6 +294,12 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         } else
             return false;
     }
+    
+    protected JTextField textSearchValue;
+    protected JComboBox boxSearchCondition;
+    protected JButton buttonRuleTreeFindNext;
+    protected JButton buttonRuleTreeFind;
+    protected JButton buttonRuleTreeFindClear;
     
     
     private JPanel createPanelRuleTree() {
@@ -481,6 +469,17 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         return panel;
     }
     
+    protected JComboBox listUnusedNamedACL;
+    protected JComboBox boxFirstSort;
+    protected JComboBox boxSecondSort;
+    protected JComboBox boxThirdSort;
+    protected JCheckBox checkAscending;
+    protected JTextField textFilterName;
+    protected JTextField textFilterInstanceCount;
+    protected JComboBox boxfilterType;
+    protected JTreeAdvanced treeReferences;
+    protected JTabbedPane tabNamedAcl;
+    
     private JPanel createPanelNamedACL() {
         /* Named ACL List Panel */
         JScrollPane namedAclComponentScroll = new JScrollPane();
@@ -492,8 +491,6 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         panelRuleList.add(namedAclComponentScroll);
         
         
-        JPanel panelNamedACLDetails = new JPanel();
-        panelNamedACLDetails.setLayout(new BorderLayout(Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
         JPanel panelNamedACLDetailsLeft = new JPanel();
         panelNamedACLDetailsLeft.setLayout(new GridLayout(3,1,Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
         panelNamedACLDetailsLeft.add(new JLabel("RuleTree Named ACLs"));
@@ -512,6 +509,8 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
                 accessManager.getAccessRuleList().getWorkFlowTypeSize(),
                 "Access Rules"));
         panelNamedACLDetailsRight.add(new JPanel());
+        JPanel panelNamedACLDetails = new JPanel();
+        panelNamedACLDetails.setLayout(new BorderLayout(Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
         panelNamedACLDetails.add("West",panelNamedACLDetailsLeft);
         panelNamedACLDetails.add("Center",panelNamedACLDetailsRight);
         
@@ -567,6 +566,8 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
                 sort[0] = boxFirstSort.getSelectedIndex();
                 sort[1] = boxSecondSort.getSelectedIndex();
                 sort[2] = boxThirdSort.getSelectedIndex();
+                Settings.setAMNamedACLSort(sort);
+                Settings.setAMNamedACLSortAscending(checkAscending.isSelected());
                 tableDataFilterSortNamedACL.setSort(sort, checkAscending.isSelected());
                 tableDataFilterSortNamedACL.fireTableDataChanged();
                 tableNamedACL.repaint();
@@ -586,7 +587,7 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         panelNamedACLSortBottom.add(checkAscending);
         panelNamedACLSortBottom.add(buttonSortNamedACL);
         JPanel panelNamedACLSort = new JPanel();
-        panelNamedACLSort.setLayout(new BorderLayout(Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
+        panelNamedACLSort.setLayout(new BorderLayout());
         panelNamedACLSort.add("North",panelNamedACLSortTop);
         panelNamedACLSort.add("Center",panelNamedACLSortBottom);
         
@@ -654,16 +655,17 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         panelNamedACLFilterBottom.add(buttonReset);
         panelNamedACLFilterBottom.add(buttonFilter);
         JPanel panelNamedACLFilter = new JPanel();
-        panelNamedACLFilter.setLayout(new BorderLayout(Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
+        panelNamedACLFilter.setLayout(new BorderLayout());
         panelNamedACLFilter.add("North",panelNamedACLFilterTop);
         panelNamedACLFilter.add("Center",panelNamedACLFilterBottom);
         
         
-        treeReferences = new JTree(new String[]{"Ruletree Reference","Nader Eloshaiker"});
+        treeReferences = new JTreeAdvanced(new String[]{"Ruletree Reference","Nader Eloshaiker"});
         treeReferences.setRootVisible(false);
+        treeReferences.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         treeReferences.setCellRenderer(new RuleTreeReferencesNodeRenderer());
         JScrollPane scrollReferences = new JScrollPane();
-        scrollReferences.setPreferredSize(new Dimension(100,100));
+        scrollReferences.setPreferredSize(new Dimension(20,20));
         scrollReferences.getViewport().add(treeReferences);
         scrollReferences.setBorder(new BevelBorder(BevelBorder.LOWERED));
         JPanel panelNamedACLReferences = new JPanel();
@@ -671,12 +673,18 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         panelNamedACLReferences.add(scrollReferences);
         
         
-        JTabbedPane tabNamedAcl = new JTabbedPane();
+        tabNamedAcl = new JTabbedPane();
         tabNamedAcl.add("Details",Utilities.createPanelMargined(panelNamedACLDetails));
         tabNamedAcl.add("Unused ACLs",Utilities.createPanelMargined(panelNamedACLMissingFull));
         tabNamedAcl.add("Sort",Utilities.createPanelMargined(panelNamedACLSort));
         tabNamedAcl.add("Filter",Utilities.createPanelMargined(panelNamedACLFilter));
         tabNamedAcl.add("References",panelNamedACLReferences);
+        tabNamedAcl.setSelectedIndex(Settings.getAMNamedACLTab());
+        tabNamedAcl.addChangeListener(new ChangeListener(){
+            public void stateChanged(ChangeEvent e) {
+                Settings.setAMNamedACLTab(tabNamedAcl.getSelectedIndex());
+            }
+        });
         
         
         JPanel panelACL = new JPanel();
@@ -691,6 +699,17 @@ public class AccessManagerComponent extends JPanel implements TabbedPanel {
         
         return panel;
         
+    }
+    
+    private void updateReferences(AccessRule ar) {
+        DefaultMutableTreeNode root;
+        if(ar.getTreeIndexSize() > 0)
+            root = RuleTreeNodeBuilder.getRuleTreePathsForRule(accessManager.getAccessManagerTree(),ar);
+        else
+            root = null;
+        
+        ((DefaultTreeModel)treeReferences.getModel()).setRoot(root);
+        treeReferences.repaint();
     }
     
     

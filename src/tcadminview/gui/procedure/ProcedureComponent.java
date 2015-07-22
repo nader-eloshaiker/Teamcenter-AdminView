@@ -9,6 +9,7 @@
 
 package tcadminview.gui.procedure;
 
+import tcadminview.Settings;
 import tcadminview.ResourceLocator;
 import tcadminview.utils.PatternMatch;
 import tcadminview.gui.*;
@@ -24,8 +25,11 @@ import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.table.*;
 import javax.swing.tree.*;
+import javax.swing.plaf.basic.BasicSplitPaneUI;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentAdapter;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.BorderLayout;
@@ -44,26 +48,44 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
     protected JTable tableWorkflowTemplatesSub;
     protected JTable tableActionsRef;
     protected JTable tableSubTemplateRef;
-    protected JTree treeWorkflowProcess;
+    protected JTreeAdvanced treeWorkflowProcess;
     protected JFrame parentFrame;
     protected ProcedureManager pm;
-    
+    protected JSplitPane splitPane1;
     
     
     /**
      * Creates a new instance of ProcedureComponent
      */
-    public ProcedureComponent(JFrame parentFrame, ProcedureManager pm){
+    public ProcedureComponent(JFrame parentFrame, ProcedureManager pm) {
         this.pm = pm;
         this.parentFrame = parentFrame;
         
+        splitPane1 = new JSplitPane(
+                JSplitPane.HORIZONTAL_SPLIT,
+                true,
+                Utilities.createPanelMargined(createWorkflowProcessPanel()),
+                createNodeDetailsPanel());
+        splitPane1.setResizeWeight(1.0);
+        splitPane1.setBorder(null);
+        splitPane1.setDividerLocation(Settings.getPMSplitLocation1());
+        splitPane1.setOneTouchExpandable(true);
+        ((BasicSplitPaneUI)splitPane1.getUI()).getDivider().addComponentListener(new ComponentAdapter(){
+            public void componentMoved(ComponentEvent e){
+                Settings.setPMSplitLocation1(splitPane1.getDividerLocation());
+            }
+        });
+        /*
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(1,2,Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
         panel.add(createWorkflowProcessPanel());
         panel.add(createNodeDetailsPanel());
-        
+
         this.setLayout(new BorderLayout(Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
         this.add("Center",Utilities.createPanelMargined(panel));
+         */
+        this.setLayout(new BorderLayout());
+        this.add("Center",splitPane1);
     }
     
     private int workflowSearchIndex;
@@ -99,7 +121,7 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
     /*
      * Both condition and value cannot be empty, either one or the other.
      */
-    private void findRuleTreeItem(JTree tree, TreePath parent, String condition, String value) {
+    private void findRuleTreeItem(JTreeAdvanced tree, TreePath parent, String condition, String value) {
         // Traverse children
         NodeReference nr = (NodeReference)parent.getLastPathComponent();
         Boolean matched = false;
@@ -140,10 +162,12 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
     protected JComboBox boxSearchWorkflowType;
     protected JTextField textSearchValue;
     
-    public JPanel createWorkflowProcessPanel() {
+    public JComponent createWorkflowProcessPanel() {
         
         // Workflow Process Tree
-        treeWorkflowProcess = new JTree(new ProcedureTreeModel(pm));
+        treeWorkflowProcess = new JTreeAdvanced(new ProcedureTreeModel(pm));
+        treeWorkflowProcess.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        treeWorkflowProcess.setLargeModel(true);
         treeWorkflowProcess.setCellRenderer(new ProcedureTreeCellRenderer());
         treeWorkflowProcess.addTreeSelectionListener(new TreeSelectionListener() {
             public void valueChanged(TreeSelectionEvent e) {
@@ -160,14 +184,30 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
         buttonExpandBelow.setToolTipText("Expand Below");
         buttonExpandBelow.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                Utilities.expandTreeBranch(treeWorkflowProcess);
+                if(treeWorkflowProcess.getRowForPath(treeWorkflowProcess.getSelectionPath()) == 0)
+                    JOptionPane.showMessageDialog(
+                            parentFrame, 
+                            "Selecting the first item can take a very long time to process.\n\n"+
+                            "Please select a sub item to expand.", 
+                            "First Item Selected", 
+                            JOptionPane.ERROR_MESSAGE);
+                else
+                    Utilities.expandTreeBranch(treeWorkflowProcess);
             }
         });
         JButton buttonCollapseBelow = new JButton();
         buttonCollapseBelow.setToolTipText("Collapse Below");
         buttonCollapseBelow.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                Utilities.collapseTreeBranch(treeWorkflowProcess);
+                if(treeWorkflowProcess.getRowForPath(treeWorkflowProcess.getSelectionPath()) == 0)
+                    JOptionPane.showMessageDialog(
+                            parentFrame, 
+                            "Selecting the first item can take a very long time to process.\n\n"+
+                            "Please select a sub item to collapse.", 
+                            "First Item Selected", 
+                            JOptionPane.ERROR_MESSAGE);
+                else
+                    Utilities.collapseTreeBranch(treeWorkflowProcess);
             }
         });
         
@@ -299,14 +339,18 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
         return (pm.getWorkflowTemplates().size() == 0);
     }
     
-    protected JTree treeAttributes;
+    protected JTreeAdvanced treeAttributes;
     protected JTableAdvanced tableProcedure;
     protected JTableAdvanced tableAttribute;
     protected JRadioButton radioExpand;
+    protected JRadioButton radioCollapse;
+    protected JSplitPane splitPane2;
     
-    private JPanel createNodeDetailsPanel() {
-        treeAttributes = new JTree(new AttributeTreeModel());
-        treeAttributes.setRootVisible(true);
+    private JComponent createNodeDetailsPanel() {
+        treeAttributes = new JTreeAdvanced(new AttributeTreeModel());
+        treeAttributes.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        treeAttributes.setLargeModel(false);
+        treeAttributes.setCellRenderer(new ProcedureTreeCellRenderer());
         treeAttributes.addTreeSelectionListener(new TreeSelectionListener() {
             public void valueChanged(TreeSelectionEvent e) {
                 TreePath path = e.getPath();
@@ -314,7 +358,7 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
                 updateAttribDetails(nr);
             }
         });
-        treeAttributes.setCellRenderer(new ProcedureTreeCellRenderer());
+        
         JScrollPane scrollTreeAttributes = new JScrollPane();
         scrollTreeAttributes.setPreferredSize(new Dimension(200,220));
         scrollTreeAttributes.setBorder(new BevelBorder(BevelBorder.LOWERED));
@@ -368,11 +412,22 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
         buttonCollapseBelow.setIcon(iconCollapseBelow);
         
         radioExpand = new JRadioButton("Expanded");
-        JRadioButton radioCollapse = new JRadioButton("Collapsed");
+        radioExpand.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                Settings.setPMExpandedView(radioExpand.isSelected());
+            }
+        });
+        radioCollapse = new JRadioButton("Collapsed");
+        radioCollapse.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                Settings.setPMExpandedView(!radioCollapse.isSelected());
+            }
+        });
         ButtonGroup buttonGroup = new ButtonGroup();
         buttonGroup.add(radioExpand);
         buttonGroup.add(radioCollapse);
-        buttonGroup.setSelected(radioExpand.getModel(),true);
+        buttonGroup.setSelected(radioExpand.getModel(),Settings.getPMExpandedView());
+        buttonGroup.setSelected(radioCollapse.getModel(),!Settings.getPMExpandedView());
         
         JToolBar toolBarAttributeTree = new JToolBar();
         toolBarAttributeTree.setMargin(new Insets(
@@ -413,12 +468,23 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
         panelAttributeDetails.setBorder(new TitledBorder(new EtchedBorder(),"Attribute Details"));
         panelAttributeDetails.add("Center",Utilities.createPanelMargined(scrollTableAttribute));
         
-        JPanel panel = new JPanel();
-        panel.setLayout(new BorderLayout(Utilities.GAP_COMPONENT,Utilities.GAP_COMPONENT));
-        panel.add("Center",panelAttributes);
-        panel.add("South",panelAttributeDetails);
         
-        return panel;
+        splitPane2 = new JSplitPane(
+                JSplitPane.VERTICAL_SPLIT,
+                true,
+                Utilities.createPanelMargined(panelAttributes),
+                Utilities.createPanelMargined(panelAttributeDetails));
+        splitPane2.setResizeWeight(1.0);
+        splitPane2.setDividerLocation(Settings.getPMSplitLocation2());
+        splitPane2.setOneTouchExpandable(true);
+        splitPane2.setBorder(null);
+        ((BasicSplitPaneUI)splitPane2.getUI()).getDivider().addComponentListener(new ComponentAdapter(){
+            public void componentMoved(ComponentEvent e){
+                Settings.setPMSplitLocation2(splitPane2.getDividerLocation());
+            }
+        });
+        
+        return splitPane2;
     }
     
     private void updateNodeDetails(NodeReference nr) {

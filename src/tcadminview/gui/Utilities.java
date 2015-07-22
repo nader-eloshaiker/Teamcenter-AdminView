@@ -60,7 +60,7 @@ public class Utilities {
     // will be just wide enough to show the column head and the widest cell in the column.
     // margin pixels are added to the left and right
     // (resulting in an additional width of 2*margin pixels).
-    public static void packColumn(JTable table, int columnIndex, int margin) {
+    private static void packColumn(JTable table, int columnIndex, int margin) {
         TableModel model = table.getModel();
         DefaultTableColumnModel colModel = (DefaultTableColumnModel)table.getColumnModel();
         TableColumn col = colModel.getColumn(columnIndex);
@@ -104,28 +104,35 @@ public class Utilities {
         
     }
   
-    public static void collapseTree(JTree tree){
+    public static void collapseTree(JTreeAdvanced tree){
+        tree.clearToggledPaths();
         setCascadeTreeExpansion(tree,tree.getPathForRow(0),false);
-        //tree.expandRow(0);
+        tree.expandRow(0);
+        
+        //TreePath root = tree.getPathForRow(0);
+        //tree.setExpandedState(root, true);
+        
         //tree.expandPath(new TreePath(tree.getModel().getRoot()));
     }
     
-    public static void collapseTreeBranch(JTree tree){
-        if(!tree.isSelectionEmpty())
+    public static void collapseTreeBranch(JTreeAdvanced tree){
+        if(!tree.isSelectionEmpty()){
+            tree.clearToggledPaths();
             setCascadeTreeExpansion(tree,tree.getSelectionPath(),false);
+        }
     }
     
-    public static void expandTree(JTree tree) {
+    public static void expandTree(JTreeAdvanced tree) {
         setCascadeTreeExpansion(tree, tree.getPathForRow(0), true);
     }
     
-    public static void expandTreeBranch(JTree tree){
+    public static void expandTreeBranch(JTreeAdvanced tree){
         if(!tree.isSelectionEmpty())
             setCascadeTreeExpansion(tree,tree.getSelectionPath(),true);
     }
     
     
-    public static void setCascadeTreeExpansion(JTree tree, TreePath parent, boolean expand) {
+    public static void setCascadeTreeExpansion(JTreeAdvanced tree, TreePath parent, boolean expand) {
         // Traverse children
         //TreeNode node = (TreeNode)parent.getLastPathComponent();
         int childCount = tree.getModel().getChildCount(parent.getLastPathComponent());
