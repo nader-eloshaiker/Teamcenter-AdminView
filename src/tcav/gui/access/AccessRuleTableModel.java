@@ -1,4 +1,4 @@
-package tcav.gui.ruletree;
+package tcav.gui.access;
 /*
  * AccessRuleTableModel.java
  *

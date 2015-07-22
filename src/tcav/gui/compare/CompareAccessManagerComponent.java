@@ -9,8 +9,10 @@
 
 package tcav.gui.compare;
 
+import tcav.gui.access.AccessRuleComponent;
+import tcav.gui.access.NamedRuleComponent;
+import tcav.gui.access.RuleTreeComponent;
 import tcav.manager.compare.CompareAccessManager;
-import tcav.gui.ruletree.*;
 
 import javax.naming.ldap.StartTlsRequest;
 import tcav.gui.*;
@@ -41,7 +43,11 @@ public class CompareAccessManagerComponent extends TabbedPanel {
     private NamedRuleComponent[] namedACL;
     private AccessRuleComponent accessControl;
     private JSplitPane splitPane;
+    private JPanel pane;
+
     private final int compareCount = 2;
+    private final String MODE_ACL = "Named ACL";
+    private final String MODE_TREE = "Rule Tree";
     
     private CompareAccessManager cam;
     
@@ -56,15 +62,43 @@ public class CompareAccessManagerComponent extends TabbedPanel {
         
         accessControl = new AccessRuleComponent(cam.getAccessManagers()[0]);
         
-        JTabbedPane pane = new JTabbedPane();
-        pane.setTabPlacement(JTabbedPane.BOTTOM);
-        pane.add("Named ACL", buildNamedAclComponent());
-        pane.add("Rule Tree",buildRuletreeComponent());
+        JRadioButton ruletreeButton = new JRadioButton("Rule Tree Mode");
+        ruletreeButton.setOpaque(false);
+        ruletreeButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                ((CardLayout)pane.getLayout()).show(pane,MODE_TREE);
+            }
+        });
+        JRadioButton namedAclButton = new JRadioButton("Named ACL Mode");
+        namedAclButton.setOpaque(false);
+        namedAclButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                ((CardLayout)pane.getLayout()).show(pane,MODE_ACL);
+            }
+        });
+        
+        ButtonGroup group = new ButtonGroup();
+        group.add(ruletreeButton);
+        group.add(namedAclButton);
+        namedAclButton.setSelected(true);
+        
+        JPanel panelMode = new JPanel();
+        panelMode.setLayout(new FlowLayout(FlowLayout.CENTER, GUIutilities.GAP_COMPONENT,0));
+        panelMode.add(ruletreeButton);
+        panelMode.add(namedAclButton);
+        
+        
+        pane = new JPanel();
+        pane.setLayout(new CardLayout());
+        pane.add(buildRuletreeComponent(), MODE_TREE);
+        pane.add(buildNamedAclComponent(), MODE_ACL);
+        ((CardLayout)pane.getLayout()).show(pane,MODE_ACL);
         
         /* Rules Panel */
         JPanel panel =  new JPanel();
-        panel.setLayout(new BorderLayout(GUIutilities.GAP_MARGIN,GUIutilities.GAP_MARGIN));
-        panel.add("Center",pane);
+        panel.setLayout(new BorderLayout(0,0));//GUIutilities.GAP_MARGIN,GUIutilities.GAP_MARGIN));
+        panel.add(BorderLayout.CENTER, pane);
+        panel.add(BorderLayout.SOUTH, panelMode);
         
         splitPane = new JSplitPane(
                 JSplitPane.VERTICAL_SPLIT,
@@ -95,17 +129,10 @@ public class CompareAccessManagerComponent extends TabbedPanel {
         for(int index=0; index<compareCount; index++) {
             namedACL[index] = new NamedRuleComponent(parentFrame, cam.getAccessManagers()[index], cam.getAccessManagers()[index].getName());
             namedACL[index].getTable().getSelectionModel().addListSelectionListener(new NamedAclSelectionListener(index));
+            namedACL[index].attachCompareTab(cam.getCompareResult(CompareAccessManager.ACL_TYPE,index));
             panel.add(namedACL[index]);
         }
-        /*
-        namedACL[0] = new NamedRuleComponent(parentFrame, cam.getAccessManagers()[0], cam.getAccessManagers()[0].getName());
-        namedACL[0].getTable().getSelectionModel().addListSelectionListener(new NamedAclSelectionListener(0));
-        panel.add(namedACL[0]);
-        
-        namedACL[1] = new NamedRuleComponent(parentFrame, cam.getAccessManagers()[1], cam.getAccessManagers()[1].getName());
-        namedACL[1].getTable().getSelectionModel().addListSelectionListener(new NamedAclSelectionListener(1));
-        panel.add(namedACL[1]);
-        */
+
         return panel;
     }
     
@@ -118,15 +145,7 @@ public class CompareAccessManagerComponent extends TabbedPanel {
             ruletree[index].getTree().addTreeSelectionListener(new RuletreeSelectionListener(index));
             panel.add(ruletree[index]);
         }
-        /*
-        ruletree[0] = new RuleTreeComponent(parentFrame, cam.getAccessManagers()[0], cam.getAccessManagers()[0].getName());
-        ruletree[0].getTree().addTreeSelectionListener(new RuletreeSelectionListener(0));
-        panel.add(ruletree[0]);
-        
-        ruletree[1] = new RuleTreeComponent(parentFrame, cam.getAccessManagers()[1], cam.getAccessManagers()[1].getName());
-        ruletree[1].getTree().addTreeSelectionListener(new RuletreeSelectionListener(1));
-        panel.add(ruletree[1]);
-        */
+
         return panel;
     }
     
@@ -234,7 +253,8 @@ public class CompareAccessManagerComponent extends TabbedPanel {
                 
                 for(int k=0; k<namedACL.length; k++)
                     if(k != index)
-                        namedACL[k].getTable().clearSelection();
+                        if(namedACL[k].getTable().getSelectedRowCount() != 0)
+                            namedACL[k].getTable().clearSelection();
                 
             } else
                 accessControl.updateTable();

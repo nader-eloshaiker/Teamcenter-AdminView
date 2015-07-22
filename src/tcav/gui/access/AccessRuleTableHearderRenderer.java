@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package tcav.gui.ruletree;
+package tcav.gui.access;
 
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;

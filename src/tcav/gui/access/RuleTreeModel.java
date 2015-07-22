@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package tcav.gui.ruletree;
+package tcav.gui.access;
 
 import java.util.ArrayList;
 import javax.swing.*;

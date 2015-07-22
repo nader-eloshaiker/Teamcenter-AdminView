@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package tcav.gui.ruletree;
+package tcav.gui.access;
 
 import javax.swing.table.*;
 import javax.swing.*;
@@ -67,7 +67,7 @@ public class NamedRuleTableCellRenderer implements TableCellRenderer {
                 break;
         }
         
-        int result = ((NamedRuleTableModel)table.getModel()).getAccessRule(row).getComparison();
+        int result = ((NamedRuleDataStreamAbstract)table.getModel()).getAccessRule(row).getComparison();
         switch(result) {
             case CompareInterface.NOT_EQUAL:
                 if (isSelected) {

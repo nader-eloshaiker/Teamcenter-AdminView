@@ -19,25 +19,35 @@ import java.io.File;
  * @author nzr4dl
  */
 public class CompareAccessManager extends AbstractManager {
-    
-    
-    
-    private final int TREE_INDEX = 0;
-    private final int ACL_INDEX = 1;
+    public static final int TREE_TYPE = 0;
+    public static final int ACL_TYPE = 1;
     
     private AccessManager[] amList;
-    private CompareResult[] compareResultOne = new CompareResult[]{new CompareResult(),new CompareResult()};
-    private CompareResult[] compareResultTwo = new CompareResult[]{new CompareResult(),new CompareResult()};
+    private CompareResult[] compareRuletreeResult;
+    private CompareResult[] compareNamedACLResult;
     
     public CompareAccessManager(AccessManager[] amList) {
         this.amList = amList;
+        compareRuletreeResult = new CompareResult[]{new CompareResult(),new CompareResult()};
+        compareNamedACLResult = new CompareResult[]{new CompareResult(),new CompareResult()};
         
-        compareNamedACL(amList[0], amList[1], compareResultOne);
-        compareNamedACL(amList[1], amList[0], compareResultTwo);
+        compareNamedACL(amList[0], amList[1], compareNamedACLResult[0]);
+        compareNamedACL(amList[1], amList[0], compareNamedACLResult[1]);
     }
     
     public AccessManager[] getAccessManagers() {
         return amList;
+    }
+    
+    public CompareResult getCompareResult(int type, int index) {
+        if(type == ACL_TYPE) {
+            if(index < compareNamedACLResult.length)
+                return compareNamedACLResult[index];
+        } else if(type == TREE_TYPE) {
+            if(index < compareRuletreeResult.length)
+                return compareRuletreeResult[index];
+        }
+        return null;
     }
     
     public String getId(){
@@ -63,7 +73,7 @@ public class CompareAccessManager extends AbstractManager {
         return super.ACCESS_COMPARE_MANAGER_TYPE;
     }
     
-    private void compareNamedACL(AccessManager amOne, AccessManager amTwo, CompareResult[] results) {
+    private void compareNamedACL(AccessManager amOne, AccessManager amTwo, CompareResult results) {
         int compareResult = CompareInterface.NOT_FOUND;
         AccessRule ar;
         
@@ -75,7 +85,7 @@ public class CompareAccessManager extends AbstractManager {
                     break;
             }
             ar.setComparison(compareResult);
-            results[ACL_INDEX].increment(compareResult);
+            results.increment(compareResult);
             //System.out.println(amOne.getFile().getName()+" "+compareResult);
         }
     }

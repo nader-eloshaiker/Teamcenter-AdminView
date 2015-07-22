@@ -1,4 +1,4 @@
-package tcav.gui.ruletree;
+package tcav.gui.access;
 
 import javax.naming.ldap.StartTlsRequest;
 import tcav.gui.*;

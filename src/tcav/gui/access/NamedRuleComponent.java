@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package tcav.gui.ruletree;
+package tcav.gui.access;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -21,6 +21,7 @@ import tcav.manager.access.AccessManager;
 import tcav.manager.access.AccessRule;
 import tcav.Settings;
 import tcav.resources.*;
+import tcav.manager.compare.*;
 /**
  *
  * @author NZR4DL
@@ -28,9 +29,14 @@ import tcav.resources.*;
 public class NamedRuleComponent extends JPanel {
     
     private JTableAdvanced table;
-    private NamedRuleFilterSortTableModel dataModel;
+    private NamedRuleDataModel data;
+    private NamedRuleDataStreamSort dataSort;
+    private NamedRuleDataStreamCompareFilter dataCompareFilter;
+    private NamedRuleDataStreamFilter dataFilter;
     private AccessManager am;
     private JFrame parentFrame;
+    
+    private final int TAB_MAX_COUNT = 6;
     
     /**
      * Creates a new instance of NamedRuleComponent
@@ -44,9 +50,15 @@ public class NamedRuleComponent extends JPanel {
         this.am = am;
         this.parentFrame = parent;
         table = new JTableAdvanced();
-        dataModel = new NamedRuleFilterSortTableModel(am.getAccessRuleList());
-        dataModel.setSort(Settings.getAMACLSort(),Settings.getAMACLSortAscending());
-        table.setModel(dataModel);
+        
+        data = new NamedRuleDataModel(am.getAccessRuleList());
+        dataSort = new NamedRuleDataStreamSort(data);
+        dataSort.setSort(Settings.getAMACLSort(),Settings.getAMACLSortAscending());
+        dataCompareFilter = new NamedRuleDataStreamCompareFilter(dataSort);
+        dataFilter = new NamedRuleDataStreamFilter(dataCompareFilter);
+        applyModelChanges();
+        
+        table.setModel(dataFilter);
         table.setRowSelectionAllowed(true);
         table.getTableHeader().setReorderingAllowed(false);
         table.setSelectionMode(0);
@@ -54,7 +66,7 @@ public class NamedRuleComponent extends JPanel {
         table.setIntercellSpacing(new Dimension(0,0));
         table.setShowGrid(false);
         TableColumn column;
-        for (int i=0; i<dataModel.getColumnCount(); i++){
+        for (int i=0; i<dataFilter.getColumnCount(); i++){
             column = table.getColumnModel().getColumn(i);
             column.setHeaderRenderer(new NamedRuleTableHearderRenderer());
             column.setCellRenderer(new NamedRuleTableCellRenderer());
@@ -88,7 +100,8 @@ public class NamedRuleComponent extends JPanel {
         tabNamed.setSelectedIndex(Settings.getAMACLTab());
         tabNamed.addChangeListener(new ChangeListener(){
             public void stateChanged(ChangeEvent e) {
-                Settings.setAMACLTab(tabNamed.getSelectedIndex());
+                if(tabNamed.getSelectedIndex() < TAB_MAX_COUNT)
+                    Settings.setAMACLTab(tabNamed.getSelectedIndex());
             }
         });
         
@@ -107,12 +120,33 @@ public class NamedRuleComponent extends JPanel {
         this.add(GUIutilities.createPanelMargined(panel));
     }
     
-    public NamedRuleFilterSortTableModel getModel() {
-        return dataModel;
+    private NamedRuleDataStreamAbstract getFinalModel() {
+        return dataFilter;
+    }
+    
+    private void applyModelChanges() {
+        dataSort.apply();
+        dataCompareFilter.apply();
+        dataFilter.apply();
+        
+        dataSort.fireTableDataChanged();
+        dataCompareFilter.fireTableDataChanged();
+        dataFilter.fireTableDataChanged();
+        
+        table.repaint();
+    }
+    
+    public NamedRuleDataStreamAbstract getModel() {
+        return getFinalModel();
     }
     
     public JTableAdvanced getTable() {
         return table;
+    }
+    
+    public void attachCompareTab(CompareResult result) {
+        tabNamed.add("Compare",GUIutilities.createPanelMargined(createTabCompare(result)));
+        tabNamed.setSelectedIndex(TAB_MAX_COUNT);
     }
     
     protected JComboBox listUnusedNamed;
@@ -185,9 +219,9 @@ public class NamedRuleComponent extends JPanel {
         listUnusedNamed.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 AccessRule ar = (AccessRule)listUnusedNamed.getSelectedItem();
-                int sortedIndex = getModel().indexOfRuleName(ar.getRuleName());
-                table.setRowSelectionInterval(sortedIndex,sortedIndex);
-                table.getSelectionModel().setAnchorSelectionIndex(sortedIndex);
+                int tableIndex = dataFilter.indexOfRuleName(ar.getRuleName());
+                table.setRowSelectionInterval(tableIndex,tableIndex);
+                table.getSelectionModel().setAnchorSelectionIndex(tableIndex);
                 table.scrollRectToVisible(
                         table.getCellRect(
                         table.getSelectionModel().getAnchorSelectionIndex(),
@@ -207,13 +241,13 @@ public class NamedRuleComponent extends JPanel {
     }
     
     private JPanel createTabSort() {
-        boxFirstSort = new JComboBox(NamedRuleFilterSortTableModel.SORT_COLUMN_SELECTION);
-        boxFirstSort.setSelectedIndex(getModel().getSort(0));
-        boxSecondSort = new JComboBox(NamedRuleFilterSortTableModel.SORT_COLUMN_SELECTION);
-        boxSecondSort.setSelectedIndex(getModel().getSort(1));
-        boxThirdSort = new JComboBox(NamedRuleFilterSortTableModel.SORT_COLUMN_SELECTION);
-        boxThirdSort.setSelectedIndex(getModel().getSort(2));
-        checkAscending = new JCheckBox("Ascending",getModel().isAscending());
+        boxFirstSort = new JComboBox(NamedRuleDataStreamSort.SORT_COLUMN_SELECTION);
+        boxFirstSort.setSelectedIndex(dataSort.getSort(0));
+        boxSecondSort = new JComboBox(NamedRuleDataStreamSort.SORT_COLUMN_SELECTION);
+        boxSecondSort.setSelectedIndex(dataSort.getSort(1));
+        boxThirdSort = new JComboBox(NamedRuleDataStreamSort.SORT_COLUMN_SELECTION);
+        boxThirdSort.setSelectedIndex(dataSort.getSort(2));
+        checkAscending = new JCheckBox("Ascending",dataSort.isAscending());
         JButton buttonSortNamed = new JButton("Sort");
         buttonSortNamed.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -223,9 +257,8 @@ public class NamedRuleComponent extends JPanel {
                 sort[2] = boxThirdSort.getSelectedIndex();
                 Settings.setAMACLSort(sort);
                 Settings.setAMACLSortAscending(checkAscending.isSelected());
-                getModel().setSort(sort, checkAscending.isSelected());
-                getModel().fireTableDataChanged();
-                table.repaint();
+                dataSort.setSort(sort, checkAscending.isSelected());
+                applyModelChanges();
             }
         });
         
@@ -260,17 +293,19 @@ public class NamedRuleComponent extends JPanel {
     private JPanel createTabFilter() {
         boxfilterType = new JComboBox();
         boxfilterType.addItem(null);
+        
         for(int i=0; i<am.getAccessRuleList().getACLTypes().size(); i++)
             boxfilterType.addItem(am.getAccessRuleList().getACLTypes().get(i));
-        boxfilterType.setSelectedItem(getModel().getFilterPattern(getModel().TYPE_COLUMN));
+        
+        boxfilterType.setSelectedItem(dataFilter.getFilterPattern(NamedRuleDataStreamInterface.TYPE_COLUMN));
         FilterActionListener filterActionListener = new FilterActionListener();
         textFilterInstanceCount = new JTextField();
         textFilterInstanceCount.setToolTipText("Must be a number");
-        textFilterInstanceCount.setText(getModel().getFilterPattern(getModel().INSTANCES_COLUMN));
+        textFilterInstanceCount.setText(dataFilter.getFilterPattern(NamedRuleDataStreamInterface.INSTANCES_COLUMN));
         textFilterInstanceCount.addActionListener(filterActionListener);
         textFilterName = new JTextField();
         textFilterName.setToolTipText("* ? [ - ] accepted");
-        textFilterName.setText(getModel().getFilterPattern(getModel().NAME_COLUMN));
+        textFilterName.setText(dataFilter.getFilterPattern(NamedRuleDataStreamInterface.NAME_COLUMN));
         textFilterName.addActionListener(filterActionListener);
         JButton buttonFilter = new JButton("Filter");
         buttonFilter.addActionListener(filterActionListener);
@@ -283,9 +318,8 @@ public class NamedRuleComponent extends JPanel {
                 boxfilterType.setSelectedItem(null);
                 textFilterInstanceCount.setText(null);
                 textFilterName.setText(null);
-                getModel().resetFilter();
-                getModel().fireTableDataChanged();
-                table.repaint();
+                dataFilter.resetFilter();
+                applyModelChanges();
             }
         });
         
@@ -339,9 +373,8 @@ public class NamedRuleComponent extends JPanel {
                 boxfilterType.setEnabled(false);
                 textFilterInstanceCount.setEnabled(false);
                 textFilterName.setEnabled(false);
-                getModel().setFilter(filterColumns,filterPatterns);
-                getModel().fireTableDataChanged();
-                table.repaint();
+                dataFilter.setFilter(filterColumns,filterPatterns);
+                applyModelChanges();
             }
         }
     }
@@ -350,7 +383,7 @@ public class NamedRuleComponent extends JPanel {
         search = new SearchTableComponent(){
             public boolean compare(int row, String type, String value) {
                 boolean matched = false;
-                AccessRule ar = getModel().getAccessRule(row);
+                AccessRule ar = getFinalModel().getAccessRule(row);
                 for(int j=0; j<ar.size(); j++) {
                     if((!type.equals("")) && (!value.equals("")) )
                         matched = isMatched(ar.get(j).getTypeOfAccessor(), type) & isMatched(ar.get(j).getIdOfAccessor(), value);
@@ -497,8 +530,100 @@ public class NamedRuleComponent extends JPanel {
         return panelNamedReferences;
     }
     
+    JButton buttonFilterCompare;
+    JCheckBox checkCompareEqual;
+    JCheckBox checkCompareNotEqual;
+    JCheckBox checkCompareNotFound;
+    
+    private JPanel createTabCompare(CompareResult result) {
+        checkCompareEqual = new JCheckBox(CompareInterface.EQUAL_LABEL);
+        checkCompareNotEqual = new JCheckBox(CompareInterface.NOT_EQUAL_LABEL);
+        checkCompareNotFound = new JCheckBox(CompareInterface.NOT_FOUND_LABEL);
+        buttonFilterCompare = new JButton("Filter");
+        buttonFilterCompare.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                dataCompareFilter.setFilterEqual(checkCompareEqual.isSelected());
+                dataCompareFilter.setFilterNotEqual(checkCompareNotEqual.isSelected());
+                dataCompareFilter.setFilterNotFound(checkCompareNotFound.isSelected());
+                applyModelChanges();
+            }
+        });
+        JButton buttonReset = new JButton("Clear");
+        buttonReset.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                checkCompareEqual.setSelected(false);
+                checkCompareNotEqual.setSelected(false);
+                checkCompareNotFound.setSelected(false);
+                dataCompareFilter.setFilterEqual(false);
+                dataCompareFilter.setFilterNotEqual(false);
+                dataCompareFilter.setFilterNotFound(false);
+                applyModelChanges();
+            }
+        });
+        
+        ImageIcon iconFind = new ImageIcon();
+        ImageIcon iconReset = new ImageIcon();
+        try {
+            iconFind = ResourceLoader.getImage(ImageEnum.utilFind);
+            iconReset = ResourceLoader.getImage(ImageEnum.utilClear);
+        } catch (Exception e) {
+            System.out.println("Couldn't load images: " + e);
+        }
+        buttonFilterCompare.setIcon(iconFind);
+        buttonReset.setIcon(iconReset);
+        
+        JPanel panel1Top = new JPanel();
+        panel1Top.setLayout(new GridLayout(1,3));//,GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
+        panel1Top.add(checkCompareEqual);
+        panel1Top.add(checkCompareNotEqual);
+        panel1Top.add(checkCompareNotFound);
+        JPanel panel1Bottom = new JPanel();
+        panel1Bottom.setLayout(new FlowLayout(FlowLayout.RIGHT,GUIutilities.GAP_COMPONENT,0));
+        panel1Bottom.add(buttonReset);
+        panel1Bottom.add(buttonFilterCompare);
+        JPanel panel1 = new JPanel();
+        panel1.setBorder(new TitledBorder(new EtchedBorder(), "Compare Filter:"));
+        panel1.setLayout(new BorderLayout());
+        panel1.add(panel1Top, BorderLayout.NORTH);
+        panel1.add(panel1Bottom, BorderLayout.CENTER);
+        
+        
+        JLabel labelEqual = new JLabel(Integer.toString(result.getResult(CompareInterface.EQUAL)));
+        JLabel labelNotEqual = new JLabel(Integer.toString(result.getResult(CompareInterface.NOT_EQUAL)));
+        JLabel labelNotFound = new JLabel(Integer.toString(result.getResult(CompareInterface.NOT_FOUND)));
+        labelEqual.setHorizontalAlignment(JLabel.CENTER);
+        labelNotEqual.setHorizontalAlignment(JLabel.CENTER);
+        labelNotFound.setHorizontalAlignment(JLabel.CENTER);
+        JLabel labelTitleEqual = new JLabel(CompareInterface.EQUAL_LABEL+":");
+        JLabel labelTitleNotEqual = new JLabel(CompareInterface.NOT_EQUAL_LABEL+":");
+        JLabel labelTitleNotFound = new JLabel(CompareInterface.NOT_FOUND_LABEL+":");
+        labelTitleEqual.setHorizontalAlignment(JLabel.CENTER);
+        labelTitleNotEqual.setHorizontalAlignment(JLabel.CENTER);
+        labelTitleNotFound.setHorizontalAlignment(JLabel.CENTER);
+        JPanel panel2Bottom = new JPanel();
+        panel2Bottom.setLayout(new GridLayout(2,3));//,GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
+        panel2Bottom.add(labelTitleEqual);
+        panel2Bottom.add(labelTitleNotEqual);
+        panel2Bottom.add(labelTitleNotFound);
+        panel2Bottom.add(labelEqual);
+        panel2Bottom.add(labelNotEqual);
+        panel2Bottom.add(labelNotFound);
+        JPanel panel2 = new JPanel();
+        panel2.setLayout(new BorderLayout());
+        panel2.setBorder(new TitledBorder(new EtchedBorder(), "Compare Statistics:"));
+        panel2.add(panel2Bottom, BorderLayout.CENTER);
+        
+        
+        JPanel panel = new JPanel();
+        panel.setLayout(new BorderLayout());
+        panel.add(panel1, BorderLayout.WEST);
+        panel.add(panel2, BorderLayout.CENTER);
+        
+        return panel;
+    }
+    
     public void updateReferences(int index) {
-        AccessRule ar = getModel().getAccessRule(index);
+        AccessRule ar = getFinalModel().getAccessRule(index);
         treeReferences.setModel(new RuleTreeReferencesModel(ar));
         treeReferences.repaint();
     }
