@@ -218,16 +218,21 @@ public class TreeToolBar extends JToolBar {
         int childCount = tree.getModel().getChildCount(parent.getLastPathComponent());
         progressLimit += childCount;
         monitor.setMaximum(progressLimit);
+        Object child;
+        
         if(childCount > 0) {
             for (int e=0; e<childCount; e++ ) {
                 progressCounter++;
-                monitor.setProgress(progressCounter);
-                monitor.setNote(progressCounter+" "+tree.getModel().getChild(parent.getLastPathComponent(),e).toString());
-                TreePath path = parent.pathByAddingChild(tree.getModel().getChild(parent.getLastPathComponent(), e));
-                if(monitor.isCanceled())
-                    break;
+                child = tree.getModel().getChild(parent.getLastPathComponent(),e);
+                if(child != null) {
+                    monitor.setProgress(progressCounter);
+                    monitor.setNote(progressCounter+" "+tree.getModel().getChild(parent.getLastPathComponent(),e).toString());
+                    TreePath path = parent.pathByAddingChild(tree.getModel().getChild(parent.getLastPathComponent(), e));
+                    if(monitor.isCanceled())
+                        break;
                 
-                setCascadeTreeExpansion(tree, path, expand, monitor);
+                    setCascadeTreeExpansion(tree, path, expand, monitor);
+                }
             }
         }
         

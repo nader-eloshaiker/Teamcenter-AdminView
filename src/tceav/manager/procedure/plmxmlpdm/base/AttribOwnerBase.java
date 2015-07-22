@@ -20,6 +20,7 @@ import tceav.manager.procedure.plmxmlpdm.type.ValidationResultsType;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.NamedNodeMap;
+import tceav.manager.procedure.plmxmlpdm.type.element.UserDataElementType;
 
 /*
 import javax.xml.bind.JAXBElement;
@@ -97,6 +98,7 @@ public abstract class AttribOwnerBase extends DescriptionBase {
             switch(tagType) {
                 case Arguments:
                     UserDataType arg = new UserDataType(currentNode);
+                    
                     arg.setUserDataType(ProcedureTagTypeEnum.Arguments);
                     getAttribute().add(arg);
                     getAttributeRefs().add(arg.getId());
@@ -104,7 +106,18 @@ public abstract class AttribOwnerBase extends DescriptionBase {
 
                 case UserData:          
                     UserDataType ud = new UserDataType(currentNode);
+                    
+                    /*
+                     * Workaround BUG in Attributes Tree Data which causes
+                     * rendering bug.
+                     */
+                    UserDataElementType ude = ud.getUserValue().get(0);
+                    if(ude != null && ude.getValue().equals(UserDataElementType.parentDependencyTaskRef)) {
+                        break;
+                    }
+
                     ud.setUserDataType(ProcedureTagTypeEnum.UserData);
+                    
                     getAttribute().add(ud);
                     getAttributeRefs().add(ud.getId());
                     break;
