@@ -39,16 +39,11 @@ import java.util.ArrayList;
  */
 public class ProcedureComponent extends JPanel implements TabbedPanel {
     
-    protected JTable tableDepTaskTemplateRef;
-    protected JTable tableWorkflowTemplatesProcess;
-    protected JTable tableWorkflowTemplatesSub;
-    protected JTable tableActionsRef;
-    protected JTable tableSubTemplateRef;
     protected JTreeAdvanced treeWorkflowProcess;
     protected JFrame parentFrame;
     protected ProcedureManager pm;
     protected JSplitPane splitPane1;
-    
+    protected ProcedureTreeModel modelProcedure;
     
     /**
      * Creates a new instance of ProcedureComponent
@@ -81,11 +76,13 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
     protected JButton buttonWorkflowFindClear;
     protected JComboBox boxSearchWorkflowType;
     protected JTextField textSearchValue;
+    protected JRadioButton radioProcedureDependantTasks;
+    protected JRadioButton radioProcedureSubWorkflow;
     
     public JComponent createWorkflowProcessPanel() {
         
         // Workflow Process Tree
-        treeWorkflowProcess = new JTreeAdvanced(new ProcedureTreeModel(pm));
+        treeWorkflowProcess = new JTreeAdvanced(new ProcedureTreeModel(pm, Settings.getPMProcedureMode()));
         treeWorkflowProcess.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         treeWorkflowProcess.setLargeModel(true);
         treeWorkflowProcess.setCellRenderer(new ProcedureTreeCellRenderer());
@@ -144,30 +141,36 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
                 }.start();
             }
         });
-        JButton buttonExpandDependTask = new JButton("Dependant Task");
-        buttonExpandDependTask.setHorizontalTextPosition(SwingConstants.RIGHT);
-        buttonExpandDependTask.setToolTipText("Show all Dependant Workflow Tasks");
-        buttonExpandDependTask.addActionListener(new ActionListener(){
+        
+        radioProcedureDependantTasks = new JRadioButton("Dependant Tasks");
+        radioProcedureDependantTasks.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                new Thread() {
-                    public void run() {
-                        Utilities.expandWorkflow(treeWorkflowProcess, parentFrame, NodeReference.PROCEDURE_DEPENDANT_TASKS);
-                    }
-                }.start();
+                Settings.setPMProcedureMode(ProcedureTreeModel.MODE_DEPENDANT_TASKS);
+                treeWorkflowProcess.setModel(new ProcedureTreeModel(pm, Settings.getPMProcedureMode()));
+                //modelProcedure.setProcedureMode(ProcedureTreeModel.MODE_DEPENDANT_TASKS);
+                //treeWorkflowProcess.reloadModel();
+                //treeWorkflowProcess.validate();
             }
         });
-        JButton buttonExpandSubTask = new JButton("Sub Workflow");
-        buttonExpandSubTask.setHorizontalTextPosition(SwingConstants.RIGHT);
-        buttonExpandSubTask.setToolTipText("Show all Sub Workflows");
-        buttonExpandSubTask.addActionListener(new ActionListener(){
+        radioProcedureSubWorkflow = new JRadioButton("Sub Workflows");
+        radioProcedureSubWorkflow.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                new Thread() {
-                    public void run() {
-                        Utilities.expandWorkflow(treeWorkflowProcess, parentFrame, NodeReference.PROCEDURE_SUB_WORKFLOW);
-                    }
-                }.start();
+                Settings.setPMProcedureMode(ProcedureTreeModel.MODE_SUB_WORKFLOWS);
+                treeWorkflowProcess.setModel(new ProcedureTreeModel(pm, Settings.getPMProcedureMode()));
+                //modelProcedure.setProcedureMode(ProcedureTreeModel.MODE_SUB_WORKFLOWS);
+                //treeWorkflowProcess.reloadModel();
+                //treeWorkflowProcess.validate();
             }
         });
+        ButtonGroup buttonGroupProcedureMode = new ButtonGroup();
+        buttonGroupProcedureMode.add(radioProcedureDependantTasks);
+        buttonGroupProcedureMode.add(radioProcedureSubWorkflow);
+        buttonGroupProcedureMode.setSelected(
+                radioProcedureDependantTasks.getModel(),
+                (Settings.getPMProcedureMode() == ProcedureTreeModel.MODE_DEPENDANT_TASKS));
+        buttonGroupProcedureMode.setSelected(
+                radioProcedureSubWorkflow.getModel(),
+                (Settings.getPMProcedureMode() == ProcedureTreeModel.MODE_SUB_WORKFLOWS));
         
         
         ImageIcon iconExpandAll = new ImageIcon();
@@ -185,8 +188,6 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
         
         buttonExpandAll.setIcon(iconExpandAll);
         buttonExpandBelow.setIcon(iconExpandBelow);
-        buttonExpandDependTask.setIcon(iconExpandBelow);
-        buttonExpandSubTask.setIcon(iconExpandBelow);
         buttonCollapseAll.setIcon(iconCollapseAll);
         buttonCollapseBelow.setIcon(iconCollapseBelow);
         
@@ -286,8 +287,9 @@ public class ProcedureComponent extends JPanel implements TabbedPanel {
         toolBarWorkflowTreeTop.add(buttonCollapseAll);
         toolBarWorkflowTreeTop.add(buttonCollapseBelow);
         toolBarWorkflowTreeTop.addSeparator();
-        toolBarWorkflowTreeTop.add(buttonExpandDependTask);
-        toolBarWorkflowTreeTop.add(buttonExpandSubTask);
+        toolBarWorkflowTreeTop.add(new JLabel("Default View:"));
+        toolBarWorkflowTreeTop.add(radioProcedureDependantTasks);
+        toolBarWorkflowTreeTop.add(radioProcedureSubWorkflow);
         
         JToolBar toolBarWorkflowTreeBottom = new JToolBar();
         toolBarWorkflowTreeBottom.setMargin(new Insets(

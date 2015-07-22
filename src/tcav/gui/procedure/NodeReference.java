@@ -23,15 +23,10 @@ public class NodeReference {
     private String parentId;
     private int index;
     private String name;
-    private int entryType;
     private int procedureType;
     private TagTypeEnum classType;
     private TagTypeEnum parentClassType;
     private String iconKey;
-    
-    /* Entry Type */
-    public static final int ENTRY_ITEM = 0;
-    public static final int ENTRY_COLLECTOR = 1;
     
     /* Procedure Tree Type */
     public static final int PROCEDURE_SITE = 0;
@@ -48,20 +43,19 @@ public class NodeReference {
     /**
      * Creates a new instance of NodeReference
      */
-    public NodeReference(String id, String name, int entryType, int procedureType, TagTypeEnum classType, String iconKey) {
+    public NodeReference(String id, String name, int procedureType, TagTypeEnum classType, String iconKey) {
         if(id.charAt(0)== '#')
             this.id = id.substring(1);
         else
             this.id = id;
         this.name = name;
-        this.entryType = entryType;
         this.procedureType = procedureType;
         this.iconKey = iconKey;
         this.classType = classType;
     }
     
-    public NodeReference(String id, String name, int entryType, int procedureType, TagTypeEnum classType) {
-        this(id, name, entryType, procedureType, classType, null);
+    public NodeReference(String id, String name, int procedureType, TagTypeEnum classType) {
+        this(id, name, procedureType, classType, null);
     }
     
     public String getId(){
@@ -104,10 +98,6 @@ public class NodeReference {
     
     public String getName(){
         return name;
-    }
-    
-    public int getEntryType() {
-        return entryType;
     }
     
     public int getProcedureType() {

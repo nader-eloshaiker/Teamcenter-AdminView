@@ -11,6 +11,8 @@ package tcav.gui;
 
 import javax.swing.JTree;
 import javax.swing.tree.TreeModel;
+import javax.swing.event.TreeModelListener;
+import javax.swing.event.TreeModelEvent;
 
 /**
  *
@@ -33,6 +35,18 @@ public class JTreeAdvanced extends JTree{
      */
     public void clearToggledPaths(){
         super.clearToggledPaths();
+    }
+    
+    public TreeModelListener getTreeModelListener() {
+        return treeModelListener;
+    }
+    
+    public void reloadModel() {
+        getTreeModelListener().treeStructureChanged(new TreeModelEvent(
+                getModel(), 
+                new Object[] {getModel().getRoot()},
+                null, 
+                null));
     }
     
 }

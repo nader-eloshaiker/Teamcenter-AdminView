@@ -56,11 +56,11 @@ public class ResourceLocator {
     }
     
     public static String getVersion() {
-        return "1.0 (Build 28)";
+        return "1.0 (Build 29)";
     }
     
     public static String getReleaseDate() {
-        return "11-Sep-07";
+        return "12-Sep-07";
     }
     
     public static String getApplicationName() {
@@ -74,7 +74,6 @@ public class ResourceLocator {
                         "<p></p>" +
                         "<p>Developed by"+
                         "<br>Nader Eloshaiker"+
-                        "<br>Senior Engineer: Product Data Management"+
                         "<br>email: nader.eloshaiker@gm.com"+
                         "<br>phone: +61 3 9647 5271</p>"+
                         "<p></p>" +

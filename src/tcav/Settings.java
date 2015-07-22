@@ -55,6 +55,9 @@ public class Settings {
     private static final int PROPERTY_AM_ACLTAB_DEFAULT = 0;
     
     /* properties process manager */
+    private static int pmProcedureMode;
+    private static final String PROPERTY_PM_PROCEDUREMODE = "tcav.pm.procedureMode";
+    private static int PROPERTY_PM_PROCEDUREMODE_DEFAULT = -1;
     private static int pmSplitLocation1;
     private static final String PROPERTY_PM_SPLITLOCATION1 = "tcav.pm.splitLocation1";
     private static int PROPERTY_PM_SPLITLOCATION1_DEFAULT = -1;
@@ -126,6 +129,10 @@ public class Settings {
                 PROPERTY_AM_ACLSORT,
                 PROPERTY_AM_ACLSORT_DEFAULT));
         
+        setPMProcedureMode(
+                getPropertyAsInt(
+                PROPERTY_PM_PROCEDUREMODE,
+                PROPERTY_PM_PROCEDUREMODE_DEFAULT));
         setPMSplitLocation1(
                 getPropertyAsInt(
                 PROPERTY_PM_SPLITLOCATION1,
@@ -177,7 +184,9 @@ public class Settings {
                 PROPERTY_AM_ACLSORT,
                 convertIntArrayToString(getAMACLSort()));
         
-        
+        property.setProperty(
+                PROPERTY_PM_PROCEDUREMODE,
+                Integer.toString(getPMProcedureMode()));
         property.setProperty(
                 PROPERTY_PM_SPLITLOCATION1,
                 Integer.toString(getPMSplitLocation1()));
@@ -281,6 +290,17 @@ public class Settings {
     
     public static void setAMACLTab(int amACLTab) {
         Settings.amACLTab = amACLTab;
+    }
+    
+    public static int getPMProcedureMode() {
+        return pmProcedureMode;
+    }
+    
+    public static void setPMProcedureMode(int pmProcedureMode) {
+        if(pmProcedureMode == -1)
+            Settings.pmProcedureMode = 0;
+        else
+            Settings.pmProcedureMode = pmProcedureMode;
     }
     
     public static int getPMSplitLocation1(){
