@@ -150,7 +150,7 @@ public class ProcedureManagerComponent extends JPanel implements TabbedPanel {
             textAuthor.setBorder(new BevelBorder(BevelBorder.LOWERED));
             JLabel textDate = new JLabel(" Date: "+pm.getPLMXML().getDate()+"   Time: "+pm.getPLMXML().getTime()+" ");
             textDate.setBorder(new BevelBorder(BevelBorder.LOWERED));
-            JLabel textFile = new JLabel(" "+getFile()+" ");
+            JLabel textFile = new JLabel(" Path: "+getFile().getParent()+" ");
             textFile.setBorder(new BevelBorder(BevelBorder.LOWERED));
             statusBar = new JPanel();
             statusBar.setLayout(new BorderLayout(1,1));

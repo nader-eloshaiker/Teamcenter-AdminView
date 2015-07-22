@@ -32,11 +32,11 @@ public class ResourceStrings {
     }
     
     public static String getVersion() {
-        return "1.9";
+        return "1.10";
     }
     
     public static String getBuild() {
-        return "74";
+        return "75";
     }
     
     public static String getReleaseDate() {
