@@ -93,8 +93,6 @@ public class WorkflowSignoffProfileType extends AttribOwnerBase {
         setRoleRef(TagTools.getStringValue(attrib, roleRefAttribute));
         setSignoffQuorum(TagTools.getIntegerValue(attrib, signoffQuorumAttribute));
         setTemplateRef(TagTools.getStringValue(attrib, templateRefAttribute));
-        
-        setTagType(TagTypeEnum.WorkflowSignoffProfile);
     }
 
     public Boolean isAllowSubgroups() {

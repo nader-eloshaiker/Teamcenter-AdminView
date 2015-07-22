@@ -59,8 +59,6 @@ public class WorkflowBusinessRuleHandlerType extends WorkflowHandlerType {
         
          setNegated(TagTools.getBooleanValue(attrib, negatedAttribute));
          setOverride(TagTools.getBooleanValue(attrib, overrideAttribute));
-         
-         setTagType(TagTypeEnum.WorkflowBusinessRuleHandler);
     }
 
     public Boolean isNegated() {

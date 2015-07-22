@@ -13,11 +13,11 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.table.*;
 import javax.swing.border.*;
+import tceav.gui.tools.GUIutilities;
+import tceav.gui.tools.table.JTableAdvanced;
 import tceav.manager.access.AccessControlHeader;
 import tceav.manager.access.AccessManager;
 import tceav.manager.access.AccessRule;
-import tceav.gui.*;
-import tceav.resources.*;
 
 /**
  *
@@ -67,15 +67,17 @@ public class AccessRuleComponent extends JPanel {
             }
         }
         
-        JScrollPane accessRuleComponentScroll = new JScrollPane();
-        accessRuleComponentScroll.setPreferredSize(new Dimension(980,150));
-        accessRuleComponentScroll.getViewport().add(table);
-        accessRuleComponentScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        accessRuleComponentScroll.setBorder(new BevelBorder(BevelBorder.LOWERED));
+        JScrollPane scrollTable = new JScrollPane();
+        scrollTable.setPreferredSize(new Dimension(980,150));
+        scrollTable.getViewport().add(table);
+        scrollTable.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollTable.setBorder(new BevelBorder(BevelBorder.LOWERED));
 
-        this.setLayout(new GridLayout(1,1));
-        this.setBorder(new TitledBorder(new EtchedBorder(),"Access Control"));
-        this.add(GUIutilities.createPanelMargined(accessRuleComponentScroll));
+        setLayout(new BorderLayout(GUIutilities.GAP_COMPONENT,GUIutilities.GAP_COMPONENT));
+        setBorder(new CompoundBorder(
+                new TitledBorder(new EtchedBorder(),"Access Control"),
+                new EmptyBorder(GUIutilities.GAP_MARGIN,GUIutilities.GAP_MARGIN,GUIutilities.GAP_MARGIN,GUIutilities.GAP_MARGIN)));
+        add(scrollTable, BorderLayout.CENTER);
     }
     
     public JTableAdvanced getTable() {

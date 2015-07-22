@@ -16,8 +16,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.CompoundBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
-import tceav.gui.GUIutilities;
-import tceav.gui.RotatedTextIcon;
+import tceav.gui.tools.GUIutilities;
+import tceav.gui.tools.RotatedTextIcon;
 import javax.swing.SwingConstants;
 
 /**

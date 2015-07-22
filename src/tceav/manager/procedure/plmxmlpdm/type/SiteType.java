@@ -76,8 +76,6 @@ public class SiteType extends OwnerBase
         setAddressRef(TagTools.getStringValue(attrib, addressRefAttribute));
         setOwnerRef(TagTools.getStringValue(attrib, ownerRefAttribute));
         setSiteId(TagTools.getStringValue(attrib, siteIdAttribute));
-        
-        setTagType(TagTypeEnum.Site);
     }
 
     public String getAddressRef() {

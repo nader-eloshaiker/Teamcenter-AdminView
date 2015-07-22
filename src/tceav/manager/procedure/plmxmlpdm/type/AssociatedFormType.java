@@ -62,8 +62,6 @@ public class AssociatedFormType extends AttributeBase {
        
         setFormRef(TagTools.getStringValue(attrib, formRefAttribute));
         setRole(TagTools.getStringValue(attrib, roleAttribute));
-        
-        setTagType(TagTypeEnum.AssociatedForm);
     }
 
     public String getFormRef() {

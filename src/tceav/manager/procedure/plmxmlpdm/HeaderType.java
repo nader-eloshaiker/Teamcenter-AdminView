@@ -41,8 +41,6 @@ public class HeaderType extends AttribOwnerBase{
         setTransferContext(TagTools.getStringValue(attrib, transferContextAttribute));
         
         TagTools.addToList(attrib, traverseRootRefsAttribute, getTraverseRootRefs());
-        
-        setTagType(TagTypeEnum.Header);
     }
     
     public List<String> getTraverseRootRefs() {

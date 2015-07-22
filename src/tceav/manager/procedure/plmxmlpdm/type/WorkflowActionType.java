@@ -83,8 +83,6 @@ public class WorkflowActionType extends AttribOwnerBase {
 
         TagTools.addToList(attrib, actionHandlerRefsAttribute, getActionHandlerRefs());
         TagTools.addToList(attrib, ruleRefsAttribute, getRuleRefs());
-
-        setTagType(TagTypeEnum.WorkflowAction);
     }
     
     public List<String> getActionHandlerRefs() {

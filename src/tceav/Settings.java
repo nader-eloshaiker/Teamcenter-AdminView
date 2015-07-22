@@ -26,108 +26,102 @@ import tceav.gui.compare.CompareAccessManagerComponent;
 public class Settings {
     /* properties application*/
     private static int frameSizeX;
-    private static final String PROPERTY_FRAMESIZEX = "tcav.frameSizeX";
+    private static final String PROPERTY_FRAMESIZEX = "tceav.frameSizeX";
     private static final int PROPERTY_FRAMESIZEX_DEFAULT = -1;
     private static int frameSizeY;
-    private static final String PROPERTY_FRAMESIZEY = "tcav.frameSizeY";
+    private static final String PROPERTY_FRAMESIZEY = "tceav.frameSizeY";
     private static final int PROPERTY_FRAMESIZEY_DEFAULT = -1;
     private static int frameLocationX;
-    private static final String PROPERTY_FRAMELOCATIONX = "tcav.frameLocationX";
+    private static final String PROPERTY_FRAMELOCATIONX = "tceav.frameLocationX";
     private static final int PROPERTY_FRAMELOCATIONX_DEFAULT = 0;
     private static int frameLocationY;
-    private static final String PROPERTY_FRAMELOCATIONY = "tcav.frameLocationY";
+    private static final String PROPERTY_FRAMELOCATIONY = "tceav.frameLocationY";
     private static final int PROPERTY_FRAMELOCATIONY_DEFAULT = 0;
     private static boolean saveSettingsOnExit;
-    private static final String PROPERTY_SAVESETTINGSONEXIT = "tcav.saveSettingsOnExit";
+    private static final String PROPERTY_SAVESETTINGSONEXIT = "tceav.saveSettingsOnExit";
     private static final boolean PROPERTY_SAVESETTINGSONEXIT_DEFAULT = true;
     private static String userInterface;
-    private static final String PROPERTY_USERINTERFACE = "tcav.userInterface";
+    private static final String PROPERTY_USERINTERFACE = "tceav.userInterface";
     private static final String PROPERTY_USERINTERFACE_DEFAULT = "";
+    private static String version;
+    private static final String PROPERTY_VERSION = "tceav.version";
+    private static final String PROPERTY_VERSION_DEFAULT = "1.0";
     
     /* properties access manager*/
     private static String amLoadPath;
-    private static final String PROPERTY_AMLOADPATH = "tcav.am.LoadPath";
+    private static final String PROPERTY_AMLOADPATH = "tceav.am.LoadPath";
     private static final String PROPERTY_AMLOADPATH_DEFAULT = "";
     private static int amSplitLocation;
-    private static final String PROPERTY_AM_SPLITLOCATION = "tcav.am.splitLocation";
+    private static final String PROPERTY_AM_SPLITLOCATION = "tceav.am.splitLocation";
     private static final int PROPERTY_AM_SPLITLOCATION_DEFAULT = -1;
     private static int[] amACLSort;
-    private static final String PROPERTY_AM_ACLSORT = "tcav.am.aclSort";
+    private static final String PROPERTY_AM_ACLSORT = "tceav.am.aclSort";
     private static final String PROPERTY_AM_ACLSORT_DEFAULT = "0,2";
     private static boolean amACLSortAscending;
-    private static final String PROPERTY_AM_ACLSORTASCENDING = "tcav.am.aclSortAscending";
+    private static final String PROPERTY_AM_ACLSORTASCENDING = "tceav.am.aclSortAscending";
     private static final boolean PROPERTY_AM_ACLSORTASCENDING_DEFAULT = true;
     private static int amACLTab;
-    private static final String PROPERTY_AM_ACLTAB = "tcav.am.aclTab";
+    private static final String PROPERTY_AM_ACLTAB = "tceav.am.aclTab";
     private static final int PROPERTY_AM_ACLTAB_DEFAULT = 0;
     private static boolean amSyncSelection;
-    private static final String PROPERTY_AM_SYNCSELECTION = "tcav.am.syncSelection";
+    private static final String PROPERTY_AM_SYNCSELECTION = "tceav.am.syncSelection";
     private static final boolean PROPERTY_AM_SYNCSELECTION_DEFAULT = true;
     
     /* properties process manager */
     private static String pmLoadPath;
-    private static final String PROPERTY_PMLOADPATH = "tcav.pm.loadPath";
+    private static final String PROPERTY_PMLOADPATH = "tceav.pm.loadPath";
     private static final String PROPERTY_PMLOADPATH_DEFAULT = "";
-    private static int pmProcedureMode;
-    private static final String PROPERTY_PM_PROCEDUREMODE = "tcav.pm.procedureMode";
-    private static int PROPERTY_PM_PROCEDUREMODE_DEFAULT = -1;
     private static int pmSplitLocation;
-    private static final String PROPERTY_PM_SPLITLOCATION = "tcav.pm.SplitLocation";
+    private static final String PROPERTY_PM_SPLITLOCATION = "tceav.pm.SplitLocation";
     private static int PROPERTY_PM_SPLITLOCATION_DEFAULT = -1;
-    private static boolean pmWokflowExpandedView;
-    private static final String PROPERTY_PM_WORKFLOWEXPANDEDVIEW = "tcav.pm.workflowExpandedView";
-    private static final boolean PROPERTY_PM_WORKFLOWEXPANDEDVIEW_DEFAULT = true;
-    private static boolean pmActionExpandedView;
-    private static final String PROPERTY_PM_ACTIONEXPANDEDVIEW = "tcav.pm.actionExpandedView";
-    private static final boolean PROPERTY_PM_ACTIONEXPANDEDVIEW_DEFAULT = true;
     
     
     private static boolean pmTblStrictArgument;
-    private static final String PROPERTY_PM_TBL_STRICTARUMENT = "tcav.pm.tbl.strictArgument";
+    private static final String PROPERTY_PM_TBL_STRICTARUMENT = "tceav.pm.tbl.strictArgument";
     private static final boolean PROPERTY_PM_TBL_STRICTARUMENT_DEFAULT = false;
     private static boolean pmTblMultiSheet;
-    private static final String PROPERTY_PM_TBL_MULTISHEET = "tcav.pm.tbl.multiSheet";
+    private static final String PROPERTY_PM_TBL_MULTISHEET = "tceav.pm.tbl.multiSheet";
     private static final boolean PROPERTY_PM_TBL_MULTISHEET_DEFAULT = true;
     private static boolean pmTblShowActions;
-    private static final String PROPERTY_PM_TBL_SHOWACTIONS = "tcav.pm.tbl.showActions";
+    private static final String PROPERTY_PM_TBL_SHOWACTIONS = "tceav.pm.tbl.showActions";
     private static final boolean PROPERTY_PM_TBL_SHOWACTIONS_DEFAULT = true;
     private static boolean pmTblIncludeIndents;
-    private static final String PROPERTY_PM_TBL_INCLUDEINDENTS = "tcav.pm.tbl.includeIndents";
+    private static final String PROPERTY_PM_TBL_INCLUDEINDENTS = "tceav.pm.tbl.includeIndents";
     private static final boolean PROPERTY_PM_TBL_INCLUDEINDENTS_DEFAULT = true;
     private static boolean pmTblDatabaseMode;
-    private static final String PROPERTY_PM_TBL_DATABASEMODE = "tcav.pm.tbl.database";
+    private static final String PROPERTY_PM_TBL_DATABASEMODE = "tceav.pm.tbl.database";
     private static final boolean PROPERTY_PM_TBL_DATABASEMODE_DEFAULT = true;
-
+    
     
     private static String compareMode;
-    private static final String PROPERTY_COMPAREMODE = "tcav.compareMode";
+    private static final String PROPERTY_COMPAREMODE = "tceav.compareMode";
     private static final String PROPERTY_COMPAREMODE_DEFAULT = ManagerAdapter.ACCESS_MANAGER_TYPE;
     
     
     /* properties access manager comparison */
     private static boolean amCmpSyncSelection;
-    private static final String PROPERTY_AM_CMP_SYNCSELECTION = "tcav.am.cmp.syncSelection";
+    private static final String PROPERTY_AM_CMP_SYNCSELECTION = "tceav.am.cmp.syncSelection";
     private static final boolean PROPERTY_AM_CMP_SYNCSELECTION_DEFAULT = true;
     private static int amCmpACLTab;
-    private static final String PROPERTY_AM_CMP_ACLTAB = "tcav.am.cmp.aclTab";
+    private static final String PROPERTY_AM_CMP_ACLTAB = "tceav.am.cmp.aclTab";
     private static final int PROPERTY_AM_CMP_ACLTAB_DEFAULT = 6;
     private static String amCmpDisplayMode;
-    private static final String PROPERTY_AM_CMP_DISPLAYMODE = "tcav.am.cmp.displayMode";
+    private static final String PROPERTY_AM_CMP_DISPLAYMODE = "tceav.am.cmp.displayMode";
     private static final String PROPERTY_AM_CMP_DISPLAYMODE_DEFAULT = CompareAccessManagerComponent.MODE_TREE;
     private static int amCmpFilterEqual;
-    private static final String PROPERTY_AM_CMP_FILTEREQUAL = "tcav.am.cmp.filterEqual";
+    private static final String PROPERTY_AM_CMP_FILTEREQUAL = "tceav.am.cmp.filterEqual";
     private static final int PROPERTY_AM_CMP_FILTEREQUAL_DEFAULT = NamedRuleComponent.COMPARE_HIDE_INDEX;
     private static int amCmpFilterNotEqual;
-    private static final String PROPERTY_AM_CMP_FILTERNOTEQUAL = "tcav.am.cmp.filterNotEqual";
+    private static final String PROPERTY_AM_CMP_FILTERNOTEQUAL = "tceav.am.cmp.filterNotEqual";
     private static final int PROPERTY_AM_CMP_FILTERNOTEQUAL_DEFAULT = NamedRuleComponent.COMPARE_SHOW_INDEX;
     private static int amCmpFilterNotFound;
-    private static final String PROPERTY_AM_CMP_FILTERNOTFOUND = "tcav.am.cmp.filterNotFound";
+    private static final String PROPERTY_AM_CMP_FILTERNOTFOUND = "tceav.am.cmp.filterNotFound";
     private static final int PROPERTY_AM_CMP_FILTERNOTFOUND_DEFAULT = NamedRuleComponent.COMPARE_SHOW_INDEX;
     private static int[] amCmpACLSort;
-    private static final String PROPERTY_AM_CMP_ACLSORT = "tcav.am.cmp.aclSort";
+    private static final String PROPERTY_AM_CMP_ACLSORT = "tceav.am.cmp.aclSort";
     private static final String PROPERTY_AM_CMP_ACLSORT_DEFAULT = "3,0,2";
     private static boolean amCmpACLSortAscending;
-    private static final String PROPERTY_AM_CMP_ACLSORTASCENDING = "tcav.am.cmp.aclSortAscending";
+    private static final String PROPERTY_AM_CMP_ACLSORTASCENDING = "tceav.am.cmp.aclSortAscending";
     private static final boolean PROPERTY_AM_CMP_ACLSORTASCENDING_DEFAULT = true;
     
     
@@ -139,15 +133,20 @@ public class Settings {
     }
     
     public static void load() throws Exception {
-        File path = new File(System.getenv("USERPROFILE"),".TcAV");
+        File path = new File(System.getenv("USERPROFILE"),".TcEAV");
         if(!path.exists())
             path.mkdir();
-        File file = new File(path,"TcAdminView.cfg");
+        File file = new File(path,"TcEAdminView.cfg");
         if(file.exists()) {
             FileInputStream fis =  new FileInputStream(file);
             property.load(fis);
             fis.close();
         }
+        
+        setVersion(
+                getPropertyAsString(
+                PROPERTY_VERSION,
+                PROPERTY_VERSION_DEFAULT));
         
         setUserInterface(
                 getPropertyAsString(
@@ -235,32 +234,20 @@ public class Settings {
                 getPropertyAsIntArray(
                 PROPERTY_AM_ACLSORT,
                 PROPERTY_AM_ACLSORT_DEFAULT));
-         setAmSyncSelection(
+        setAmSyncSelection(
                 getPropertyAsBoolean(
                 PROPERTY_AM_SYNCSELECTION,
                 PROPERTY_AM_SYNCSELECTION_DEFAULT));
-       
+        
         
         setPmLoadPath(
                 getPropertyAsString(
                 PROPERTY_PMLOADPATH,
                 PROPERTY_PMLOADPATH_DEFAULT));
-        setPmProcedureMode(
-                getPropertyAsInt(
-                PROPERTY_PM_PROCEDUREMODE,
-                PROPERTY_PM_PROCEDUREMODE_DEFAULT));
         setPmSplitLocation(
                 getPropertyAsInt(
                 PROPERTY_PM_SPLITLOCATION,
                 PROPERTY_PM_SPLITLOCATION_DEFAULT));
-        setPmWorkflowExpandedView(
-                getPropertyAsBoolean(
-                PROPERTY_PM_WORKFLOWEXPANDEDVIEW,
-                PROPERTY_PM_WORKFLOWEXPANDEDVIEW_DEFAULT));
-        setPmActionExpandedView(
-                getPropertyAsBoolean(
-                PROPERTY_PM_ACTIONEXPANDEDVIEW,
-                PROPERTY_PM_ACTIONEXPANDEDVIEW_DEFAULT));
         
         
         setPmTblStrictArgument(
@@ -287,6 +274,9 @@ public class Settings {
     }
     
     public static void store() throws Exception  {
+        property.setProperty(
+                PROPERTY_VERSION,
+                ResourceStrings.getVersion());
         property.setProperty(
                 PROPERTY_USERINTERFACE,
                 getUserInterface());
@@ -360,19 +350,10 @@ public class Settings {
                 PROPERTY_PMLOADPATH,
                 getPmLoadPath());
         property.setProperty(
-                PROPERTY_PM_PROCEDUREMODE,
-                Integer.toString(getPmProcedureMode()));
-        property.setProperty(
                 PROPERTY_PM_SPLITLOCATION,
                 Integer.toString(getPmSplitLocation()));
-        property.setProperty(
-                PROPERTY_PM_WORKFLOWEXPANDEDVIEW,
-                Boolean.toString(isPmWorkflowExpandedView()));
-        property.setProperty(
-                PROPERTY_PM_ACTIONEXPANDEDVIEW,
-                Boolean.toString(isPmActionExpandedView()));
         
-
+        
         property.setProperty(
                 PROPERTY_PM_TBL_STRICTARUMENT,
                 Boolean.toString(isPmTblStrictArgument()));
@@ -388,12 +369,12 @@ public class Settings {
         property.setProperty(
                 PROPERTY_PM_TBL_DATABASEMODE,
                 Boolean.toString(isPmTblDatabaseMode()));
-
         
-        File path = new File(System.getenv("USERPROFILE"),".TcAV");
+        
+        File path = new File(System.getenv("USERPROFILE"),".TcEAV");
         if(!path.exists())
             path.mkdir();
-        File file = new File(path,"TcAdminView.cfg");
+        File file = new File(path,"TcEAdminView.cfg");
         
         if(file.exists())
             if(!file.canWrite())
@@ -404,6 +385,14 @@ public class Settings {
             property.store(fos, ResourceStrings.getVersion());
             fos.close();
         }
+    }
+    
+    public static void setVersion(String version) {
+        Settings.version = version;
+    }
+    
+    public static int compareVersion() {
+        return version.compareToIgnoreCase(ResourceStrings.getVersion());
     }
     
     public static String getCompareMode() {
@@ -421,11 +410,11 @@ public class Settings {
     public static void setAmCmpRuleTab(int amCmpACLTab) {
         Settings.amCmpACLTab = amCmpACLTab;
     }
-
+    
     public static void setAmCmpSyncSelection(boolean amCmpSyncSelection) {
         Settings.amCmpSyncSelection = amCmpSyncSelection;
     }
-
+    
     public static boolean isAmCmpSyncSelection() {
         return amCmpSyncSelection;
     }
@@ -437,7 +426,7 @@ public class Settings {
     public static void setAmCmpDisplayMode(String amCmpDisplayMode) {
         Settings.amCmpDisplayMode = amCmpDisplayMode;
     }
-
+    
     public static int getAmCmpFilterEqual() {
         return  amCmpFilterEqual;
     }
@@ -469,7 +458,7 @@ public class Settings {
     public static void setAmCmpRuleSort(int[] amCmpACLSort) {
         Settings.amCmpACLSort = amCmpACLSort;
     }
-
+    
     public static boolean isAmCmpRuleSortAscending() {
         return amCmpACLSortAscending;
     }
@@ -479,7 +468,7 @@ public class Settings {
     }
     
     
-
+    
     public static String getAmLoadPath() {
         return amLoadPath;
     }
@@ -557,7 +546,9 @@ public class Settings {
     }
     
     public static void setAmSplitLocation(int amSplitLocation) {
-        if(amSplitLocation == -1)
+        if(compareVersion() != 0)
+            Settings.amSplitLocation = (int)(frameSizeY*0.58); 
+        else if(amSplitLocation == -1)
             Settings.amSplitLocation = (int)(frameSizeY*0.58);
         else
             Settings.amSplitLocation = amSplitLocation;
@@ -590,20 +581,9 @@ public class Settings {
     public static void setAmSyncSelection(boolean amSyncSelection) {
         Settings.amSyncSelection = amSyncSelection;
     }
-
+    
     public static boolean isAmSyncSelection() {
         return amSyncSelection;
-    }
-    
-    public static int getPmProcedureMode() {
-        return pmProcedureMode;
-    }
-    
-    public static void setPmProcedureMode(int pmProcedureMode) {
-        if(pmProcedureMode == -1)
-            Settings.pmProcedureMode = 0;
-        else
-            Settings.pmProcedureMode = pmProcedureMode;
     }
     
     public static int getPmSplitLocation(){
@@ -611,35 +591,21 @@ public class Settings {
     }
     
     public static void setPmSplitLocation(int pmSplitLocation) {
-        if(pmSplitLocation == -1)
-            Settings.pmSplitLocation = (int)(frameSizeX*0.5);
+        if(compareVersion() != 0)
+            Settings.pmSplitLocation = (int)(frameSizeY*0.5);
+        else if(pmSplitLocation == -1)
+            Settings.pmSplitLocation = (int)(frameSizeY*0.5);
         else
             Settings.pmSplitLocation = pmSplitLocation;
     }
     
-    public static boolean isPmWorkflowExpandedView() {
-        return pmWokflowExpandedView;
-    }
     
-    public static void setPmWorkflowExpandedView(boolean pmWokflowExpandedView) {
-        Settings.pmWokflowExpandedView = pmWokflowExpandedView;
-    }
     
-    public static boolean isPmActionExpandedView() {
-        return pmActionExpandedView;
-    }
     
-    public static void setPmActionExpandedView(boolean pmActionExpandedView) {
-        Settings.pmActionExpandedView = pmActionExpandedView;
-    }
-    
-
-    
-
     public static boolean isPmTblDatabaseMode() {
         return pmTblDatabaseMode;
     }
-
+    
     public static void setPmTblDatabaseMode(boolean pmTblDatabaseMode) {
         Settings.pmTblDatabaseMode = pmTblDatabaseMode;
     }
@@ -647,7 +613,7 @@ public class Settings {
     public static boolean isPmTblIncludeIndents() {
         return pmTblIncludeIndents;
     }
-
+    
     public static void setPmTblIncludeIndents(boolean pmTblIncludeIndents) {
         Settings.pmTblIncludeIndents = pmTblIncludeIndents;
     }
@@ -655,15 +621,15 @@ public class Settings {
     public static boolean isPmTblMultiSheet() {
         return pmTblMultiSheet;
     }
-
+    
     public static void setPmTblMultiSheet(boolean pmTblMultiSheet) {
         Settings.pmTblMultiSheet = pmTblMultiSheet;
     }
-
+    
     public static boolean isPmTblShowActions() {
         return pmTblShowActions;
     }
-
+    
     public static void setPmTblShowActions(boolean pmTblShowActions) {
         Settings.pmTblShowActions = pmTblShowActions;
     }
@@ -671,7 +637,7 @@ public class Settings {
     public static boolean isPmTblStrictArgument() {
         return pmTblStrictArgument;
     }
-
+    
     public static void setPmTblStrictArgument(boolean pmTblStrictArgument) {
         Settings.pmTblStrictArgument = pmTblStrictArgument;
     }

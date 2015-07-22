@@ -13,7 +13,7 @@ import javax.swing.table.*;
 import javax.swing.*;
 import java.awt.*;
 import tceav.manager.compare.CompareInterface;
-import tceav.gui.TableShadedRenderer;
+import tceav.gui.tools.table.TableShadedRenderer;
 import tceav.resources.*;
 
 /**

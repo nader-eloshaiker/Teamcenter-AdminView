@@ -11,7 +11,12 @@ package tceav.gui.procedure.tabulate;
 import java.util.ArrayList;
 import tceav.Settings;
 import tceav.manager.procedure.ProcedureManager;
-import tceav.manager.procedure.plmxmlpdm.type.*;
+import tceav.manager.procedure.plmxmlpdm.type.UserDataType;
+import tceav.manager.procedure.plmxmlpdm.type.WorkflowActionType;
+import tceav.manager.procedure.plmxmlpdm.type.WorkflowBusinessRuleHandlerType;
+import tceav.manager.procedure.plmxmlpdm.type.WorkflowBusinessRuleType;
+import tceav.manager.procedure.plmxmlpdm.type.WorkflowHandlerType;
+import tceav.manager.procedure.plmxmlpdm.type.WorkflowTemplateType;
 
 /**
  *
@@ -106,10 +111,9 @@ public class TableData extends WorkflowAbstractTable {
     public Object getValueAt(int rowIndex, int columnIndex) {
 
         WorkflowTemplateType wt = rowList.get(rowIndex);
+        ColumnHeaderAdapter  entry = getColumn(columnIndex);
         WorkflowHandlerType[] wh;
         WorkflowBusinessRuleType[] wbr;
-
-        ColumnHeaderAdapter entry = getColumn(columnIndex);
 
         for (int i = 0; i < wt.getActions().length; i++) {
             if (entry.isActionHandler()) {

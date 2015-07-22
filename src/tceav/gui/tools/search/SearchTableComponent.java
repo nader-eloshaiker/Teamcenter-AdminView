@@ -7,10 +7,10 @@
  * and open the template in the editor.
  */
 
-package tceav.gui;
+package tceav.gui.tools.search;
 
 import java.util.ArrayList;
-import tceav.gui.JTableAdvanced;
+import tceav.gui.tools.table.JTableAdvanced;
 import tceav.manager.access.AccessRule;
 /**
  *

@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package tceav.gui;
+package tceav.gui.tools.search;
 
 import tceav.utils.PatternMatch;
 import java.util.ArrayList;

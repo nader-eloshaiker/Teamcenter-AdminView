@@ -48,8 +48,6 @@ public class RoleType extends AttribOwnerBase {
     
     public RoleType(Node node) {
         super(node);
-        
-        setTagType(TagTypeEnum.Role);
     }
 
 

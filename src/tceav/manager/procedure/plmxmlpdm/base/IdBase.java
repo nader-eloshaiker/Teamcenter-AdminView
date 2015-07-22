@@ -53,17 +53,4 @@ public abstract class IdBase {
         this.id = value;
     }
     
-    /***************
-     * Customisation 
-     ***************/
-    private TagTypeEnum tagType;
-
-    protected void setTagType(TagTypeEnum tagType){
-        this.tagType = tagType;
-    }
-    
-    public TagTypeEnum getTagType() {
-        return tagType;
-    }
-
 }

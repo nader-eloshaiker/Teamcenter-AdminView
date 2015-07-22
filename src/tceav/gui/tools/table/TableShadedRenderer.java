@@ -7,12 +7,13 @@
  * and open the template in the editor.
  */
 
-package tceav.gui;
+package tceav.gui.tools.table;
 
-import javax.swing.table.*;
-import javax.swing.*;
 import java.awt.Color;
 import java.awt.Component;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
 /**
  *
  * @author nzr4dl
