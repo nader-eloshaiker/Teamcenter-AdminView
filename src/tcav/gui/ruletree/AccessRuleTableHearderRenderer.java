@@ -9,19 +9,25 @@
 
 package tcav.gui.ruletree;
 
-import javax.swing.table.TableCellRenderer;
-import javax.swing.JButton;
-import javax.swing.JTable;
+import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.JTableHeader;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.CompoundBorder;
 import javax.swing.ImageIcon;
+import javax.swing.JTable;
+import javax.swing.UIManager;
 import java.awt.Component;
-import java.awt.Insets;
+import tcav.ResourceLocator;
 import tcav.ResourceLocator;
 import tcav.ruletree.AccessControlColumnsEntry;
+
 /**
  *
  * @author nzr4dl
  */
-public class AccessRuleTableHearderRenderer extends JButton implements TableCellRenderer{
+public class AccessRuleTableHearderRenderer extends DefaultTableCellRenderer{
 
     ImageIcon icon;
     /** Creates a new instance of AccessRuleTableHearderRenderer */
@@ -29,6 +35,16 @@ public class AccessRuleTableHearderRenderer extends JButton implements TableCell
             Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         
         AccessControlColumnsEntry accEntry = (AccessControlColumnsEntry)value;
+        JTableHeader header = table.getTableHeader();
+        
+        if (header != null) {
+            setForeground(header.getForeground());
+            setBackground(header.getBackground());
+            setFont(header.getFont());
+        }
+        setBorder(new CompoundBorder(
+                UIManager.getBorder("TableHeader.cellBorder"), 
+                new EmptyBorder(1,1,1,1)));
 
       	try {
             icon = new ImageIcon(ResourceLocator.getRultreeColumnImage(accEntry.getIconName()));
@@ -36,9 +52,9 @@ public class AccessRuleTableHearderRenderer extends JButton implements TableCell
 	    System.out.println("Couldn't load images: " + e);
 	}
         
-        super.setIcon(icon);
-        super.setMargin(new Insets(0, 0, 0, 0));
-        super.setToolTipText(accEntry.getDescription());
+        setIcon(icon);
+        setToolTipText(accEntry.getDescription());
+        setHorizontalAlignment(SwingConstants.CENTER);
 
         return this;
     }

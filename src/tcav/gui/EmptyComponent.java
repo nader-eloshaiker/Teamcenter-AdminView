@@ -33,7 +33,7 @@ public class EmptyComponent extends JPanel implements TabbedPanel  {
         }
         
         this.setLayout(new BorderLayout());
-        this.add("Center", new JLabel(iconBanner));
+        this.add("East", new JLabel(iconBanner));
         this.setBackground(Color.WHITE);
         this.setBorder(new BevelBorder(BevelBorder.LOWERED));
     }
