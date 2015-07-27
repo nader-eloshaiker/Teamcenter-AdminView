@@ -50,7 +50,7 @@ public enum WorkflowTemplateClassificationEnum {
                 return c;
             }
         }
-        throw new IllegalArgumentException(v.toString());
+        throw new IllegalArgumentException(v);
     }
 
 }

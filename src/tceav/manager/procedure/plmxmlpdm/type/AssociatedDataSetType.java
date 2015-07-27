@@ -9,7 +9,6 @@
 package tceav.manager.procedure.plmxmlpdm.type;
 
 import tceav.xml.TagTools;
-import tceav.manager.procedure.plmxmlpdm.ProcedureTagTypeEnum;
 import tceav.manager.procedure.plmxmlpdm.base.AttributeBase;
 import tceav.manager.procedure.plmxmlpdm.base.IdBase;
 import org.w3c.dom.Node;
@@ -45,7 +44,7 @@ import org.w3c.dom.NamedNodeMap;
  */
 //@XmlAccessorType(XmlAccessType.FIELD)
 //@XmlType(name = "AssociatedDataSetType")
-public class AssociatedDataSetType extends AttributeBase {
+public final class AssociatedDataSetType extends AttributeBase {
 
     //@XmlAttribute(required = true)
     protected final String dataSetRefAttribute = "dataSetRef";

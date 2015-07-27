@@ -50,6 +50,7 @@ public class RuleTreeNodeRenderer implements TreeCellRenderer {
      * This attempts to set the font based on value, which will be
      * a TreeNode.
      */
+    @Override
     public Component getTreeCellRendererComponent(JTree tree, Object value,
             boolean isSelected, boolean expanded,
             boolean leaf, int row,
@@ -67,9 +68,11 @@ public class RuleTreeNodeRenderer implements TreeCellRenderer {
         cell.setToolTipText(amItem.toString());
         
         if(amItem.getParamters() != null)
-            for(int i=0; i<amItem.getParamters().length; i++)
-                if(!amItem.getParamters()[i].equals("Collapsed"))
-                    cell.setText(cell.getText()+" ["+amItem.getParamters()[i]+"]");
+            for (String paramter : amItem.getParamters()) {
+            if (!paramter.equals("Collapsed")) {
+                cell.setText(cell.getText()+" [" + paramter + "]");
+            }
+        }
         
         if (leaf)
             cell.setIcon(ruleIcon);

@@ -51,15 +51,18 @@ public class FreezeRowTableData extends WorkflowAbstractTable {
             return s.substring(2);
     }
     
+    @Override
     public Class getColumnClass(int columnIndex) {
         return String.class;
     }
     
+    @Override
     public int getColumnCount() {
         /*return 1*/
         return 2;
     }
     
+    @Override
     public String getColumnName(int columnIndex) {
         //return "Procedure Name";
         if(columnIndex == 0)
@@ -73,6 +76,7 @@ public class FreezeRowTableData extends WorkflowAbstractTable {
         return "\"" + getColumnName(columnIndex) + "\"";
     }
     
+    @Override
     public int getRowCount() {
         return rowList.size();
     }
@@ -84,10 +88,12 @@ public class FreezeRowTableData extends WorkflowAbstractTable {
             return getWorkflowType(rowIndex);
     }
     
+    @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         return getIndentString(rowIndex) + getRawValueAt(rowIndex, columnIndex);
     }
     
+    @Override
     public String getCSVValueAt(int rowIndex, int columnIndex) {
         if(Settings.isPmTblIncludeIndents())
             return "\"" + getIndentString(rowIndex) + getRawValueAt(rowIndex, columnIndex).replace("\"", "\"\"") + "\"";

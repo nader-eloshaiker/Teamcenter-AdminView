@@ -9,7 +9,6 @@
 
 package tceav.gui.access;
 
-import javax.swing.table.*;
 import javax.swing.tree.*;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.event.TreeSelectionEvent;
@@ -57,6 +56,7 @@ public class RuleTreeSelectionListener implements TreeSelectionListener {
         this.sync = sync;
     }
     
+    @Override
     public void valueChanged(TreeSelectionEvent e) {
         TreePath newPath = e.getPath();
         

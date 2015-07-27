@@ -49,6 +49,7 @@ public class AccessRuleTableCellRenderer extends TableShadedRenderer implements 
     }
      
     /** Creates a new instance of AccessRuleTableHearderRenderer */
+    @Override
     public Component getTableCellRendererComponent(JTable table,
             Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         
@@ -59,13 +60,18 @@ public class AccessRuleTableCellRenderer extends TableShadedRenderer implements 
         if(column > 1) {
             setHorizontalAlignment(SwingConstants.CENTER);
             setVerticalAlignment(SwingConstants.CENTER);
-            if(s.equals("Y"))
-                setIcon(yesIcon);
-            else if(s.equals("N"))
-                setIcon(noIcon);
-            else
-                setIcon(null);
-            setValue(null);
+            switch(s) {
+                case "Y":
+                    setIcon(yesIcon);
+                    break;
+                case "N":
+                    setIcon(noIcon);
+                    break;
+                default:
+                    setIcon(null);
+                    break;
+            }
+            setText(null);
         } else {
             setHorizontalAlignment(SwingConstants.LEFT);
             setIcon(null);

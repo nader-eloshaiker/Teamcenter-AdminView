@@ -72,6 +72,7 @@ public class RuleTreeComponent extends JPanel {
 
         searchRuleTree = new SearchTreeComponent() {
 
+            @Override
             public boolean compare(TreePath path, String type, String value) {
                 RuleTreeNode amItem = (RuleTreeNode) path.getLastPathComponent();
 
@@ -90,6 +91,7 @@ public class RuleTreeComponent extends JPanel {
         buttonRuleTreeFindNext = createButton("Show Next", "Show the next occurrence", false);
         buttonRuleTreeFindNext.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 searchRuleTree.searchNext(tree);
                 int k = searchRuleTree.getResultIndex() + 1;
@@ -110,6 +112,7 @@ public class RuleTreeComponent extends JPanel {
         buttonRuleTreeFindClear = createButton("Clear", "Clear search results", false);
         buttonRuleTreeFindClear.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 buttonRuleTreeFind.setText("Find");
                 buttonRuleTreeFindNext.setEnabled(false);
@@ -126,7 +129,8 @@ public class RuleTreeComponent extends JPanel {
         boxSearchCondition = new JComboBox();
         boxSearchCondition.setOpaque(false);
         boxSearchCondition.setToolTipText("Ruletree Condition");
-        if (am.getConditions().size() == 0) {
+        
+        if (am.getConditions().isEmpty()) {
             boxSearchCondition.setEnabled(false);
             boxSearchCondition.addItem("Condition");
         } else {
@@ -182,18 +186,19 @@ public class RuleTreeComponent extends JPanel {
 
     class FindActionListener implements ActionListener {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             new Thread() {
 
                 @Override
                 public void run() {
                     String conditionString = "";
-                    String valueString = "";
 
                     if (boxSearchCondition.getSelectedIndex() > 0) {
                         conditionString = (String) boxSearchCondition.getSelectedItem();
                     }
-                    valueString = textSearchValue.getText();
+                    
+                    String valueString = textSearchValue.getText();
 
                     if ((conditionString.equals("")) &&
                             ((valueString == null) || (valueString.equals("")))) {

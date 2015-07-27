@@ -9,8 +9,6 @@
 
 package tceav.manager.procedure.plmxmlpdm.classtype;
 
-import java.awt.Color;
-
 /**
  * Custom Enumerator
  *

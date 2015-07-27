@@ -9,7 +9,6 @@
 
 package tceav.gui.access;
 
-import tceav.manager.access.NamedAcl;
 import tceav.manager.compare.CompareInterface;
 import java.util.*;
 
@@ -59,22 +58,25 @@ public class NamedRuleDataFilterCompare extends NamedRuleDataFilterAdapter imple
         return filterNotFound;
     }
     
+    @Override
     protected void filter(){
         if(!isFilterNotFound() || !isFilterNotEqual() || !isFilterEqual())
             indexes = compareFilter(indexes);
     }
     
     private int[] compareFilter(int[] list){
-        Vector<Integer> newList = new Vector<Integer>();
+        ArrayList<Integer> newList;
         int[] newIndexes;
+        
+        newList = new ArrayList<>();
         
         for(int i=0; i<list.length; i++)
             if(compare(list[i]))
-                newList.addElement(list[i]);
+                newList.add(list[i]);
         
         newIndexes = new int[newList.size()];
         for(int j=0; j<newIndexes.length; j++)
-            newIndexes[j] = newList.elementAt(j).intValue();
+            newIndexes[j] = newList.get(j);
         
         return newIndexes;
     }
@@ -84,22 +86,13 @@ public class NamedRuleDataFilterCompare extends NamedRuleDataFilterAdapter imple
 
         switch(result){
             case CompareInterface.EQUAL:
-                if(isFilterEqual())
-                    return true;
-                else
-                    return false;
+                return isFilterEqual();
                 
             case CompareInterface.NOT_EQUAL:
-                if(isFilterNotEqual())
-                    return true;
-                else
-                    return false;
+                return isFilterNotEqual();
                 
             case CompareInterface.NOT_FOUND:
-                if(isFilterNotFound())
-                    return true;
-                else
-                    return false;
+                return isFilterNotFound();
 
             default:
                 return false;

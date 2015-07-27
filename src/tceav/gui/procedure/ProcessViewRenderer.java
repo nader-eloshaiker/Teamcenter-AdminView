@@ -40,7 +40,6 @@ public class ProcessViewRenderer extends JPanel {
         JTree tree = new JTree();
         setBackground(tree.getBackground());
         setOpaque(true);
-        tree = null;
         
         if (rootTask == null) {
             subTasks = new ProcessTaskComponent[0];
@@ -69,7 +68,6 @@ public class ProcessViewRenderer extends JPanel {
         super.updateUI();
         JTree tree = new JTree();
         setBackground(tree.getBackground());
-        tree = null;
     }
     
     public void drawArrow(Point src, Point dst, Graphics2D g2) {

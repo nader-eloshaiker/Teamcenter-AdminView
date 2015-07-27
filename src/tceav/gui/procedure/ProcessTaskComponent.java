@@ -4,13 +4,10 @@
  */
 package tceav.gui.procedure;
 
-import tceav.resources.ResourceLoader;
-import tceav.resources.ImageEnum;
 import java.awt.Point;
 import java.awt.Dimension;
 import java.awt.Color;
 import java.awt.Font;
-import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
@@ -23,7 +20,7 @@ import tceav.manager.procedure.plmxmlpdm.type.WorkflowTemplateType;
  *
  * @author nzr4dl-e
  */
-public class ProcessTaskComponent extends JLabel {
+public final class ProcessTaskComponent extends JLabel {
     
     private WorkflowTemplateType task;
     private int taskType;

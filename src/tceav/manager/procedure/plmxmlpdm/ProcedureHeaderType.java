@@ -32,6 +32,7 @@ public class ProcedureHeaderType extends AttribOwnerBase{
     
     /**
      * Creates a new instance of HeaderType
+     * @param node
      */
     public ProcedureHeaderType(Node node) {
         super(node);
@@ -47,7 +48,7 @@ public class ProcedureHeaderType extends AttribOwnerBase{
     
     private List<String> getTraverseRootRefs() {
         if (traverseRootRefs == null) {
-            traverseRootRefs = new ArrayList<String>();
+            traverseRootRefs = new ArrayList<>();
         }
         return this.traverseRootRefs;
     }

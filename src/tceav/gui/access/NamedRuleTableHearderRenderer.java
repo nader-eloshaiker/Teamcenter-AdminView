@@ -15,11 +15,9 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.CompoundBorder;
-import javax.swing.JLabel;
 import javax.swing.ImageIcon;
 import javax.swing.JTable;
 import java.awt.Component;
-import tceav.gui.access.NamedRuleDataFilterInterface;
 import tceav.resources.*;
 
 
@@ -45,6 +43,7 @@ public class NamedRuleTableHearderRenderer implements TableCellRenderer {
     }
     
     /** Creates a new instance of AccessRuleTableHearderRenderer */
+    @Override
     public Component getTableCellRendererComponent(JTable table,
             Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         

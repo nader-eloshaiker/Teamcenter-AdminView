@@ -10,7 +10,6 @@
 package tceav.gui.tools.tree.toolbar;
 
 import javax.swing.tree.TreePath;
-import tceav.gui.*;
 import tceav.manager.access.RuleTreeNode;
 
 /**
@@ -23,6 +22,7 @@ public class TreeCopyRuleTreeAdaptor implements TreeCopyModel {
     public TreeCopyRuleTreeAdaptor() {
     }
     
+    @Override
     public String getEntryAsString(TreePath path) {
         return ((RuleTreeNode)path.getLastPathComponent()).toString();
     };

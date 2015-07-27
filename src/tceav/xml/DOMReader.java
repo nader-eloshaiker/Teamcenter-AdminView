@@ -21,7 +21,7 @@ import org.w3c.dom.Node;
  */
 public class DOMReader {
     
-    private Node rootNode;
+    private final Node rootNode;
     
     //public DOMReader(InputStream is) throws Exception {
     public DOMReader(File file) throws Exception {

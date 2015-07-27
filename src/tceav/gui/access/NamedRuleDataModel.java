@@ -27,14 +27,17 @@ public class NamedRuleDataModel extends NamedRuleDataAdapterModel implements Nam
         this.accessRuleList = accessRuleList;
     }
     
+    @Override
     public NamedAcl getAccessRule(int row) {
         return accessRuleList.get(row);
     }
     
+    @Override
     public int getRowCount() {
         return accessRuleList.size();
     }
     
+    @Override
     public Object getValueAt(int row, int col) {
         switch(col) {
             case TYPE_COLUMN:

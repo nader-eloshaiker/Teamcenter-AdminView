@@ -2,6 +2,7 @@
 <!-- 
 Copyright 2005 UGS Corp.  All Rights Reserved.
 This software and related documentation are proprietary to UGS Corp.
+This verion was used in the initial implementation to support Teamcenter v6
 -->
 <xsd:schema targetNamespace="http://www.plmxml.org/Schemas/PLMXMLSchema" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:plm="http://www.plmxml.org/Schemas/PLMXMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
   <xsd:include schemaLocation="PLMXMLSchema.xsd"/>

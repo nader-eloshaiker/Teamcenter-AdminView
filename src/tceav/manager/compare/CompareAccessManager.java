@@ -25,9 +25,9 @@ public class CompareAccessManager extends ManagerAdapter {
     public static final int TREE_TYPE = 0;
     public static final int ACL_TYPE = 1;
     
-    private AccessManager[] amList;
-    private CompareResult[] compareRuletreeResult;
-    private CompareResult[] compareNamedACLResult;
+    private final AccessManager[] amList;
+    private final CompareResult[] compareRuletreeResult;
+    private final CompareResult[] compareNamedACLResult;
     
     public CompareAccessManager(AccessManager[] amList) {
         this.amList = amList;
@@ -57,14 +57,17 @@ public class CompareAccessManager extends ManagerAdapter {
         return null;
     }
     
+    @Override
     public File getFile() {
         return amList[0].getFile();//+" <> "+amList[1].getFile();
     }
     
+    @Override
     public void readFile(File file) throws Exception {
         
     }
     
+    @Override
     public boolean isValid() {
         /*
         if (amList[0].isValid() && amList[1].isValid())
@@ -75,6 +78,7 @@ public class CompareAccessManager extends ManagerAdapter {
         return true;
     }
     
+    @Override
     public String getManagerType() {
         return ACCESS_COMPARE_MANAGER_TYPE;
     }
@@ -84,24 +88,18 @@ public class CompareAccessManager extends ManagerAdapter {
     }
     
     private void compare(ArrayList<RuleTreeNode> am1, ArrayList<RuleTreeNode> am2, CompareResult results) {
-        int compResult = CompareInterface.NOT_FOUND;
-        int finalResult = CompareInterface.NOT_FOUND;
-        RuleTreeNode node;
+        int result = CompareInterface.NOT_FOUND;
      
-        for (int i=0; i<am1.size(); i++) {
-            node = am1.get(i);
-            for (int j=0; j<am2.size(); j++){
-                compResult = node.compare(am2.get(j));
-                if(compResult == CompareInterface.EQUAL) {
-                    finalResult = compResult;
+        for (RuleTreeNode node1 : am1) {
+            for (RuleTreeNode node2 : am2) {
+                result = node1.compare(node2);
+                if(result != CompareInterface.NOT_FOUND) {
                     break;
-                } else if(compResult == CompareInterface.NOT_EQUAL) {
-                    finalResult = compResult;
                 }
             }
-            node.setComparison(finalResult);
+            node1.setComparison(result);
             if(results != null)
-                results.increment(finalResult);
+                results.increment(result);
         }
     }
 
@@ -111,16 +109,14 @@ public class CompareAccessManager extends ManagerAdapter {
     
     private void compare(NamedAclList am1, NamedAclList am2, CompareResult results) {
         int result = CompareInterface.NOT_FOUND;
-        NamedAcl node;
         
-        for(int j=0; j<am1.size(); j++){
-            node = am1.get(j);
-            for(int l=0; l<am2.size(); l++) {
-                result = node.compare(am2.get(l));
+        for (NamedAcl node1 : am1) {
+            for (NamedAcl node2 : am2) {
+                result = node1.compare(node2);
                 if(result != CompareInterface.NOT_FOUND)
                     break;
             }
-            node.setComparison(result);
+            node1.setComparison(result);
             if(results != null)
                 results.increment(result);
         }

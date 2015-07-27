@@ -32,8 +32,8 @@ import tceav.manager.procedure.ProcedureManager;
  */
 public class WorkflowComponent extends JComponent {
     
-    private JTreeAdvanced tree;
-    private ProcedureManager procedureManager;
+    private final JTreeAdvanced tree;
+    private final ProcedureManager procedureManager;
     
     public WorkflowComponent(AdminViewFrame parentFrame, ProcedureManager pm) {
         super();

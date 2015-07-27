@@ -46,6 +46,7 @@ public class EmptyComponent extends TabbedPanel {
     
     private JPanel statusBar;
     
+    @Override
     public JComponent getStatusBar() {
         if(statusBar != null)
             return statusBar;

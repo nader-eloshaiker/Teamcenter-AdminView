@@ -76,7 +76,7 @@ public class GUIutilities {
         TableModel model = table.getModel();
         DefaultTableColumnModel colModel = (DefaultTableColumnModel)table.getColumnModel();
         TableColumn col = colModel.getColumn(columnIndex);
-        int width = 0;
+        int width;
         
         // Get width of column header
         TableCellRenderer renderer = col.getHeaderRenderer();

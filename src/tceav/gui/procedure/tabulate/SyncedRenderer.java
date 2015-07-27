@@ -19,13 +19,14 @@ import javax.swing.table.TableCellRenderer;
  */
 public class SyncedRenderer extends TableShadedWorkflowRenderer implements TableCellRenderer {
     
-    private JTable oppositeTable;
+    private final JTable oppositeTable;
     
     public SyncedRenderer(JTable oppositeTable) {
         super();
         this.oppositeTable = oppositeTable;
     }
     
+    @Override
     public Component getTableCellRendererComponent(JTable table,
             Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         

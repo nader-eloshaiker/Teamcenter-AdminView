@@ -10,7 +10,6 @@ package tceav.manager.procedure.plmxmlpdm.base;
 
 import java.util.*;
 
-import tceav.xml.TagTools;
 import tceav.manager.procedure.plmxmlpdm.ProcedureTagTypeEnum;
 import tceav.manager.procedure.plmxmlpdm.type.UserDataType;
 import tceav.manager.procedure.plmxmlpdm.type.AssociatedDataSetType;
@@ -78,14 +77,15 @@ public abstract class AttribOwnerBase extends DescriptionBase {
     
     //@XmlAttribute
     //@XmlIDREF
-    /***************
-     * Customisation
-     * List<String> attributeRefs, use to be List<Object> attributeRefs
-     ***************/
     protected List<String> attributeRefs;
     
     public AttribOwnerBase(Node node) {
         super(node);
+        
+        if (node == null) {
+            return;
+        }
+
         Node currentNode = node;
         NamedNodeMap attrib = currentNode.getAttributes();
         NodeList nodeList = currentNode.getChildNodes();
@@ -169,17 +169,18 @@ public abstract class AttribOwnerBase extends DescriptionBase {
      * {@link JAXBElement }{@code <}{@link ValidationResultsType }{@code >}
      *
      *
+     * @return 
      */
-    public List<AttributeBase> getAttribute() {
+    public final List<AttributeBase> getAttribute() {
         if (attribute == null) {
-            attribute = new ArrayList<AttributeBase>();
+            attribute = new ArrayList<>();
         }
         return this.attribute;
     }
     
-    public List<String> getAttributeRefs() {
+    public final List<String> getAttributeRefs() {
         if (attributeRefs == null) {
-            attributeRefs = new ArrayList<String>();
+            attributeRefs = new ArrayList<>();
         }
         return this.attributeRefs;
     }

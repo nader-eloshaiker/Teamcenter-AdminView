@@ -10,7 +10,6 @@
 package tceav.gui.tools.search;
 
 import tceav.utils.PatternMatch;
-import java.util.ArrayList;
 
 /**
  *

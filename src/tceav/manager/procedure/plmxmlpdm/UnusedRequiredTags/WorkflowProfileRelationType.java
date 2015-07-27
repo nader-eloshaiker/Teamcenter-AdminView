@@ -105,7 +105,7 @@ public class WorkflowProfileRelationType extends AttribOwnerBase {
      */
     public List<String> getProfileRefs() {
         if (profileRefs == null) {
-            profileRefs = new ArrayList<String>();
+            profileRefs = new ArrayList<>();
         }
         return this.profileRefs;
     }

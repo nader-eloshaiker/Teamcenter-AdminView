@@ -85,7 +85,7 @@ public class WorkflowProcessType extends AttribOwnerBase {
      */
     public List<TaskType> getTask() {
         if (task == null) {
-            task = new ArrayList<TaskType>();
+            task = new ArrayList<>();
         }
         return this.task;
     }

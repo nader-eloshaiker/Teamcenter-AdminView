@@ -9,10 +9,8 @@
 
 package tceav.gui.tools.tree;
 
-import java.util.ArrayList;
 import javax.swing.JTree;
 import javax.swing.tree.TreeModel;
-import javax.swing.tree.TreePath;
 import javax.swing.event.TreeModelListener;
 import javax.swing.event.TreeModelEvent;
 
@@ -35,6 +33,7 @@ public class JTreeAdvanced extends JTree{
      * This is used to get around the caching bug for collapse and expanding all
      * branches.
      */
+    @Override
     public void clearToggledPaths(){
         super.clearToggledPaths();
     }

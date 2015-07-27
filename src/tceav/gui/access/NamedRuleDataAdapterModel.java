@@ -30,6 +30,7 @@ public abstract class NamedRuleDataAdapterModel extends AbstractTableModel {
         this.compareMode = compareMode;
     }
     
+    @Override
     public int getColumnCount() {
         return getColumns().length;
     }

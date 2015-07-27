@@ -52,6 +52,7 @@ public class PropertiesTableData extends AbstractTableModel implements TableMode
         return String.class;
     }
     
+    @Override
     public int getColumnCount() {
         return 2;
     }
@@ -70,6 +71,7 @@ public class PropertiesTableData extends AbstractTableModel implements TableMode
         }
     }
     
+    @Override
     public int getRowCount() {
         if(data == null)
             return 0;
@@ -121,6 +123,7 @@ public class PropertiesTableData extends AbstractTableModel implements TableMode
         
     }
     
+    @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         if(data == null)
             return null;

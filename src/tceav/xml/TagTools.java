@@ -29,11 +29,13 @@ public class TagTools {
             return;
         
         String[] s = listValues.split(" ");
-        for(int i=0; i<s.length; i++)
-            if(s[i].indexOf('#') == 0)
-                list.add(s[i].substring(1));
-            else
-                list.add(s[i]);
+        for (String item : s) {
+            if (item.indexOf('#') == 0) {
+                list.add(item.substring(1));
+            } else {
+                list.add(item);
+            }
+        }
     }
     
     public static String getStringValue(NamedNodeMap nodeMap, String attribute) {
@@ -54,7 +56,7 @@ public class TagTools {
             return null;
         
         String s = node.getNodeValue();
-        if((s.equals("")) || (s ==null))
+        if(s ==null || s.equals(""))
             return null;
         else
             return Double.parseDouble(s);
@@ -66,7 +68,7 @@ public class TagTools {
             return null;
         
         String s = node.getNodeValue();
-        if((s.equals("")) || (s ==null))
+        if(s ==null || s.equals(""))
             return null;
         else
             return Boolean.parseBoolean(s);
@@ -78,7 +80,7 @@ public class TagTools {
             return null;
         
         String s = node.getNodeValue();
-        if((s.equals("")) || (s == null))
+        if(s ==null || s.equals(""))
             return null;
         else
             return Integer.parseInt(s);

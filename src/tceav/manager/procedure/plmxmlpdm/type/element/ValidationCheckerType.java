@@ -9,8 +9,6 @@
 package tceav.manager.procedure.plmxmlpdm.type.element;
 
 import tceav.xml.TagTools;
-import tceav.manager.procedure.plmxmlpdm.ProcedureTagTypeEnum;
-import tceav.manager.procedure.plmxmlpdm.base.AttributeBase;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.NamedNodeMap;
@@ -53,7 +51,7 @@ import tceav.manager.procedure.plmxmlpdm.base.IdBase;
  */
 //@XmlAccessorType(XmlAccessType.FIELD)
 //@XmlType(name = "ValidationCheckerType")
-public class ValidationCheckerType extends IdBase {
+public final class ValidationCheckerType extends IdBase {
 
     //@XmlAttribute
     protected final String adHocAttribute = "adHoc";

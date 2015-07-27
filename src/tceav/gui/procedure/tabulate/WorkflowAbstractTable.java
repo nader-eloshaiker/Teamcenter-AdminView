@@ -23,10 +23,7 @@ public abstract class WorkflowAbstractTable implements TableModel {
     protected String siteId;
     
     public boolean isRootNode(int rowIndex) {
-        if(rowList.get(rowIndex).getParentTaskTemplate() == null)
-            return true;
-        else
-            return false;
+        return rowList.get(rowIndex).getParentTaskTemplate() == null;
     }
     
     
@@ -63,12 +60,16 @@ public abstract class WorkflowAbstractTable implements TableModel {
         return indent;
     }
     
+    @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) { return false; }
     
+    @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) { }
     
+    @Override
     public void removeTableModelListener(TableModelListener l) { }
     
+    @Override
     public void addTableModelListener(TableModelListener l) { }
     
 }

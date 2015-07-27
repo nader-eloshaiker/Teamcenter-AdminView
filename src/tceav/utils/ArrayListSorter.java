@@ -30,15 +30,15 @@ public class ArrayListSorter {
     }
     
     private static int compare(String s1, String s2, boolean ascending) {
-        int result = 0;
+        int result;
         
         // If both values are null, return 0.
         if (s1 == null && s2 == null) {
-            result = 0;
+            return 0;
         } else if (s1 == null) { // Define null less than everything.
-            result = -1;
+            return -1;
         } else if (s2 == null) {
-            result = 1;
+            return 1;
         }
         
         result = s2.compareToIgnoreCase(s1);

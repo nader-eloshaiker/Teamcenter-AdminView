@@ -22,53 +22,59 @@ public class AccessControlHeader extends ArrayList<AccessControlHeaderItem> {
     public AccessControlHeader() {
         super(32);
 
-        add(new AccessControlHeaderItem(AccessControlHeaderEnum.AccessorType));
-        add(new AccessControlHeaderItem(AccessControlHeaderEnum.Accessor));
-        add(new AccessControlHeaderItem(AccessControlHeaderEnum.Read));
-        add(new AccessControlHeaderItem(AccessControlHeaderEnum.Write));
-        add(new AccessControlHeaderItem(AccessControlHeaderEnum.Delete));
-        add(new AccessControlHeaderItem(AccessControlHeaderEnum.Change));
-        add(new AccessControlHeaderItem(AccessControlHeaderEnum.Promote));
-        add(new AccessControlHeaderItem(AccessControlHeaderEnum.Demote));
-        add(new AccessControlHeaderItem(AccessControlHeaderEnum.Copy));
-        add(new AccessControlHeaderItem(AccessControlHeaderEnum.Export));
-        add(new AccessControlHeaderItem(AccessControlHeaderEnum.Import));
-        add(new AccessControlHeaderItem(AccessControlHeaderEnum.TransferOut));
-        add(new AccessControlHeaderItem(AccessControlHeaderEnum.TransferIn));
-        add(new AccessControlHeaderItem(AccessControlHeaderEnum.ChangeOwnership));
-        add(new AccessControlHeaderItem(AccessControlHeaderEnum.Publish));
-        add(new AccessControlHeaderItem(AccessControlHeaderEnum.Subscribe));
-        add(new AccessControlHeaderItem(AccessControlHeaderEnum.Accessor));
-        add(new AccessControlHeaderItem(AccessControlHeaderEnum.Classification));
-        add(new AccessControlHeaderItem(AccessControlHeaderEnum.AssignToProject));
-        add(new AccessControlHeaderItem(AccessControlHeaderEnum.RemoveFromProject));
-        add(new AccessControlHeaderItem(AccessControlHeaderEnum.Unamanged));
-        add(new AccessControlHeaderItem(AccessControlHeaderEnum.IPAdmin));
-        add(new AccessControlHeaderItem(AccessControlHeaderEnum.ITARAdmin));
-        add(new AccessControlHeaderItem(AccessControlHeaderEnum.CheckInCheckOut));
-        add(new AccessControlHeaderItem(AccessControlHeaderEnum.RemoteCICO));
-        add(new AccessControlHeaderItem(AccessControlHeaderEnum.AdministerADALicense));
-        add(new AccessControlHeaderItem(AccessControlHeaderEnum.Translation));
-        add(new AccessControlHeaderItem(AccessControlHeaderEnum.MarkUp));
-        add(new AccessControlHeaderItem(AccessControlHeaderEnum.BatchPrint));
-        add(new AccessControlHeaderItem(AccessControlHeaderEnum.DigitalSign));
+        add(new AccessControlHeaderItem(AccessControlHeaderItem.ACCESSOR_TYPE));
+        add(new AccessControlHeaderItem(AccessControlHeaderItem.ACCESSOR));
+        add(new AccessControlHeaderItem(AccessControlHeaderItem.READ));
+        add(new AccessControlHeaderItem(AccessControlHeaderItem.WRITE));
+        add(new AccessControlHeaderItem(AccessControlHeaderItem.DELETE));
+        add(new AccessControlHeaderItem(AccessControlHeaderItem.CHANGE));
+        add(new AccessControlHeaderItem(AccessControlHeaderItem.PROMOTE));
+        add(new AccessControlHeaderItem(AccessControlHeaderItem.DEMOTE));
+        add(new AccessControlHeaderItem(AccessControlHeaderItem.COPY));
+        add(new AccessControlHeaderItem(AccessControlHeaderItem.EXPORT));
+        add(new AccessControlHeaderItem(AccessControlHeaderItem.IMPORT));
+        add(new AccessControlHeaderItem(AccessControlHeaderItem.TRANSFER_OUT));
+        add(new AccessControlHeaderItem(AccessControlHeaderItem.TRANSFER_IN));
+        add(new AccessControlHeaderItem(AccessControlHeaderItem.CHANGE_OWNER));
+        add(new AccessControlHeaderItem(AccessControlHeaderItem.PUBLISH));
+        add(new AccessControlHeaderItem(AccessControlHeaderItem.SUBSCRIBE));
+        add(new AccessControlHeaderItem(AccessControlHeaderItem.WRITE_ICOS));
+        add(new AccessControlHeaderItem(AccessControlHeaderItem.ASSIGN_TO_PROJECT));
+        add(new AccessControlHeaderItem(AccessControlHeaderItem.REMOVE_FROM_PROJECT));
+        add(new AccessControlHeaderItem(AccessControlHeaderItem.UNMANAGE));
+        add(new AccessControlHeaderItem(AccessControlHeaderItem.IP_ADMIN));
+        add(new AccessControlHeaderItem(AccessControlHeaderItem.ITAR_ADMIN));
+        add(new AccessControlHeaderItem(AccessControlHeaderItem.CICO));
+        add(new AccessControlHeaderItem(AccessControlHeaderItem.REMOTE_CICO));
+        add(new AccessControlHeaderItem(AccessControlHeaderItem.ADMIN_ADA_LIC));
+        add(new AccessControlHeaderItem(AccessControlHeaderItem.TRANSLATION));
+        add(new AccessControlHeaderItem(AccessControlHeaderItem.MARKUP));
+        add(new AccessControlHeaderItem(AccessControlHeaderItem.BATCH_PRINT));
+        add(new AccessControlHeaderItem(AccessControlHeaderItem.DIGITAL_SIGN));
+        add(new AccessControlHeaderItem(AccessControlHeaderItem.ITAR_CLASSIFIER));
+        add(new AccessControlHeaderItem(AccessControlHeaderItem.IP_CLASSIFIER));
+        add(new AccessControlHeaderItem(AccessControlHeaderItem.ADD_CONTENT));
+        add(new AccessControlHeaderItem(AccessControlHeaderItem.REMOVE_CONTENT));
     }
 
     public AccessControlHeader(String str) {
         super(32);
 
-        add(new AccessControlHeaderItem(AccessControlHeaderEnum.AccessorType));
-        add(new AccessControlHeaderItem(AccessControlHeaderEnum.Accessor));
+        add(new AccessControlHeaderItem(AccessControlHeaderItem.ACCESSOR_TYPE));
+        add(new AccessControlHeaderItem(AccessControlHeaderItem.ACCESSOR));
 
+        AccessControlHeaderItem acHeader;
+        
         String[] s = str.split("!");
-        for (int i = 0; i < s.length; i++) {
-            add(new AccessControlHeaderItem(AccessControlHeaderEnum.fromValue(s[i])));
+        for (String item : s) {
+            acHeader = new AccessControlHeaderItem(item);
+            add(acHeader);
         }
     }
 
-    public int indexOfAccessControl(AccessControlHeaderEnum item) {
+    public int indexOfAccessControl(String item) {
         for (int i = 0; i < size(); i++) {
-            if (get(i).getEnum().equals(item)) {
+            if (get(i).value().equals(item)) {
                 return i;
             }
         }

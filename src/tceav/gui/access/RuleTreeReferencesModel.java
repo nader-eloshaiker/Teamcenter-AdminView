@@ -9,8 +9,6 @@
 
 package tceav.gui.access;
 
-import java.util.ArrayList;
-import javax.swing.*;
 import javax.swing.tree.*;
 import javax.swing.event.*;
 import tceav.manager.access.NamedAcl;
@@ -23,7 +21,7 @@ import tceav.manager.access.RuleTreeNode;
  */
 public class RuleTreeReferencesModel implements TreeModel{
     
-    private NamedAcl root;
+    private final NamedAcl root;
     
     /** Creates a new instance of RuleTreeModel */
     public RuleTreeReferencesModel(NamedAcl root) {
@@ -31,10 +29,12 @@ public class RuleTreeReferencesModel implements TreeModel{
     }
     
     
+    @Override
     public Object getRoot(){
         return root;
     }
     
+    @Override
     public Object getChild(Object parent, int index){
         if(parent.equals(root))
             return root.getRuleTreeReferences().get(index);
@@ -42,6 +42,7 @@ public class RuleTreeReferencesModel implements TreeModel{
             return ((RuleTreeNode)parent).getParent();
     }
     
+    @Override
     public int getChildCount(Object parent){
         if(parent.equals(root))
             return root.getRuleTreeReferences().size();
@@ -53,13 +54,15 @@ public class RuleTreeReferencesModel implements TreeModel{
         }
     }
     
+    @Override
     public boolean isLeaf(Object node){
         if(node.equals(root))
-            return (root.getRuleTreeReferences().size() == 0);
+            return (root.getRuleTreeReferences().isEmpty());
         else
             return (((RuleTreeNode)node).getParent() == null);
     }
     
+    @Override
     public int getIndexOfChild(Object parent, Object child){
         if(parent == null || child == null)
             return -1;
@@ -76,14 +79,17 @@ public class RuleTreeReferencesModel implements TreeModel{
         return -1;
     }
     
+    @Override
     public void addTreeModelListener(TreeModelListener listener){
         // not editable
     }
     
+    @Override
     public void removeTreeModelListener(TreeModelListener listener){
         // not editable
     }
     
+    @Override
     public void valueForPathChanged(TreePath path, Object newValue){
         // not editable
     }

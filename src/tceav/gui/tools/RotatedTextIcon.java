@@ -26,13 +26,13 @@ import java.util.ArrayList;
  * @author NZR4DL
  */
 
-public class RotatedTextIcon implements Icon {
+public final class RotatedTextIcon implements Icon {
     public static final int NONE = 0;
     public static final int RIGHT = 1;
     public static final int LEFT = 2;
     
-    private int rotate;
-    private ArrayList<GlyphVector> glyphs;
+    private final int rotate;
+    private final ArrayList<GlyphVector> glyphs;
     private float width;
     private float height;
     private float ascent;
@@ -43,7 +43,7 @@ public class RotatedTextIcon implements Icon {
         this.rotate = rotate;
         this.height = 0;
         this.width = 0;
-        glyphs = new ArrayList<GlyphVector>();
+        glyphs = new ArrayList<>();
         
         for(int i=0; i<s.size(); i++)
             convertTextToGlyph(font.get(i), s.get(i));
@@ -54,28 +54,27 @@ public class RotatedTextIcon implements Icon {
         this.height = 0;
         this.width = 0;
         this.rotate = rotate;
-        glyphs = new ArrayList<GlyphVector>();
+        glyphs = new ArrayList<>();
         
         convertTextToGlyph(font, s);
     }
     
     public void convertTextToGlyph(Font font, String s) {
         int strPad = 4;
+        LineMetrics lineMetrics;
         String[] text = s.split("\n");
         
         FontRenderContext fontRenderContext = new FontRenderContext(null,true,true);
-        for(int i=0; i<text.length; i++) {
+        for (String t : text) {
+            ArrayList<String> strList = hyphenateString(t);
             
-            ArrayList<String> strList = hyphenateString(text[i]);
-            
-            for(int k=0; k<strList.size(); k++) {
-                glyphs.add(font.createGlyphVector(fontRenderContext,strList.get(k)));
+            for (String sList : strList) {
+                glyphs.add(font.createGlyphVector(fontRenderContext, sList));
                 width = Math.max(width, (int)glyphs.get(glyphs.size()-1).getLogicalBounds().getWidth() + strPad);
-                LineMetrics lineMetrics = font.getLineMetrics(strList.get(k), fontRenderContext);
+                lineMetrics = font.getLineMetrics(sList, fontRenderContext);
                 ascent = lineMetrics.getAscent();
                 height = Math.max(height, (int)lineMetrics.getHeight());
             }
-            
         }
         
         renderHints = new RenderingHints(
@@ -92,7 +91,7 @@ public class RotatedTextIcon implements Icon {
         int division;
         String indent;
         String pad = "   ";
-        ArrayList<String> tmpList = new ArrayList<String>();
+        ArrayList<String> tmpList = new ArrayList<>();
         
         if(s.length() > stringLimit) {
             division = s.length() / stringLimit;
@@ -125,6 +124,7 @@ public class RotatedTextIcon implements Icon {
         return indent;
     }
     
+    @Override
     public int getIconWidth() {
         return (int)(rotate == RotatedTextIcon.RIGHT
                 || rotate == RotatedTextIcon.LEFT
@@ -132,6 +132,7 @@ public class RotatedTextIcon implements Icon {
     }
     
     
+    @Override
     public int getIconHeight() {
         return (int)(rotate == RotatedTextIcon.RIGHT
                 || rotate == RotatedTextIcon.LEFT
@@ -139,6 +140,7 @@ public class RotatedTextIcon implements Icon {
     }
     
     
+    @Override
     public void paintIcon(Component c, Graphics g, int x, int y) {
         Graphics2D g2d = (Graphics2D)g;
         

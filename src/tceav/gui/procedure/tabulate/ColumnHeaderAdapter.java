@@ -20,7 +20,7 @@ import java.util.ArrayList;
  */
 public abstract class ColumnHeaderAdapter implements ColumnHeaderModel {
 
-    private ArrayList<Handler> handlers = new ArrayList<Handler>();;
+    private ArrayList<Handler> handlers = new ArrayList<>();;
     public static final String ARGUMENT_PREFIX = "   ";
     public static final String ARGUMENT_PAD = "   ";
 
@@ -73,12 +73,12 @@ public abstract class ColumnHeaderAdapter implements ColumnHeaderModel {
 
     public class Handler {
 
-        private String handler;
-        private ArrayList<Argument> arguments;
+        private final String handler;
+        private final ArrayList<Argument> arguments;
 
         public Handler(String handler) {
             this.handler = handler;
-            arguments = new ArrayList<Argument>();
+            arguments = new ArrayList<>();
         }
 
         public String getName() {
@@ -133,7 +133,7 @@ public abstract class ColumnHeaderAdapter implements ColumnHeaderModel {
         }
 
         public boolean hasArguments() {
-            return (arguments.size() != 0);
+            return (!arguments.isEmpty());
         }
 
         public String getAllArguments() {
@@ -191,9 +191,9 @@ public abstract class ColumnHeaderAdapter implements ColumnHeaderModel {
                 String s = argumentStr.substring(argumentStr.indexOf('=') + 1);
                 values = new String[]{s};
 
-                for (int i = 0; i < delimeters.length; i++) {
-                    if (s.indexOf(delimeters[i]) > -1) {
-                        values = s.split(delimeters[i]);
+                for (String delimeter : delimeters) {
+                    if (s.contains(delimeter)) {
+                        values = s.split(delimeter);
                         break;
                     }
                 }
@@ -243,9 +243,9 @@ public abstract class ColumnHeaderAdapter implements ColumnHeaderModel {
                 String s = argumentCmp.substring(argumentCmp.indexOf('=') + 1);
                 valuesCmp = new String[]{s};
 
-                for (int i = 0; i < delimeters.length; i++) {
-                    if (s.indexOf(delimeters[i]) > -1) {
-                        valuesCmp = s.split(delimeters[i]);
+                for (String delimeter : delimeters) {
+                    if (s.contains(delimeter)) {
+                        valuesCmp = s.split(delimeter);
                         break;
                     }
                 }

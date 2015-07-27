@@ -44,6 +44,7 @@ public class TreeToolBar extends JToolBar {
         buttonExpandBelow.setOpaque(false);
         buttonExpandBelow.setToolTipText("Expand Below");
         buttonExpandBelow.addActionListener(new ActionListener() {//new TreeToolBarExpandAction(tree, parentFrame){
+            @Override
             public void actionPerformed(ActionEvent e) {
                 new Thread() {
                     @Override
@@ -57,6 +58,7 @@ public class TreeToolBar extends JToolBar {
         buttonExpandAll.setOpaque(false);
         buttonExpandAll.setToolTipText("Expand All");
         buttonExpandAll.addActionListener(new ActionListener() {//new TreeToolBarExpandAction(tree, parentFrame){
+            @Override
             public void actionPerformed(ActionEvent e) {
                 new Thread() {
                     @Override
@@ -70,6 +72,7 @@ public class TreeToolBar extends JToolBar {
         buttonCollapseBelow.setOpaque(false);
         buttonCollapseBelow.setToolTipText("Collapse Below");
         buttonCollapseBelow.addActionListener(new ActionListener() {//new TreeToolBarExpandAction(tree, parentFrame){
+            @Override
             public void actionPerformed(ActionEvent e) {
                 new Thread() {
                     @Override
@@ -83,6 +86,7 @@ public class TreeToolBar extends JToolBar {
         buttonCollapseAll.setOpaque(false);
         buttonCollapseAll.setToolTipText("Collapse Below");
         buttonCollapseAll.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 new Thread() {
                     @Override
@@ -94,6 +98,7 @@ public class TreeToolBar extends JToolBar {
         });
         
         ActionListener copyAction = new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 copyToClipboard();
             }

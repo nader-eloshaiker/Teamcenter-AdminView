@@ -10,11 +10,7 @@
 package tceav.gui.tools.tree.toolbar;
 
 import javax.swing.tree.TreePath;
-import tceav.gui.*;
 import tceav.gui.procedure.TaskProperties;
-import tceav.manager.procedure.plmxmlpdm.base.DescriptionBase;
-import tceav.manager.procedure.plmxmlpdm.type.WorkflowActionType;
-import tceav.manager.procedure.plmxmlpdm.type.element.UserDataElementType;
 
 
 /**
@@ -27,6 +23,7 @@ public class TreeCopyProcedureAdaptor implements TreeCopyModel {
     public TreeCopyProcedureAdaptor() {
     }
     
+    @Override
     public String getEntryAsString(TreePath path) {
         return TaskProperties.getElementName(path.getLastPathComponent());
     }

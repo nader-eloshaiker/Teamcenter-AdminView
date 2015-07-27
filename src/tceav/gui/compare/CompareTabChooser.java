@@ -11,17 +11,14 @@ package tceav.gui.compare;
 
 import javax.swing.*;
 import javax.swing.border.*;
-import javax.swing.event.*;
 import java.io.File;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
 import tceav.gui.tools.CustomFileFilter;
 import tceav.gui.tools.GUIutilities;
 import tceav.manager.ManagerAdapter;
 import tceav.Settings;
 import tceav.gui.*;
-import tceav.resources.*;
 
 /**
  *
@@ -49,6 +46,7 @@ public class CompareTabChooser extends JPanel {
                 "RuleTree",
                 (SelectionMode.equals(ManagerAdapter.ACCESS_MANAGER_TYPE)));
         ruletreeButton.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 if(ruletreeButton.isSelected()) {
                     SelectionMode = ManagerAdapter.ACCESS_MANAGER_TYPE;
@@ -60,6 +58,7 @@ public class CompareTabChooser extends JPanel {
                 "Procedure",
                 (SelectionMode.equals(ManagerAdapter.PROCEDURE_MANAGER_TYPE)));
         procedureButton.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 if(procedureButton.isSelected()) {
                     SelectionMode = ManagerAdapter.PROCEDURE_MANAGER_TYPE;
@@ -98,6 +97,7 @@ public class CompareTabChooser extends JPanel {
         label1.setHorizontalAlignment(JLabel.RIGHT);
         JButton button1 = new JButton("Choose File");
         button1.addActionListener( new ActionListener(){
+            @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fc = createFileChooser();
                 int result = fc.showOpenDialog(parentFrame);
@@ -121,6 +121,7 @@ public class CompareTabChooser extends JPanel {
         label1.setPreferredSize(label2.getPreferredSize());
         JButton button2 = new JButton("Choose File");
         button2.addActionListener( new ActionListener(){
+            @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fc = createFileChooser();
                 int result = fc.showOpenDialog(parentFrame);
@@ -165,7 +166,7 @@ public class CompareTabChooser extends JPanel {
     }
     
     private JFileChooser createFileChooser() {
-        String path = "";
+        String path;
         JFileChooser fc = new JFileChooser();
         
         if(ruletreeButton.isSelected()) {
