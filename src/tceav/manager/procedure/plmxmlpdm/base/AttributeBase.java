@@ -9,13 +9,7 @@
 package tceav.manager.procedure.plmxmlpdm.base;
 
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.NamedNodeMap;
-/*
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
-*/
+
 
 /**
  * 

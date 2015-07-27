@@ -24,6 +24,7 @@ public class FreezeRowRenderer extends SyncedRenderer implements TableCellRender
         super(oppositeTable);
     }
     
+    @Override
     public Component getTableCellRendererComponent(JTable table,
             Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         

@@ -9,7 +9,6 @@
 
 package tceav.gui.access;
 
-import javax.swing.table.*;
 import tceav.manager.access.NamedAcl;
 
 /**
@@ -21,19 +20,23 @@ public abstract class NamedRuleDataFilterAdapter extends NamedRuleDataAdapterMod
     protected int[] indexes;
     protected NamedRuleDataFilterInterface model;
     
+    @Override
     public void setCompareMode(boolean compareMode) {
         super.setCompareMode(compareMode);
         model.setCompareMode(compareMode);
     }
     
+    @Override
     public final Object getValueAt(int aRow, int aColumn) {
         return model.getValueAt(indexes[aRow], aColumn);
     }
     
+    @Override
     public final int getRowCount() {
         return indexes.length;
     }
     
+    @Override
     public final NamedAcl getAccessRule(int row) {
         return model.getAccessRule(indexes[row]);
     }
@@ -54,12 +57,14 @@ public abstract class NamedRuleDataFilterAdapter extends NamedRuleDataAdapterMod
         
     }
     
+    @Override
     public final void applyFilter(){
         model.applyFilter();
         reallocateIndexes();
         filter();
     }
     
+    @Override
     public final void fireTableDataChanged() {
         model.fireTableDataChanged();
         super.fireTableDataChanged();
@@ -183,11 +188,7 @@ public abstract class NamedRuleDataFilterAdapter extends NamedRuleDataAdapterMod
         
         // at the end of all this, if we're at the end of the pattern
         // then we have a good match
-        if (patternPos == pattern.length()) {
-            return true;
-        }  else  {
-            return false;
-        }
+        return patternPos == pattern.length();
         
     }
     

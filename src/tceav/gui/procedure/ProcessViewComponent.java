@@ -5,7 +5,6 @@
 package tceav.gui.procedure;
 
 import tceav.manager.procedure.plmxmlpdm.base.IdBase;
-import tceav.manager.procedure.plmxmlpdm.ProcedureTagTypeEnum;
 import tceav.gui.tools.GUIutilities;
 import java.awt.BorderLayout;
 import javax.swing.JComponent;
@@ -25,7 +24,7 @@ public class ProcessViewComponent extends JComponent {
 
     private WorkflowTemplateType wt;
     private ProcessViewRenderer renderer;
-    private JScrollPane scrolltree;
+    private final JScrollPane scrolltree;
 
     public ProcessViewComponent() {
         super();

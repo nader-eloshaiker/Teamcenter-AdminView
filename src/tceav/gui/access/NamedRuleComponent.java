@@ -23,6 +23,7 @@ import tceav.manager.access.AccessManager;
 import tceav.manager.access.NamedAcl;
 import tceav.Settings;
 import tceav.gui.*;
+import tceav.manager.access.AccessControl;
 import tceav.resources.*;
 import tceav.manager.compare.CompareInterface;
 
@@ -126,6 +127,7 @@ public class NamedRuleComponent extends JPanel {
         }
         tabNamed.addChangeListener(new ChangeListener() {
 
+            @Override
             public void stateChanged(ChangeEvent e) {
                 if (!compareMode) {
                     Settings.setAmRuleTab(tabNamed.getSelectedIndex());
@@ -135,11 +137,6 @@ public class NamedRuleComponent extends JPanel {
             }
         });
 
-
-        String borderName = "Named ACL";
-        if (title != null) {
-            borderName = borderName.concat(": " + title);
-        }
 
         setLayout(new BorderLayout(GUIutilities.GAP_COMPONENT, GUIutilities.GAP_COMPONENT));
         setBorder(new CompoundBorder(
@@ -223,7 +220,7 @@ public class NamedRuleComponent extends JPanel {
                 am.getUnusedRules().size(),
                 "Access Rules"));
         listUnusedNamed = new JComboBox();
-        if (am.getUnusedRules().size() == 0) {
+        if (am.getUnusedRules().isEmpty()) {
             listUnusedNamed.setEnabled(false);
         } else {
             for (int z = 0; z < am.getUnusedRules().size(); z++) {
@@ -232,6 +229,7 @@ public class NamedRuleComponent extends JPanel {
         }
         listUnusedNamed.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 NamedAcl ar = (NamedAcl) listUnusedNamed.getSelectedItem();
                 int tableIndex = dataFilter.indexOfRuleName(ar.getRuleName());
@@ -266,6 +264,7 @@ public class NamedRuleComponent extends JPanel {
         JButton buttonSortNamed = new JButton("Sort");
         buttonSortNamed.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 int[] sort = new int[3];
                 sort[0] = boxFirstSort.getSelectedIndex();
@@ -315,18 +314,18 @@ public class NamedRuleComponent extends JPanel {
     private JPanel createTabSearch() {
         search = new SearchTableComponent() {
 
+            @Override
             public boolean compare(int row, String type, String value) {
                 boolean matched = false;
                 NamedAcl ar = getModel().getAccessRule(row);
-                for (int j = 0; j < ar.size(); j++) {
+                for (AccessControl ac : ar) {
                     if ((!type.equals("")) && (!value.equals(""))) {
-                        matched = isMatched(ar.get(j).getTypeOfAccessor(), type) & isMatched(ar.get(j).getIdOfAccessor(), value);
+                        matched = isMatched(ac.getTypeOfAccessor(), type) & isMatched(ac.getIdOfAccessor(), value);
                     } else if (!type.equals("")) {
-                        matched = isMatched(ar.get(j).getTypeOfAccessor(), type);
+                        matched = isMatched(ac.getTypeOfAccessor(), type);
                     } else if (!value.equals("")) {
-                        matched = isMatched(ar.get(j).getIdOfAccessor(), value);
+                        matched = isMatched(ac.getIdOfAccessor(), value);
                     }
-
                     if (matched) {
                         break;
                     }
@@ -353,6 +352,7 @@ public class NamedRuleComponent extends JPanel {
         buttonNamedSearchNext.setEnabled(false);
         buttonNamedSearchNext.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 search.searchNext(table);
                 int k = search.getResultIndex() + 1;
@@ -363,6 +363,7 @@ public class NamedRuleComponent extends JPanel {
         buttonNamedSearchReset.setEnabled(false);
         buttonNamedSearchReset.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 labelSearchResult.setText("Result: -- / --");
                 buttonNamedSearchNext.setEnabled(false);
@@ -414,18 +415,19 @@ public class NamedRuleComponent extends JPanel {
 
     class SearchActionListener implements ActionListener {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             new Thread() {
 
                 @Override
                 public void run() {
                     String acessorType = "";
-                    String accessorId = "";
 
                     if (boxTypeAccessor.getSelectedIndex() > 0) {
                         acessorType = (String) boxTypeAccessor.getSelectedItem();
                     }
-                    accessorId = textAccessorID.getText();
+                    
+                    String accessorId = textAccessorID.getText();
 
                     if ((acessorType.equals("")) &&
                             ((accessorId == null) || (accessorId.equals("")))) {
@@ -491,6 +493,7 @@ public class NamedRuleComponent extends JPanel {
         buttonFilterCompare = new JButton("Filter");
         buttonFilterCompare.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 dataCompareFilter.setFilterEqual(boxCompareEqual.getSelectedIndex() == COMPARE_SHOW_INDEX);
                 dataCompareFilter.setFilterNotEqual(boxCompareNotEqual.getSelectedIndex() == COMPARE_SHOW_INDEX);
@@ -554,6 +557,7 @@ public class NamedRuleComponent extends JPanel {
         JButton buttonReset = new JButton("Clear");
         buttonReset.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 boxfilterType.setEnabled(true);
                 textFilterInstanceCount.setEnabled(true);
@@ -601,6 +605,7 @@ public class NamedRuleComponent extends JPanel {
 
     class FilterActionListener implements ActionListener {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             int[] filterColumns = new int[]{0, 1, 2};
             String[] filterPatterns = new String[]{

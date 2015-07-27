@@ -24,14 +24,15 @@ import tceav.manager.procedure.plmxmlpdm.type.WorkflowTemplateType;
  */
 public class TableData extends WorkflowAbstractTable {
 
-    private ColumnHeader header;
+    private final ColumnHeader header;
 
     /**
      * Creates a new instance of DataModel
+     * @param pm
      */
     public TableData(ProcedureManager pm) {
         header = new ColumnHeader();
-        rowList = new ArrayList<WorkflowTemplateType>();
+        rowList = new ArrayList<>();
         siteId = pm.getSite().getName();
 
         for (int i = 0; i < pm.getWorkflowProcesses().size(); i++) {
@@ -47,35 +48,36 @@ public class TableData extends WorkflowAbstractTable {
         WorkflowBusinessRuleHandlerType[] wbrh;
         UserDataType ud;
 
-        for (int i = 0; i < wt.getActions().length; i++) {
-            wh = wt.getActions()[i].getActionHandlers();
-            for (int j = 0; j < wh.length; j++) {
-                if (!header.contains(wh[j])) {
-                    header.add(new ColumnHeaderAction(wh[j]));
+        for (WorkflowActionType action : wt.getActions()) {
+            wh = action.getActionHandlers();
+            for (WorkflowHandlerType handler : wh) {
+                if (!header.contains(handler)) {
+                    header.add(new ColumnHeaderAction(handler));
                 }
             }
-
-            wbr = wt.getActions()[i].getRules();
-            for (int j = 0; j < wbr.length; j++) {
-                wbrh = wbr[j].getRuleHandlers();
+            wbr = action.getRules();
+            for (WorkflowBusinessRuleType rule : wbr) {
+                wbrh = rule.getRuleHandlers();
                 for (int k = 0; k < wbrh.length; k++) {
-                    if (!header.contains(wbr[j])) {
-                        header.add(new ColumnHeaderRule(wbr[j]));
+                    if (!header.contains(rule)) {
+                        header.add(new ColumnHeaderRule(rule));
                     }
                 }
             }
         }
 
 
-        for (int k = 0; k < wt.getSubTemplates().length; k++) {
-            scanWorkflowTemplate(wt.getSubTemplates()[k]);
+        for (WorkflowTemplateType subTemplate : wt.getSubTemplates()) {
+            scanWorkflowTemplate(subTemplate);
         }
     }
 
+    @Override
     public Class getColumnClass(int columnIndex) {
         return String.class;
     }
 
+    @Override
     public int getColumnCount() {
         return header.size();
     }
@@ -88,14 +90,17 @@ public class TableData extends WorkflowAbstractTable {
         return header.get(index);
     }
 
+    @Override
     public String getColumnName(int columnIndex) {
         return header.get(columnIndex).toString();
     }
 
+    @Override
     public int getRowCount() {
         return rowList.size();
     }
 
+    @Override
     public String getCSVValueAt(int rowIndex, int columnIndex) {
         return "\"" + ((String) getValueAt(rowIndex, columnIndex)).replace("\"", "\"\"") + "\"";
     }
@@ -108,6 +113,7 @@ public class TableData extends WorkflowAbstractTable {
         }
     }
 
+    @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
 
         WorkflowTemplateType wt = rowList.get(rowIndex);
@@ -115,21 +121,20 @@ public class TableData extends WorkflowAbstractTable {
         WorkflowHandlerType[] wh;
         WorkflowBusinessRuleType[] wbr;
 
-        for (int i = 0; i < wt.getActions().length; i++) {
+        for (WorkflowActionType action : wt.getActions()) {
             if (entry.isActionHandler()) {
-                wh = wt.getActions()[i].getActionHandlers();
-                for (int j = 0; j < wh.length; j++) {
-                    if (entry.equals(wh[j])) {
-                        return getValue(wt.getActions()[i]);
+                wh = action.getActionHandlers();
+                for (WorkflowHandlerType handler : wh) {
+                    if (entry.equals(handler)) {
+                        return getValue(action);
                     }
                 }
             } else if (entry.isRuleHandler()) {
-                wbr = wt.getActions()[i].getRules();
-                for (int j = 0; j < wbr.length; j++) {
-                    if (entry.equals(wbr[j])) {
-                        return getValue(wt.getActions()[i]);
+                wbr = action.getRules();
+                for (WorkflowBusinessRuleType rule : wbr) {
+                    if (entry.equals(rule)) {
+                        return getValue(action);
                     }
-
                 }
             }
         }

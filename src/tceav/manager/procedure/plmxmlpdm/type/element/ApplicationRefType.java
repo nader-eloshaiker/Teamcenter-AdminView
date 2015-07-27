@@ -9,10 +9,8 @@
 package tceav.manager.procedure.plmxmlpdm.type.element;
 
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.w3c.dom.NamedNodeMap;
 import tceav.xml.TagTools;
-import tceav.manager.procedure.plmxmlpdm.ProcedureTagTypeEnum;
 import tceav.manager.procedure.plmxmlpdm.base.IdBase;
 
 /**
@@ -62,7 +60,7 @@ import tceav.manager.procedure.plmxmlpdm.base.IdBase;
  */
 //@XmlAccessorType(XmlAccessType.FIELD)
 //@XmlType(name = "ApplicationRefType")
-public class ApplicationRefType extends IdBase {
+public final class ApplicationRefType extends IdBase {
 
     //@XmlAttribute
     protected final String applicationAttribute = "application";

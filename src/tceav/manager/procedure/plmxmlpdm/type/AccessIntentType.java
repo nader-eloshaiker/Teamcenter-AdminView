@@ -11,10 +11,8 @@ package tceav.manager.procedure.plmxmlpdm.type;
 import java.util.ArrayList;
 import java.util.List;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.w3c.dom.NamedNodeMap;
 import tceav.xml.TagTools;
-import tceav.manager.procedure.plmxmlpdm.ProcedureTagTypeEnum;
 import tceav.manager.procedure.plmxmlpdm.base.AccessControlBase;
 import tceav.manager.procedure.plmxmlpdm.classtype.AccessIntentEnum;
 
@@ -55,7 +53,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 //@XmlAccessorType(XmlAccessType.FIELD)
 //@XmlType(name = "AccessIntentType")
-public class AccessIntentType extends AccessControlBase {
+public final class AccessIntentType extends AccessControlBase {
 
     //@XmlAttribute
     protected final String AccessIntentEnumAttribute = "AccessIntentEnum";
@@ -93,7 +91,7 @@ public class AccessIntentType extends AccessControlBase {
 
     public List<String> getOwnerRefs() {
         if (ownerRefs == null) {
-            ownerRefs = new ArrayList<String>();
+            ownerRefs = new ArrayList<>();
         }
         return this.ownerRefs;
     }

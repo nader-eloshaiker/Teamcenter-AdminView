@@ -128,11 +128,7 @@ public class PatternMatch {
         
         // at the end of all this, if we're at the end of the pattern
         // then we have a good match
-        if (patternPos == pattern.length()) {
-            return true;
-        }  else  {
-            return false;
-        }
+        return patternPos == pattern.length();
         
     }
     

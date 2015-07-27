@@ -11,7 +11,6 @@ package tceav.manager.procedure.plmxmlpdm.type.element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NamedNodeMap;
 import tceav.xml.TagTools;
-import tceav.manager.procedure.plmxmlpdm.ProcedureTagTypeEnum;
 import tceav.manager.procedure.plmxmlpdm.base.IdBase;
 
 /**
@@ -44,7 +43,7 @@ import tceav.manager.procedure.plmxmlpdm.base.IdBase;
  */
 //@XmlAccessorType(XmlAccessType.FIELD)
 //@XmlType(name = "UserListElementType")
-public class UserListElementType extends IdBase {
+public final class UserListElementType extends IdBase {
 
     //@XmlAttribute
     protected final String descriptionAttribute = "description";

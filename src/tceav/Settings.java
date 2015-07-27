@@ -73,7 +73,7 @@ public class Settings {
     private static final String PROPERTY_PMLOADPATH_DEFAULT = "";
     private static int pmSplitLocation;
     private static final String PROPERTY_PM_SPLITLOCATION = "tceav.pm.SplitLocation";
-    private static int PROPERTY_PM_SPLITLOCATION_DEFAULT = -1;
+    private static final int PROPERTY_PM_SPLITLOCATION_DEFAULT = -1;
     
     
     private static boolean pmTblStrictArgument;
@@ -125,7 +125,7 @@ public class Settings {
     private static final boolean PROPERTY_AM_CMP_ACLSORTASCENDING_DEFAULT = true;
     
     
-    private static Properties property = new Properties();
+    private static final Properties property = new Properties();
     
     /** Creates a new instance of Settings */
     public Settings() {
@@ -138,9 +138,9 @@ public class Settings {
             path.mkdir();
         File file = new File(path,"TcEAdminView.cfg");
         if(file.exists()) {
-            FileInputStream fis =  new FileInputStream(file);
-            property.load(fis);
-            fis.close();
+            try (FileInputStream fis = new FileInputStream(file)) {
+                property.load(fis);
+            }
         }
         
         setVersion(
@@ -381,9 +381,9 @@ public class Settings {
                 return;
         
         if(path.canWrite()) {
-            FileOutputStream fos = new FileOutputStream(file);
-            property.store(fos, ResourceStrings.getVersion());
-            fos.close();
+            try (FileOutputStream fos = new FileOutputStream(file)) {
+                property.store(fos, ResourceStrings.getVersion());
+            }
         }
     }
     

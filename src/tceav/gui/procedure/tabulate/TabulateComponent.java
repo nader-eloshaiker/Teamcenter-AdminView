@@ -17,8 +17,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.Calendar;
 import java.text.DecimalFormat;
 import javax.swing.ButtonGroup;
@@ -51,14 +53,17 @@ import tceav.gui.tools.table.JTableAdvanced;
 import tceav.manager.procedure.ProcedureManager;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import org.w3c.dom.DOMException;
 import tceav.gui.AdminViewFrame;
 import tceav.gui.TabbedPanel;
 import tceav.resources.ImageEnum;
@@ -73,10 +78,10 @@ public class TabulateComponent extends TabbedPanel {
     private JDialog dialog;
     private JTableAdvanced table;
     private JTableAdvanced tableFreezeRow;
-    private String title;
-    private ProcedureManager pm;
-    private AdminViewFrame parentFrame;
-    private FreezeRowTableData modelFreezeRow;
+    private final String title;
+    private final ProcedureManager pm;
+    private final AdminViewFrame parentFrame;
+    private final FreezeRowTableData modelFreezeRow;
 
     /**
      * Creates a new instance of TabulateComponent
@@ -98,6 +103,7 @@ public class TabulateComponent extends TabbedPanel {
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 
+            @Override
             public void valueChanged(ListSelectionEvent e) {
                 tableFreezeRow.repaint();
             }
@@ -108,6 +114,7 @@ public class TabulateComponent extends TabbedPanel {
         tableFreezeRow.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         tableFreezeRow.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 
+            @Override
             public void valueChanged(ListSelectionEvent e) {
                 table.repaint();
             }
@@ -253,6 +260,7 @@ public class TabulateComponent extends TabbedPanel {
     private JPanel statusBar;
     private JLabel textHandler;
 
+    @Override
     public JComponent getStatusBar() {
         if (statusBar != null) {
             return statusBar;
@@ -329,6 +337,7 @@ public class TabulateComponent extends TabbedPanel {
     private JCheckBox buttonExactMatch;
     private JCheckBox buttonShowActions;
 
+    @Override
     public JComponent getToolBar() {
         if (toolBar != null) {
             return toolBar;
@@ -338,6 +347,7 @@ public class TabulateComponent extends TabbedPanel {
         buttonExport.setOpaque(false);
         buttonExport.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fc = createFileChooser();
                 int result = fc.showSaveDialog(parentFrame);
@@ -364,6 +374,7 @@ public class TabulateComponent extends TabbedPanel {
         buttonExactMatch.setOpaque(false);
         buttonExactMatch.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 updateTable();
             }
@@ -374,6 +385,7 @@ public class TabulateComponent extends TabbedPanel {
         buttonShowActions.setOpaque(false);
         buttonShowActions.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 Settings.setPmTblShowActions(buttonShowActions.isSelected());
                 updateTable();
@@ -390,11 +402,13 @@ public class TabulateComponent extends TabbedPanel {
         return toolBar;
     }
 
+    @Override
     public String getTitle() {
         return title;
     }
     private ImageIcon iconTabulate;
 
+    @Override
     public ImageIcon getIcon() {
         if (iconTabulate == null) {
             try {
@@ -427,7 +441,7 @@ public class TabulateComponent extends TabbedPanel {
         }
         return true;
     }
-    private String padding = "000000";
+    private final String padding = "000000";
 
     private String StrFormat(String num) {
         return padding.substring(0, padding.length() - num.length()) + num;
@@ -755,7 +769,7 @@ public class TabulateComponent extends TabbedPanel {
             }
 
             TransformerFactory tf = TransformerFactory.newInstance();
-            tf.setAttribute("indent-number", new Integer(4));
+            tf.setAttribute("indent-number", 4);
             Transformer tr = tf.newTransformer();
             tr.setOutputProperty(OutputKeys.METHOD, "xml");
             tr.setOutputProperty(OutputKeys.INDENT, "yes");
@@ -763,7 +777,7 @@ public class TabulateComponent extends TabbedPanel {
             tr.setOutputProperty("{http://xml.apache.org/xalan}indent-amount", "4");
             tr.transform(new DOMSource(dom), new StreamResult(new OutputStreamWriter(new FileOutputStream(tableFile), "utf-8")));
 
-        } catch (Exception e) {
+        } catch (ParserConfigurationException | DOMException | IllegalArgumentException | FileNotFoundException | UnsupportedEncodingException | TransformerException e) {
             JOptionPane.showMessageDialog(parentFrame, e.getMessage(), "Save Error", JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -865,6 +879,7 @@ public class TabulateComponent extends TabbedPanel {
         checkMultiSheet.setToolTipText("Split file into multiple sheets of 256 columns");
         checkMultiSheet.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 Settings.setPmTblMultiSheet(checkMultiSheet.isSelected());
             }
@@ -873,6 +888,7 @@ public class TabulateComponent extends TabbedPanel {
         checkIncludeIndents.setToolTipText("Include the indentation to indicate hirarchy");
         checkIncludeIndents.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 Settings.setPmTblIncludeIndents(checkIncludeIndents.isSelected());
             }
@@ -890,6 +906,7 @@ public class TabulateComponent extends TabbedPanel {
         radioDatabaseMode.setToolTipText("Export to XML table files");
         radioDatabaseMode.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 Settings.setPmTblDatabaseMode(true);
                 checkMultiSheet.setEnabled(false);
@@ -903,6 +920,7 @@ public class TabulateComponent extends TabbedPanel {
         radioSpreadSheetMode.setToolTipText("Export to CSV spreadsheet file(s)");
         radioSpreadSheetMode.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 Settings.setPmTblDatabaseMode(false);
                 checkMultiSheet.setEnabled(true);

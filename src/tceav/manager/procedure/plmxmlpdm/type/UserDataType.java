@@ -69,7 +69,7 @@ import javax.xml.bind.annotation.XmlType;
     "userValue"
 })
  **/
-public class UserDataType extends AttributeBase {
+public final class UserDataType extends AttributeBase {
 
     //@XmlElement(name = "UserValue")
     protected List<UserDataElementType> userValue;
@@ -106,7 +106,7 @@ public class UserDataType extends AttributeBase {
 
     public List<UserDataElementType> getUserValue() {
         if (userValue == null)
-            userValue = new ArrayList<UserDataElementType>();
+            userValue = new ArrayList<>();
         
         return userValue;
     }

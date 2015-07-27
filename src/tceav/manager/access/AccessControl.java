@@ -29,8 +29,8 @@ public class AccessControl implements CompareInterface {
         Node currentNode;
         String s;
         columns = c;
-        AccessControlHeaderEnum acTag;
-        access = new HashMap<String, String>();
+        //AccessControlHeaderItem acTag;
+        access = new HashMap<>();
         NodeList nodeList = accessControlNode.getChildNodes();
         NodeList subNodeList;
 
@@ -40,17 +40,17 @@ public class AccessControl implements CompareInterface {
             switch (AccessTagTypeEnum.fromValue(currentNode.getNodeName())) {
                 case AccessorType:
                     s = currentNode.getTextContent();
-                    access.put(AccessControlHeaderEnum.AccessorType.value(), s);
-                    if (columns.indexOfAccessControl(AccessControlHeaderEnum.AccessorType) == -1) {
-                        columns.add(new AccessControlHeaderItem(AccessControlHeaderEnum.AccessorType));
+                    access.put(AccessControlHeaderItem.ACCESSOR_TYPE, s);
+                    if (columns.indexOfAccessControl(AccessControlHeaderItem.ACCESSOR_TYPE) == -1) {
+                        columns.add(new AccessControlHeaderItem(AccessControlHeaderItem.ACCESSOR_TYPE));
                     }
                     break;
 
                 case Accessor:
                     s = currentNode.getTextContent();
-                    access.put(AccessControlHeaderEnum.Accessor.value(), s);
-                    if (columns.indexOfAccessControl(AccessControlHeaderEnum.Accessor) == -1) {
-                        columns.add(new AccessControlHeaderItem(AccessControlHeaderEnum.Accessor));
+                    access.put(AccessControlHeaderItem.ACCESSOR, s);
+                    if (columns.indexOfAccessControl(AccessControlHeaderItem.ACCESSOR) == -1) {
+                        columns.add(new AccessControlHeaderItem(AccessControlHeaderItem.ACCESSOR));
                     }
                     break;
 
@@ -63,9 +63,8 @@ public class AccessControl implements CompareInterface {
                         if (AccessTagTypeEnum.fromValue(currentNode.getNodeName()) == AccessTagTypeEnum.ACEEntryColumn) {
                             s = currentNode.getTextContent();
                             access.put(s, "Y");
-                            acTag = AccessControlHeaderEnum.fromValue(s);
-                            if (columns.indexOfAccessControl(acTag) == -1) {
-                                columns.add(new AccessControlHeaderItem(acTag));
+                            if (columns.indexOfAccessControl(s) == -1) {
+                                columns.add(new AccessControlHeaderItem(s));
                             }
                         }
                     }
@@ -81,9 +80,8 @@ public class AccessControl implements CompareInterface {
                         if (AccessTagTypeEnum.fromValue(currentNode.getNodeName()) == AccessTagTypeEnum.ACEEntryColumn) {
                             s = currentNode.getTextContent();
                             access.put(s, "N");
-                            acTag = AccessControlHeaderEnum.fromValue(s);
-                            if (columns.indexOfAccessControl(acTag) == -1) {
-                                columns.add(new AccessControlHeaderItem(acTag));
+                            if (columns.indexOfAccessControl(s) == -1) {
+                                columns.add(new AccessControlHeaderItem(s));
                             }
                         }
                     }
@@ -105,7 +103,7 @@ public class AccessControl implements CompareInterface {
         columns = c;
         AccessControlHeaderItem item;
         String[] strArray = ruleEntry.split("!");
-        access = new HashMap<String, String>();
+        access = new HashMap<>();
 
         for (int i = 0; i < c.size(); i++) {
             item = c.get(i);
@@ -136,11 +134,11 @@ public class AccessControl implements CompareInterface {
     }
 
     public String getTypeOfAccessor() {
-        return access.get(AccessControlHeaderEnum.AccessorType.value());
+        return access.get(AccessControlHeaderItem.ACCESSOR_TYPE);
     }
 
     public String getIdOfAccessor() {
-        return access.get(AccessControlHeaderEnum.Accessor.value());
+        return access.get(AccessControlHeaderItem.ACCESSOR);
     }
 
     public String getAccessControlAtIndex(int index) {
@@ -164,14 +162,17 @@ public class AccessControl implements CompareInterface {
      **************************************************************************/
     private int compare_result = CompareInterface.EQUAL;
 
+    @Override
     public int getComparison() {
         return compare_result;
     }
 
+    @Override
     public void setComparison(int compare_result) {
         this.compare_result = compare_result;
     }
 
+    @Override
     public int compare(Object o) {
         AccessControl c = (AccessControl) o;
         String value;
@@ -180,10 +181,10 @@ public class AccessControl implements CompareInterface {
 
             for (int i = 2; i < access.size(); i++) {
                 value = c.getAccessControlAtIndex(i);
-                if (value == null) {
-                    continue;
-                } else if (!getAccessControlAtIndex(i).equals(value)) {
-                    return CompareInterface.NOT_EQUAL;
+                if (value != null) {
+                    if (!getAccessControlAtIndex(i).equals(value)) {
+                        return CompareInterface.NOT_EQUAL;
+                    }
                 }
             }
 

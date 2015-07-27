@@ -9,7 +9,6 @@
 
 package tceav.gui.access;
 
-import tceav.manager.access.NamedAcl;
 import java.util.*;
 
 /**
@@ -19,8 +18,8 @@ import java.util.*;
 public class NamedRuleDataFilterSearch extends NamedRuleDataFilterAdapter implements NamedRuleDataFilterInterface {
     
     private String strPattern;
-    private ArrayList<Integer> filteringColumns = new ArrayList<Integer>();
-    private ArrayList<String> filteringPatterns = new ArrayList<String>();
+    private final ArrayList<Integer> filteringColumns = new ArrayList<>();
+    private final ArrayList<String> filteringPatterns = new ArrayList<>();
     
     /**
      * Creates a new instance of NamedRuleDataFilterSearch
@@ -35,7 +34,7 @@ public class NamedRuleDataFilterSearch extends NamedRuleDataFilterAdapter implem
             return;
         
         filteringColumns.clear();
-        filteringColumns.add(new Integer(column));
+        filteringColumns.add(column);
         filteringPatterns.clear();
         filteringPatterns.add(value);
     }
@@ -52,7 +51,7 @@ public class NamedRuleDataFilterSearch extends NamedRuleDataFilterAdapter implem
         
         for(int i=0; i<length; i++) {
             if((patterns[i] != null) &&(!patterns[i].equals(""))) {
-                filteringColumns.add(new Integer(columns[i]));
+                filteringColumns.add(columns[i]);
                 filteringPatterns.add(patterns[i]);
             }
         }
@@ -78,7 +77,7 @@ public class NamedRuleDataFilterSearch extends NamedRuleDataFilterAdapter implem
     public int[] getFilterColumns() {
         int[] columns = new int[filteringColumns.size()];
         for(int i=0; i<columns.length; i++)
-            columns[i] = filteringColumns.get(i).intValue();
+            columns[i] = filteringColumns.get(i);
         return columns;
     }
     
@@ -88,21 +87,22 @@ public class NamedRuleDataFilterSearch extends NamedRuleDataFilterAdapter implem
         reallocateIndexes();
     }
     
+    @Override
     protected void filter() {
         indexes = searchFilter(indexes);
     }
     
     private int[] searchFilter(int[] list){
-        Vector<Integer> newList = new Vector<Integer>();
+        ArrayList<Integer> newList = new ArrayList<>();
         int[] newIndexes;
         
         for(int i=0; i<list.length; i++)
             if(compare(list[i]))
-                newList.addElement(list[i]);
+                newList.add(list[i]);
         
         newIndexes = new int[newList.size()];
         for(int j=0; j<newIndexes.length; j++)
-            newIndexes[j] = newList.elementAt(j).intValue();
+            newIndexes[j] = newList.get(j);
         
         return newIndexes;
     }
@@ -111,7 +111,7 @@ public class NamedRuleDataFilterSearch extends NamedRuleDataFilterAdapter implem
         boolean result;
         for (int level = 0; level < filteringColumns.size(); level++) {
             Integer column = filteringColumns.get(level);
-            result = compare(row, filteringPatterns.get(level), column.intValue());
+            result = compare(row, filteringPatterns.get(level), column);
             if (!result) {
                 return result;
             }
@@ -142,11 +142,7 @@ public class NamedRuleDataFilterSearch extends NamedRuleDataFilterAdapter implem
             case INSTANCES_COLUMN:
                 i1 = model.getAccessRule(row).getRuleTreeReferences().size();
                 i2 = new Integer(strPattern);
-                
-                if (i1 == i2.intValue())
-                    return true;
-                else
-                    return false;
+                return i1 == i2;
                 
             case NAME_COLUMN:
                 s = model.getAccessRule(row).getRuleName();

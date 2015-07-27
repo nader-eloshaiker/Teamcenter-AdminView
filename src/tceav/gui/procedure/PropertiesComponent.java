@@ -38,7 +38,7 @@ import tceav.manager.procedure.plmxmlpdm.base.IdBase;
 public class PropertiesComponent extends JComponent {
     
     /** Creates a new instance of XMLComponent */
-    private JTableAdvanced table;
+    private final JTableAdvanced table;
     
     public PropertiesComponent() {
         super();
@@ -77,6 +77,7 @@ public class PropertiesComponent extends JComponent {
         
         JButton button = new JButton("Close Window");
         button.addActionListener(new ActionListener(){
+            @Override
             public void actionPerformed(ActionEvent e){
                 dialog.setVisible(false);
                 dialog.dispose();
@@ -109,6 +110,7 @@ public class PropertiesComponent extends JComponent {
         contentPane.add(panel, BorderLayout.CENTER);
         
         WindowAdapter adapter = new WindowAdapter() {
+            @Override
             public void windowClosed(WindowEvent we) {
                 dialog = null;
             }

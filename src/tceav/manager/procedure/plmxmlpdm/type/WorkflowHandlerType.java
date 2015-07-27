@@ -12,7 +12,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.NamedNodeMap;
 import tceav.xml.TagTools;
-import tceav.manager.procedure.plmxmlpdm.ProcedureTagTypeEnum;
 import tceav.manager.procedure.plmxmlpdm.base.AttribOwnerBase;
 
 /*
@@ -110,7 +109,7 @@ public class WorkflowHandlerType extends AttribOwnerBase {
         return parentRef;
     }
     
-    public void setParentRef(String value) {
+    public final void setParentRef(String value) {
         this.parentRef = value;
     }
     

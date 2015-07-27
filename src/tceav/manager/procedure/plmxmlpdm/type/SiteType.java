@@ -9,7 +9,6 @@
 package tceav.manager.procedure.plmxmlpdm.type;
 
 import tceav.xml.TagTools;
-import tceav.manager.procedure.plmxmlpdm.ProcedureTagTypeEnum;
 import tceav.manager.procedure.plmxmlpdm.base.OwnerBase;
 import org.w3c.dom.Node;
 import org.w3c.dom.NamedNodeMap;
@@ -53,7 +52,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 //@XmlAccessorType(XmlAccessType.FIELD)
 //@XmlType(name = "SiteType")
-public class SiteType extends OwnerBase
+public final class SiteType extends OwnerBase
 {
 
     //@XmlAttribute
@@ -70,6 +69,10 @@ public class SiteType extends OwnerBase
     
     public SiteType(Node node) {
         super(node);
+        
+        if(node == null)
+            return;
+        
         Node currentNode = node;
         NamedNodeMap attrib = currentNode.getAttributes();
         

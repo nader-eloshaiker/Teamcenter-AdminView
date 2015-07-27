@@ -17,11 +17,11 @@ import tceav.manager.access.NamedAcl;
  * @author NZR4DL
  */
 public abstract class SearchTableComponent extends SearchAdapter implements SearchTableComparator {
-    private ArrayList<Integer> resultsRowLocations;
+    private final ArrayList<Integer> resultsRowLocations;
     
     /** Creates a new instance of SearchTableComponent */
     public SearchTableComponent() {
-        resultsRowLocations = new ArrayList<Integer>();
+        resultsRowLocations = new ArrayList<>();
     }
     
     public void addResult(int row) {

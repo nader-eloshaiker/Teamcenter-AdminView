@@ -11,11 +11,9 @@ package tceav.manager.procedure.plmxmlpdm.type;
 import java.util.ArrayList;
 import java.util.List;
 import tceav.xml.TagTools;
-import tceav.manager.procedure.plmxmlpdm.ProcedureTagTypeEnum;
 import tceav.manager.procedure.plmxmlpdm.base.OwnerBase;
 
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.w3c.dom.NamedNodeMap;
 /*
 import javax.xml.bind.annotation.XmlAccessType;
@@ -58,7 +56,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 //@XmlAccessorType(XmlAccessType.FIELD)
 //@XmlType(name = "OrganisationType")
-public class OrganisationType extends OwnerBase {
+public final class OrganisationType extends OwnerBase {
 
     //@XmlAttribute
     protected final String addressRefAttribute = "addressRef";
@@ -102,7 +100,7 @@ public class OrganisationType extends OwnerBase {
 
     public List<String> getOrganisationRefs() {
         if (organisationRefs == null) {
-            organisationRefs = new ArrayList<String>();
+            organisationRefs = new ArrayList<>();
         }
         return this.organisationRefs;
     }

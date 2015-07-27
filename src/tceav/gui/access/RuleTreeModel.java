@@ -9,8 +9,6 @@
 
 package tceav.gui.access;
 
-import java.util.ArrayList;
-import javax.swing.*;
 import javax.swing.tree.*;
 import javax.swing.event.*;
 import tceav.manager.access.RuleTreeNode;

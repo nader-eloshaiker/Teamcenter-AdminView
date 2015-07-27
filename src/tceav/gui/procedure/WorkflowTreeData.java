@@ -22,19 +22,23 @@ import tceav.manager.procedure.plmxmlpdm.type.WorkflowTemplateType;
  */
 public class WorkflowTreeData implements TreeModel {
     
-    private ArrayList<WorkflowTemplateType> workflowProcesses;
-    private SiteType site;
+    private final ArrayList<WorkflowTemplateType> workflowProcesses;
+    private final SiteType site;
     
-    /** Creates a new instance of RuleTreeModel */
+    /** Creates a new instance of RuleTreeModel
+     * @param workflowProcesses
+     * @param site */
     public WorkflowTreeData(ArrayList<WorkflowTemplateType> workflowProcesses, SiteType site) {
         this.workflowProcesses = workflowProcesses;
         this.site = site;
     }
     
+    @Override
     public Object getRoot() {
         return site;
     }
     
+    @Override
     public Object getChild(Object parent, int index) {
         
         if(parent instanceof SiteType){
@@ -50,6 +54,7 @@ public class WorkflowTreeData implements TreeModel {
         }
     }
     
+    @Override
     public int getChildCount(Object parent) {
         
         if(parent instanceof SiteType){
@@ -65,10 +70,11 @@ public class WorkflowTreeData implements TreeModel {
         }
     }
     
+    @Override
     public boolean isLeaf(Object node) {
         
         if(node instanceof SiteType){
-            return (workflowProcesses.size() == 0);
+            return (workflowProcesses.isEmpty());
             
         } else if(node instanceof WorkflowTemplateType) {
             WorkflowTemplateType wt = (WorkflowTemplateType) node;
@@ -80,6 +86,7 @@ public class WorkflowTreeData implements TreeModel {
         }
     }
     
+    @Override
     public int getIndexOfChild(Object parent, Object child) {
         IdBase childProcedure = (IdBase) child;
         
@@ -95,14 +102,17 @@ public class WorkflowTreeData implements TreeModel {
         }
     }
     
+    @Override
     public void addTreeModelListener(TreeModelListener listener) {
         // not editable
     }
     
+    @Override
     public void removeTreeModelListener(TreeModelListener listener) {
         // not editable
     }
     
+    @Override
     public void valueForPathChanged(TreePath path, Object newValue) {
         // not editable
     }

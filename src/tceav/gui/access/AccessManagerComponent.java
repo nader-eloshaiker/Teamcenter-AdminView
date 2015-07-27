@@ -18,14 +18,14 @@ import javax.swing.plaf.basic.BasicSplitPaneUI;
  */
 public class AccessManagerComponent extends TabbedPanel {
 
-    private AdminViewFrame parentFrame;
-    private RuleTreeComponent ruletree;
-    private NamedRuleComponent namedACL;
-    private AccessRuleComponent accessControl;
+    private final AdminViewFrame parentFrame;
+    private final RuleTreeComponent ruletree;
+    private final NamedRuleComponent namedACL;
+    private final AccessRuleComponent accessControl;
     private JSplitPane splitPane;
-    private AccessManager am;
-    private NamedRuleSelectionListener ruleSelectionListener;
-    private RuleTreeSelectionListener treeSelectionListener;
+    private final AccessManager am;
+    private final NamedRuleSelectionListener ruleSelectionListener;
+    private final RuleTreeSelectionListener treeSelectionListener;
 
     /**
      * Creates a new instance of AccessManagerComponent
@@ -71,11 +71,13 @@ public class AccessManagerComponent extends TabbedPanel {
 
     }
 
+    @Override
     public String getTitle() {
         return am.getFile().getName();
     }
     private ImageIcon iconRuleTree;
 
+    @Override
     public ImageIcon getIcon() {
         if (iconRuleTree == null) {
             try {
@@ -90,6 +92,7 @@ public class AccessManagerComponent extends TabbedPanel {
     private JToolBar toolBar;
     private JCheckBox checkSync;
 
+    @Override
     public JToolBar getToolBar() {
 
         if (toolBar != null) {
@@ -100,6 +103,7 @@ public class AccessManagerComponent extends TabbedPanel {
         checkSync.setOpaque(false);
         checkSync.addChangeListener(new ChangeListener() {
 
+            @Override
             public void stateChanged(ChangeEvent e) {
                 ruleSelectionListener.setSync(checkSync.isSelected());
                 treeSelectionListener.setSync(checkSync.isSelected());
@@ -115,6 +119,7 @@ public class AccessManagerComponent extends TabbedPanel {
     }
     private JPanel statusBar;
 
+    @Override
     public JComponent getStatusBar() {
         if (statusBar != null) {
             return statusBar;

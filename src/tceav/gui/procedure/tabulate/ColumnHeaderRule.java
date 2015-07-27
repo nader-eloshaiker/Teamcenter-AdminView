@@ -43,6 +43,7 @@ public class ColumnHeaderRule extends ColumnHeaderAdapter {
         }
     }
 
+    @Override
     public String getClassification() {
         return "Rule";
     }
@@ -52,18 +53,22 @@ public class ColumnHeaderRule extends ColumnHeaderAdapter {
         return Integer.toString(quorum);
     }
 
+    @Override
     public boolean isRuleHandler() {
         return true;
     }
 
+    @Override
     public boolean isActionHandler() {
         return false;
     }
 
+    @Override
     public boolean equals(WorkflowHandlerType wh) {
         return false;
     }
 
+    @Override
     public boolean equals(WorkflowBusinessRuleType wbr) {
         ColumnHeaderRule c = new ColumnHeaderRule(wbr);
 
@@ -109,6 +114,7 @@ public class ColumnHeaderRule extends ColumnHeaderAdapter {
     }
     private String cmpString;
 
+    @Override
     public String toStringCompare() {
         if (cmpString != null) {
             return cmpString;
@@ -122,6 +128,7 @@ public class ColumnHeaderRule extends ColumnHeaderAdapter {
         return cmpString;
     }
 
+    @Override
     public String toStringRule() {
         return "Quorum Rule: " + quorum;
     }

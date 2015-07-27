@@ -16,13 +16,11 @@ package tceav.gui.procedure.tabulate;
 import java.awt.Component;
 import java.awt.Font;
 import javax.swing.JTable;
-import javax.swing.JLabel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.CompoundBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import tceav.gui.tools.GUIutilities;
-import tceav.gui.tools.RotatedTextIcon;
 import javax.swing.SwingConstants;
 
 /**
@@ -32,6 +30,7 @@ import javax.swing.SwingConstants;
 public class FreezeRowHeaderRenderer implements TableCellRenderer {
     
     
+    @Override
     public Component getTableCellRendererComponent(JTable table,
             Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         

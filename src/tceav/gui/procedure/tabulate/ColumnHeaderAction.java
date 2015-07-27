@@ -36,22 +36,27 @@ public class ColumnHeaderAction extends ColumnHeaderAdapter {
         }
     }
 
+    @Override
     public String getClassification() {
         return "Action";
     }
 
+    @Override
     public boolean isRuleHandler() {
         return false;
     }
 
+    @Override
     public boolean isActionHandler() {
         return true;
     }
 
+    @Override
     public boolean equals(WorkflowBusinessRuleType wbr) {
         return false;
     }
 
+    @Override
     public boolean equals(WorkflowHandlerType wh) {
         ColumnHeaderAction c = new ColumnHeaderAction(wh);
 
@@ -82,10 +87,12 @@ public class ColumnHeaderAction extends ColumnHeaderAdapter {
         return toString;
     }
 
+    @Override
     public String toStringCompare() {
         return toString();
     }
 
+    @Override
     public String toStringRule() {
         return null;
     }

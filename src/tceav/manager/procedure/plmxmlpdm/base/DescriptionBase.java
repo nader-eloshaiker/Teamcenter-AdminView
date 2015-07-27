@@ -85,6 +85,10 @@ public abstract class DescriptionBase extends IdBase {
     public DescriptionBase(Node node) {
         super(node);
         
+        if (node == null) {
+            return;
+        }
+
         Node currentNode = node;
         NamedNodeMap attrib = currentNode.getAttributes();
         NodeList nodeList = currentNode.getChildNodes();
@@ -131,7 +135,7 @@ public abstract class DescriptionBase extends IdBase {
      *     {@link String }
      *     
      */
-    public void setDescription(String value) {
+    public final void setDescription(String value) {
         this.description = value;
     }
 
@@ -156,10 +160,11 @@ public abstract class DescriptionBase extends IdBase {
      * {@link ApplicationRefType }
      * 
      * 
+     * @return 
      */
-    public List<ApplicationRefType> getApplicationRef() {
+    public final List<ApplicationRefType> getApplicationRef() {
         if (applicationRef == null) {
-            applicationRef = new ArrayList<ApplicationRefType>();
+            applicationRef = new ArrayList<>();
         }
         return this.applicationRef;
     }
@@ -184,7 +189,7 @@ public abstract class DescriptionBase extends IdBase {
      *     {@link String }
      *     
      */
-    public void setName(String value) {
+    public final void setName(String value) {
         this.name = value;
     }
     
