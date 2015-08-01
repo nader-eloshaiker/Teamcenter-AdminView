@@ -695,7 +695,7 @@ public class Settings {
         String  stringValue  = property.getProperty(name);
         
         if (stringValue != null)
-            booleanValue = Boolean.valueOf(stringValue).booleanValue();
+            booleanValue = Boolean.valueOf(stringValue);
         
         return booleanValue;
     }
