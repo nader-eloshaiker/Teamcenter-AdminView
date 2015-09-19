@@ -6,7 +6,7 @@
  * To change this template, choose Tools | Template Manager
  * and open the template in the editor.
  */
-package tceav.gui.procedure.tabulate;
+package tcav.gui.procedure.tabulate;
 
 import java.util.ArrayList;
 import java.awt.Component;
@@ -16,8 +16,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.CompoundBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
-import tceav.gui.tools.GUIutilities;
-import tceav.gui.tools.RotatedTextIcon;
+import tcav.gui.tools.GUIutilities;
+import tcav.gui.tools.RotatedTextIcon;
 import javax.swing.SwingConstants;
 
 /**

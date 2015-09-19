@@ -1,4 +1,4 @@
-package tceav.gui.access;
+package tcav.gui.access;
 /*
  * AccessRuleTableModel.java
  *
@@ -8,9 +8,9 @@ package tceav.gui.access;
  * and open the template in the editor.
  */
 
-import tceav.manager.access.AccessControlHeader;
-import tceav.manager.access.AccessControlHeaderItem;
-import tceav.manager.access.NamedAcl;
+import tcav.manager.access.AccessControlHeader;
+import tcav.manager.access.AccessControlHeaderItem;
+import tcav.manager.access.NamedAcl;
 import javax.swing.table.*;
 
 /**

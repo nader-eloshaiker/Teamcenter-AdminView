@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package tceav.gui;
+package tcav.gui;
 
 import javax.swing.border.BevelBorder;
 import java.awt.BorderLayout;
@@ -18,9 +18,9 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import tceav.resources.ImageEnum;
-import tceav.resources.ResourceLoader;
-import tceav.resources.ResourceStrings;
+import tcav.resources.ImageEnum;
+import tcav.resources.ResourceLoader;
+import tcav.resources.ResourceStrings;
 
 /**
  *

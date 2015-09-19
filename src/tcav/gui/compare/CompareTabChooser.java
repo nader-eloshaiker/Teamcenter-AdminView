@@ -7,18 +7,18 @@
  * and open the template in the editor.
  */
 
-package tceav.gui.compare;
+package tcav.gui.compare;
 
+import tcav.gui.AdminViewFrame;
 import javax.swing.*;
 import javax.swing.border.*;
 import java.io.File;
 import java.awt.*;
 import java.awt.event.*;
-import tceav.gui.tools.CustomFileFilter;
-import tceav.gui.tools.GUIutilities;
-import tceav.manager.ManagerAdapter;
-import tceav.Settings;
-import tceav.gui.*;
+import tcav.gui.tools.CustomFileFilter;
+import tcav.gui.tools.GUIutilities;
+import tcav.manager.ManagerAdapter;
+import tcav.Settings;
 
 /**
  *

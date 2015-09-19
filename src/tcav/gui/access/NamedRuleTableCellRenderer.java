@@ -7,14 +7,15 @@
  * and open the template in the editor.
  */
 
-package tceav.gui.access;
+package tcav.gui.access;
 
+import tcav.resources.ResourceLoader;
+import tcav.resources.ImageEnum;
 import javax.swing.table.*;
 import javax.swing.*;
 import java.awt.*;
-import tceav.manager.compare.CompareInterface;
-import tceav.gui.tools.table.TableShadedRenderer;
-import tceav.resources.*;
+import tcav.manager.compare.CompareInterface;
+import tcav.gui.tools.table.TableShadedRenderer;
 
 /**
  *

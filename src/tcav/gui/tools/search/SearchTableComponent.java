@@ -7,11 +7,11 @@
  * and open the template in the editor.
  */
 
-package tceav.gui.tools.search;
+package tcav.gui.tools.search;
 
 import java.util.ArrayList;
-import tceav.gui.tools.table.JTableAdvanced;
-import tceav.manager.access.NamedAcl;
+import tcav.gui.tools.table.JTableAdvanced;
+import tcav.manager.access.NamedAcl;
 /**
  *
  * @author NZR4DL

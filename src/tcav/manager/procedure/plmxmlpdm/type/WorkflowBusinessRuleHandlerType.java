@@ -6,11 +6,11 @@
 //
 
 
-package tceav.manager.procedure.plmxmlpdm.type;
+package tcav.manager.procedure.plmxmlpdm.type;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.NamedNodeMap;
-import tceav.xml.TagTools;
+import tcav.xml.TagTools;
 
 /*
 import javax.xml.bind.annotation.XmlAccessType;

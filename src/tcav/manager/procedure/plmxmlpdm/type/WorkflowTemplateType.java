@@ -4,7 +4,7 @@
 // Any modifications to this file will be lost upon recompilation of the source schema. 
 // Generated on: 2007.07.22 at 11:41:15 AM EST 
 //
-package tceav.manager.procedure.plmxmlpdm.type;
+package tcav.manager.procedure.plmxmlpdm.type;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,11 +13,11 @@ import java.awt.Point;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.NamedNodeMap;
-import tceav.xml.TagTools;
-import tceav.manager.procedure.plmxmlpdm.ProcedureTagTypeEnum;
-import tceav.manager.procedure.plmxmlpdm.base.AttribOwnerBase;
-import tceav.manager.procedure.plmxmlpdm.classtype.WorkflowTemplateClassificationEnum;
-import tceav.manager.procedure.plmxmlpdm.classtype.WorkflowTemplateStageEnum;
+import tcav.xml.TagTools;
+import tcav.manager.procedure.plmxmlpdm.ProcedureTagTypeEnum;
+import tcav.manager.procedure.plmxmlpdm.base.AttribOwnerBase;
+import tcav.manager.procedure.plmxmlpdm.classtype.WorkflowTemplateClassificationEnum;
+import tcav.manager.procedure.plmxmlpdm.classtype.WorkflowTemplateStageEnum;
 
 /**
  * 

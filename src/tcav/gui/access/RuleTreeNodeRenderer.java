@@ -1,4 +1,4 @@
-package tceav.gui.access;
+package tcav.gui.access;
 /*
  * RuleTreeNodeRenderer.java
  *
@@ -12,12 +12,13 @@ package tceav.gui.access;
  *
  * @author NZR4DL
  */
+import tcav.resources.ResourceLoader;
+import tcav.resources.ImageEnum;
 import javax.swing.*;
 import javax.swing.tree.*;
 import java.awt.*;
-import tceav.manager.access.RuleTreeNode;
-import tceav.manager.compare.CompareInterface;
-import tceav.resources.*;
+import tcav.manager.access.RuleTreeNode;
+import tcav.manager.compare.CompareInterface;
 
 public class RuleTreeNodeRenderer implements TreeCellRenderer {
     

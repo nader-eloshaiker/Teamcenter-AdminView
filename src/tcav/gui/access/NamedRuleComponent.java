@@ -6,8 +6,11 @@
  * To change table template, choose Tools | Template Manager
  * and open the template in the editor.
  */
-package tceav.gui.access;
+package tcav.gui.access;
 
+import tcav.resources.ResourceLoader;
+import tcav.resources.ImageEnum;
+import tcav.gui.AdminViewFrame;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -15,17 +18,15 @@ import javax.swing.event.*;
 import javax.swing.table.*;
 import javax.swing.border.*;
 import javax.swing.tree.*;
-import tceav.gui.tools.GUIutilities;
-import tceav.gui.tools.search.SearchTableComponent;
-import tceav.gui.tools.table.JTableAdvanced;
-import tceav.gui.tools.tree.JTreeAdvanced;
-import tceav.manager.access.AccessManager;
-import tceav.manager.access.NamedAcl;
-import tceav.Settings;
-import tceav.gui.*;
-import tceav.manager.access.AccessControl;
-import tceav.resources.*;
-import tceav.manager.compare.CompareInterface;
+import tcav.gui.tools.GUIutilities;
+import tcav.gui.tools.search.SearchTableComponent;
+import tcav.gui.tools.table.JTableAdvanced;
+import tcav.gui.tools.tree.JTreeAdvanced;
+import tcav.manager.access.AccessManager;
+import tcav.manager.access.NamedAcl;
+import tcav.Settings;
+import tcav.manager.access.AccessControl;
+import tcav.manager.compare.CompareInterface;
 
 /**
  *

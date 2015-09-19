@@ -6,14 +6,14 @@
 //
 
 
-package tceav.manager.procedure.plmxmlpdm.type;
+package tcav.manager.procedure.plmxmlpdm.type;
 
 import java.util.ArrayList;
 import java.util.List;
-import tceav.xml.TagTools;
-import tceav.manager.procedure.plmxmlpdm.ProcedureTagTypeEnum;
-import tceav.manager.procedure.plmxmlpdm.base.AttributeBase;
-import tceav.manager.procedure.plmxmlpdm.type.element.ValidationCheckerType;
+import tcav.xml.TagTools;
+import tcav.manager.procedure.plmxmlpdm.ProcedureTagTypeEnum;
+import tcav.manager.procedure.plmxmlpdm.base.AttributeBase;
+import tcav.manager.procedure.plmxmlpdm.type.element.ValidationCheckerType;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.NamedNodeMap;

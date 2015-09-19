@@ -2,10 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the rootTask in the editor.
  */
-package tceav.gui.procedure;
+package tcav.gui.procedure;
 
-import tceav.manager.procedure.plmxmlpdm.base.IdBase;
-import tceav.gui.tools.GUIutilities;
+import tcav.manager.procedure.plmxmlpdm.base.IdBase;
+import tcav.gui.tools.GUIutilities;
 import java.awt.BorderLayout;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
@@ -14,7 +14,7 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
-import tceav.manager.procedure.plmxmlpdm.type.WorkflowTemplateType;
+import tcav.manager.procedure.plmxmlpdm.type.WorkflowTemplateType;
 
 /**
  *

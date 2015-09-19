@@ -7,9 +7,9 @@
  * and open the template in the editor.
  */
 
-package tceav;
+package tcav;
 
-import tceav.gui.AdminViewFrame;
+import tcav.gui.AdminViewFrame;
 
 /**
  *

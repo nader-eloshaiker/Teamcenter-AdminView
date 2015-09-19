@@ -7,11 +7,11 @@
  * and open the template in the editor.
  */
 
-package tceav.gui.procedure.tabulate;
+package tcav.gui.procedure.tabulate;
 
 import java.util.ArrayList;
-import tceav.Settings;
-import tceav.manager.procedure.plmxmlpdm.type.WorkflowTemplateType;
+import tcav.Settings;
+import tcav.manager.procedure.plmxmlpdm.type.WorkflowTemplateType;
 
 /**
  *

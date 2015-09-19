@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package tceav.gui.procedure.tabulate;
+package tcav.gui.procedure.tabulate;
 
 import java.awt.Component;
 import javax.swing.JTable;

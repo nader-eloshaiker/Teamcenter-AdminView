@@ -7,17 +7,17 @@
  * and open the template in the editor.
  */
 
-package tceav.gui.access;
+package tcav.gui.access;
 
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.table.*;
 import javax.swing.border.*;
-import tceav.gui.tools.GUIutilities;
-import tceav.gui.tools.table.JTableAdvanced;
-import tceav.manager.access.AccessControlHeader;
-import tceav.manager.access.AccessManager;
-import tceav.manager.access.NamedAcl;
+import tcav.gui.tools.GUIutilities;
+import tcav.gui.tools.table.JTableAdvanced;
+import tcav.manager.access.AccessControlHeader;
+import tcav.manager.access.AccessManager;
+import tcav.manager.access.NamedAcl;
 
 /**
  *

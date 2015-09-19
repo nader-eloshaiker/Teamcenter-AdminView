@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package tceav.manager;
+package tcav.manager;
 
 import java.io.File;
 

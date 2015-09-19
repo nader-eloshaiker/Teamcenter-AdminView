@@ -7,8 +7,10 @@
  * and open the template in the editor.
  */
 
-package tceav.gui.access;
+package tcav.gui.access;
 
+import tcav.resources.ResourceLoader;
+import tcav.resources.ImageEnum;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
@@ -18,7 +20,6 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.ImageIcon;
 import javax.swing.JTable;
 import java.awt.Component;
-import tceav.resources.*;
 
 
 /**

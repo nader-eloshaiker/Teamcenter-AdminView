@@ -6,7 +6,7 @@
  * To change this template, choose Tools | Template Manager
  * and open the template in the editor.
  */
-package tceav.manager.access;
+package tcav.manager.access;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -16,9 +16,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import javax.swing.ProgressMonitor;
 import javax.swing.ProgressMonitorInputStream;
-import tceav.gui.AdminViewFrame;
-import tceav.manager.ManagerAdapter;
-import tceav.xml.DOMReader;
+import tcav.gui.AdminViewFrame;
+import tcav.manager.ManagerAdapter;
+import tcav.xml.DOMReader;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 

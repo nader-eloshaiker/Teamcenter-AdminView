@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package tceav.gui.tools;
+package tcav.gui.tools;
 
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;

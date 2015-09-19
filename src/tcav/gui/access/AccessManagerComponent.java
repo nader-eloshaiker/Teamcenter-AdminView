@@ -1,10 +1,12 @@
-package tceav.gui.access;
+package tcav.gui.access;
 
-import tceav.gui.tools.GUIutilities;
-import tceav.manager.access.AccessManager;
-import tceav.gui.*;
-import tceav.resources.*;
-import tceav.Settings;
+import tcav.resources.ResourceLoader;
+import tcav.resources.ImageEnum;
+import tcav.gui.TabbedPanel;
+import tcav.gui.AdminViewFrame;
+import tcav.gui.tools.GUIutilities;
+import tcav.manager.access.AccessManager;
+import tcav.Settings;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;

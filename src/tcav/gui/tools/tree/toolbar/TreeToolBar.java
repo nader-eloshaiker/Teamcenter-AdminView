@@ -7,16 +7,17 @@
  * and open the template in the editor.
  */
 
-package tceav.gui.tools.tree.toolbar;
+package tcav.gui.tools.tree.toolbar;
 
+import tcav.resources.ResourceLoader;
+import tcav.resources.ImageEnum;
+import tcav.gui.AdminViewFrame;
 import javax.swing.tree.*;
 import javax.swing.*;
 import java.awt.event.*;
-import tceav.gui.*;
-import tceav.gui.tools.ClipboardManager;
-import tceav.gui.tools.GUIutilities;
-import tceav.gui.tools.tree.JTreeAdvanced;
-import tceav.resources.*;
+import tcav.gui.tools.ClipboardManager;
+import tcav.gui.tools.GUIutilities;
+import tcav.gui.tools.tree.JTreeAdvanced;
 
 /**
  *

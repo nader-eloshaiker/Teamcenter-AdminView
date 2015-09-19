@@ -6,7 +6,7 @@
  * To change this template, choose Tools | Template Manager
  * and open the template in the editor.
  */
-package tceav.gui.procedure.tabulate;
+package tcav.gui.procedure.tabulate;
 
 import java.awt.Component;
 import java.util.HashMap;
@@ -14,10 +14,10 @@ import javax.swing.ImageIcon;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.TableCellRenderer;
-import tceav.Settings;
-import tceav.manager.procedure.plmxmlpdm.classtype.WorkflowActionTypeEnum;
-import tceav.resources.ImageEnum;
-import tceav.resources.ResourceLoader;
+import tcav.Settings;
+import tcav.manager.procedure.plmxmlpdm.classtype.WorkflowActionTypeEnum;
+import tcav.resources.ImageEnum;
+import tcav.resources.ResourceLoader;
 
 /**
  *

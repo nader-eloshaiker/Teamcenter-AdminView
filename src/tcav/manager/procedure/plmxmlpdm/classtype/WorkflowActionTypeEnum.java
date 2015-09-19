@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package tceav.manager.procedure.plmxmlpdm.classtype;
+package tcav.manager.procedure.plmxmlpdm.classtype;
 
 /**
  * Custom Enumerator

@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package tceav.gui.tools.search;
+package tcav.gui.tools.search;
 
 import javax.swing.tree.TreePath;
 /**

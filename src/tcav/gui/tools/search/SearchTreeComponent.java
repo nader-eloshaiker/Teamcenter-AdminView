@@ -7,10 +7,10 @@
  * and open the template in the editor.
  */
 
-package tceav.gui.tools.search;
+package tcav.gui.tools.search;
 
 import java.util.ArrayList;
-import tceav.gui.tools.tree.JTreeAdvanced;
+import tcav.gui.tools.tree.JTreeAdvanced;
 import javax.swing.tree.TreePath;
 
 /**

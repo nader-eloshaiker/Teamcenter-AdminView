@@ -6,10 +6,10 @@
 //
 
 
-package tceav.manager.procedure.plmxmlpdm.UnusedRequiredTags;
+package tcav.manager.procedure.plmxmlpdm.UnusedRequiredTags;
 
 import java.util.Date;
-import tceav.manager.procedure.plmxmlpdm.base.DescriptionBase;
+import tcav.manager.procedure.plmxmlpdm.base.DescriptionBase;
 import org.w3c.dom.Node;
 /*
 import javax.xml.bind.annotation.XmlAccessType;

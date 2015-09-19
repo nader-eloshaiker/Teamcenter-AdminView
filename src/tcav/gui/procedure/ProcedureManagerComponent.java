@@ -6,7 +6,7 @@
  * To change this template, choose Tools | Template Manager
  * and open the template in the editor.
  */
-package tceav.gui.procedure;
+package tcav.gui.procedure;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -26,15 +26,15 @@ import javax.swing.border.BevelBorder;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
-import tceav.gui.tools.GUIutilities;
-import tceav.manager.procedure.ProcedureManager;
-import tceav.gui.procedure.tabulate.TabulateComponent;
-import tceav.manager.procedure.plmxmlpdm.base.IdBase;
-import tceav.Settings;
-import tceav.gui.AdminViewFrame;
-import tceav.gui.TabbedPanel;
-import tceav.resources.ImageEnum;
-import tceav.resources.ResourceLoader;
+import tcav.gui.tools.GUIutilities;
+import tcav.manager.procedure.ProcedureManager;
+import tcav.gui.procedure.tabulate.TabulateComponent;
+import tcav.manager.procedure.plmxmlpdm.base.IdBase;
+import tcav.Settings;
+import tcav.gui.AdminViewFrame;
+import tcav.gui.TabbedPanel;
+import tcav.resources.ImageEnum;
+import tcav.resources.ResourceLoader;
 
 /**
  *

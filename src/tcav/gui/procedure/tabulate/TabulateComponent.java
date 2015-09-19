@@ -6,7 +6,7 @@
  * To change this template, choose Tools | Template Manager
  * and open the template in the editor.
  */
-package tceav.gui.procedure.tabulate;
+package tcav.gui.procedure.tabulate;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -45,12 +45,12 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
-import tceav.Settings;
-import tceav.gui.tools.CustomFileFilter;
-import tceav.gui.tools.GUIutilities;
-import tceav.gui.tools.RotatedTextIcon;
-import tceav.gui.tools.table.JTableAdvanced;
-import tceav.manager.procedure.ProcedureManager;
+import tcav.Settings;
+import tcav.gui.tools.CustomFileFilter;
+import tcav.gui.tools.GUIutilities;
+import tcav.gui.tools.RotatedTextIcon;
+import tcav.gui.tools.table.JTableAdvanced;
+import tcav.manager.procedure.ProcedureManager;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
@@ -64,10 +64,10 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.DOMException;
-import tceav.gui.AdminViewFrame;
-import tceav.gui.TabbedPanel;
-import tceav.resources.ImageEnum;
-import tceav.resources.ResourceLoader;
+import tcav.gui.AdminViewFrame;
+import tcav.gui.TabbedPanel;
+import tcav.resources.ImageEnum;
+import tcav.resources.ResourceLoader;
 
 /**
  *

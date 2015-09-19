@@ -7,17 +7,17 @@
  * and open the template in the editor.
  */
 
-package tceav;
+package tcav;
 
 import java.awt.GraphicsEnvironment;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.File;
 import java.util.Properties;
-import tceav.resources.ResourceStrings;
-import tceav.manager.ManagerAdapter;
-import tceav.gui.access.NamedRuleComponent;
-import tceav.gui.compare.CompareAccessManagerComponent;
+import tcav.resources.ResourceStrings;
+import tcav.manager.ManagerAdapter;
+import tcav.gui.access.NamedRuleComponent;
+import tcav.gui.compare.CompareAccessManagerComponent;
 
 /**
  *

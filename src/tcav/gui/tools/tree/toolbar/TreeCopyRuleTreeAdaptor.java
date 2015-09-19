@@ -7,10 +7,10 @@
  * and open the template in the editor.
  */
 
-package tceav.gui.tools.tree.toolbar;
+package tcav.gui.tools.tree.toolbar;
 
 import javax.swing.tree.TreePath;
-import tceav.manager.access.RuleTreeNode;
+import tcav.manager.access.RuleTreeNode;
 
 /**
  *

@@ -6,14 +6,22 @@
  * To change this template, choose Tools | Template Manager
  * and open the template in the editor.
  */
-package tceav.gui.compare;
+package tcav.gui.compare;
 
-import tceav.gui.tools.GUIutilities;
-import tceav.Settings;
-import tceav.gui.*;
-import tceav.gui.access.*;
-import tceav.manager.compare.*;
-import tceav.resources.*;
+import tcav.resources.ResourceLoader;
+import tcav.resources.ImageEnum;
+import tcav.manager.compare.CompareInterface;
+import tcav.manager.compare.CompareResult;
+import tcav.manager.compare.CompareAccessManager;
+import tcav.gui.access.RuleTreeSelectionListener;
+import tcav.gui.access.NamedRuleSelectionListener;
+import tcav.gui.access.AccessRuleComponent;
+import tcav.gui.access.NamedRuleComponent;
+import tcav.gui.access.RuleTreeComponent;
+import tcav.gui.TabbedPanel;
+import tcav.gui.AdminViewFrame;
+import tcav.gui.tools.GUIutilities;
+import tcav.Settings;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;

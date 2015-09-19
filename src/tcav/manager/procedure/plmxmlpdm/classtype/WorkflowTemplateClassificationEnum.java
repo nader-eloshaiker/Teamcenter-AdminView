@@ -6,7 +6,7 @@
 //
 
 
-package tceav.manager.procedure.plmxmlpdm.classtype;
+package tcav.manager.procedure.plmxmlpdm.classtype;
 /*
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;

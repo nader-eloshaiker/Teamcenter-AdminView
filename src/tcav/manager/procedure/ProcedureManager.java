@@ -6,7 +6,7 @@
  * To change this template, choose Tools | Template Manager
  * and open the template in the editor.
  */
-package tceav.manager.procedure;
+package tcav.manager.procedure;
 
 import java.util.*;
 import java.io.*;
@@ -14,24 +14,24 @@ import javax.swing.*;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import tceav.gui.AdminViewFrame;
-import tceav.manager.ManagerAdapter;
-import tceav.manager.procedure.plmxmlpdm.ProcedureHeaderType;
-import tceav.manager.procedure.plmxmlpdm.ProcedureTagTypeEnum;
-import tceav.manager.procedure.plmxmlpdm.base.IdBase;
-import tceav.manager.procedure.plmxmlpdm.classtype.WorkflowTemplateClassificationEnum;
-import tceav.manager.procedure.plmxmlpdm.type.AccessIntentType;
-import tceav.manager.procedure.plmxmlpdm.type.OrganisationType;
-import tceav.manager.procedure.plmxmlpdm.type.PLMXMLType;
-import tceav.manager.procedure.plmxmlpdm.type.RoleType;
-import tceav.manager.procedure.plmxmlpdm.type.SiteType;
-import tceav.manager.procedure.plmxmlpdm.type.WorkflowActionType;
-import tceav.manager.procedure.plmxmlpdm.type.WorkflowBusinessRuleHandlerType;
-import tceav.manager.procedure.plmxmlpdm.type.WorkflowBusinessRuleType;
-import tceav.manager.procedure.plmxmlpdm.type.WorkflowHandlerType;
-import tceav.manager.procedure.plmxmlpdm.type.WorkflowSignoffProfileType;
-import tceav.manager.procedure.plmxmlpdm.type.WorkflowTemplateType;
-import tceav.xml.DOMReader;
+import tcav.gui.AdminViewFrame;
+import tcav.manager.ManagerAdapter;
+import tcav.manager.procedure.plmxmlpdm.ProcedureHeaderType;
+import tcav.manager.procedure.plmxmlpdm.ProcedureTagTypeEnum;
+import tcav.manager.procedure.plmxmlpdm.base.IdBase;
+import tcav.manager.procedure.plmxmlpdm.classtype.WorkflowTemplateClassificationEnum;
+import tcav.manager.procedure.plmxmlpdm.type.AccessIntentType;
+import tcav.manager.procedure.plmxmlpdm.type.OrganisationType;
+import tcav.manager.procedure.plmxmlpdm.type.PLMXMLType;
+import tcav.manager.procedure.plmxmlpdm.type.RoleType;
+import tcav.manager.procedure.plmxmlpdm.type.SiteType;
+import tcav.manager.procedure.plmxmlpdm.type.WorkflowActionType;
+import tcav.manager.procedure.plmxmlpdm.type.WorkflowBusinessRuleHandlerType;
+import tcav.manager.procedure.plmxmlpdm.type.WorkflowBusinessRuleType;
+import tcav.manager.procedure.plmxmlpdm.type.WorkflowHandlerType;
+import tcav.manager.procedure.plmxmlpdm.type.WorkflowSignoffProfileType;
+import tcav.manager.procedure.plmxmlpdm.type.WorkflowTemplateType;
+import tcav.xml.DOMReader;
 
 /**
  *

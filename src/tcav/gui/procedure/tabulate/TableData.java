@@ -6,17 +6,17 @@
  * To change this template, choose Tools | Template Manager
  * and open the template in the editor.
  */
-package tceav.gui.procedure.tabulate;
+package tcav.gui.procedure.tabulate;
 
 import java.util.ArrayList;
-import tceav.Settings;
-import tceav.manager.procedure.ProcedureManager;
-import tceav.manager.procedure.plmxmlpdm.type.UserDataType;
-import tceav.manager.procedure.plmxmlpdm.type.WorkflowActionType;
-import tceav.manager.procedure.plmxmlpdm.type.WorkflowBusinessRuleHandlerType;
-import tceav.manager.procedure.plmxmlpdm.type.WorkflowBusinessRuleType;
-import tceav.manager.procedure.plmxmlpdm.type.WorkflowHandlerType;
-import tceav.manager.procedure.plmxmlpdm.type.WorkflowTemplateType;
+import tcav.Settings;
+import tcav.manager.procedure.ProcedureManager;
+import tcav.manager.procedure.plmxmlpdm.type.UserDataType;
+import tcav.manager.procedure.plmxmlpdm.type.WorkflowActionType;
+import tcav.manager.procedure.plmxmlpdm.type.WorkflowBusinessRuleHandlerType;
+import tcav.manager.procedure.plmxmlpdm.type.WorkflowBusinessRuleType;
+import tcav.manager.procedure.plmxmlpdm.type.WorkflowHandlerType;
+import tcav.manager.procedure.plmxmlpdm.type.WorkflowTemplateType;
 
 /**
  *

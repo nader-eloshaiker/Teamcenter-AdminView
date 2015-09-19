@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package tceav.gui;
+package tcav.gui;
 
 import javax.swing.JComponent;
 import javax.swing.ImageIcon;

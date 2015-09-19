@@ -7,15 +7,15 @@
  * and open the template in the editor.
  */
 
-package tceav.manager.compare;
+package tcav.manager.compare;
 
-import tceav.manager.ManagerAdapter;
+import tcav.manager.ManagerAdapter;
 import java.io.File;
 import java.util.ArrayList;
-import tceav.manager.access.AccessManager;
-import tceav.manager.access.NamedAcl;
-import tceav.manager.access.NamedAclList;
-import tceav.manager.access.RuleTreeNode;
+import tcav.manager.access.AccessManager;
+import tcav.manager.access.NamedAcl;
+import tcav.manager.access.NamedAclList;
+import tcav.manager.access.RuleTreeNode;
 
 /**
  *

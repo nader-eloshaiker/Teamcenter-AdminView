@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package tceav.gui.procedure;
+package tcav.gui.procedure;
 
 import java.awt.Point;
 import java.awt.Dimension;
@@ -14,7 +14,7 @@ import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
-import tceav.manager.procedure.plmxmlpdm.type.WorkflowTemplateType;
+import tcav.manager.procedure.plmxmlpdm.type.WorkflowTemplateType;
 
 /**
  *

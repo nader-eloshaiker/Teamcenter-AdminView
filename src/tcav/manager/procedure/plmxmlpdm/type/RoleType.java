@@ -6,9 +6,9 @@
 //
 
 
-package tceav.manager.procedure.plmxmlpdm.type;
+package tcav.manager.procedure.plmxmlpdm.type;
 
-import tceav.manager.procedure.plmxmlpdm.base.AttribOwnerBase;
+import tcav.manager.procedure.plmxmlpdm.base.AttribOwnerBase;
 import org.w3c.dom.Node;
 /*
 import javax.xml.bind.annotation.XmlAccessType;

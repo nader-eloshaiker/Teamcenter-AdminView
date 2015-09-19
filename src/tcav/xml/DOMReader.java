@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package tceav.xml;
+package tcav.xml;
 
 import java.io.File;//InputStream;
 import java.io.InputStream;

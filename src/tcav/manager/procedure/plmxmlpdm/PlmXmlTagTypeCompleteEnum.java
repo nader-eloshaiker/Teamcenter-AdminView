@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package tceav.manager.procedure.plmxmlpdm;
+package tcav.manager.procedure.plmxmlpdm;
 
 /**
  *

@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package tceav.gui.procedure;
+package tcav.gui.procedure;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
@@ -26,10 +26,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
-import tceav.gui.AdminViewFrame;
-import tceav.gui.tools.GUIutilities;
-import tceav.gui.tools.table.JTableAdvanced;
-import tceav.manager.procedure.plmxmlpdm.base.IdBase;
+import tcav.gui.AdminViewFrame;
+import tcav.gui.tools.GUIutilities;
+import tcav.gui.tools.table.JTableAdvanced;
+import tcav.manager.procedure.plmxmlpdm.base.IdBase;
 
 /**
  *

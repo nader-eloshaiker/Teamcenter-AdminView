@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package tceav.gui.procedure.tabulate;
+package tcav.gui.procedure.tabulate;
 
 /**
  *
@@ -20,7 +20,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.CompoundBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
-import tceav.gui.tools.GUIutilities;
+import tcav.gui.tools.GUIutilities;
 import javax.swing.SwingConstants;
 
 /**

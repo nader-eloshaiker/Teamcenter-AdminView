@@ -6,25 +6,25 @@
  * To change this template, choose Tools | Template Manager
  * and open the template in the editor.
  */
-package tceav.gui.procedure;
+package tcav.gui.procedure;
 
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
-import tceav.manager.procedure.plmxmlpdm.base.IdBase;
-import tceav.manager.procedure.plmxmlpdm.base.AttribOwnerBase;
-import tceav.manager.procedure.plmxmlpdm.base.AttributeBase;
-import tceav.manager.procedure.plmxmlpdm.type.AssociatedDataSetType;
-import tceav.manager.procedure.plmxmlpdm.type.AssociatedFolderType;
-import tceav.manager.procedure.plmxmlpdm.type.AssociatedFormType;
-import tceav.manager.procedure.plmxmlpdm.type.OrganisationType;
-import tceav.manager.procedure.plmxmlpdm.type.RoleType;
-import tceav.manager.procedure.plmxmlpdm.type.UserDataType;
-import tceav.manager.procedure.plmxmlpdm.type.ValidationResultsType;
-import tceav.manager.procedure.plmxmlpdm.type.WorkflowSignoffProfileType;
-import tceav.manager.procedure.plmxmlpdm.type.WorkflowTemplateType;
-import tceav.manager.procedure.plmxmlpdm.type.element.UserDataElementType;
-import tceav.manager.procedure.plmxmlpdm.type.element.ValidationCheckerType;
+import tcav.manager.procedure.plmxmlpdm.base.IdBase;
+import tcav.manager.procedure.plmxmlpdm.base.AttribOwnerBase;
+import tcav.manager.procedure.plmxmlpdm.base.AttributeBase;
+import tcav.manager.procedure.plmxmlpdm.type.AssociatedDataSetType;
+import tcav.manager.procedure.plmxmlpdm.type.AssociatedFolderType;
+import tcav.manager.procedure.plmxmlpdm.type.AssociatedFormType;
+import tcav.manager.procedure.plmxmlpdm.type.OrganisationType;
+import tcav.manager.procedure.plmxmlpdm.type.RoleType;
+import tcav.manager.procedure.plmxmlpdm.type.UserDataType;
+import tcav.manager.procedure.plmxmlpdm.type.ValidationResultsType;
+import tcav.manager.procedure.plmxmlpdm.type.WorkflowSignoffProfileType;
+import tcav.manager.procedure.plmxmlpdm.type.WorkflowTemplateType;
+import tcav.manager.procedure.plmxmlpdm.type.element.UserDataElementType;
+import tcav.manager.procedure.plmxmlpdm.type.element.ValidationCheckerType;
 
 /**
  *

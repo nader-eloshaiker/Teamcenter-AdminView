@@ -6,13 +6,13 @@
 //
 
 
-package tceav.manager.procedure.plmxmlpdm.type.element;
+package tcav.manager.procedure.plmxmlpdm.type.element;
 
-import tceav.xml.TagTools;
+import tcav.xml.TagTools;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.NamedNodeMap;
-import tceav.manager.procedure.plmxmlpdm.base.IdBase;
+import tcav.manager.procedure.plmxmlpdm.base.IdBase;
 
 /**
  * 

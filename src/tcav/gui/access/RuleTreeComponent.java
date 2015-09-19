@@ -6,7 +6,7 @@
  * To change tree template, choose Tools | Template Manager
  * and open the template in the editor.
  */
-package tceav.gui.access;
+package tcav.gui.access;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -26,14 +26,14 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.tree.TreePath;
-import tceav.gui.AdminViewFrame;
-import tceav.gui.tools.GUIutilities;
-import tceav.gui.tools.search.SearchTreeComponent;
-import tceav.gui.tools.tree.JTreeAdvanced;
-import tceav.gui.tools.tree.toolbar.TreeCopyRuleTreeAdaptor;
-import tceav.gui.tools.tree.toolbar.TreeToolBar;
-import tceav.manager.access.AccessManager;
-import tceav.manager.access.RuleTreeNode;
+import tcav.gui.AdminViewFrame;
+import tcav.gui.tools.GUIutilities;
+import tcav.gui.tools.search.SearchTreeComponent;
+import tcav.gui.tools.tree.JTreeAdvanced;
+import tcav.gui.tools.tree.toolbar.TreeCopyRuleTreeAdaptor;
+import tcav.gui.tools.tree.toolbar.TreeToolBar;
+import tcav.manager.access.AccessManager;
+import tcav.manager.access.RuleTreeNode;
 
 /**
  *

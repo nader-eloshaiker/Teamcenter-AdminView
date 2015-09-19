@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package tceav.manager.compare;
+package tcav.manager.compare;
 
 import java.awt.Color;
 

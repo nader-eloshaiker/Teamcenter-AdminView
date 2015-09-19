@@ -7,14 +7,14 @@
  * and open the template in the editor.
  */
 
-package tceav.manager.procedure.plmxmlpdm;
+package tcav.manager.procedure.plmxmlpdm;
 
-import tceav.xml.TagTools;
+import tcav.xml.TagTools;
 import java.util.*;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.NamedNodeMap;
-import tceav.manager.procedure.plmxmlpdm.base.AttribOwnerBase;
+import tcav.manager.procedure.plmxmlpdm.base.AttribOwnerBase;
 
 /**
  *

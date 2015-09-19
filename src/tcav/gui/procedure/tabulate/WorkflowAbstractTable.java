@@ -7,12 +7,12 @@
  * and open the template in the editor.
  */
 
-package tceav.gui.procedure.tabulate;
+package tcav.gui.procedure.tabulate;
 
 import java.util.ArrayList;
 import javax.swing.table.TableModel;
 import javax.swing.event.TableModelListener;
-import tceav.manager.procedure.plmxmlpdm.type.WorkflowTemplateType;
+import tcav.manager.procedure.plmxmlpdm.type.WorkflowTemplateType;
 /**
  *
  * @author nzr4dl-e

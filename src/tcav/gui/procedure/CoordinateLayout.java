@@ -4,7 +4,7 @@
  * Copyright 2004 Sun Microsystems, Inc. All rights reserved.
  * SUN PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
-package tceav.gui.procedure;
+package tcav.gui.procedure;
 
 import java.awt.Component;
 import java.awt.Container;

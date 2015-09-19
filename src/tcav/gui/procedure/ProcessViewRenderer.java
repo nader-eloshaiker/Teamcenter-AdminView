@@ -2,9 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package tceav.gui.procedure;
+package tcav.gui.procedure;
 
-import tceav.gui.tools.GUIutilities;
+import tcav.gui.tools.GUIutilities;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -14,8 +14,8 @@ import java.awt.geom.AffineTransform;
 import java.util.List;
 import javax.swing.JPanel;
 import javax.swing.JTree;
-import tceav.manager.procedure.plmxmlpdm.type.SiteType;
-import tceav.manager.procedure.plmxmlpdm.type.WorkflowTemplateType;
+import tcav.manager.procedure.plmxmlpdm.type.SiteType;
+import tcav.manager.procedure.plmxmlpdm.type.WorkflowTemplateType;
 
 /**
  *

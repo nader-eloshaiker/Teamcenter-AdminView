@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package tceav.gui.tools.table;
+package tcav.gui.tools.table;
 
 import java.awt.Color;
 import java.awt.Component;

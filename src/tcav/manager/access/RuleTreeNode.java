@@ -6,13 +6,13 @@
  * To change this template, choose Tools | Template Manager
  * and open the template in the editor.
  */
-package tceav.manager.access;
+package tcav.manager.access;
 
 import java.util.ArrayList;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import tceav.manager.compare.CompareInterface;
-import tceav.utils.ArrayListSorter;
+import tcav.manager.compare.CompareInterface;
+import tcav.utils.ArrayListSorter;
 
 /**
  *

@@ -6,7 +6,7 @@
  * To change this template, choose Tools | Template Manager
  * and open the template in the editor.
  */
-package tceav.gui.procedure;
+package tcav.gui.procedure;
 
 import java.awt.BorderLayout;
 import javax.swing.JComponent;
@@ -17,10 +17,10 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
-import tceav.gui.tools.GUIutilities;
-import tceav.manager.procedure.plmxmlpdm.base.DescriptionBase;
-import tceav.manager.procedure.plmxmlpdm.base.IdBase;
-import tceav.manager.procedure.plmxmlpdm.type.WorkflowTemplateType;
+import tcav.gui.tools.GUIutilities;
+import tcav.manager.procedure.plmxmlpdm.base.DescriptionBase;
+import tcav.manager.procedure.plmxmlpdm.base.IdBase;
+import tcav.manager.procedure.plmxmlpdm.type.WorkflowTemplateType;
 
 /**
  *

@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package tceav.xml;
+package tcav.xml;
 
 import java.util.List;
 import org.w3c.dom.NamedNodeMap;

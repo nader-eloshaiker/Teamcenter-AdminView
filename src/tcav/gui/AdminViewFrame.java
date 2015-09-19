@@ -6,7 +6,7 @@
  * To change this template, choose Tools | Template Manager
  * and open the template in the editor.
  */
-package tceav.gui;
+package tcav.gui;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
@@ -54,21 +54,21 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import tceav.gui.compare.CompareAccessManagerComponent;
-import tceav.gui.compare.CompareTabChooser;
-import tceav.gui.tools.ClipboardManager;
-import tceav.gui.access.AccessManagerComponent;
-import tceav.gui.procedure.ProcedureManagerComponent;
-import tceav.gui.tools.CustomFileFilter;
-import tceav.gui.tools.GUIutilities;
-import tceav.resources.ImageEnum;
-import tceav.resources.ResourceLoader;
-import tceav.resources.ResourceStrings;
-import tceav.manager.ManagerAdapter;
-import tceav.manager.access.AccessManager;
-import tceav.manager.procedure.ProcedureManager;
-import tceav.manager.compare.CompareAccessManager;
-import tceav.Settings;
+import tcav.gui.compare.CompareAccessManagerComponent;
+import tcav.gui.compare.CompareTabChooser;
+import tcav.gui.tools.ClipboardManager;
+import tcav.gui.access.AccessManagerComponent;
+import tcav.gui.procedure.ProcedureManagerComponent;
+import tcav.gui.tools.CustomFileFilter;
+import tcav.gui.tools.GUIutilities;
+import tcav.resources.ImageEnum;
+import tcav.resources.ResourceLoader;
+import tcav.resources.ResourceStrings;
+import tcav.manager.ManagerAdapter;
+import tcav.manager.access.AccessManager;
+import tcav.manager.procedure.ProcedureManager;
+import tcav.manager.compare.CompareAccessManager;
+import tcav.Settings;
 
 /**
  *
@@ -501,7 +501,7 @@ public class AdminViewFrame extends JFrame {
                 html = new JEditorPane();
                 html.setEditable(false);
                 try {
-                    url = tceav.resources.ResourceStrings.getChangeLog();
+                    url = tcav.resources.ResourceStrings.getChangeLog();
                     html = new JEditorPane(url);
                     html.setEditable(false);
                 } catch (Exception ex) {
@@ -527,7 +527,7 @@ public class AdminViewFrame extends JFrame {
                 html = new JEditorPane();
                 html.setEditable(false);
                 try {
-                    url = tceav.resources.ResourceStrings.getLicense();
+                    url = tcav.resources.ResourceStrings.getLicense();
                     html = new JEditorPane(url);
                     html.setEditable(false);
                 } catch (Exception ex) {

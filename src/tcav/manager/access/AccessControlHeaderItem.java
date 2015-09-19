@@ -7,9 +7,9 @@
  * and open the template in the editor.
  */
 
-package tceav.manager.access;
+package tcav.manager.access;
 
-import tceav.resources.ImageEnum;
+import tcav.resources.ImageEnum;
 
 /**
  *

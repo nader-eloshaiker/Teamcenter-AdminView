@@ -7,9 +7,9 @@
  * and open the template in the editor.
  */
 
-package tceav.gui.access;
+package tcav.gui.access;
 
-import tceav.manager.access.NamedAcl;
+import tcav.manager.access.NamedAcl;
 
 /**
  *
